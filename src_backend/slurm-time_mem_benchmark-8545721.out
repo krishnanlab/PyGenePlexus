@@ -1,0 +1,722 @@
+/mnt/home/mancus16/.bashrc: line 18: bind: warning: line editing not enabled
+[?1034h[?1034h[?1034h[?1034h[?1034h[?1034h[?1034h[?1034h[?1034h/mnt/home/mancus16/software/anaconda3/bin/python
+
+The name of the set is negative regulation of macrophage derived foam cell differentiation and the ID is GO:0010745
+BioGRID Embedding GO
+The number of seconds it took to do up to the SL part is 0.840930700302124
+The number of seconds it took to do the SL part is 1.5674264430999756
+The number of seconds it took to generate the main output dfs is 1.765202522277832
+The number of seconds it took to make the small network is 1.1538889408111572
+
+5.13user 0.54system 0:17.16elapsed 33%CPU (0avgtext+0avgdata 412556maxresident)k
+0inputs+0outputs (0major+128931minor)pagefaults 0swaps
+
+The name of the set is embryo implantation and the ID is GO:0007566
+BioGRID Embedding GO
+The number of seconds it took to do up to the SL part is 0.6100747585296631
+The number of seconds it took to do the SL part is 1.7201263904571533
+The number of seconds it took to generate the main output dfs is 1.548954725265503
+The number of seconds it took to make the small network is 1.103506088256836
+
+5.40user 0.38system 0:05.80elapsed 99%CPU (0avgtext+0avgdata 408640maxresident)k
+0inputs+0outputs (0major+131898minor)pagefaults 0swaps
+
+The name of the set is neuron migration and the ID is GO:0001764
+BioGRID Embedding GO
+The number of seconds it took to do up to the SL part is 0.5914475917816162
+The number of seconds it took to do the SL part is 1.8112778663635254
+The number of seconds it took to generate the main output dfs is 1.6259431838989258
+The number of seconds it took to make the small network is 1.0408482551574707
+
+5.47user 0.36system 0:05.86elapsed 99%CPU (0avgtext+0avgdata 408744maxresident)k
+0inputs+0outputs (0major+127416minor)pagefaults 0swaps
+
+The name of the set is negative regulation of macrophage derived foam cell differentiation and the ID is GO:0010745
+BioGRID Adjacency GO
+The number of seconds it took to do up to the SL part is 0.6606831550598145
+The number of seconds it took to do the SL part is 34.00278639793396
+The number of seconds it took to generate the main output dfs is 2.2168123722076416
+The number of seconds it took to make the small network is 0.9834592342376709
+
+36.20user 2.07system 0:39.04elapsed 98%CPU (0avgtext+0avgdata 7042196maxresident)k
+0inputs+0outputs (0major+364131minor)pagefaults 0swaps
+
+The name of the set is embryo implantation and the ID is GO:0007566
+BioGRID Adjacency GO
+The number of seconds it took to do up to the SL part is 0.6089153289794922
+The number of seconds it took to do the SL part is 39.066863775253296
+The number of seconds it took to generate the main output dfs is 2.05625057220459
+The number of seconds it took to make the small network is 0.8863117694854736
+
+41.71user 1.94system 0:43.69elapsed 99%CPU (0avgtext+0avgdata 7042272maxresident)k
+0inputs+0outputs (0major+357977minor)pagefaults 0swaps
+
+The name of the set is neuron migration and the ID is GO:0001764
+BioGRID Adjacency GO
+The number of seconds it took to do up to the SL part is 0.584681510925293
+The number of seconds it took to do the SL part is 36.97020649909973
+The number of seconds it took to generate the main output dfs is 2.1186578273773193
+The number of seconds it took to make the small network is 0.9151415824890137
+
+39.62user 1.96system 0:41.64elapsed 99%CPU (0avgtext+0avgdata 7042436maxresident)k
+0inputs+0outputs (0major+334877minor)pagefaults 0swaps
+
+The name of the set is negative regulation of macrophage derived foam cell differentiation and the ID is GO:0010745
+BioGRID Influence GO
+The number of seconds it took to do up to the SL part is 0.654104471206665
+The number of seconds it took to do the SL part is 12.132893323898315
+The number of seconds it took to generate the main output dfs is 2.235896587371826
+The number of seconds it took to make the small network is 1.2134933471679688
+
+14.72user 1.94system 0:17.43elapsed 95%CPU (0avgtext+0avgdata 7042212maxresident)k
+0inputs+0outputs (0major+300565minor)pagefaults 0swaps
+
+The name of the set is embryo implantation and the ID is GO:0007566
+BioGRID Influence GO
+The number of seconds it took to do up to the SL part is 0.6274139881134033
+The number of seconds it took to do the SL part is 16.15492606163025
+The number of seconds it took to generate the main output dfs is 2.10127854347229
+The number of seconds it took to make the small network is 0.9743742942810059
+
+18.87user 1.96system 0:20.90elapsed 99%CPU (0avgtext+0avgdata 7042332maxresident)k
+0inputs+0outputs (0major+312609minor)pagefaults 0swaps
+
+The name of the set is neuron migration and the ID is GO:0001764
+BioGRID Influence GO
+The number of seconds it took to do up to the SL part is 0.5888321399688721
+The number of seconds it took to do the SL part is 18.54750633239746
+The number of seconds it took to generate the main output dfs is 2.128333330154419
+The number of seconds it took to make the small network is 1.3777296543121338
+
+21.56user 2.07system 0:23.69elapsed 99%CPU (0avgtext+0avgdata 7044272maxresident)k
+0inputs+0outputs (0major+309925minor)pagefaults 0swaps
+
+The name of the set is abdominal aortic aneurysm and the ID is DOID:7693
+BioGRID Embedding DisGeNet
+The number of seconds it took to do up to the SL part is 0.422452449798584
+The number of seconds it took to do the SL part is 0.744023323059082
+The number of seconds it took to generate the main output dfs is 1.0505027770996094
+The number of seconds it took to make the small network is 1.0700197219848633
+
+3.49user 0.27system 0:04.04elapsed 93%CPU (0avgtext+0avgdata 284940maxresident)k
+0inputs+0outputs (0major+107064minor)pagefaults 0swaps
+
+The name of the set is bile duct cancer and the ID is DOID:4606
+BioGRID Embedding DisGeNet
+The number of seconds it took to do up to the SL part is 0.45477747917175293
+The number of seconds it took to do the SL part is 0.6138858795166016
+The number of seconds it took to generate the main output dfs is 0.8706111907958984
+The number of seconds it took to make the small network is 1.1490564346313477
+
+3.53user 0.28system 0:03.83elapsed 99%CPU (0avgtext+0avgdata 285004maxresident)k
+0inputs+0outputs (0major+107982minor)pagefaults 0swaps
+
+The name of the set is alopecia areata and the ID is DOID:986
+BioGRID Embedding DisGeNet
+The number of seconds it took to do up to the SL part is 0.3152918815612793
+The number of seconds it took to do the SL part is 1.076340675354004
+The number of seconds it took to generate the main output dfs is 1.096860647201538
+The number of seconds it took to make the small network is 1.1057195663452148
+
+4.01user 0.31system 0:04.34elapsed 99%CPU (0avgtext+0avgdata 284972maxresident)k
+0inputs+0outputs (0major+126627minor)pagefaults 0swaps
+
+The name of the set is abdominal aortic aneurysm and the ID is DOID:7693
+BioGRID Adjacency DisGeNet
+The number of seconds it took to do up to the SL part is 0.382993221282959
+The number of seconds it took to do the SL part is 12.931378602981567
+The number of seconds it took to generate the main output dfs is 1.5839476585388184
+The number of seconds it took to make the small network is 1.141772747039795
+
+15.07user 1.60system 0:16.86elapsed 98%CPU (0avgtext+0avgdata 6604764maxresident)k
+0inputs+0outputs (0major+203961minor)pagefaults 0swaps
+
+The name of the set is bile duct cancer and the ID is DOID:4606
+BioGRID Adjacency DisGeNet
+The number of seconds it took to do up to the SL part is 0.471179723739624
+The number of seconds it took to do the SL part is 12.115232706069946
+The number of seconds it took to generate the main output dfs is 1.3850929737091064
+The number of seconds it took to make the small network is 0.995471715927124
+
+14.12user 1.61system 0:15.78elapsed 99%CPU (0avgtext+0avgdata 6604916maxresident)k
+0inputs+0outputs (0major+189392minor)pagefaults 0swaps
+
+The name of the set is alopecia areata and the ID is DOID:986
+BioGRID Adjacency DisGeNet
+The number of seconds it took to do up to the SL part is 0.31415724754333496
+The number of seconds it took to do the SL part is 19.780489444732666
+The number of seconds it took to generate the main output dfs is 1.741023302078247
+The number of seconds it took to make the small network is 0.9318194389343262
+
+21.84user 1.66system 0:23.59elapsed 99%CPU (0avgtext+0avgdata 6604636maxresident)k
+0inputs+0outputs (0major+189721minor)pagefaults 0swaps
+
+The name of the set is abdominal aortic aneurysm and the ID is DOID:7693
+BioGRID Influence DisGeNet
+The number of seconds it took to do up to the SL part is 0.40700531005859375
+The number of seconds it took to do the SL part is 8.576223611831665
+The number of seconds it took to generate the main output dfs is 1.5472493171691895
+The number of seconds it took to make the small network is 1.0781536102294922
+
+10.64user 1.65system 0:12.48elapsed 98%CPU (0avgtext+0avgdata 6604768maxresident)k
+0inputs+0outputs (0major+213405minor)pagefaults 0swaps
+
+The name of the set is bile duct cancer and the ID is DOID:4606
+BioGRID Influence DisGeNet
+The number of seconds it took to do up to the SL part is 0.46027326583862305
+The number of seconds it took to do the SL part is 7.640058755874634
+The number of seconds it took to generate the main output dfs is 1.4172959327697754
+The number of seconds it took to make the small network is 1.0654997825622559
+
+9.74user 1.65system 0:11.41elapsed 99%CPU (0avgtext+0avgdata 6606776maxresident)k
+0inputs+0outputs (0major+208890minor)pagefaults 0swaps
+
+The name of the set is alopecia areata and the ID is DOID:986
+BioGRID Influence DisGeNet
+The number of seconds it took to do up to the SL part is 0.3159053325653076
+The number of seconds it took to do the SL part is 9.617065906524658
+The number of seconds it took to generate the main output dfs is 1.6138496398925781
+The number of seconds it took to make the small network is 1.0005221366882324
+
+11.70user 1.66system 0:13.38elapsed 99%CPU (0avgtext+0avgdata 6604712maxresident)k
+0inputs+0outputs (0major+207934minor)pagefaults 0swaps
+
+The name of the set is negative regulation of macrophage derived foam cell differentiation and the ID is GO:0010745
+STRING-EXP Embedding GO
+The number of seconds it took to do up to the SL part is 0.7064826488494873
+The number of seconds it took to do the SL part is 1.7655737400054932
+The number of seconds it took to generate the main output dfs is 1.640979290008545
+The number of seconds it took to make the small network is 5.1090686321258545
+
+9.01user 0.48system 0:10.05elapsed 94%CPU (0avgtext+0avgdata 605396maxresident)k
+0inputs+0outputs (0major+222786minor)pagefaults 0swaps
+
+The name of the set is embryo implantation and the ID is GO:0007566
+STRING-EXP Embedding GO
+The number of seconds it took to do up to the SL part is 0.5930032730102539
+The number of seconds it took to do the SL part is 1.8339402675628662
+The number of seconds it took to generate the main output dfs is 1.4373655319213867
+The number of seconds it took to make the small network is 4.437431573867798
+
+8.59user 0.47system 0:09.08elapsed 99%CPU (0avgtext+0avgdata 603776maxresident)k
+0inputs+0outputs (0major+257241minor)pagefaults 0swaps
+
+The name of the set is neuron migration and the ID is GO:0001764
+STRING-EXP Embedding GO
+The number of seconds it took to do up to the SL part is 0.5668940544128418
+The number of seconds it took to do the SL part is 2.011796236038208
+The number of seconds it took to generate the main output dfs is 1.5880610942840576
+The number of seconds it took to make the small network is 5.66446590423584
+
+10.12user 0.48system 0:10.63elapsed 99%CPU (0avgtext+0avgdata 603512maxresident)k
+0inputs+0outputs (0major+267694minor)pagefaults 0swaps
+
+The name of the set is negative regulation of macrophage derived foam cell differentiation and the ID is GO:0010745
+STRING-EXP Adjacency GO
+The number of seconds it took to do up to the SL part is 0.6431257724761963
+The number of seconds it took to do the SL part is 17.226739645004272
+The number of seconds it took to generate the main output dfs is 2.109105348587036
+The number of seconds it took to make the small network is 4.915036678314209
+
+23.45user 1.84system 0:26.03elapsed 97%CPU (0avgtext+0avgdata 5957804maxresident)k
+0inputs+0outputs (0major+348409minor)pagefaults 0swaps
+
+The name of the set is embryo implantation and the ID is GO:0007566
+STRING-EXP Adjacency GO
+The number of seconds it took to do up to the SL part is 0.592658281326294
+The number of seconds it took to do the SL part is 19.01890993118286
+The number of seconds it took to generate the main output dfs is 1.8812518119812012
+The number of seconds it took to make the small network is 3.7531545162200928
+
+24.51user 1.72system 0:26.29elapsed 99%CPU (0avgtext+0avgdata 5959592maxresident)k
+0inputs+0outputs (0major+288926minor)pagefaults 0swaps
+
+The name of the set is neuron migration and the ID is GO:0001764
+STRING-EXP Adjacency GO
+The number of seconds it took to do up to the SL part is 0.5611777305603027
+The number of seconds it took to do the SL part is 21.390381336212158
+The number of seconds it took to generate the main output dfs is 1.9841430187225342
+The number of seconds it took to make the small network is 3.710721969604492
+
+26.84user 1.77system 0:28.66elapsed 99%CPU (0avgtext+0avgdata 5957616maxresident)k
+0inputs+0outputs (0major+289036minor)pagefaults 0swaps
+
+The name of the set is negative regulation of macrophage derived foam cell differentiation and the ID is GO:0010745
+STRING-EXP Influence GO
+The number of seconds it took to do up to the SL part is 0.6393814086914062
+The number of seconds it took to do the SL part is 10.202550411224365
+The number of seconds it took to generate the main output dfs is 2.070695161819458
+The number of seconds it took to make the small network is 6.732127666473389
+
+18.26user 1.82system 0:20.83elapsed 96%CPU (0avgtext+0avgdata 5957808maxresident)k
+0inputs+0outputs (0major+362005minor)pagefaults 0swaps
+
+The name of the set is embryo implantation and the ID is GO:0007566
+STRING-EXP Influence GO
+The number of seconds it took to do up to the SL part is 0.5869450569152832
+The number of seconds it took to do the SL part is 10.85164999961853
+The number of seconds it took to generate the main output dfs is 1.8771531581878662
+The number of seconds it took to make the small network is 4.754098176956177
+
+17.33user 1.75system 0:19.10elapsed 99%CPU (0avgtext+0avgdata 5957616maxresident)k
+0inputs+0outputs (0major+285886minor)pagefaults 0swaps
+
+The name of the set is neuron migration and the ID is GO:0001764
+STRING-EXP Influence GO
+The number of seconds it took to do up to the SL part is 0.566206693649292
+The number of seconds it took to do the SL part is 10.964408159255981
+The number of seconds it took to generate the main output dfs is 2.0233216285705566
+The number of seconds it took to make the small network is 6.4258434772491455
+
+19.14user 1.78system 0:21.02elapsed 99%CPU (0avgtext+0avgdata 5957684maxresident)k
+0inputs+0outputs (0major+308236minor)pagefaults 0swaps
+
+The name of the set is abdominal aortic aneurysm and the ID is DOID:7693
+STRING-EXP Embedding DisGeNet
+The number of seconds it took to do up to the SL part is 0.4153916835784912
+The number of seconds it took to do the SL part is 0.7353801727294922
+The number of seconds it took to generate the main output dfs is 0.9474501609802246
+The number of seconds it took to make the small network is 6.951614856719971
+
+9.18user 0.45system 0:09.85elapsed 97%CPU (0avgtext+0avgdata 586448maxresident)k
+0inputs+0outputs (0major+250647minor)pagefaults 0swaps
+
+The name of the set is bile duct cancer and the ID is DOID:4606
+STRING-EXP Embedding DisGeNet
+The number of seconds it took to do up to the SL part is 0.4538278579711914
+The number of seconds it took to do the SL part is 0.6104538440704346
+The number of seconds it took to generate the main output dfs is 0.8220725059509277
+The number of seconds it took to make the small network is 9.022182703018188
+
+11.18user 0.47system 0:11.69elapsed 99%CPU (0avgtext+0avgdata 585352maxresident)k
+0inputs+0outputs (0major+264049minor)pagefaults 0swaps
+
+The name of the set is alopecia areata and the ID is DOID:986
+STRING-EXP Embedding DisGeNet
+The number of seconds it took to do up to the SL part is 0.31066060066223145
+The number of seconds it took to do the SL part is 1.1753718852996826
+The number of seconds it took to generate the main output dfs is 1.0193102359771729
+The number of seconds it took to make the small network is 4.48270583152771
+
+7.32user 0.41system 0:07.75elapsed 99%CPU (0avgtext+0avgdata 590224maxresident)k
+0inputs+0outputs (0major+211234minor)pagefaults 0swaps
+
+The name of the set is abdominal aortic aneurysm and the ID is DOID:7693
+STRING-EXP Adjacency DisGeNet
+The number of seconds it took to do up to the SL part is 0.38222479820251465
+The number of seconds it took to do the SL part is 9.121526002883911
+The number of seconds it took to generate the main output dfs is 1.4329795837402344
+The number of seconds it took to make the small network is 6.255072355270386
+
+16.20user 1.59system 0:18.06elapsed 98%CPU (0avgtext+0avgdata 5563376maxresident)k
+0inputs+0outputs (0major+277540minor)pagefaults 0swaps
+
+The name of the set is bile duct cancer and the ID is DOID:4606
+STRING-EXP Adjacency DisGeNet
+The number of seconds it took to do up to the SL part is 0.45399975776672363
+The number of seconds it took to do the SL part is 9.258063316345215
+The number of seconds it took to generate the main output dfs is 1.2825837135314941
+The number of seconds it took to make the small network is 12.16336178779602
+
+22.32user 1.66system 0:24.02elapsed 99%CPU (0avgtext+0avgdata 5567376maxresident)k
+0inputs+0outputs (0major+355044minor)pagefaults 0swaps
+
+The name of the set is alopecia areata and the ID is DOID:986
+STRING-EXP Adjacency DisGeNet
+The number of seconds it took to do up to the SL part is 0.30637407302856445
+The number of seconds it took to do the SL part is 11.940892457962036
+The number of seconds it took to generate the main output dfs is 1.5516154766082764
+The number of seconds it took to make the small network is 4.022784948348999
+
+16.98user 1.60system 0:18.67elapsed 99%CPU (0avgtext+0avgdata 5563320maxresident)k
+0inputs+0outputs (0major+246520minor)pagefaults 0swaps
+
+The name of the set is abdominal aortic aneurysm and the ID is DOID:7693
+STRING-EXP Influence DisGeNet
+The number of seconds it took to do up to the SL part is 0.3835601806640625
+The number of seconds it took to do the SL part is 6.094297885894775
+The number of seconds it took to generate the main output dfs is 1.497964859008789
+The number of seconds it took to make the small network is 7.348175287246704
+
+14.23user 1.68system 0:16.20elapsed 98%CPU (0avgtext+0avgdata 5563444maxresident)k
+0inputs+0outputs (0major+282213minor)pagefaults 0swaps
+
+The name of the set is bile duct cancer and the ID is DOID:4606
+STRING-EXP Influence DisGeNet
+The number of seconds it took to do up to the SL part is 0.45556068420410156
+The number of seconds it took to do the SL part is 5.828413486480713
+The number of seconds it took to generate the main output dfs is 1.2927680015563965
+The number of seconds it took to make the small network is 5.56209921836853
+
+12.37user 1.56system 0:13.98elapsed 99%CPU (0avgtext+0avgdata 5563444maxresident)k
+0inputs+0outputs (0major+260815minor)pagefaults 0swaps
+
+The name of the set is alopecia areata and the ID is DOID:986
+STRING-EXP Influence DisGeNet
+The number of seconds it took to do up to the SL part is 0.3107771873474121
+The number of seconds it took to do the SL part is 7.48115611076355
+The number of seconds it took to generate the main output dfs is 1.5078372955322266
+The number of seconds it took to make the small network is 5.493236064910889
+
+13.96user 1.61system 0:15.63elapsed 99%CPU (0avgtext+0avgdata 5563372maxresident)k
+0inputs+0outputs (0major+259869minor)pagefaults 0swaps
+
+The name of the set is negative regulation of macrophage derived foam cell differentiation and the ID is GO:0010745
+STRING Embedding GO
+The number of seconds it took to do up to the SL part is 0.7076625823974609
+The number of seconds it took to do the SL part is 2.09759521484375
+The number of seconds it took to generate the main output dfs is 1.640099287033081
+The number of seconds it took to make the small network is 22.22018790245056
+
+26.15user 0.91system 0:27.54elapsed 98%CPU (0avgtext+0avgdata 1303620maxresident)k
+0inputs+0outputs (0major+588746minor)pagefaults 0swaps
+
+The name of the set is embryo implantation and the ID is GO:0007566
+STRING Embedding GO
+The number of seconds it took to do up to the SL part is 0.591073751449585
+The number of seconds it took to do the SL part is 2.0312552452087402
+The number of seconds it took to generate the main output dfs is 1.574876070022583
+The number of seconds it took to make the small network is 20.943746089935303
+
+25.05user 0.89system 0:25.96elapsed 99%CPU (0avgtext+0avgdata 1274652maxresident)k
+0inputs+0outputs (0major+581317minor)pagefaults 0swaps
+
+The name of the set is neuron migration and the ID is GO:0001764
+STRING Embedding GO
+The number of seconds it took to do up to the SL part is 0.5749330520629883
+The number of seconds it took to do the SL part is 2.136920690536499
+The number of seconds it took to generate the main output dfs is 1.6012370586395264
+The number of seconds it took to make the small network is 18.89170479774475
+
+23.14user 0.86system 0:24.03elapsed 99%CPU (0avgtext+0avgdata 1274764maxresident)k
+0inputs+0outputs (0major+550736minor)pagefaults 0swaps
+
+The name of the set is negative regulation of macrophage derived foam cell differentiation and the ID is GO:0010745
+STRING Adjacency GO
+The number of seconds it took to do up to the SL part is 0.6490921974182129
+The number of seconds it took to do the SL part is 18.29763627052307
+The number of seconds it took to generate the main output dfs is 2.2077436447143555
+The number of seconds it took to make the small network is 25.620556831359863
+
+44.76user 2.49system 0:47.97elapsed 98%CPU (0avgtext+0avgdata 6729136maxresident)k
+0inputs+0outputs (0major+786507minor)pagefaults 0swaps
+
+The name of the set is embryo implantation and the ID is GO:0007566
+STRING Adjacency GO
+The number of seconds it took to do up to the SL part is 0.5963828563690186
+The number of seconds it took to do the SL part is 20.488401889801025
+The number of seconds it took to generate the main output dfs is 2.030791997909546
+The number of seconds it took to make the small network is 19.774285078048706
+
+41.68user 2.25system 0:43.99elapsed 99%CPU (0avgtext+0avgdata 6729048maxresident)k
+0inputs+0outputs (0major+520721minor)pagefaults 0swaps
+
+The name of the set is neuron migration and the ID is GO:0001764
+STRING Adjacency GO
+The number of seconds it took to do up to the SL part is 0.5783646106719971
+The number of seconds it took to do the SL part is 20.103476524353027
+The number of seconds it took to generate the main output dfs is 2.0824716091156006
+The number of seconds it took to make the small network is 20.742881059646606
+
+42.22user 2.29system 0:44.61elapsed 99%CPU (0avgtext+0avgdata 6729260maxresident)k
+0inputs+0outputs (0major+518790minor)pagefaults 0swaps
+
+The name of the set is negative regulation of macrophage derived foam cell differentiation and the ID is GO:0010745
+STRING Influence GO
+The number of seconds it took to do up to the SL part is 0.6464717388153076
+The number of seconds it took to do the SL part is 11.230041742324829
+The number of seconds it took to generate the main output dfs is 2.1763312816619873
+The number of seconds it took to make the small network is 20.81141495704651
+
+32.94user 2.43system 0:36.07elapsed 98%CPU (0avgtext+0avgdata 6729132maxresident)k
+0inputs+0outputs (0major+593204minor)pagefaults 0swaps
+
+The name of the set is embryo implantation and the ID is GO:0007566
+STRING Influence GO
+The number of seconds it took to do up to the SL part is 0.594984769821167
+The number of seconds it took to do the SL part is 11.581550121307373
+The number of seconds it took to generate the main output dfs is 2.058997392654419
+The number of seconds it took to make the small network is 18.328187942504883
+
+31.25user 2.34system 0:33.66elapsed 99%CPU (0avgtext+0avgdata 6729288maxresident)k
+0inputs+0outputs (0major+649876minor)pagefaults 0swaps
+
+The name of the set is neuron migration and the ID is GO:0001764
+STRING Influence GO
+The number of seconds it took to do up to the SL part is 0.5785870552062988
+The number of seconds it took to do the SL part is 13.528343200683594
+The number of seconds it took to generate the main output dfs is 2.084871768951416
+The number of seconds it took to make the small network is 15.53913950920105
+
+30.45user 2.27system 0:32.81elapsed 99%CPU (0avgtext+0avgdata 6729196maxresident)k
+0inputs+0outputs (0major+646887minor)pagefaults 0swaps
+
+The name of the set is abdominal aortic aneurysm and the ID is DOID:7693
+STRING Embedding DisGeNet
+The number of seconds it took to do up to the SL part is 0.4137248992919922
+The number of seconds it took to do the SL part is 0.8279907703399658
+The number of seconds it took to generate the main output dfs is 0.978278398513794
+The number of seconds it took to make the small network is 22.353975772857666
+
+24.36user 0.82system 0:25.39elapsed 99%CPU (0avgtext+0avgdata 1256440maxresident)k
+0inputs+0outputs (0major+523421minor)pagefaults 0swaps
+
+The name of the set is bile duct cancer and the ID is DOID:4606
+STRING Embedding DisGeNet
+The number of seconds it took to do up to the SL part is 0.45917558670043945
+The number of seconds it took to do the SL part is 0.6725950241088867
+The number of seconds it took to generate the main output dfs is 0.8484508991241455
+The number of seconds it took to make the small network is 25.74903178215027
+
+27.64user 0.87system 0:28.55elapsed 99%CPU (0avgtext+0avgdata 1256380maxresident)k
+0inputs+0outputs (0major+561711minor)pagefaults 0swaps
+
+The name of the set is alopecia areata and the ID is DOID:986
+STRING Embedding DisGeNet
+The number of seconds it took to do up to the SL part is 0.3135192394256592
+The number of seconds it took to do the SL part is 1.218226432800293
+The number of seconds it took to generate the main output dfs is 1.0809061527252197
+The number of seconds it took to make the small network is 15.975028276443481
+
+18.60user 0.73system 0:19.37elapsed 99%CPU (0avgtext+0avgdata 1256456maxresident)k
+0inputs+0outputs (0major+478748minor)pagefaults 0swaps
+
+The name of the set is abdominal aortic aneurysm and the ID is DOID:7693
+STRING Adjacency DisGeNet
+The number of seconds it took to do up to the SL part is 0.3883049488067627
+The number of seconds it took to do the SL part is 9.252233982086182
+The number of seconds it took to generate the main output dfs is 1.5249865055084229
+The number of seconds it took to make the small network is 27.73939299583435
+
+37.38user 2.21system 0:39.80elapsed 99%CPU (0avgtext+0avgdata 6308856maxresident)k
+0inputs+0outputs (0major+774926minor)pagefaults 0swaps
+
+The name of the set is bile duct cancer and the ID is DOID:4606
+STRING Adjacency DisGeNet
+The number of seconds it took to do up to the SL part is 0.4602522850036621
+The number of seconds it took to do the SL part is 10.092669486999512
+The number of seconds it took to generate the main output dfs is 1.39583158493042
+The number of seconds it took to make the small network is 29.783093214035034
+
+40.29user 2.33system 0:42.69elapsed 99%CPU (0avgtext+0avgdata 6308964maxresident)k
+0inputs+0outputs (0major+747282minor)pagefaults 0swaps
+
+The name of the set is alopecia areata and the ID is DOID:986
+STRING Adjacency DisGeNet
+The number of seconds it took to do up to the SL part is 0.3352947235107422
+The number of seconds it took to do the SL part is 17.42890954017639
+The number of seconds it took to generate the main output dfs is 1.6815285682678223
+The number of seconds it took to make the small network is 15.237184047698975
+
+33.40user 2.11system 0:35.61elapsed 99%CPU (0avgtext+0avgdata 6308728maxresident)k
+0inputs+0outputs (0major+518570minor)pagefaults 0swaps
+
+The name of the set is abdominal aortic aneurysm and the ID is DOID:7693
+STRING Influence DisGeNet
+The number of seconds it took to do up to the SL part is 0.42769956588745117
+The number of seconds it took to do the SL part is 7.767830848693848
+The number of seconds it took to generate the main output dfs is 1.6736478805541992
+The number of seconds it took to make the small network is 22.031502962112427
+
+30.46user 2.05system 0:32.83elapsed 99%CPU (0avgtext+0avgdata 6308904maxresident)k
+0inputs+0outputs (0major+497577minor)pagefaults 0swaps
+
+The name of the set is bile duct cancer and the ID is DOID:4606
+STRING Influence DisGeNet
+The number of seconds it took to do up to the SL part is 0.4703524112701416
+The number of seconds it took to do the SL part is 8.230260372161865
+The number of seconds it took to generate the main output dfs is 1.5138940811157227
+The number of seconds it took to make the small network is 16.874248266220093
+
+25.68user 2.18system 0:28.01elapsed 99%CPU (0avgtext+0avgdata 6308860maxresident)k
+0inputs+0outputs (0major+457924minor)pagefaults 0swaps
+
+The name of the set is alopecia areata and the ID is DOID:986
+STRING Influence DisGeNet
+The number of seconds it took to do up to the SL part is 0.3125331401824951
+The number of seconds it took to do the SL part is 10.332924842834473
+The number of seconds it took to generate the main output dfs is 1.70991849899292
+The number of seconds it took to make the small network is 24.44277024269104
+
+35.47user 2.32system 0:37.87elapsed 99%CPU (0avgtext+0avgdata 6308664maxresident)k
+0inputs+0outputs (0major+495121minor)pagefaults 0swaps
+
+The name of the set is negative regulation of macrophage derived foam cell differentiation and the ID is GO:0010745
+GIANT-TN Embedding GO
+The number of seconds it took to do up to the SL part is 0.8741281032562256
+The number of seconds it took to do the SL part is 3.8485069274902344
+The number of seconds it took to generate the main output dfs is 2.5069639682769775
+The number of seconds it took to make the small network is 130.73805785179138
+
+133.67user 5.08system 2:19.52elapsed 99%CPU (0avgtext+0avgdata 7863448maxresident)k
+0inputs+0outputs (0major+2494897minor)pagefaults 0swaps
+
+The name of the set is embryo implantation and the ID is GO:0007566
+GIANT-TN Embedding GO
+The number of seconds it took to do up to the SL part is 0.8166055679321289
+The number of seconds it took to do the SL part is 4.7148277759552
+The number of seconds it took to generate the main output dfs is 2.567391872406006
+The number of seconds it took to make the small network is 123.11622953414917
+
+127.33user 5.08system 2:12.75elapsed 99%CPU (0avgtext+0avgdata 7863464maxresident)k
+0inputs+0outputs (0major+2096999minor)pagefaults 0swaps
+
+The name of the set is neuron migration and the ID is GO:0001764
+GIANT-TN Embedding GO
+The number of seconds it took to do up to the SL part is 0.8553991317749023
+The number of seconds it took to do the SL part is 6.435121774673462
+The number of seconds it took to generate the main output dfs is 2.762174606323242
+The number of seconds it took to make the small network is 106.99477243423462
+
+112.34user 5.59system 1:58.23elapsed 99%CPU (0avgtext+0avgdata 7863576maxresident)k
+0inputs+0outputs (0major+2005653minor)pagefaults 0swaps
+
+The name of the set is negative regulation of macrophage derived foam cell differentiation and the ID is GO:0010745
+GIANT-TN Adjacency GO
+The number of seconds it took to do up to the SL part is 0.6707661151885986
+The number of seconds it took to do the SL part is 33.69985771179199
+The number of seconds it took to generate the main output dfs is 2.8128015995025635
+The number of seconds it took to make the small network is 90.66237473487854
+
+122.48user 5.69system 2:09.19elapsed 99%CPU (0avgtext+0avgdata 12473936maxresident)k
+0inputs+0outputs (0major+2972411minor)pagefaults 0swaps
+
+The name of the set is embryo implantation and the ID is GO:0007566
+GIANT-TN Adjacency GO
+The number of seconds it took to do up to the SL part is 0.628852367401123
+The number of seconds it took to do the SL part is 36.023571729660034
+The number of seconds it took to generate the main output dfs is 2.843468189239502
+The number of seconds it took to make the small network is 100.09702849388123
+
+134.74user 5.69system 2:20.86elapsed 99%CPU (0avgtext+0avgdata 12473872maxresident)k
+0inputs+0outputs (0major+3100331minor)pagefaults 0swaps
+
+The name of the set is neuron migration and the ID is GO:0001764
+GIANT-TN Adjacency GO
+The number of seconds it took to do up to the SL part is 0.6145229339599609
+The number of seconds it took to do the SL part is 39.6046884059906
+The number of seconds it took to generate the main output dfs is 2.8465094566345215
+The number of seconds it took to make the small network is 88.80958724021912
+
+127.28user 5.52system 2:13.11elapsed 99%CPU (0avgtext+0avgdata 12473756maxresident)k
+0inputs+0outputs (0major+2652548minor)pagefaults 0swaps
+
+The name of the set is negative regulation of macrophage derived foam cell differentiation and the ID is GO:0010745
+GIANT-TN Influence GO
+The number of seconds it took to do up to the SL part is 0.675048828125
+The number of seconds it took to do the SL part is 17.661318063735962
+The number of seconds it took to generate the main output dfs is 2.819854736328125
+The number of seconds it took to make the small network is 91.30208849906921
+
+107.08user 5.76system 1:53.77elapsed 99%CPU (0avgtext+0avgdata 12473964maxresident)k
+0inputs+0outputs (0major+3242537minor)pagefaults 0swaps
+
+The name of the set is embryo implantation and the ID is GO:0007566
+GIANT-TN Influence GO
+The number of seconds it took to do up to the SL part is 0.6227340698242188
+The number of seconds it took to do the SL part is 17.449790239334106
+The number of seconds it took to generate the main output dfs is 2.827185869216919
+The number of seconds it took to make the small network is 91.8821177482605
+
+108.25user 5.50system 1:53.99elapsed 99%CPU (0avgtext+0avgdata 12473884maxresident)k
+0inputs+0outputs (0major+2831481minor)pagefaults 0swaps
+
+The name of the set is neuron migration and the ID is GO:0001764
+GIANT-TN Influence GO
+The number of seconds it took to do up to the SL part is 0.6023643016815186
+The number of seconds it took to do the SL part is 18.68335747718811
+The number of seconds it took to generate the main output dfs is 2.895425319671631
+The number of seconds it took to make the small network is 90.44791460037231
+
+107.81user 5.77system 1:53.86elapsed 99%CPU (0avgtext+0avgdata 12473944maxresident)k
+0inputs+0outputs (0major+3073417minor)pagefaults 0swaps
+
+The name of the set is abdominal aortic aneurysm and the ID is DOID:7693
+GIANT-TN Embedding DisGeNet
+The number of seconds it took to do up to the SL part is 0.4564635753631592
+The number of seconds it took to do the SL part is 1.122861385345459
+The number of seconds it took to generate the main output dfs is 1.2601149082183838
+The number of seconds it took to make the small network is 99.53579354286194
+
+99.58user 3.43system 1:43.75elapsed 99%CPU (0avgtext+0avgdata 7844992maxresident)k
+0inputs+0outputs (0major+2845310minor)pagefaults 0swaps
+
+The name of the set is bile duct cancer and the ID is DOID:4606
+GIANT-TN Embedding DisGeNet
+The number of seconds it took to do up to the SL part is 0.5045702457427979
+The number of seconds it took to do the SL part is 0.9746582508087158
+The number of seconds it took to generate the main output dfs is 1.0863170623779297
+The number of seconds it took to make the small network is 89.7101218700409
+
+89.92user 2.93system 1:33.16elapsed 99%CPU (0avgtext+0avgdata 7844964maxresident)k
+0inputs+0outputs (0major+2730765minor)pagefaults 0swaps
+
+The name of the set is alopecia areata and the ID is DOID:986
+GIANT-TN Embedding DisGeNet
+The number of seconds it took to do up to the SL part is 0.3366537094116211
+The number of seconds it took to do the SL part is 1.575411081314087
+The number of seconds it took to generate the main output dfs is 1.386986255645752
+The number of seconds it took to make the small network is 88.00680255889893
+
+88.92user 3.04system 1:32.12elapsed 99%CPU (0avgtext+0avgdata 7844956maxresident)k
+0inputs+0outputs (0major+2956322minor)pagefaults 0swaps
+
+The name of the set is abdominal aortic aneurysm and the ID is DOID:7693
+GIANT-TN Adjacency DisGeNet
+The number of seconds it took to do up to the SL part is 0.42052745819091797
+The number of seconds it took to do the SL part is 17.348480939865112
+The number of seconds it took to generate the main output dfs is 1.8883321285247803
+The number of seconds it took to make the small network is 97.20083093643188
+
+112.21user 5.31system 1:57.81elapsed 99%CPU (0avgtext+0avgdata 11892004maxresident)k
+0inputs+0outputs (0major+3107505minor)pagefaults 0swaps
+
+The name of the set is bile duct cancer and the ID is DOID:4606
+GIANT-TN Adjacency DisGeNet
+The number of seconds it took to do up to the SL part is 0.47880005836486816
+The number of seconds it took to do the SL part is 16.625536680221558
+The number of seconds it took to generate the main output dfs is 1.763364315032959
+The number of seconds it took to make the small network is 88.5050106048584
+
+102.82user 5.23system 1:48.31elapsed 99%CPU (0avgtext+0avgdata 11891888maxresident)k
+0inputs+0outputs (0major+2921864minor)pagefaults 0swaps
+
+The name of the set is alopecia areata and the ID is DOID:986
+GIANT-TN Adjacency DisGeNet
+The number of seconds it took to do up to the SL part is 0.33790111541748047
+The number of seconds it took to do the SL part is 21.326744556427002
+The number of seconds it took to generate the main output dfs is 2.074298858642578
+The number of seconds it took to make the small network is 93.21291375160217
+
+111.95user 5.75system 1:57.91elapsed 99%CPU (0avgtext+0avgdata 11894004maxresident)k
+0inputs+0outputs (0major+3103637minor)pagefaults 0swaps
+
+The name of the set is abdominal aortic aneurysm and the ID is DOID:7693
+GIANT-TN Influence DisGeNet
+The number of seconds it took to do up to the SL part is 0.4130542278289795
+The number of seconds it took to do the SL part is 13.555938720703125
+The number of seconds it took to generate the main output dfs is 1.9637362957000732
+The number of seconds it took to make the small network is 97.40949559211731
+
+107.87user 5.85system 1:54.60elapsed 99%CPU (0avgtext+0avgdata 11891976maxresident)k
+0inputs+0outputs (0major+3356200minor)pagefaults 0swaps
+
+The name of the set is bile duct cancer and the ID is DOID:4606
+GIANT-TN Influence DisGeNet
+The number of seconds it took to do up to the SL part is 0.484849214553833
+The number of seconds it took to do the SL part is 12.335587739944458
+The number of seconds it took to generate the main output dfs is 1.7807247638702393
+The number of seconds it took to make the small network is 89.23429322242737
+
+99.31user 5.28system 1:44.77elapsed 99%CPU (0avgtext+0avgdata 11892004maxresident)k
+0inputs+0outputs (0major+2949854minor)pagefaults 0swaps
+
+The name of the set is alopecia areata and the ID is DOID:986
+GIANT-TN Influence DisGeNet
+The number of seconds it took to do up to the SL part is 0.3418557643890381
+The number of seconds it took to do the SL part is 14.241787672042847
+The number of seconds it took to generate the main output dfs is 2.0817246437072754
+The number of seconds it took to make the small network is 92.8448760509491
+
+104.83user 5.43system 1:50.45elapsed 99%CPU (0avgtext+0avgdata 11891772maxresident)k
+0inputs+0outputs (0major+3010891minor)pagefaults 0swaps

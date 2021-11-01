@@ -1,0 +1,19 @@
+/mnt/home/mancus16/.bashrc: line 18: bind: warning: line editing not enabled
+[?1034h[?1034h[?1034h[?1034h[?1034h[?1034h[?1034h[?1034h[?1034h/mnt/home/mancus16/software/anaconda3/envs/pecanpy-pip/lib/python3.7/site-packages/numba/np/ufunc/parallel.py:363: NumbaWarning: The TBB threading layer requires TBB version 2019.5 or later i.e., TBB_INTERFACE_VERSION >= 11005. Found TBB_INTERFACE_VERSION = 10003. The TBB threading layer is disabled.
+  warnings.warn(problem)
+Took 00:00:01.06 to load graph
+Took 00:00:00.00 to pre-compute transition probabilities
+Took 00:00:41.89 to generate walks
+Took 00:01:04.59 to train embeddings
+/mnt/home/mancus16/software/anaconda3/envs/pecanpy-pip/lib/python3.7/site-packages/numba/np/ufunc/parallel.py:363: NumbaWarning: The TBB threading layer requires TBB version 2019.5 or later i.e., TBB_INTERFACE_VERSION >= 11005. Found TBB_INTERFACE_VERSION = 10003. The TBB threading layer is disabled.
+  warnings.warn(problem)
+Took 00:00:04.42 to load graph
+Took 00:00:00.00 to pre-compute transition probabilities
+Took 00:00:34.96 to generate walks
+Took 00:00:59.04 to train embeddings
+/mnt/home/mancus16/software/anaconda3/envs/pecanpy-pip/lib/python3.7/site-packages/numba/np/ufunc/parallel.py:363: NumbaWarning: The TBB threading layer requires TBB version 2019.5 or later i.e., TBB_INTERFACE_VERSION >= 11005. Found TBB_INTERFACE_VERSION = 10003. The TBB threading layer is disabled.
+  warnings.warn(problem)
+Took 00:00:11.46 to load graph
+Took 00:00:00.00 to pre-compute transition probabilities
+Took 00:00:37.49 to generate walks
+Took 00:01:03.77 to train embeddings
