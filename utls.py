@@ -8,6 +8,8 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import average_precision_score
 import time
 from scipy.spatial.distance import cosine
+import os
+from jinja2 import Environment, FileSystemLoader
 
 
 ################################################################################################################################
@@ -42,23 +44,30 @@ def intial_ID_convert(input_genes,file_loc='local'):
     df_convert_out = df_convert_out.astype({'Original_ID':str,'ID_converted_to_Entrez':str})
     return convert_IDs, df_convert_out
     
-def make_validation_df(df_convert_out,file_loc='local'):
-    converted_genes = df_convert_out['ID_converted_to_Entrez'].tolist()
-    summary_results = [] 
+def make_validation_df(df_convert_out,anet,file_loc='local'):
+    table_summary = []
+    #num_converted_to_Entrez = df_convert_out[~(df_convert_out['ID_converted_to_Entrez']=='Could Not be mapped to Entrez')].shape[0]
+    input_count = df_convert_out.shape[0]
+    converted_genes = df_convert_out['ID_converted_to_Entrez'].to_numpy()
     for anet in ['BioGRID','STRING','STRING-EXP','GIANT-TN']:
         net_genes = load_txtfile('net_genes',file_loc,net_type_=anet)
-        in_net = []
-        in_net_count = 0
-        for agene in converted_genes:
-            if agene in net_genes:
-                in_net.append('Y')
-                in_net_count = in_net_count + 1
-            else:
-                in_net.append('N')
-        summary_results.append([anet,len(net_genes),in_net_count])
-        df_convert_out['In %s?'%anet] = in_net
-    df_summary = pd.DataFrame(summary_results,columns=['Network','Num. of Network Genes', 'Num. Positive Genes']) 
-    return df_convert_out, df_summary
+        df_tmp = df_convert_out[df_convert_out['ID_converted_to_Entrez'].isin(net_genes)]
+        pos_genes_in_net = np.intersect1d(converted_genes,net_genes)
+        table_row = {'Network': anet, 'NetworkGenes': len(net_genes), 'PositiveGenes': len(pos_genes_in_net)}
+        table_summary.append(dict(table_row))
+        tmp_ins = np.full(len(converted_genes),'N',dtype=str)
+        tmp_ins[df_tmp.index.to_numpy()] = 'Y'
+        df_convert_out['In %s?'%anet] = tmp_ins
+
+    df_convert_out = df_convert_out.rename(columns = {'Original_ID': 'Original ID', 'ID_converted_to_Entrez': 'Entrez ID'})
+
+    return df_convert_out, table_summary, input_count
+    
+def alter_validation_df(df_convert_out,table_info,net_type):
+    df_convert_out_subset = df_convert_out[['Original ID','Entrez ID','In %s?'%net_type]]
+    network = next((item for item in table_info if item['Network'] == net_type), None)
+    positive_genes = network.get("PositiveGenes")
+    return df_convert_out_subset, positive_genes
         
 def get_genes_in_network(convert_IDs,net_type,file_loc='local'):
     net_genes = load_txtfile('net_genes',file_loc,net_type_=net_type)
@@ -111,7 +120,8 @@ def run_SL(pos_genes_in_net,negative_genes,net_genes,net_type,features,CV,file_l
                 prior = num_tst_pos/Xdata[tst_inds].shape[0]
                 log2_prior = np.log2(avgp/prior)
                 avgps.append(log2_prior)
-    return mdl_weights, probs, avgps
+        avgp = '{0:.2f}'.format(np.median(avgps))
+    return mdl_weights, probs, avgp
     
 def make_prob_df(net_genes,probs,pos_genes_in_net,negative_genes,file_loc='local'):
     Entrez_to_Symbol = load_dict('Entrez_to_Symbol',file_loc)
@@ -196,6 +206,85 @@ def make_small_edgelist(df_probs,net_type,Entrez_to_Symbol,file_loc='local'):
         isolated_genes_sym.append(syms_tmp)
     return df_edge, isolated_genes, df_edge_sym, isolated_genes_sym
     
+def make_graph(df_edge, df_probs,max_num_genes):
+    df_edge.fillna(0)
+    df_edge.columns = ['source', 'target', 'weight']
+    nodes = df_probs[0:max_num_genes]
+    nodes.rename(columns={'Entrez': 'id', 'Class-Label': 'Class'}, inplace=True)
+    nodes = nodes.astype({'id': int})
+
+    graph = {}
+    graph["nodes"] = nodes.to_dict(orient='records')
+    graph["links"] = df_edge.to_dict(orient='records')
+
+    return graph
+    
+def make_template(jobname, net_type, features, GSC, avgps, df_probs, df_GO, df_dis, input_count, positive_genes, df_convert_out_subset, graph):
+    # Render the Jinja template, filling fields as appropriate
+    # return rendered HTML
+    # Find the module absolute path and locate templates
+    
+    module_root = os.path.join(os.path.dirname(__file__), 'templates')
+    env = Environment(loader=FileSystemLoader(module_root))
+
+    # Find the absolute module path and the static files
+    context_menu_path = os.path.join(os.path.dirname(__file__), 'static', 'd3-v4-contextmenu.js')
+    with open(context_menu_path, 'r') as f:
+        context_menu_js = f.read()
+
+    tip_path = os.path.join(os.path.dirname(__file__), 'static', 'd3-tip.js')
+    with open(tip_path, 'r') as f:
+        d3_tip_js = f.read()
+
+    graph_path = os.path.join(os.path.dirname(__file__), 'static', 'graph.js')
+    with open(graph_path, 'r') as f:
+        graph_js = f.read()
+
+    datatable_path = os.path.join(os.path.dirname(__file__), 'static', 'datatable.js')
+    with open(datatable_path, 'r') as f:
+        datatable_js = f.read()
+
+    main_path = os.path.join(os.path.dirname(__file__), 'static', 'main.css')
+    with open(main_path, 'r') as f:
+        main_css = f.read()
+
+    graph_css_path = os.path.join(os.path.dirname(__file__), 'static', 'graph.css')
+    with open(graph_css_path, 'r') as f:
+        graph_css = f.read()
+
+    d3_tip_css_path = os.path.join(os.path.dirname(__file__), 'static', 'd3-tip.css')
+    with open(d3_tip_css_path, 'r') as f:
+        d3_tip_css = f.read()
+
+    template = env.get_template('result_base.html').render(
+        jobname=jobname,
+        network=net_type,
+        features=features,
+        negativeclass=GSC,
+        avgps=avgps,
+        input_count=input_count,
+        positive_genes=positive_genes,
+        context_menu_js=context_menu_js,
+        d3_tip_js=d3_tip_js,
+        graph_js=graph_js,
+        datatable_js=datatable_js,
+        main_css=main_css,
+        graph_css=graph_css,
+        d3_tip_css=d3_tip_css,
+        probs_table=df_probs.to_html(index=False, classes='table table-striped table-bordered" id = "probstable'),
+        go_table=df_GO.to_html(index=False,
+                               classes='table table-striped table-bordered nowrap" style="width: 100%;" id = "gotable'),
+        dis_table=df_dis.to_html(index=False, classes='table table-striped table-bordered" id = "distable'),
+        validate_results=df_convert_out_subset.to_html(index=False,
+                                              classes='table table-striped table-bordered" id = "validateresults'),
+        graph=graph)
+
+        
+    with open('my_new_html_file.html', 'w') as f:
+        f.write(template)
+    # return utf-8 string
+    return(template)
+    
     
 ################################################################################################################################
 
@@ -252,6 +341,7 @@ def load_df(file_type,file_loc,sep_='\t',header_=None,net_type_=None):
         elif file_loc == 'HPCC':
             if net_type_ == 'BioGRID':
                 output_df = pd.read_csv(fp_HPCC + 'data_backend2/Edgelists/%s.edg'%net_type_,sep=sep_,header=header_,names=['Node1','Node2'])
+                output_df["Weight"] = 1
             else:
                 output_df = pd.read_csv(fp_HPCC + 'data_backend2/Edgelists/%s.edg'%net_type_,sep=sep_,header=header_,names=['Node1','Node2','Weight'])
         elif file_loc == 'cloud':

@@ -10,7 +10,7 @@ Currently, the repo can be run anywhere in the krishnan lab research space on th
 The input is the file path to the list of input genes (hard coded now, probably need to change, see below)
 
 ### Run the model
-`python geneplexus.py --task run_model --net_type BioGRID --features Embedding --GSC GO --CV doCV`
+`python geneplexus.py --task run_model --net_type BioGRID --features Embedding --GSC GO --CV doCV --mg 1000`
 
 Some thoughts and questions
 
