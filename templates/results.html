@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.6.4/css/buttons.bootstrap4.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.6/css/responsive.dataTables.min.css">
+    <script src="https://kit.fontawesome.com/e6f3faaa40.js" crossorigin="anonymous"></script>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='main.css') }}">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='graph.css') }}">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='d3-tip.css') }}">
+    <title>GenePlexus</title>
+    <script>
+        var dataset = {{ graph | safe }}
+    </script>
+</head>
+    <body>
+       <header>
+        {% include 'navbar.html'  ignore missing  %}
+
+        </header>
+       <div class="result_container">
+           <h4 style="padding: 5px">Prediction results</h4>
+            <div class="border border-dark">
+                <div class="box_padding">
+                    <div class="row">
+                        <div class="col-xs-2 text-left col-sm-2">
+                            <b>Parameters:</b>
+                        </div>
+                        <div class="col-xs-3 text-left col-sm-3">
+                            <label><b>Job Name:</b>&nbsp</label>{{( jobname )}}<br>
+                            <label><b>Network:</b>&nbsp</label>{{( request.form['network'] )}}<br>
+                        </div>
+                        <div class="col-xs-3 text-left col-sm-3">
+                            <label><b>Features:</b>&nbsp</label>{{( request.form['features'] )}}<br>
+                            <label><b>Negative Class:</b>&nbsp</label>{{( request.form['negativeclass'] )}}<br>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12">
+                            <label>The median value of the log2(auPRC/prior)
+                                for 5-fold cross validation is &nbsp</label>{{( avgps )}}.
+                            </label>&nbsp
+                            <a href="#" data-toggle="popover" data-trigger="hover" data-placement="right"
+                                  data-content="If the number of genes in the positive class is greater than 20,
+                                  this metric reports the fold change of the area under the precision-recall curve
+                                  (auPRC) over the prior auPRC expected by random chance. For example, a value of 1
+                                  indicates that the model performs twice as good as a random ranking of genes.">
+                                <i class="fas fa-question-circle"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br class="mt-5">
+            <div role="tabpanel">
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item">
+                        <a href="#predictions" class="nav-link text-dark active" data-toggle="tab">Gene Predictions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#sim_go" class="nav-link text-dark" data-toggle="tab">Similarities to Biological Processes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#sim_dis" class="nav-link text-dark" data-toggle="tab">Similarities to Disease</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#netgraph" class="nav-link text-dark" data-toggle="tab">Network Graph</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#validation" class="nav-link text-dark" data-toggle="tab">Validation Data</a>
+                    </li>
+                </ul>
+
+                  <!-- Tab panes -->
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane fade show active" id="predictions">
+                        <div class="table_container">
+                            <div class="box_padding">
+                                <p>The table below contains the prediction probability for all the genes in the
+                                    selected network indicating each gene’s functional similarity to the input genes.
+                                    The Probability of each gene is bounded between 0 and 1, and is displayed upto 2
+                                    decimal places for clarity. The Rank column indicates the rank of the gene when
+                                    sorted by the full probability value (up to several decimals). The Class-Labels are:
+                                    P – gene was considered in positive class during training,
+                                    N – gene was considered in negative class during training, and
+                                    U – gene was not considered at all during training.
+                                    Known/Novel indicates whether the gene was part of the input gene list
+                                    (therefore ‘Known’) or not (therefore ‘Novel’).</p>
+                            </div>
+                        {{ probs_table|safe }}
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="sim_go">
+                        <div class="table_container">
+                            <div class="box_padding">
+                                <P>The table below shows the similarity of machine learning models trained on sets of
+                                    genes associated with Gene Ontology Biological Process terms to the custom model
+                                    trained on the input genes. See the Help page for more information about
+                                    the similarity measure.</P>
+                            </div>
+                        {{ go_table|safe }}
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="sim_dis">
+                        <div class="table_container">
+                            <div class="box_padding">
+                                <P>The table below shows the similarity of machine learning models trained on sets of
+                                    genes associated with diseases in the DisGeNET database to the custom model
+                                    trained on the input genes. See the Help page for more information about
+                                    the similarity measure.</P>
+                            </div>
+                        {{ dis_table|safe }}
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="netgraph">
+                        <div class="controls">
+                            <div class="force">
+                                <p style=margin:0><label>Network Interpretation:</label></p>
+                            </div>
+                            <div class="force">
+                                <p style=margin:0>The graph shows the top 50 nodes based on highest prediction probability</p>
+                            </div>
+                            <div class="force">
+                                <p style=margin:0>Node size is based on the prediction probability</p>
+                            </div>
+                            <div class="force">
+                                <p style=margin:0>Node color is based on the Class-Label</p>
+                            </div>
+                            <div class="force">
+                                <p style=margin:0>Hover over a node for additional attributes</p>
+                            </div>
+                            <div class="force">
+                                <p style=margin:0>Zoom in or out using the mouse scroll wheel</p>
+                            </div>
+                            <div class="force">
+                                <p style=margin:0>Move graph around the screen by dragging with the left mouse button</p>
+                            </div>
+                            <div class="force">
+                                <p style=margin:0>Right-click on node to look up gene at NCBI</p>
+                            </div>
+                        </div>
+                        <svg width="1080" height="600" id="graph"></svg>
+                        <canvas hidden width="1080" height="600"></canvas>
+                    </div>
+                    <div class="tab-pane fade" id="validation">
+                        <div class="table_container">
+                            <div class="box_padding">
+                                <p>The number of genes in the input file was {{ input_count }}.
+                                The number of those genes that were uniquely mapped to an Entrez ID
+                                        and were also in the network is {{positive_genes}}.</p>
+                            </div>
+                        {{ validate_results|safe }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+        <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap.min.js"></script>
+        <script src="https://cdn.datatables.net/responsive/2.2.6/js/dataTables.responsive.min.js"></script>
+        <script src="https://cdn.datatables.net/responsive/2.2.6/js/responsive.bootstrap.min.js"></script>
+        <!--<script src="https://cdn.datatables.net/v/dt/dt-1.10.22/datatables.min.js"></script>-->
+        <script src="https://cdn.datatables.net/buttons/1.6.4/js/dataTables.buttons.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/1.6.4/js/buttons.bootstrap4.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+        <script src="https://cdn.datatables.net/buttons/1.6.4/js/buttons.html5.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/1.6.4/js/buttons.print.min.js"></script>
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+        <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+        <script src="{{url_for('static', filename='d3-v4-contextmenu.js')}}"></script>
+        <script src="{{url_for('static', filename='d3-tip.js')}}"></script>
+        <script src="{{url_for('static', filename='graph.js')}}"></script>
+        <script src="{{url_for('static', filename='datatable.js')}}"></script>
+        <script>
+            $('[data-toggle="popover"]').popover();
+        </script>
+    </body>
+</html>

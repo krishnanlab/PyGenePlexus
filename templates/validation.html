@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.6.4/css/buttons.bootstrap4.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.6/css/responsive.dataTables.min.css">
+    <script src="https://kit.fontawesome.com/e6f3faaa40.js" crossorigin="anonymous"></script>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='main.css') }}">
+    <title>GenePlexus</title>
+</head>
+    <body>
+       <header>
+        {% include 'navbar.html'  ignore missing  %}
+        </header>
+       <div class="sidenav">
+                <div class="item-content">
+                   <span>
+                       <br>
+                       <form id="validate-form" action="{{ url_for('validate') }}" method="POST", enctype="multipart/form-data">
+                       <fieldset class="border box_padding fieldset">
+                           <label>
+                               1. Enter Input Genes
+                           </label>&nbsp
+                           <a href="#" data-toggle="popover" data-trigger="hover" data-placement="right"
+                                  data-content="Upload of file of Gene IDs or input them manually.
+                                  Acceptable Gene IDs are; Entrez, ENSG, Symbol, ENSP, ENST.
+                                  The format is delimited by newline (i.e. each gene is on a separate line)">
+                               <i class="fas fa-question-circle"></i>
+                           </a>
+                           <div>
+                                <span id="geneButton" class="btn btn-sm">Input Genes from File</span>
+                                <span id="filename" class="text-center"></span>
+                                <input class="btn btn-sm btn-outline-primary py-0" style="font-size: 0.0em;"
+                                       type="file"
+                                       title=" "
+                                       name="input_genes"
+                                       accept="txt/csv"
+                                       />
+                           </div>
+                           <div class="button_padding">
+                               <button type="button"
+                                       id="sampleBtn"
+                                       class="btn btn-sm"
+                                       onclick="window.location.href='/uploads/DOID-9562-STRING-Adjacency-DisGeNet-Symbols.txt'">
+                                  Download Sample Gene File
+                                </button>
+                           </div>
+                           <label>Or</label>
+                           <div class="button_padding">
+                               <!-- Button trigger modal -->
+                                <button type="button" id="geneBtn" class="btn btn-sm"  data-toggle="modal" data-target="#geneModal">
+                                  Enter / Paste Genes
+                                </button>
+                           </div>
+                           <div class="button_padding">
+                                <button type="button" id="geneClear" class="btn btn-sm"  onclick="clearInput()">
+                                  Clear Input
+                                </button>
+                           </div>
+                           <br>
+                           <label>
+                               2. Check if IDs are Valid
+                           </label>&nbsp;<a href="#" data-toggle="popover" data-trigger="hover" data-placement="right"
+                                  data-content="All IDs will be converted to Entrez IDs to be used in the machine learning model.
+                                  The resulting spreadsheet shows how the input genes were converted and if they were in the molecular networks.">
+                           <i class="fas fa-question-circle"></i></a>
+                            <div class="button_padding">
+                                <input type="submit" disabled name="submit_button" class="btn btn-sm border dark" value="Check if IDs are Valid">
+                            </div>
+                       </fieldset>
+                       </form>
+                       <br>
+                       <form id="model-form" action="{{ url_for('run_model') }}" method="POST", enctype="multipart/form-data">
+                           <fieldset class="border box_padding fieldset">
+                               <label>
+                                   3. Job Name
+                               </label>&nbsp<a href="#" data-toggle="popover" data-trigger="hover" data-placement="right"
+                                      data-content="The default job name is a unique identifier that will be assigned
+                                      once the model is run.  Optionally, a prefix can be added for easier identification
+                                       by typing text into the box below">
+                                        <i class="fas fa-question-circle"></i></a>
+                               <div>
+                                   <label>(Optional) Add a prefix to the job</label>
+                                   {{ form.prefix }}
+                               </div>
+                               <br>
+                               <label>
+                                   4. Select Molecular Network
+                               </label>&nbsp<a href="#" data-toggle="popover" data-trigger="hover" data-placement="right"
+                                      data-content="Select the molecular network that will be used in training the model.">
+                               <i class="fas fa-question-circle"></i></a>
+                               <div>
+                                {{ form.network }}
+                               </div>
+                               <br>
+                               <label>
+                                   5. Select Feature Type
+                               </label>&nbsp<a href="#" data-toggle="popover" data-trigger="hover" data-placement="right"
+                                  data-content="Select how the connections of chosen network will be represented as features in the machine learning model.">
+                               <i class="fas fa-question-circle"></i></a>
+                               <div class="select">
+                                    {{ form.features }}
+                                </div>
+                                <br>
+                               <label>
+                                   6. Select Negative Gene Class
+                               </label>&nbsp<a href="#" data-toggle="popover" data-trigger="hover" data-placement="right"
+                                  data-content="Select the type of genes in the negative class – genes annotated to Gene Ontology Biological Processes or to disease in the DisGeNet database – based on whether the input genes represent a process/pathway or a disease.">
+                               <i class="fas fa-question-circle"></i></a>
+                                <div class="select">
+                                    {{ form.negativeclass }}
+                                </div>
+                                <br>
+                                
+                                {{ form.runbatch(class_="btn btn-sm btn-primary") }}
+                                <br/>
+                                <a href="#" data-toggle="popover" data-trigger="hover" data-placement="right"
+                                  data-content="Hitting this button will launch a process in the cloud to train the machine learning model.
+                                  The link to view the results will be available in the Jobs tab when completed.">
+                               <i class="fas fa-question-circle"></i></a>
+                           </fieldset>
+                       </form>
+                   </span>
+                </div>
+            </form>
+       </div>
+        <div class="container">
+            <div class="border border-dark">
+                <div class="box_padding">
+                    <h4>Summary</h4>
+                    <p>The table below shows how many of the input genes were converted to Entrez gene IDs and how many
+                        of them are present in the various molecular networks.</p>
+                    <table style="width: 85%">
+                            <colgroup>
+                               <col span="1" style="width: 15%;">
+                               <col span="1" style="width: 37%;">
+                               <col span="1" style="width: 48%;">
+                            </colgroup>
+                        <thead>
+                            <tr>
+                                <th>Network</th>
+                                <th style="text-align: right">Total Number of Genes in the Network</th>
+                                <th style="text-align: right">Number of User-Supplied Genes in the Network</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for dict_item in table_summary %}
+                            <tr>
+                                {% for key, value in dict_item.items() %}
+                                    {%- if key == 'Network' -%}
+                                        <td style="text-align: left; vertical-align: middle;">{{ value }}</td>
+                                    {%- else -%}
+                                        <td style="text-align: right; vertical-align: middle;">{{ '{0:,}'.format(value | int) }}</td>
+                                    {%- endif -%}
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <br class="mt-5">
+            <h4>Input genes</h4>
+            <p>The table below shows the input genes, their corresponding Entrez gene IDs, and if they are present
+                in the various molecular networks. Use this table to select a molecular network to train your model
+                (in the panel on the left).</p>
+            {% if pos < 5 %}
+                <p style="color:red;">One or more networks has less than 5 positive genes.
+                    Consider adding additional genes before running the model</p>
+            {% endif %}
+            {{ validate_table|safe }}
+            <div class="fill_container">
+                <div id="divLoading">
+                    <div id="loading" class="fa-5x"><i class="fas fa-spinner fa-spin"></i></div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="geneModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form id="modal-form" method="POST", enctype="multipart/form-data"></form>
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Enter or Paste List of Genes</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div style="padding-left:20px" onclick="sampleGenes()"><button>Click to load a Sample Gene Set</button></div>
+                      <div class="modal-body">
+                        <textarea class="form-control rounded-0" id="enterGenes" rows="25"></textarea>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="saveGenes()">Save Genes</button>
+                      </div>
+                </form>
+            </div>
+          </div>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+        <!--<script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>-->
+        <script src="https://cdn.datatables.net/v/dt/dt-1.10.22/datatables.min.js"></script>
+        <script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/1.6.4/js/dataTables.buttons.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/1.6.4/js/buttons.bootstrap4.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+        <script src="https://cdn.datatables.net/buttons/1.6.4/js/buttons.html5.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/1.6.4/js/buttons.print.min.js"></script>
+        <script src="https://cdn.datatables.net/responsive/2.2.6/js/dataTables.responsive.min.js"></script>
+        <script src="https://cdn.datatables.net/responsive/2.2.6/js/responsive.bootstrap.min.js"></script>
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+        <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+        <script src="{{url_for('static', filename='datatable.js')}}"></script>
+        <script src="{{url_for('static', filename='validation.js')}}"></script>
+    </body>
+</html>

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+
+<!-- <div class="sidenav">
+</div> -->
+
+<div class="container">
+        
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-info" role="alert">
+                        <strong>{{ message }}</strong>
+                    </div>
+                    {% endfor %}
+            {% endif %}
+            {% endwith %}
+        
+     
+        <h4 >Contact</h4>
+
+
+<p>You can report issues or request features by submitting an issue on <a href="https://github.com/krishnanlab/geneplexus_app/issues/new">GitHub.</a>
+
+<p> Or you can write to us at arjun [at] msu [dot] edu  </a>
+
+{% endblock %}
