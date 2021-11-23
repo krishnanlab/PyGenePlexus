@@ -11,91 +11,78 @@ import numpy as np
 4. Can we make a repo/package that is good for cloud and stand alone version
 
 '''
-
-parser = argparse.ArgumentParser()
-parser.add_argument('-t','--task',
-                    default = 'run_model',
-                    type = str,
-                    help = 'options are validate or run_model')
-parser.add_argument('-i','--input',
-                    default = 'input_genes.txt',
-                    type = str,
-                    help = 'file path to the gene functions')
-parser.add_argument('-fl','--file_loc',
-                    default = 'HPCC',
-                    type = str,
-                    help = 'options local, HPCC, cloud')
-parser.add_argument('-n','--net_type',
-                    default = 'BioGRID',
-                    type = str,
-                    help = 'options are BioGRID, STRING-EXP, STRING, GIANT-TN')
-parser.add_argument('-f','--features',
-                    default = 'Embedding',
-                    type = str,
-                    help = 'options are Embedding, Adjacency, Influence')
-parser.add_argument('-g','--GSC',
-                    default = 'GO',
-                    type = str,
-                    help = 'options are GO, DisGeNet')
-parser.add_argument('-c','--CV',
-                    default = 'doCV',
-                    type = str,
-                    help = 'options are doCV or noCV')
-parser.add_argument('-mg','--max_num_genes',
-                    default = 1000,
-                    type = int,
-                    help = 'max number of genes for the output graph')
-
-args = parser.parse_args()
-
-
-if args.task == 'validate':
-    input_genes = np.loadtxt(args.input,dtype=str,delimiter=', ')
+### there is no logger functions in here like Doug has ####
+### the way the user gene list files are read in is different ###
+### the way the backend data is read in is different ###
+### how to handle how webserver remembers the validate IDs then select job parameters ###
+    
+def read_input_file(file_path,sep=', '):
+    input_genes = np.loadtxt('input_genes.txt',dtype=str,delimiter=', ')
     input_genes = [item.strip("'") for item in input_genes]
-    convert_IDs, df_convert_out = utls.intial_ID_convert(input_genes,file_loc=args.file_loc)
-    df_convert_out, table_summary, input_count = utls.make_validation_df(df_convert_out,args.net_type,file_loc=args.file_loc)
-    df_convert_out_subset, positive_genes = utls.alter_validation_df(df_convert_out,table_summary,args.net_type)
-    # Print some Validaton landing page outputs
+    return input_genes
+
+def validate_genes(input_genes):
+    '''
+    This function is supposed to return some  info on how many genes were able to be converted
+    1. This is returned on webserver, but for here maybe need something different or generate this as an output file
+    '''
+    convert_IDs, df_convert_out = utls.intial_ID_convert(input_genes,file_loc='HPCC')
+    df_convert_out, table_summary, input_count = utls.make_validation_df(df_convert_out,file_loc='HPCC')
+    print('The number of input genes is',input_count)
+    print('The summary is')
     print(table_summary)
-    print(df_convert_out)
+    print('The df_convert head is')
+    print(df_convert_out.head())
+    
+def run_model(input_genes, net_type, GSC, features, jobname):
 
-elif args.task == 'run_model':
+    print('0. redo get validation') ### this is in here as not sure how this is handle in webserver
+    convert_IDs, df_convert_out = utls.intial_ID_convert(input_genes,file_loc='HPCC')
+    df_convert_out, table_summary, input_count = utls.make_validation_df(df_convert_out,file_loc='HPCC')
     
-    ### there is no logger functions in here like Doug has ####
-    ### the way the user gene list files are read in is different ###
-    ### the way the backend data is read in is different ###
-    
-    input_genes = np.loadtxt(args.input,dtype=str,delimiter=', ')
-    input_genes = [item.strip("'") for item in input_genes]
-    convert_IDs, df_convert_out = utls.intial_ID_convert(input_genes,file_loc=args.file_loc)
-    
-    # these are run for printing on webpage only
-    df_convert_out, table_summary, input_count = utls.make_validation_df(df_convert_out,args.net_type,file_loc=args.file_loc)
-    df_convert_out_subset, positive_genes = utls.alter_validation_df(df_convert_out,table_summary,args.net_type)
-    
-    pos_genes_in_net, genes_not_in_net, net_genes = utls.get_genes_in_network(convert_IDs,args.net_type,file_loc=args.file_loc)
-    negative_genes = utls.get_negatives(pos_genes_in_net,args.net_type,args.GSC,file_loc=args.file_loc)
+    print('1. get_genese_in_network')
+    pos_genes_in_net, genes_not_in_net, net_genes = utls.get_genes_in_network(convert_IDs,net_type,file_loc='HPCC')
+
+    print('2. get_negatives')
+    negative_genes = utls.get_negatives(pos_genes_in_net,net_type,GSC,file_loc='HPCC')
+
+    print('3. run_SL... features=%s'%features)
     mdl_weights, probs, avgps = utls.run_SL(pos_genes_in_net,negative_genes,net_genes,
-                                            args.net_type,args.features,args.CV,file_loc=args.file_loc)
-    df_probs, Entrez_to_Symbol = utls.make_prob_df(net_genes,probs,pos_genes_in_net,negative_genes,file_loc=args.file_loc)
-    df_GO, df_dis, weights_dict_GO, weights_dict_Dis = utls.make_sim_dfs(mdl_weights,args.GSC,
-                                                                         args.net_type,args.features,file_loc=args.file_loc)
-    df_edge, isolated_genes, df_edge_sym, isolated_genes_sym = utls.make_small_edgelist(df_probs,args.net_type,
+                                            net_type,features,file_loc='HPCC')
+
+    print('4. make_prob_df...')
+    df_probs, Entrez_to_Symbol = utls.make_prob_df(net_genes,probs,pos_genes_in_net,negative_genes,file_loc='HPCC')
+
+    print('5. make_sim_dfs...')
+    df_GO, df_dis, weights_dict_GO, weights_dict_Dis = utls.make_sim_dfs(mdl_weights,GSC,
+                                                                         net_type,features,file_loc='HPCC')
+
+    print('6. make_small_edgelist...')
+    df_edge, isolated_genes, df_edge_sym, isolated_genes_sym = utls.make_small_edgelist(df_probs,net_type,
                                                                                         Entrez_to_Symbol,
-                                                                                        file_loc=args.file_loc)
-    graph = utls.make_graph(df_edge, df_probs,args.max_num_genes)
-    
-    template = utls.make_template('myjobname', args.net_type, args.features, args.GSC, avgps, df_probs, df_GO,
+                                                                                        file_loc='HPCC')
+
+    print('7. make_graph...')
+    '''
+    Here in webserver this max number of genes is some app.config.get variable.
+    I've hard coded that varible into the function
+    '''
+    graph = utls.make_graph(df_edge, df_probs)
+
+    print('8. alter_validation_df')
+    df_convert_out_subset, positive_genes = utls.alter_validation_df(df_convert_out,table_summary,net_type)
+
+    print('9. make_template...')
+    '''
+    Not sure how the job name is set in the webserver code
+    '''
+    template = utls.make_template(jobname, net_type, features, GSC, avgps, df_probs, df_GO,
                   df_dis, input_count, positive_genes, df_convert_out_subset, graph)
-                  
-   
-    # # Print some probability landing page  outputs
-    # print(df_probs.head)
-    # # Print some sim
-    # print(df_GO.head())
-    # print(df_dis.head())
-    # # print some edges that could be used in network figure
-    # print(df_edge_sym.head())
+
     
-    # print(template)
+    ##########
+    # need to wtite a function to save df_probs, graph, df_GO, df_dis and tempate
+    #########
+    
+
     
