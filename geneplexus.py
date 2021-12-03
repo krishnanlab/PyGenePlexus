@@ -1,7 +1,7 @@
 import argparse
 import utls
 import numpy as np
-
+import pandas as pd
 
 '''
 
@@ -17,8 +17,10 @@ import numpy as np
 ### how to handle how webserver remembers the validate IDs then select job parameters ###
     
 def read_input_file(file_path,sep=', '):
-    input_genes = np.loadtxt('input_genes.txt',dtype=str,delimiter=', ')
-    input_genes = [item.strip("'") for item in input_genes]
+    input_genes = pd.read_csv(file_path,sep='\t')
+    input_genes = input_genes['Gene'].tolist()
+    input_genes = [str(item) for item in input_genes]
+    print('The length of input genes is',len(input_genes))
     return input_genes
 
 def validate_genes(input_genes):
@@ -34,7 +36,7 @@ def validate_genes(input_genes):
     print('The df_convert head is')
     print(df_convert_out.head())
     
-def run_model(input_genes, net_type, GSC, features, jobname):
+def run_model(input_genes, net_type, GSC, features, jobname, fp_save):
 
     print('0. redo get validation') ### this is in here as not sure how this is handle in webserver
     convert_IDs, df_convert_out = utls.intial_ID_convert(input_genes,file_loc='HPCC')
@@ -78,8 +80,12 @@ def run_model(input_genes, net_type, GSC, features, jobname):
     '''
     template = utls.make_template(jobname, net_type, features, GSC, avgps, df_probs, df_GO,
                   df_dis, input_count, positive_genes, df_convert_out_subset, graph)
+                  
+    # right now only going to save the probs for the Stephaine/Alex project
+    utls.save_files(fp_save,jobname,df_probs)
 
-    
+
+
     ##########
     # need to wtite a function to save df_probs, graph, df_GO, df_dis and tempate
     #########

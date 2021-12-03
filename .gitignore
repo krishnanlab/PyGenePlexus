@@ -133,3 +133,5 @@ dmypy.json
 .DS_Store
 ._*.py
 ._.DS_Store
+slurms/**
+results/**

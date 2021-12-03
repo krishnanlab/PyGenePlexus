@@ -279,11 +279,14 @@ def make_template(jobname, net_type, features, GSC, avgps, df_probs, df_GO, df_d
                                               classes='table table-striped table-bordered" id = "validateresults'),
         graph=graph)
 
-        
-    # with open('%s.html'%jobname, 'w') as f:
-    #     f.write(template)
-    # return utf-8 string
     return template
+    
+def save_files(fp_save,jobname,df_probs):
+    if not os.path.exists(fp_save):
+        os.makedirs(fp_save)
+    df_probs.to_csv(fp_save+jobname+'_predictions.tsv',sep='\t',header=True,index=False)
+    
+        
     
     
 ################################################################################################################################
