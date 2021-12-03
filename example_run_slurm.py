@@ -8,6 +8,7 @@ import glob
 # these can be changed
 net_type = 'STRING'
 features = 'Embedding'
+GSC = 'DisGeNet'
 
 # dir to put the slurm files
 slurm_dir = 'slurms/'
@@ -16,7 +17,7 @@ if not os.path.exists(slurm_dir):
 
 # get all the files and then get the part we care about for file name
 files_to_do = glob.glob('/mnt/research/compbio/krishnanlab/projects/chronic_inflammation/data/disease_gene_files/*.txt')
-jobnames = [item.strip().split('/')[-1].split('.t')[0] for item in files_to_do]
+jobnames = [item.strip().split('/')[-1].split('.t')[0]+'--%s--%s--%s'%(net_type,features,GSC) for item in files_to_do]
 
 
 for idx, afile in enumerate(files_to_do):
@@ -34,7 +35,7 @@ for idx, afile in enumerate(files_to_do):
     mylist.append('umask g+rw')
     mylist.append('export PATH="/mnt/home/mancus16/software/anaconda3/bin:$PATH"') #### change this
     mylist.append('cd /mnt/research/compbio/krishnanlab/projects/GenePlexus/repos/GeneplexusPublic') ### change this
-    mylist.append('python example_run.py -i %s -j %s -n %s -f %s -g DisGeNet'%(afile,jobnames[idx],net_type,features))
+    mylist.append('python example_run.py -i %s -j %s -n %s -f %s -g %s'%(afile,jobnames[idx],net_type,features,GSC))
 
     with open(slurm_dir + 'Geneplexus-%s.sb'%jobnames[idx], 'w') as thefile:
         for item in mylist:

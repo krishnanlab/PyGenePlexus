@@ -284,7 +284,7 @@ def make_template(jobname, net_type, features, GSC, avgps, df_probs, df_GO, df_d
 def save_files(fp_save,jobname,df_probs):
     if not os.path.exists(fp_save):
         os.makedirs(fp_save)
-    df_probs.to_csv(fp_save+jobname+'_predictions.tsv',sep='\t',header=True,index=False)
+    df_probs.to_csv(fp_save+jobname+'--predictions.tsv',sep='\t',header=True,index=False)
     
         
     
