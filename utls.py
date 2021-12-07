@@ -104,11 +104,11 @@ def run_SL(pos_genes_in_net,negative_genes,net_genes,net_type,features,file_loc=
     mdl_weights = np.squeeze(clf.coef_)
     probs = clf.predict_proba(data)[:,1]
     
-    if len(pos_genes_in_net) < 20:
-        avgp = 'Not enough positive genes'
+    if len(pos_genes_in_net) < 15:
+        avgps = [-10, -10, -10]
     else:
         avgps = []
-        n_folds = 5
+        n_folds = 3
         skf= StratifiedKFold(n_splits=n_folds, shuffle=True, random_state=None)
         for trn_inds, tst_inds in skf.split(Xdata,ydata):
             clf_cv = LogisticRegression(max_iter=10000,solver='lbfgs',penalty='l2',C=1.0)
@@ -119,8 +119,8 @@ def run_SL(pos_genes_in_net,negative_genes,net_genes,net_type,features,file_loc=
             prior = num_tst_pos/Xdata[tst_inds].shape[0]
             log2_prior = np.log2(avgp/prior)
             avgps.append(log2_prior)
-        avgp = '{0:.2f}'.format(np.median(avgps))
-    return mdl_weights, probs, avgp
+        # avgp = '{0:.2f}'.format(np.median(avgps)) # used in webserver but not for inflamation work
+    return mdl_weights, probs, avgps
     
 def make_prob_df(net_genes,probs,pos_genes_in_net,negative_genes,file_loc='local'):
     Entrez_to_Symbol = load_dict('Entrez_to_Symbol',file_loc)
@@ -281,10 +281,13 @@ def make_template(jobname, net_type, features, GSC, avgps, df_probs, df_GO, df_d
 
     return template
     
-def save_files(fp_save,jobname,df_probs):
+def save_files(fp_save,jobname,df_probs,avgps):
     if not os.path.exists(fp_save):
         os.makedirs(fp_save)
     df_probs.to_csv(fp_save+jobname+'--predictions.tsv',sep='\t',header=True,index=False)
+    np.savetxt(fp_save+jobname+'--CVvalues.txt',avgps,header='CVs (log2p)')
+    
+    
     
         
     

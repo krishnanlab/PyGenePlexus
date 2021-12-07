@@ -55,34 +55,38 @@ def run_model(input_genes, net_type, GSC, features, jobname, fp_save):
     print('4. make_prob_df...')
     df_probs, Entrez_to_Symbol = utls.make_prob_df(net_genes,probs,pos_genes_in_net,negative_genes,file_loc='HPCC')
 
-    print('5. make_sim_dfs...')
-    df_GO, df_dis, weights_dict_GO, weights_dict_Dis = utls.make_sim_dfs(mdl_weights,GSC,
-                                                                         net_type,features,file_loc='HPCC')
-
-    print('6. make_small_edgelist...')
-    df_edge, isolated_genes, df_edge_sym, isolated_genes_sym = utls.make_small_edgelist(df_probs,net_type,
-                                                                                        Entrez_to_Symbol,
-                                                                                        file_loc='HPCC')
-
-    print('7. make_graph...')
-    '''
-    Here in webserver this max number of genes is some app.config.get variable.
-    I've hard coded that varible into the function
-    '''
-    graph = utls.make_graph(df_edge, df_probs)
-
-    print('8. alter_validation_df')
-    df_convert_out_subset, positive_genes = utls.alter_validation_df(df_convert_out,table_summary,net_type)
-
-    print('9. make_template...')
-    '''
-    Not sure how the job name is set in the webserver code
-    '''
-    template = utls.make_template(jobname, net_type, features, GSC, avgps, df_probs, df_GO,
-                  df_dis, input_count, positive_genes, df_convert_out_subset, graph)
+    #######
+    # None of the below is used for the inflamation project 
+    # except for the saving
+    #####3
+    # print('5. make_sim_dfs...')
+    # df_GO, df_dis, weights_dict_GO, weights_dict_Dis = utls.make_sim_dfs(mdl_weights,GSC,
+    #                                                                      net_type,features,file_loc='HPCC')
+    #
+    # print('6. make_small_edgelist...')
+    # df_edge, isolated_genes, df_edge_sym, isolated_genes_sym = utls.make_small_edgelist(df_probs,net_type,
+    #                                                                                     Entrez_to_Symbol,
+    #                                                                                     file_loc='HPCC')
+    #
+    # print('7. make_graph...')
+    # '''
+    # Here in webserver this max number of genes is some app.config.get variable.
+    # I've hard coded that varible into the function
+    # '''
+    # graph = utls.make_graph(df_edge, df_probs)
+    #
+    # print('8. alter_validation_df')
+    # df_convert_out_subset, positive_genes = utls.alter_validation_df(df_convert_out,table_summary,net_type)
+    #
+    # print('9. make_template...')
+    # '''
+    # Not sure how the job name is set in the webserver code
+    # '''
+    # template = utls.make_template(jobname, net_type, features, GSC, avgps, df_probs, df_GO,
+    #               df_dis, input_count, positive_genes, df_convert_out_subset, graph)
                   
     # right now only going to save the probs for the Stephaine/Alex project
-    utls.save_files(fp_save,jobname,df_probs)
+    utls.save_files(fp_save,jobname,df_probs,avgps)
 
 
 
