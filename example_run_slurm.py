@@ -7,7 +7,7 @@ import glob
 
 # these can be changed
 net_type = 'STRING'
-features = 'Influence'
+features = 'Adjacency'
 save_path = 'results/'
 
 # dir to put the slurm files
