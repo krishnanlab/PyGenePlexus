@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 import pickle
-import utls
 from scipy.stats import hypergeom
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
@@ -16,39 +15,72 @@ from jinja2 import Environment, FileSystemLoader
 ################################################################################################################################
 
 # This set of functions is for running the main parts of the pipeline
+        
+def intial_ID_convert(file_loc):
+    #load all the possible conversion dictionaries
+    convert_types = ['ENSG','Symbol','ENSP','ENST']
+    all_convert_dict = {}
+    for anIDtype in convert_types:
+        convert_tmp = load_dict('to_Entrez',file_loc,anIDtype_=anIDtype)
+        all_convert_dict[anIDtype] = convert_tmp
 
+    # make some place holder arrays
+    convert_IDs = [] # This will be a flat list for Entrez IDs to use as positives
+    convert_out = [] # This will be a list of lists that will be used to tell user the conversions made
+    for agene in self.input_genes:
+        try:
+            agene_int = int(agene)
+            convert_out.append([agene_int,agene_int])
+            convert_IDs.append(agene_int)
+        except ValueError:
+            for idx, anIDtype in enumerate(convert_types):
+                if agene in all_convert_dict[anIDtype]:
+                    convert_IDs = convert_IDs + all_convert_dict[anIDtype][agene]
+                    convert_out.append([agene,', '.join(all_convert_dict[anIDtype][agene])])
+                    break
+                elif idx == len(convert_types)-1:
+                    convert_out.append([agene,'Could Not be mapped to Entrez'])
+    df_convert_out = pd.DataFrame(convert_out,columns=['Original_ID','ID_converted_to_Entrez'])
+    df_convert_out = df_convert_out.astype({'Original_ID':str,'ID_converted_to_Entrez':str})
+    convert_IDs = convert_IDs
+    df_convert_out = df_convert_out
+    return convert_IDs, df_convert_out
+        
+def make_validation_df(self):
+    table_summary = []
+    #num_converted_to_Entrez = df_convert_out[~(df_convert_out['ID_converted_to_Entrez']=='Could Not be mapped to Entrez')].shape[0]
+    input_count = self.df_convert_out.shape[0]
+    converted_genes = self.df_convert_out['ID_converted_to_Entrez'].to_numpy()
+    for anet in ['BioGRID','STRING','STRING-EXP','GIANT-TN']:
+        net_genes = load_txtfile('net_genes',self.file_loc,net_type_=anet)
+        df_tmp = self.df_convert_out[self.df_convert_out['ID_converted_to_Entrez'].isin(net_genes)]
+        pos_genes_in_net = np.intersect1d(converted_genes,net_genes)
+        table_row = {'Network': anet, 'NetworkGenes': len(net_genes), 'PositiveGenes': len(pos_genes_in_net)}
+        table_summary.append(dict(table_row))
+        tmp_ins = np.full(len(converted_genes),'N',dtype=str)
+        tmp_ins[df_tmp.index.to_numpy()] = 'Y'
+        self.df_convert_out['In %s?'%anet] = tmp_ins
 
-class GenePlexus:
+    self.df_convert_out = self.df_convert_out.rename(columns = {'Original_ID': 'Original ID', 'ID_converted_to_Entrez': 'Entrez ID'})
+    self.table_summary = table_summary
+    self.input_count = input_count
+    return self.df_convert_out, self.table_summary, self.input_count
     
-    def __init__(self,file_loc='/GenePlexus_data/',network='BioGRID',
-                      features='Embedding',GSC='GO'):
-        self.file_loc = file_loc
-        self.network = network
-        self.features = features
-        self.GSC = GSC
+def set_params(self,net_type,features,GSC):
+    self.net_type = net_type
+    self.features = features
+    self.GSC = GSC
+    
         
-    def load_genes(self,input_genes):
-        self.input_genes = input_genes
-        
-    def validate_input_genes(self):
-        convert_IDs, df_convert_out = utls.intial_ID_convert(self.input_genes)
-        df_convert_out = utls.make_validation_df(df_convert_out)
-        
-#     def set_params(self,net_type,features,GSC):
-#         self.net_type = net_type
-#         self.features = features
-#         self.GSC = GSC
+    # def get_genes_in_network(self):
+    #     net_genes = load_txtfile('net_genes',self.file_loc,net_type_=self.net_type)
+    #     pos_genes_in_net = np.intersect1d(np.array(self.convert_IDs),net_genes)
+    #     genes_not_in_net = np.setdiff1d(np.array(self.convert_IDs),net_genes)
+    #     self.pos_genes_in_net = pos_genes_in_net
+    #     self.genes_not_in_net = genes_not_in_net
+    #     self.net_genes = net_genes
+    #     return self.pos_genes_in_net, self.genes_not_in_net, self.net_genes
 #
-#
-#     def get_genes_in_network(self):
-#         net_genes = load_txtfile('net_genes',self.file_loc,net_type_=self.net_type)
-#         pos_genes_in_net = np.intersect1d(np.array(self.convert_IDs),net_genes)
-#         genes_not_in_net = np.setdiff1d(np.array(self.convert_IDs),net_genes)
-#         self.pos_genes_in_net = pos_genes_in_net
-#         self.genes_not_in_net = genes_not_in_net
-#         self.net_genes = net_genes
-#         return self.pos_genes_in_net, self.genes_not_in_net, self.net_genes
-# #
 # def alter_validation_df(df_convert_out,table_info,net_type):
 #     df_convert_out_subset = df_convert_out[['Original ID','Entrez ID','In %s?'%net_type]]
 #     network = next((item for item in table_info if item['Network'] == net_type), None)
@@ -276,112 +308,112 @@ class GenePlexus:
 #
 ################################################################################################################################
 
-# # This set of functions is for abstracting how a file is loaded
-# fp_HPCC = '/mnt/research/compbio/krishnanlab/projects/GenePlexus/repos/GenePlexusBackend/'
-# def load_txtfile(file_type,file_loc,dtype_=str,net_type_=None,GSC_=None,target_set_=None):
-#     if file_type == 'net_genes':
-#         if file_loc == 'local':
-#             output_txt = np.loadtxt('../data_backend2/Node_Orders/%s_nodelist.txt'%net_type_,dtype=dtype_)
-#         elif file_loc == 'HPCC':
-#             output_txt = np.loadtxt(fp_HPCC + 'data_backend2/Node_Orders/%s_nodelist.txt'%net_type_,dtype=dtype_)
-#         elif file_loc == 'cloud':
-#             raise ValueError('cloud is not yet implemented')
-#     elif file_type == 'uni_genes':
-#         if file_loc == 'local':
-#             output_txt = np.loadtxt('../data_backend2/GSCs/%s_%s_universe.txt'%(GSC_,net_type_),dtype=dtype_)
-#         elif file_loc == 'HPCC':
-#             output_txt = np.loadtxt(fp_HPCC + 'data_backend2/GSCs/%s_%s_universe.txt'%(GSC_,net_type_),dtype=dtype_)
-#         elif file_loc == 'cloud':
-#             raise ValueError('cloud is not yet implemented')
-#     elif file_type == 'GSC_order':
-#         if file_loc == 'local':
-#             output_txt = np.loadtxt('../data_backend2/CorrectionMatrices/%s_%s_Orders.txt'%(target_set_,net_type_),dtype=dtype_)
-#         elif file_loc == 'HPCC':
-#             output_txt = np.loadtxt(fp_HPCC + 'data_backend2/CorrectionMatrices/%s_%s_Orders.txt'%(target_set_,net_type_),dtype=dtype_)
-#         elif file_loc == 'cloud':
-#             raise ValueError('cloud is not yet implemented')
-#     return output_txt
-#
-# def load_npyfile(file_type,file_loc,features_=None,net_type_=None,GSC_=None,target_set_=None):
-#     if file_type == 'data':
-#         if file_loc == 'local':
-#             output_npy = np.load('../data_backend2/%s/%s_data.npy'%(features_,net_type_))
-#         elif file_loc == 'HPCC':
-#             output_npy = np.load(fp_HPCC + 'data_backend2/%s/%s_data.npy'%(features_,net_type_))
-#         elif file_loc == 'cloud':
-#             raise ValueError('cloud is not yet implemented')
-#     elif file_type == 'cor_mat':
-#         if file_loc == 'local':
-#             output_npy = np.load('../data_backend2/CorrectionMatrices/%s_%s_%s_%s_CorMat.npy'%(GSC_,target_set_,net_type_,features_))
-#         elif file_loc == 'HPCC':
-#             output_npy = np.load(fp_HPCC + 'data_backend2/CorrectionMatrices/%s_%s_%s_%s_CorMat.npy'%(GSC_,target_set_,net_type_,features_))
-#         elif file_loc == 'cloud':
-#             raise ValueError('cloud is not yet implemented')
-#     return output_npy
-#
-# def load_df(file_type,file_loc,sep_='\t',header_=None,net_type_=None):
-#     if file_type == 'edgelist':
-#         if file_loc == 'local':
-#             if net_type_ == 'BioGRID':
-#                 output_df = pd.read_csv('../data_backend2/Edgelists/%s.edg'%net_type_,sep=sep_,header=header_,names=['Node1','Node2'])
-#             else:
-#                 output_df = pd.read_csv('../data_backend2/Edgelists/%s.edg'%net_type_,sep=sep_,header=header_,names=['Node1','Node2','Weight'])
-#         elif file_loc == 'HPCC':
-#             if net_type_ == 'BioGRID':
-#                 output_df = pd.read_csv(fp_HPCC + 'data_backend2/Edgelists/%s.edg'%net_type_,sep=sep_,header=header_,names=['Node1','Node2'])
-#                 output_df["Weight"] = 1
-#             else:
-#                 output_df = pd.read_csv(fp_HPCC + 'data_backend2/Edgelists/%s.edg'%net_type_,sep=sep_,header=header_,names=['Node1','Node2','Weight'])
-#         elif file_loc == 'cloud':
-#             raise ValueError('cloud is not yet implemented')
-#     return output_df
-#
-# def load_dict(file_type,file_loc,anIDtype_=None,GSC_=None,net_type_=None,target_set_=None,features_=None):
-#     if file_type == 'to_Entrez':
-#         if file_loc == 'local':
-#             with open('../data_backend2/ID_conversion/Homo_sapiens__%s-to-Entrez__All-Mappings.pickle'%anIDtype_,'rb') as handle:
-#                 output_dict = pickle.load(handle)
-#         elif file_loc == 'HPCC':
-#             with open(fp_HPCC + 'data_backend2/ID_conversion/Homo_sapiens__%s-to-Entrez__All-Mappings.pickle'%anIDtype_,'rb') as handle:
-#                 output_dict = pickle.load(handle)
-#         elif file_loc == 'cloud':
-#             raise ValueError('cloud is not yet implemented')
-#     elif file_type == 'good_sets':
-#         if file_loc == 'local':
-#             with open('../data_backend2/GSCs/%s_%s_GoodSets.pickle'%(GSC_,net_type_),'rb') as handle:
-#                 output_dict = pickle.load(handle)
-#         elif file_loc == 'HPCC':
-#             with open(fp_HPCC + 'data_backend2/GSCs/%s_%s_GoodSets.pickle'%(GSC_,net_type_),'rb') as handle:
-#                 output_dict = pickle.load(handle)
-#         elif file_loc == 'cloud':
-#             raise ValueError('cloud is not yet implemented')
-#     elif file_type == 'Entrez_to_Symbol':
-#         if file_loc == 'local':
-#             with open('../data_backend2/ID_conversion/Homo_sapiens__Entrez-to-Symbol__All-Mappings.pickle','rb') as handle:
-#                 output_dict = pickle.load(handle)
-#         elif file_loc == 'HPCC':
-#             with open(fp_HPCC + 'data_backend2/ID_conversion/Homo_sapiens__Entrez-to-Symbol__All-Mappings.pickle','rb') as handle:
-#                 output_dict = pickle.load(handle)
-#         elif file_loc == 'cloud':
-#             raise ValueError('cloud is not yet implemented')
-#     elif file_type == 'Entrez_to_Name':
-#         if file_loc == 'local':
-#             with open('../data_backend2/ID_conversion/Homo_sapiens__Entrez-to-Name__All-Mappings.pickle','rb') as handle:
-#                 output_dict = pickle.load(handle)
-#         elif file_loc == 'HPCC':
-#             with open(fp_HPCC + 'data_backend2/ID_conversion/Homo_sapiens__Entrez-to-Name__All-Mappings.pickle','rb') as handle:
-#                 output_dict = pickle.load(handle)
-#         elif file_loc == 'cloud':
-#             raise ValueError('cloud is not yet implemented')
-#     elif file_type == 'weights':
-#         if file_loc == 'local':
-#             with open('../data_backend2/PreTrainedModels/%s_%s_%s_ModelWeights.pickle'%(target_set_,net_type_,features_),'rb') as handle:
-#                 output_dict = pickle.load(handle)
-#         elif file_loc == 'HPCC':
-#             with open(fp_HPCC + 'data_backend2/PreTrainedModels/%s_%s_%s_ModelWeights.pickle'%(target_set_,net_type_,features_),'rb') as handle:
-#                 output_dict = pickle.load(handle)
-#         elif file_loc == 'cloud':
-#             raise ValueError('cloud is not yet implemented')
-#
-#     return output_dict
+# This set of functions is for abstracting how a file is loaded
+fp_HPCC = '/mnt/research/compbio/krishnanlab/projects/GenePlexus/repos/GenePlexusBackend/'
+def load_txtfile(file_type,file_loc,dtype_=str,net_type_=None,GSC_=None,target_set_=None):
+    if file_type == 'net_genes':
+        if file_loc == 'local':
+            output_txt = np.loadtxt('../data_backend2/Node_Orders/%s_nodelist.txt'%net_type_,dtype=dtype_)
+        elif file_loc == 'HPCC':
+            output_txt = np.loadtxt(fp_HPCC + 'data_backend2/Node_Orders/%s_nodelist.txt'%net_type_,dtype=dtype_)
+        elif file_loc == 'cloud':
+            raise ValueError('cloud is not yet implemented')
+    elif file_type == 'uni_genes':
+        if file_loc == 'local':
+            output_txt = np.loadtxt('../data_backend2/GSCs/%s_%s_universe.txt'%(GSC_,net_type_),dtype=dtype_)
+        elif file_loc == 'HPCC':
+            output_txt = np.loadtxt(fp_HPCC + 'data_backend2/GSCs/%s_%s_universe.txt'%(GSC_,net_type_),dtype=dtype_)
+        elif file_loc == 'cloud':
+            raise ValueError('cloud is not yet implemented')
+    elif file_type == 'GSC_order':
+        if file_loc == 'local':
+            output_txt = np.loadtxt('../data_backend2/CorrectionMatrices/%s_%s_Orders.txt'%(target_set_,net_type_),dtype=dtype_)
+        elif file_loc == 'HPCC':
+            output_txt = np.loadtxt(fp_HPCC + 'data_backend2/CorrectionMatrices/%s_%s_Orders.txt'%(target_set_,net_type_),dtype=dtype_)
+        elif file_loc == 'cloud':
+            raise ValueError('cloud is not yet implemented')
+    return output_txt
+
+def load_npyfile(file_type,file_loc,features_=None,net_type_=None,GSC_=None,target_set_=None):
+    if file_type == 'data':
+        if file_loc == 'local':
+            output_npy = np.load('../data_backend2/%s/%s_data.npy'%(features_,net_type_))
+        elif file_loc == 'HPCC':
+            output_npy = np.load(fp_HPCC + 'data_backend2/%s/%s_data.npy'%(features_,net_type_))
+        elif file_loc == 'cloud':
+            raise ValueError('cloud is not yet implemented')
+    elif file_type == 'cor_mat':
+        if file_loc == 'local':
+            output_npy = np.load('../data_backend2/CorrectionMatrices/%s_%s_%s_%s_CorMat.npy'%(GSC_,target_set_,net_type_,features_))
+        elif file_loc == 'HPCC':
+            output_npy = np.load(fp_HPCC + 'data_backend2/CorrectionMatrices/%s_%s_%s_%s_CorMat.npy'%(GSC_,target_set_,net_type_,features_))
+        elif file_loc == 'cloud':
+            raise ValueError('cloud is not yet implemented')
+    return output_npy
+
+def load_df(file_type,file_loc,sep_='\t',header_=None,net_type_=None):
+    if file_type == 'edgelist':
+        if file_loc == 'local':
+            if net_type_ == 'BioGRID':
+                output_df = pd.read_csv('../data_backend2/Edgelists/%s.edg'%net_type_,sep=sep_,header=header_,names=['Node1','Node2'])
+            else:
+                output_df = pd.read_csv('../data_backend2/Edgelists/%s.edg'%net_type_,sep=sep_,header=header_,names=['Node1','Node2','Weight'])
+        elif file_loc == 'HPCC':
+            if net_type_ == 'BioGRID':
+                output_df = pd.read_csv(fp_HPCC + 'data_backend2/Edgelists/%s.edg'%net_type_,sep=sep_,header=header_,names=['Node1','Node2'])
+                output_df["Weight"] = 1
+            else:
+                output_df = pd.read_csv(fp_HPCC + 'data_backend2/Edgelists/%s.edg'%net_type_,sep=sep_,header=header_,names=['Node1','Node2','Weight'])
+        elif file_loc == 'cloud':
+            raise ValueError('cloud is not yet implemented')
+    return output_df
+
+def load_dict(file_type,file_loc,anIDtype_=None,GSC_=None,net_type_=None,target_set_=None,features_=None):
+    if file_type == 'to_Entrez':
+        if file_loc == 'local':
+            with open('../data_backend2/ID_conversion/Homo_sapiens__%s-to-Entrez__All-Mappings.pickle'%anIDtype_,'rb') as handle:
+                output_dict = pickle.load(handle)
+        elif file_loc == 'HPCC':
+            with open(fp_HPCC + 'data_backend2/ID_conversion/Homo_sapiens__%s-to-Entrez__All-Mappings.pickle'%anIDtype_,'rb') as handle:
+                output_dict = pickle.load(handle)
+        elif file_loc == 'cloud':
+            raise ValueError('cloud is not yet implemented')
+    elif file_type == 'good_sets':
+        if file_loc == 'local':
+            with open('../data_backend2/GSCs/%s_%s_GoodSets.pickle'%(GSC_,net_type_),'rb') as handle:
+                output_dict = pickle.load(handle)
+        elif file_loc == 'HPCC':
+            with open(fp_HPCC + 'data_backend2/GSCs/%s_%s_GoodSets.pickle'%(GSC_,net_type_),'rb') as handle:
+                output_dict = pickle.load(handle)
+        elif file_loc == 'cloud':
+            raise ValueError('cloud is not yet implemented')
+    elif file_type == 'Entrez_to_Symbol':
+        if file_loc == 'local':
+            with open('../data_backend2/ID_conversion/Homo_sapiens__Entrez-to-Symbol__All-Mappings.pickle','rb') as handle:
+                output_dict = pickle.load(handle)
+        elif file_loc == 'HPCC':
+            with open(fp_HPCC + 'data_backend2/ID_conversion/Homo_sapiens__Entrez-to-Symbol__All-Mappings.pickle','rb') as handle:
+                output_dict = pickle.load(handle)
+        elif file_loc == 'cloud':
+            raise ValueError('cloud is not yet implemented')
+    elif file_type == 'Entrez_to_Name':
+        if file_loc == 'local':
+            with open('../data_backend2/ID_conversion/Homo_sapiens__Entrez-to-Name__All-Mappings.pickle','rb') as handle:
+                output_dict = pickle.load(handle)
+        elif file_loc == 'HPCC':
+            with open(fp_HPCC + 'data_backend2/ID_conversion/Homo_sapiens__Entrez-to-Name__All-Mappings.pickle','rb') as handle:
+                output_dict = pickle.load(handle)
+        elif file_loc == 'cloud':
+            raise ValueError('cloud is not yet implemented')
+    elif file_type == 'weights':
+        if file_loc == 'local':
+            with open('../data_backend2/PreTrainedModels/%s_%s_%s_ModelWeights.pickle'%(target_set_,net_type_,features_),'rb') as handle:
+                output_dict = pickle.load(handle)
+        elif file_loc == 'HPCC':
+            with open(fp_HPCC + 'data_backend2/PreTrainedModels/%s_%s_%s_ModelWeights.pickle'%(target_set_,net_type_,features_),'rb') as handle:
+                output_dict = pickle.load(handle)
+        elif file_loc == 'cloud':
+            raise ValueError('cloud is not yet implemented')
+
+    return output_dict
 

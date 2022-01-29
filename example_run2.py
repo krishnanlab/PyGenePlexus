@@ -18,11 +18,11 @@ input_genes = [item.strip("'") for item in input_genes]
 
 myclass = geneplexus2.GenePlexus()
 myclass.load_genes(input_genes)
-convert_IDs, df_convert_out = myclass.intial_ID_convert()
-df_convert_out, table_summary, input_count = myclass.make_validation_df()
-myclass.set_params('BioGRID','Embedding','GO')
-pos_genes_in_net, genes_not_in_net, net_genes = myclass.get_genes_in_network()
-print(pos_genes_in_net)
+df_convert_out = myclass.validate_input_genes()
+print(df_convert_out)
+# myclass.set_params('BioGRID','Embedding','GO')
+# pos_genes_in_net, genes_not_in_net, net_genes = myclass.get_genes_in_network()
+# print(pos_genes_in_net)
 
 
     
