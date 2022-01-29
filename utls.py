@@ -16,7 +16,7 @@ from jinja2 import Environment, FileSystemLoader
 
 # This set of functions is for running the main parts of the pipeline
         
-def intial_ID_convert(file_loc):
+def intial_ID_convert(input_genes,file_loc):
     #load all the possible conversion dictionaries
     convert_types = ['ENSG','Symbol','ENSP','ENST']
     all_convert_dict = {}
@@ -27,7 +27,7 @@ def intial_ID_convert(file_loc):
     # make some place holder arrays
     convert_IDs = [] # This will be a flat list for Entrez IDs to use as positives
     convert_out = [] # This will be a list of lists that will be used to tell user the conversions made
-    for agene in self.input_genes:
+    for agene in input_genes:
         try:
             agene_int = int(agene)
             convert_out.append([agene_int,agene_int])
@@ -46,30 +46,30 @@ def intial_ID_convert(file_loc):
     df_convert_out = df_convert_out
     return convert_IDs, df_convert_out
         
-def make_validation_df(self):
+def make_validation_df(df_convert_out,file_loc):
     table_summary = []
-    #num_converted_to_Entrez = df_convert_out[~(df_convert_out['ID_converted_to_Entrez']=='Could Not be mapped to Entrez')].shape[0]
-    input_count = self.df_convert_out.shape[0]
-    converted_genes = self.df_convert_out['ID_converted_to_Entrez'].to_numpy()
+    input_count = df_convert_out.shape[0]
+    converted_genes = df_convert_out['ID_converted_to_Entrez'].to_numpy()
     for anet in ['BioGRID','STRING','STRING-EXP','GIANT-TN']:
-        net_genes = load_txtfile('net_genes',self.file_loc,net_type_=anet)
-        df_tmp = self.df_convert_out[self.df_convert_out['ID_converted_to_Entrez'].isin(net_genes)]
+        net_genes = load_txtfile('net_genes',file_loc,net_type_=anet)
+        df_tmp = df_convert_out[df_convert_out['ID_converted_to_Entrez'].isin(net_genes)]
         pos_genes_in_net = np.intersect1d(converted_genes,net_genes)
         table_row = {'Network': anet, 'NetworkGenes': len(net_genes), 'PositiveGenes': len(pos_genes_in_net)}
         table_summary.append(dict(table_row))
         tmp_ins = np.full(len(converted_genes),'N',dtype=str)
         tmp_ins[df_tmp.index.to_numpy()] = 'Y'
-        self.df_convert_out['In %s?'%anet] = tmp_ins
+        df_convert_out['In %s?'%anet] = tmp_ins
 
-    self.df_convert_out = self.df_convert_out.rename(columns = {'Original_ID': 'Original ID', 'ID_converted_to_Entrez': 'Entrez ID'})
-    self.table_summary = table_summary
-    self.input_count = input_count
-    return self.df_convert_out, self.table_summary, self.input_count
+    df_convert_out = df_convert_out.rename(columns = {'Original_ID': 'Original ID', 'ID_converted_to_Entrez': 'Entrez ID'})
+    table_summary = table_summary
+    input_count = input_count
+    return df_convert_out
     
-def set_params(self,net_type,features,GSC):
-    self.net_type = net_type
-    self.features = features
-    self.GSC = GSC
+    
+# def set_params(self,net_type,features,GSC):
+#     self.net_type = net_type
+#     self.features = features
+#     self.GSC = GSC
     
         
     # def get_genes_in_network(self):
@@ -312,12 +312,7 @@ def set_params(self,net_type,features,GSC):
 fp_HPCC = '/mnt/research/compbio/krishnanlab/projects/GenePlexus/repos/GenePlexusBackend/'
 def load_txtfile(file_type,file_loc,dtype_=str,net_type_=None,GSC_=None,target_set_=None):
     if file_type == 'net_genes':
-        if file_loc == 'local':
-            output_txt = np.loadtxt('../data_backend2/Node_Orders/%s_nodelist.txt'%net_type_,dtype=dtype_)
-        elif file_loc == 'HPCC':
-            output_txt = np.loadtxt(fp_HPCC + 'data_backend2/Node_Orders/%s_nodelist.txt'%net_type_,dtype=dtype_)
-        elif file_loc == 'cloud':
-            raise ValueError('cloud is not yet implemented')
+        output_txt = np.loadtxt(file_loc+'%s_nodelist.txt'%net_type_,dtype=dtype_)
     elif file_type == 'uni_genes':
         if file_loc == 'local':
             output_txt = np.loadtxt('../data_backend2/GSCs/%s_%s_universe.txt'%(GSC_,net_type_),dtype=dtype_)
@@ -370,14 +365,8 @@ def load_df(file_type,file_loc,sep_='\t',header_=None,net_type_=None):
 
 def load_dict(file_type,file_loc,anIDtype_=None,GSC_=None,net_type_=None,target_set_=None,features_=None):
     if file_type == 'to_Entrez':
-        if file_loc == 'local':
-            with open('../data_backend2/ID_conversion/Homo_sapiens__%s-to-Entrez__All-Mappings.pickle'%anIDtype_,'rb') as handle:
-                output_dict = pickle.load(handle)
-        elif file_loc == 'HPCC':
-            with open(fp_HPCC + 'data_backend2/ID_conversion/Homo_sapiens__%s-to-Entrez__All-Mappings.pickle'%anIDtype_,'rb') as handle:
-                output_dict = pickle.load(handle)
-        elif file_loc == 'cloud':
-            raise ValueError('cloud is not yet implemented')
+        with open(file_loc+'Homo_sapiens__%s-to-Entrez__All-Mappings.pickle'%anIDtype_,'rb') as handle:
+            output_dict = pickle.load(handle)
     elif file_type == 'good_sets':
         if file_loc == 'local':
             with open('../data_backend2/GSCs/%s_%s_GoodSets.pickle'%(GSC_,net_type_),'rb') as handle:

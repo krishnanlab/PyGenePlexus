@@ -20,7 +20,7 @@ from jinja2 import Environment, FileSystemLoader
 
 class GenePlexus:
     
-    def __init__(self,file_loc='/GenePlexus_data/',network='BioGRID',
+    def __init__(self,file_loc='../GenePlexus_data/',network='BioGRID',
                       features='Embedding',GSC='GO'):
         self.file_loc = file_loc
         self.network = network
@@ -31,8 +31,10 @@ class GenePlexus:
         self.input_genes = input_genes
         
     def validate_input_genes(self):
-        convert_IDs, df_convert_out = utls.intial_ID_convert(self.input_genes)
-        df_convert_out = utls.make_validation_df(df_convert_out)
+        convert_IDs, df_convert_out = utls.intial_ID_convert(self.input_genes,self.file_loc)
+        df_convert_out = utls.make_validation_df(df_convert_out,self.file_loc)
+        self.df_convert_out = df_convert_out
+        return self.df_convert_out
         
 #     def set_params(self,net_type,features,GSC):
 #         self.net_type = net_type
