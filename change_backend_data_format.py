@@ -35,7 +35,7 @@ for aFN in FNs:
 FNs = glob.glob(fp_old+'Node_Orders/*.txt')
 for aFN in FNs:
     network = aFN.strip().split('/')[-1].split('_')[0]
-    new_name = 'NodeOrders_%s.txt'%network
+    new_name = 'NodeOrder_%s.txt'%network
     shutil.move(aFN,fp_new+new_name)
 
 # change the Edgelist folder
