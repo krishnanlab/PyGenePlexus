@@ -16,10 +16,19 @@ import os
 
 # This set of functions is for running the main parts of the pipeline
 
+'''
+To Do
+
+1. Make good repr printouts
+2. Add documention of functions
+3. Clear args when set_params_reintilialize is run
+4. change pickle files to json (if below python 3.8 can't read the pickle files)
+'''
+
 
 class GenePlexus:
     
-    def __init__(self,file_loc='../GenePlexus_data/',network='BioGRID',
+    def __init__(self,file_loc='/Users/christophermancuso/Documents/DataSets/Geneplexus_data/',network='BioGRID',
                       features='Embedding',GSC='GO'):
         self.file_loc = file_loc
         self.network = network
@@ -31,25 +40,69 @@ class GenePlexus:
         
     def validate_input_genes(self):
         convert_IDs, df_convert_out = utls.intial_ID_convert(self.input_genes,self.file_loc)
-        df_convert_out = utls.make_validation_df(df_convert_out,self.file_loc)
+        df_convert_out, table_summary, input_count = utls.make_validation_df(df_convert_out,self.file_loc)
+        self.convert_IDs = convert_IDs
         self.df_convert_out = df_convert_out
-        return self.df_convert_out
+        self.table_summary = table_summary
+        self.input_count = input_count
+        return self.df_convert_out, self.table_summary, self.input_count
         
-#     def set_params(self,net_type,features,GSC):
-#         self.net_type = net_type
-#         self.features = features
-#         self.GSC = GSC
+    def set_params(self,net_type,features,GSC):
+        self.net_type = net_type
+        self.features = features
+        self.GSC = GSC
+
+    def get_genes_in_network(self):
+        pos_genes_in_net, genes_not_in_net, net_genes = utls.get_genes_in_network(self.file_loc,self.net_type,self.convert_IDs)
+        self.pos_genes_in_net = pos_genes_in_net
+        self.genes_not_in_net = genes_not_in_net
+        self.net_genes = net_genes
+        return self.pos_genes_in_net, self.genes_not_in_net, self.net_genes
+        
+    def get_negatives(self):
+        negative_genes = utls.get_negatives(self.file_loc,self.net_type,self.GSC,self.pos_genes_in_net)
+        self.negative_genes = negative_genes
+        return self.negative_genes
+        
+    def run_SL(self):
+        mdl_weights, probs, avgps = utls.run_SL(self.file_loc,self.net_type,self.features,
+                                                self.pos_genes_in_net,self.negative_genes,self.net_genes)
+        self.mdl_weights = mdl_weights
+        self.probs = probs
+        self.avgps = avgps
+        return self.mdl_weights, self.probs, self.avgps
+        
+    def make_prob_df(self):
+        df_probs, Entrez_to_Symbol = utls.make_prob_df(self.file_loc,self.net_genes,self.probs,
+                                                       self.pos_genes_in_net,self.negative_genes)
+        self.df_probs = df_probs
+        self.Entrez_to_Symbol = Entrez_to_Symbol
+        return self.df_probs, self.Entrez_to_Symbol
+        
+    def make_sim_dfs(self):
+        df_sim_GO, df_sim_Dis, weights_GO, weights_Dis = utls.make_sim_dfs(self.file_loc,self.mdl_weights,self.GSC,
+                                                                           self.net_type,self.features)
+        self.df_sim_GO = df_sim_GO
+        self.df_sim_Dis = df_sim_Dis
+        self.weights_GO = weights_GO
+        self.weights_Dis = weights_Dis
+        return self.df_sim_GO, self.df_sim_Dis, self.weights_GO, self.weights_Dis
+        
+    def make_small_edgelist(self):
+        df_edge, isolated_genes, df_edge_sym, isolated_genes_sym = utls.make_small_edgelist(self.file_loc,self.df_probs,
+                                                                                            self.net_type,self.Entrez_to_Symbol)
+        self.df_edge = df_edge
+        self.isolated_genes = isolated_genes
+        self.df_edge_sym = df_edge_sym
+        self.isolated_genes_sym = isolated_genes_sym
+        return self.df_edge, self.isolated_genes, self.df_edge_sym, self.isolated_genes_sym
+        
+    def alter_validation_df(self):
+        df_convert_out_subset, positive_genes = utls.alter_validation_df(self.df_convert_out,self.table_summary,self.net_type)
+        self.df_convert_out_subset = df_convert_out_subset
+        self.positive_genes = positive_genes
+        return self.df_convert_out_subset, self.positive_genes
 #
-#
-#     def get_genes_in_network(self):
-#         net_genes = load_txtfile('net_genes',self.file_loc,net_type_=self.net_type)
-#         pos_genes_in_net = np.intersect1d(np.array(self.convert_IDs),net_genes)
-#         genes_not_in_net = np.setdiff1d(np.array(self.convert_IDs),net_genes)
-#         self.pos_genes_in_net = pos_genes_in_net
-#         self.genes_not_in_net = genes_not_in_net
-#         self.net_genes = net_genes
-#         return self.pos_genes_in_net, self.genes_not_in_net, self.net_genes
-# #
 # def alter_validation_df(df_convert_out,table_info,net_type):
 #     df_convert_out_subset = df_convert_out[['Original ID','Entrez ID','In %s?'%net_type]]
 #     network = next((item for item in table_info if item['Network'] == net_type), None)
