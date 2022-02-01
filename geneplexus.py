@@ -22,8 +22,10 @@ To Do
 1. Make good repr printouts
 2. Add documention of functions
 3. Clear args when set_params_reintilialize is run
-4. change pickle files to json (if below python 3.8 can't read the pickle files)
-5. Compare all functions to what is in geneplexus_app
+4. Because of pickle files need to require at least python 3.8
+6. make input genes need to be uppercase in load_genes
+7. For average ps different and now sets value arbitratly to -10 so need to change
+8. work on making edge list readbale right away in networkx
 '''
 
 
@@ -37,6 +39,7 @@ class GenePlexus:
         self.GSC = GSC
         
     def load_genes(self,input_genes):
+        input_genes = [item.upper() for item in input_genes]
         self.input_genes = input_genes
         
     def convert_to_Entrez(self):

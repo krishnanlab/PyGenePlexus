@@ -8,6 +8,7 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import average_precision_score
 import time
 from scipy.spatial.distance import cosine
+from scipy.stats import rankdata
 import os
 
 
@@ -22,7 +23,7 @@ def intial_ID_convert(input_genes,file_loc):
     for anIDtype in convert_types:
         with open(file_loc+'IDconversion_Homo-sapiens_%s-to-Entrez.pickle'%anIDtype,'rb') as handle:
             convert_tmp = pickle.load(handle)
-        # convert_tmp = load_dict('to_Entrez',file_loc,anIDtype_=anIDtype)
+            convert_tmp = {akey.upper():convert_tmp[akey] for akey in convert_tmp}
         all_convert_dict[anIDtype] = convert_tmp
 
     # make some place holder arrays
@@ -43,8 +44,8 @@ def intial_ID_convert(input_genes,file_loc):
                     convert_out.append([agene,'Could Not be mapped to Entrez'])
     df_convert_out = pd.DataFrame(convert_out,columns=['Original_ID','ID_converted_to_Entrez'])
     df_convert_out = df_convert_out.astype({'Original_ID':str,'ID_converted_to_Entrez':str})
-    convert_IDs = convert_IDs
-    df_convert_out = df_convert_out
+    # convert_IDs = convert_IDs
+    # df_convert_out = df_convert_out
     return convert_IDs, df_convert_out
         
 def make_validation_df(df_convert_out,file_loc):
@@ -63,8 +64,8 @@ def make_validation_df(df_convert_out,file_loc):
         df_convert_out['In %s?'%anet] = tmp_ins
 
     df_convert_out = df_convert_out.rename(columns = {'Original_ID': 'Original ID', 'ID_converted_to_Entrez': 'Entrez ID'})
-    table_summary = table_summary
-    input_count = input_count
+    # table_summary = table_summary
+    # input_count = input_count
     return df_convert_out, table_summary, input_count
     
 def get_genes_in_network(file_loc,net_type,convert_IDs):
@@ -129,10 +130,13 @@ def make_prob_df(file_loc,net_genes,probs,pos_genes_in_net,negative_genes):
     for idx in range(len(net_genes)):
         if net_genes[idx] in pos_genes_in_net:
             class_label = 'P'
+            novel_label = 'Known'
         elif net_genes[idx] in negative_genes:
             class_label = 'N'
+            novel_label = 'Novel'
         else:
             class_label = 'U'
+            novel_label = 'Novel'
         try:
             syms_tmp = '/'.join(Entrez_to_Symbol[net_genes[idx]]) #allows for multimapping
         except KeyError:
@@ -141,10 +145,11 @@ def make_prob_df(file_loc,net_genes,probs,pos_genes_in_net,negative_genes):
             name_tmp = '/'.join(Entrez_to_Name[net_genes[idx]]) #allows for multimapping
         except KeyError:
             name_tmp = 'N/A'
-        prob_results.append([net_genes[idx],syms_tmp,name_tmp,probs[idx],class_label])
-    df_probs = pd.DataFrame(prob_results,columns=['Entrez','Symbol','Name','Probability','Class-Label'])
+        prob_results.append([net_genes[idx],syms_tmp,name_tmp,probs[idx],novel_label, class_label])
+    df_probs = pd.DataFrame(prob_results,columns=['Entrez','Symbol','Name','Probability','Known/Novel','Class-Label'])
     df_probs = df_probs.astype({'Entrez':str,'Probability':float})
     df_probs = df_probs.sort_values(by=['Probability'],ascending=False)
+    df_probs['Rank'] = rankdata(1/(df_probs['Probability'].to_numpy()+1e-9),method='min')
     return df_probs
 
 def make_sim_dfs(file_loc,mdl_weights,GSC,net_type,features):
@@ -174,6 +179,7 @@ def make_sim_dfs(file_loc,mdl_weights,GSC,net_type,features):
             z_tmp = z[idx2]
             results_tmp.append([ID_tmp,Name_tmp,z_tmp])
         df_tmp = pd.DataFrame(results_tmp,columns=['ID','Name','Similarity']).sort_values(by=['Similarity'],ascending=False)
+        df_tmp['Rank'] = rankdata(1/(df_tmp['Similarity'].to_numpy()+1e-9),method='min')
         dfs_out.append(df_tmp)
     return dfs_out[0], dfs_out[1], weights_dict_GO, weights_dict_Dis
 
