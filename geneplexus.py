@@ -9,6 +9,7 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import average_precision_score
 import time
 from scipy.spatial.distance import cosine
+import requests
 import os
 
 
@@ -76,12 +77,6 @@ class GenePlexus:
         self.df_probs = df_probs
         return self.mdl_weights, self.df_probs, self.avgps
         
-    # def make_prob_df(self):
-    #     df_probs = utls.make_prob_df(self.file_loc,self.net_genes,self.probs,
-    #                                  self.pos_genes_in_net,self.negative_genes)
-    #     self.df_probs = df_probs
-    #     return self.df_probs
-        
     def make_sim_dfs(self):
         df_sim_GO, df_sim_Dis, weights_GO, weights_Dis = utls.make_sim_dfs(self.file_loc,self.mdl_weights,self.GSC,
                                                                            self.net_type,self.features)
@@ -106,7 +101,29 @@ class GenePlexus:
         self.positive_genes = positive_genes
         return self.df_convert_out_subset, self.positive_genes
 
+def download_IDconversion_data(fp_data):
+    files_to_do = []
+    with open('data_filenames.txt','r') as f:
+        for line in f:
+            line = line.strip()
+            if ('IDconversion' in line) or ('NodeOrder' in line):
+                files_to_do.append(line)
+    for afile in files_to_do:
+        if os.path.exists(fp_data+afile):
+            print('The following file already exsists so skipping download', fp_data+afile) 
+        else:   
+            FN_Azure = 'https://mancusogeneplexusstorage.blob.core.windows.net/mancusoblob/%s'%afile
+            print('Downloading file from', FN_Azure)
+            r = requests.get(FN_Azure)
+            open(fp_data+afile, 'wb').write(r.content)
 
+# def download_IDconversion_data():
+#     # took aboout two minutes for Embedding_BioGRID at MSU
+#     newpath='/Users/christophermancuso/Documents/DataSets/from_Azure/'
+#     filename = 'https://mancusogeneplexusstorage.blob.core.windows.net/mancusoblob/GSC_DisGeNet_GIANT-TN_universe.txt'
+#     r = requests.get(filename)
+#     open(newpath+'GSC_DisGeNet_GIANT-TN_universe.txt', 'wb').write(r.content)
+    
 ################################################################################################################################
 # functions specific to the webserver
 
