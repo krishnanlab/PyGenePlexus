@@ -145,7 +145,7 @@ def make_prob_df(file_loc,net_genes,probs,pos_genes_in_net,negative_genes):
     df_probs = pd.DataFrame(prob_results,columns=['Entrez','Symbol','Name','Probability','Class-Label'])
     df_probs = df_probs.astype({'Entrez':str,'Probability':float})
     df_probs = df_probs.sort_values(by=['Probability'],ascending=False)
-    return df_probs, Entrez_to_Symbol
+    return df_probs
 
 def make_sim_dfs(file_loc,mdl_weights,GSC,net_type,features):
     dfs_out = []
@@ -177,19 +177,20 @@ def make_sim_dfs(file_loc,mdl_weights,GSC,net_type,features):
         dfs_out.append(df_tmp)
     return dfs_out[0], dfs_out[1], weights_dict_GO, weights_dict_Dis
 
-def make_small_edgelist(file_loc,df_probs,net_type,Entrez_to_Symbol):
+def make_small_edgelist(file_loc,df_probs,net_type,num_nodes=50):
     # This will set the max number of genes to look at to a given number
-    max_num_genes = 50
     if net_type == 'BioGRID':
         df_edge = pd.read_csv(file_loc+'Edgelist_%s.edg'%net_type,sep='\t',header=None,names=['Node1','Node2'])
         df_edge['Weight'] = 1
     else:
         df_edge = pd.read_csv(file_loc+'Edgelist_%s.edg'%net_type,sep='\t',header=None,names=['Node1','Node2','Weight'])
     df_edge = df_edge.astype({'Node1':str,'Node2':str})
-    top_genes = df_probs['Entrez'].to_numpy()[0:max_num_genes]
+    top_genes = df_probs['Entrez'].to_numpy()[0:num_nodes]
     df_edge = df_edge[(df_edge['Node1'].isin(top_genes)) & (df_edge['Node2'].isin(top_genes))]
     genes_in_edge = np.union1d(df_edge['Node1'].unique(),df_edge['Node2'].unique())
     isolated_genes = np.setdiff1d(top_genes,genes_in_edge)
+    with open(file_loc+'IDconversion_Homo-sapiens_Entrez-to-Symbol.pickle','rb') as handle:
+        Entrez_to_Symbol = pickle.load(handle)
     replace_dict = {}
     for agene in genes_in_edge:
         try:
@@ -219,10 +220,10 @@ def alter_validation_df(df_convert_out,table_summary,net_type):
 # functions just for webserver
 
 # def make_graph(df_edge, df_probs):
-#     max_num_genes = 1000
+#     num_nodes = 1000
 #     df_edge.fillna(0)
 #     df_edge.columns = ['source', 'target', 'weight']
-#     nodes = df_probs[0:max_num_genes]
+#     nodes = df_probs[0:num_nodes]
 #     nodes.rename(columns={'Entrez': 'id', 'Class-Label': 'Class'}, inplace=True)
 #     nodes = nodes.astype({'id': int})
 #

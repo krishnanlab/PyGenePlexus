@@ -23,6 +23,7 @@ To Do
 2. Add documention of functions
 3. Clear args when set_params_reintilialize is run
 4. change pickle files to json (if below python 3.8 can't read the pickle files)
+5. Compare all functions to what is in geneplexus_app
 '''
 
 
@@ -38,46 +39,45 @@ class GenePlexus:
     def load_genes(self,input_genes):
         self.input_genes = input_genes
         
-    def validate_input_genes(self):
+    def convert_to_Entrez(self):
         convert_IDs, df_convert_out = utls.intial_ID_convert(self.input_genes,self.file_loc)
         df_convert_out, table_summary, input_count = utls.make_validation_df(df_convert_out,self.file_loc)
         self.convert_IDs = convert_IDs
         self.df_convert_out = df_convert_out
         self.table_summary = table_summary
         self.input_count = input_count
-        return self.df_convert_out, self.table_summary, self.input_count
+        return self.df_convert_out
         
     def set_params(self,net_type,features,GSC):
         self.net_type = net_type
         self.features = features
         self.GSC = GSC
 
-    def get_genes_in_network(self):
+    def get_pos_and_neg_genes(self):
         pos_genes_in_net, genes_not_in_net, net_genes = utls.get_genes_in_network(self.file_loc,self.net_type,self.convert_IDs)
         self.pos_genes_in_net = pos_genes_in_net
         self.genes_not_in_net = genes_not_in_net
         self.net_genes = net_genes
-        return self.pos_genes_in_net, self.genes_not_in_net, self.net_genes
-        
-    def get_negatives(self):
         negative_genes = utls.get_negatives(self.file_loc,self.net_type,self.GSC,self.pos_genes_in_net)
         self.negative_genes = negative_genes
-        return self.negative_genes
+        return self.pos_genes_in_net, self.negative_genes, self.net_genes
         
-    def run_SL(self):
+    def fit_and_predict(self):
         mdl_weights, probs, avgps = utls.run_SL(self.file_loc,self.net_type,self.features,
                                                 self.pos_genes_in_net,self.negative_genes,self.net_genes)
         self.mdl_weights = mdl_weights
         self.probs = probs
         self.avgps = avgps
-        return self.mdl_weights, self.probs, self.avgps
-        
-    def make_prob_df(self):
-        df_probs, Entrez_to_Symbol = utls.make_prob_df(self.file_loc,self.net_genes,self.probs,
-                                                       self.pos_genes_in_net,self.negative_genes)
+        df_probs = utls.make_prob_df(self.file_loc,self.net_genes,self.probs,
+                                     self.pos_genes_in_net,self.negative_genes)
         self.df_probs = df_probs
-        self.Entrez_to_Symbol = Entrez_to_Symbol
-        return self.df_probs, self.Entrez_to_Symbol
+        return self.mdl_weights, self.df_probs, self.avgps
+        
+    # def make_prob_df(self):
+    #     df_probs = utls.make_prob_df(self.file_loc,self.net_genes,self.probs,
+    #                                  self.pos_genes_in_net,self.negative_genes)
+    #     self.df_probs = df_probs
+    #     return self.df_probs
         
     def make_sim_dfs(self):
         df_sim_GO, df_sim_Dis, weights_GO, weights_Dis = utls.make_sim_dfs(self.file_loc,self.mdl_weights,self.GSC,
@@ -88,9 +88,9 @@ class GenePlexus:
         self.weights_Dis = weights_Dis
         return self.df_sim_GO, self.df_sim_Dis, self.weights_GO, self.weights_Dis
         
-    def make_small_edgelist(self):
+    def make_small_edgelist(self,num_nodes=50):
         df_edge, isolated_genes, df_edge_sym, isolated_genes_sym = utls.make_small_edgelist(self.file_loc,self.df_probs,
-                                                                                            self.net_type,self.Entrez_to_Symbol)
+                                                                                            self.net_type,num_nodes=50)
         self.df_edge = df_edge
         self.isolated_genes = isolated_genes
         self.df_edge_sym = df_edge_sym
@@ -102,145 +102,11 @@ class GenePlexus:
         self.df_convert_out_subset = df_convert_out_subset
         self.positive_genes = positive_genes
         return self.df_convert_out_subset, self.positive_genes
-#
-# def alter_validation_df(df_convert_out,table_info,net_type):
-#     df_convert_out_subset = df_convert_out[['Original ID','Entrez ID','In %s?'%net_type]]
-#     network = next((item for item in table_info if item['Network'] == net_type), None)
-#     positive_genes = network.get("PositiveGenes")
-#     return df_convert_out_subset, positive_genes
-#
 
-#
-# def get_negatives(pos_genes_in_net,net_type,GSC,file_loc='local'):
-#     uni_genes = load_txtfile('uni_genes',file_loc,net_type_=net_type,GSC_=GSC)
-#     good_sets = load_dict('good_sets',file_loc,GSC_=GSC,net_type_=net_type)
-#     M = len(uni_genes)
-#     N = len(pos_genes_in_net)
-#     genes_to_remove = pos_genes_in_net
-#     for akey in good_sets:
-#         n = len(good_sets[akey]['Genes'])
-#         k = len(np.intersect1d(pos_genes_in_net,good_sets[akey]['Genes']))
-#         pval = hypergeom.sf(k-1, M, n, N)
-#         if pval < 0.05:
-#             genes_to_remove = np.union1d(genes_to_remove,good_sets[akey]['Genes'])
-#     negative_genes = np.setdiff1d(uni_genes,genes_to_remove)
-#     return negative_genes
-#
-# def run_SL(pos_genes_in_net,negative_genes,net_genes,net_type,features,file_loc='local'):
-#     pos_inds = [np.where(net_genes==agene)[0][0] for agene in pos_genes_in_net]
-#     neg_inds = [np.where(net_genes==agene)[0][0] for agene in negative_genes]
-#     data = load_npyfile('data',file_loc,features_=features,net_type_=net_type)
-#
-#     std_scale = StandardScaler().fit(data)
-#     data   = std_scale.transform(data)
-#     Xdata = data[pos_inds+neg_inds,:]
-#     ydata = np.array([1]*len(pos_inds) + [0]*len(neg_inds))
-#     clf = LogisticRegression(max_iter=10000,solver='lbfgs',penalty='l2',C=1.0)
-#     clf.fit(Xdata,ydata)
-#     mdl_weights = np.squeeze(clf.coef_)
-#     probs = clf.predict_proba(data)[:,1]
-#
-#     if len(pos_genes_in_net) < 15:
-#         avgps = [-10, -10, -10]
-#     else:
-#         avgps = []
-#         n_folds = 3
-#         skf= StratifiedKFold(n_splits=n_folds, shuffle=True, random_state=None)
-#         for trn_inds, tst_inds in skf.split(Xdata,ydata):
-#             clf_cv = LogisticRegression(max_iter=10000,solver='lbfgs',penalty='l2',C=1.0)
-#             clf_cv.fit(Xdata[trn_inds],ydata[trn_inds])
-#             probs_cv = clf_cv.predict_proba(Xdata[tst_inds])[:,1]
-#             avgp = average_precision_score(ydata[tst_inds],probs_cv)
-#             num_tst_pos = np.sum(ydata[tst_inds])
-#             prior = num_tst_pos/Xdata[tst_inds].shape[0]
-#             log2_prior = np.log2(avgp/prior)
-#             avgps.append(log2_prior)
-#         # avgp = '{0:.2f}'.format(np.median(avgps)) # used in webserver but not for inflamation work
-#     return mdl_weights, probs, avgps
-#
-# def make_prob_df(net_genes,probs,pos_genes_in_net,negative_genes,file_loc='local'):
-#     Entrez_to_Symbol = load_dict('Entrez_to_Symbol',file_loc)
-#     Entrez_to_Name = load_dict('Entrez_to_Name',file_loc)
-#     prob_results = []
-#     for idx in range(len(net_genes)):
-#         if net_genes[idx] in pos_genes_in_net:
-#             class_label = 'P'
-#         elif net_genes[idx] in negative_genes:
-#             class_label = 'N'
-#         else:
-#             class_label = 'U'
-#         try:
-#             syms_tmp = '/'.join(Entrez_to_Symbol[net_genes[idx]]) #allows for multimapping
-#         except KeyError:
-#             syms_tmp = 'N/A'
-#         try:
-#             name_tmp = '/'.join(Entrez_to_Name[net_genes[idx]]) #allows for multimapping
-#         except KeyError:
-#             name_tmp = 'N/A'
-#         prob_results.append([net_genes[idx],syms_tmp,name_tmp,probs[idx],class_label])
-#     df_probs = pd.DataFrame(prob_results,columns=['Entrez','Symbol','Name','Probability','Class-Label'])
-#     df_probs = df_probs.astype({'Entrez':str,'Probability':float})
-#     df_probs = df_probs.sort_values(by=['Probability'],ascending=False)
-#     return df_probs, Entrez_to_Symbol
-#
-# def make_sim_dfs(mdl_weights,GSC,net_type,features,file_loc='local'):
-#     dfs_out = []
-#     for target_set in ['GO', 'DisGeNet']:
-#         weights_dict = load_dict('weights',file_loc,net_type_=net_type,target_set_=target_set,features_=features)
-#         if target_set == 'GO':
-#             weights_dict_GO = weights_dict
-#         if target_set == 'DisGeNet':
-#             weights_dict_Dis = weights_dict
-#         order = load_txtfile('GSC_order',file_loc,net_type_=net_type,target_set_=target_set)
-#         cor_mat = load_npyfile('cor_mat',file_loc,GSC_=GSC,target_set_=target_set,net_type_=net_type,features_=features)
-#         add_row = np.zeros((1,len(order)))
-#         for idx, aset in enumerate(order):
-#             cos_sim = 1 - cosine(weights_dict[aset]['Weights'],mdl_weights)
-#             add_row[0,idx] = cos_sim
-#         cor_mat = np.concatenate((cor_mat,add_row),axis=0)
-#         last_row = cor_mat[-1,:]
-#         zq = np.maximum(0, (last_row - np.mean(last_row)) / np.std(last_row))
-#         zs = np.maximum(0, (last_row - np.mean(cor_mat,axis=0)) / np.std(cor_mat,axis=0))
-#         z = np.sqrt(zq**2 + zs**2)
-#         results_tmp = []
-#         for idx2, termID_tmp in enumerate(order):
-#             ID_tmp = termID_tmp
-#             Name_tmp = weights_dict[termID_tmp]['Name']
-#             z_tmp = z[idx2]
-#             results_tmp.append([ID_tmp,Name_tmp,z_tmp])
-#         df_tmp = pd.DataFrame(results_tmp,columns=['ID','Name','Similarity']).sort_values(by=['Similarity'],ascending=False)
-#         dfs_out.append(df_tmp)
-#     return dfs_out[0], dfs_out[1], weights_dict_GO, weights_dict_Dis
-#
-#
-#
-# def make_small_edgelist(df_probs,net_type,Entrez_to_Symbol,file_loc='local'):
-#     # This will set the max number of genes to look at to a given number
-#     max_num_genes = 1000
-#     df_edge = load_df('edgelist',file_loc,net_type_=net_type)
-#     df_edge = df_edge.astype({'Node1':str,'Node2':str})
-#     top_genes = df_probs['Entrez'].to_numpy()[0:max_num_genes]
-#     df_edge = df_edge[(df_edge['Node1'].isin(top_genes)) & (df_edge['Node2'].isin(top_genes))]
-#     genes_in_edge = np.union1d(df_edge['Node1'].unique(),df_edge['Node2'].unique())
-#     isolated_genes = np.setdiff1d(top_genes,genes_in_edge)
-#     replace_dict = {}
-#     for agene in genes_in_edge:
-#         try:
-#             syms_tmp = '/'.join(Entrez_to_Symbol[agene]) #allows for multimapping
-#         except KeyError:
-#             syms_tmp = 'N/A'
-#         replace_dict[agene] = syms_tmp
-#     df_edge_sym = df_edge.replace(to_replace=replace_dict)
-#     # make smae network as above just with gene symbols instead of entrez IDs
-#     isolated_genes_sym = []
-#     for agene in isolated_genes:
-#         try:
-#             syms_tmp = '/'.join(Entrez_to_Symbol[agene]) #allows for multimapping
-#         except KeyError:
-#             syms_tmp = 'N/A'
-#         isolated_genes_sym.append(syms_tmp)
-#     return df_edge, isolated_genes, df_edge_sym, isolated_genes_sym
-#
+
+################################################################################################################################
+# functions specific to the webserver
+
 # def make_graph(df_edge, df_probs):
 #     max_num_genes = 1000
 #     df_edge.fillna(0)
