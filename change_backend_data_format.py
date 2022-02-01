@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 import glob
 import shutil
+import pickle
+import json
 
 # This script will change how data_back end is structured and labeled
 # note that this moves the files. If you want to keep the origianals
@@ -81,3 +83,5 @@ for aFN in FNs:
     old_name = aFN.strip().split('/')[-1].split('_Orders')[0]
     new_name = 'CorrectionMatrixOrder_%s.txt'%old_name
     shutil.move(aFN,fp_new+new_name)
+        
+    
