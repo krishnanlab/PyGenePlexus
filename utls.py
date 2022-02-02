@@ -223,6 +223,34 @@ def alter_validation_df(df_convert_out,table_summary,net_type):
 
 ################################################################################################################################
 
+# functions for downloading data
+
+
+def make_download_options_lists(tasks,networks,features,GSCs):
+    if isinstance(tasks, str):
+        if tasks == 'All':
+            tasks = ['IDconversion','MachineLearning','Similarities','NetworkGraph']
+        else:
+            tasks = [tasks]
+    if isinstance(networks, str):
+        if networks == 'All':
+            networks = ['BioGRID','STRING','STRING-EXP','GIANT-TN']
+        else:
+            networks = [networks]
+    if isinstance(features, str):
+        if features == 'All':
+            features = ['Adjacency','Embedding','Influence']
+        else:
+            features = [features]
+    if isinstance(GSCs, str):
+        if GSCs == 'All':
+            GSCs = ['GO','DisGeNet']
+        else:
+            GSCs = [GSCs]
+    return tasks, networks, features, GSCs
+
+################################################################################################################################
+
 # functions just for webserver
 
 # def make_graph(df_edge, df_probs):

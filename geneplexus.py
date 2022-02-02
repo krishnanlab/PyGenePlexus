@@ -27,6 +27,9 @@ To Do
 6. make input genes need to be uppercase in load_genes
 7. For average ps different and now sets value arbitratly to -10 so need to change
 8. work on making edge list readbale right away in networkx
+9. Ways to make downloading the data faster https://stackoverflow.com/questions/62599036/python-requests-is-slow-and-takes-very-long-to-complete-http-or-https-request
+10. With the above, what is the fastest way to download blob data?
+11. Maybe change download functions to just read files_to_do and then one functiont to do the requests part
 '''
 
 
@@ -116,6 +119,45 @@ def download_IDconversion_data(fp_data):
             print('Downloading file from', FN_Azure)
             r = requests.get(FN_Azure)
             open(fp_data+afile, 'wb').write(r.content)
+            
+def download_all_data(fp_data):
+    with open('data_filenames.txt','r') as f:
+        for line in f:
+            line = line.strip()
+            if os.path.exists(fp_data+line):
+                print('The following file already exsists so skipping download', fp_data+line)
+            else:
+                FN_Azure = 'https://mancusogeneplexusstorage.blob.core.windows.net/mancusoblob/%s'%line
+                print('Downloading file from', FN_Azure)
+                r = requests.get(FN_Azure)
+                open(fp_data+line, 'wb').write(r.content)
+                
+def download_select_data(fp_data,tasks='All',networks='All',features='All',GSCs='All'):
+    tasks, networks, features, GSCs = utls.make_download_options_lists(tasks,networks,features,GSCs)
+    for atask in tasks:
+        if atask == 'IDconversion':
+            download_IDconversion_data(fp_data)
+        elif atask == 'MachineLearning':
+            files_to_do = []
+            with open('data_filenames.txt','r') as f:
+                for line in f:
+                    line = line.strip()
+                    if 'NodeOrder' in line:
+                        net_tmp = line.split('Order_')[-1].split('.tx')[0]
+                        if net_tmp in networks:
+                            files_to_do.append(line)
+                    if 'universe.txt' in line:
+                        net_tmp = line.split('_')[2]
+                        GSC_tmp = line.split('_')[1]
+                        if (net_tmp in networks) and (GSC_tmp in GSCs):
+                            files_to_do.append(line)
+                        
+            print(files_to_do)
+                    
+            
+                
+        
+    
 
 # def download_IDconversion_data():
 #     # took aboout two minutes for Embedding_BioGRID at MSU

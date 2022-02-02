@@ -2,7 +2,10 @@ import argparse
 import geneplexus
 import numpy as np
 import pandas as pd
+import time
 
+
+tic = time.time()
 # Main thing to discuss is how to handle the file_loc problem
 # Also, when to save objects? Probbaly not have that be something we do for the user?
 
@@ -14,7 +17,11 @@ import pandas as pd
 input_genes = np.loadtxt('input_genes.txt',dtype=str,delimiter=', ')
 input_genes = [item.strip("'") for item in input_genes]
 
-geneplexus.download_IDconversion_data('/Users/christophermancuso/Documents/DataSets/from_Azure/')
+# geneplexus.download_IDconversion_data('/Users/christophermancuso/Documents/DataSets/from_Azure/')
+# geneplexus.download_all_data('/Users/christophermancuso/Documents/DataSets/from_Azure/')
+geneplexus.download_select_data('/Users/christophermancuso/Documents/DataSets/from_Azure/',tasks='MachineLearning')
+
+print('The time is took to run script is',time.time()-tic)
 
 # data = np.load('/Users/christophermancuso/Documents/DataSets/from_Azure/Embedding_BioGRID.npy')
 # print(data.shape)
