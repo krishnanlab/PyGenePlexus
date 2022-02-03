@@ -17,9 +17,9 @@ tic = time.time()
 input_genes = np.loadtxt('input_genes.txt',dtype=str,delimiter=', ')
 input_genes = [item.strip("'") for item in input_genes]
 
-# geneplexus.download_IDconversion_data('/Users/christophermancuso/Documents/DataSets/from_Azure/')
+# geneplexus.download_IDconversion_data('/Users/christophermancuso/Documents/DataSets/from_Azure2/')
 # geneplexus.download_all_data('/Users/christophermancuso/Documents/DataSets/from_Azure/')
-geneplexus.download_select_data('/Users/christophermancuso/Documents/DataSets/from_Azure/',tasks='MachineLearning')
+geneplexus.download_select_data('/Users/christophermancuso/Documents/DataSets/from_Azure2/',tasks='MachineLearning',networks='BioGRID',features='Embedding',GSCs='GO')
 
 print('The time is took to run script is',time.time()-tic)
 

@@ -10,6 +10,7 @@ import time
 from scipy.spatial.distance import cosine
 from scipy.stats import rankdata
 import os
+import requests
 
 
 ################################################################################################################################
@@ -225,6 +226,16 @@ def alter_validation_df(df_convert_out,table_summary,net_type):
 
 # functions for downloading data
 
+def download_from_azure(fp_data,files_to_do):
+    for afile in files_to_do:
+        if os.path.exists(fp_data+afile):
+            print('The following file already exsists so skipping download', fp_data+afile) 
+        else:   
+            FN_Azure = 'https://mancusogeneplexusstorage.blob.core.windows.net/mancusoblob2/%s'%afile
+            print('Downloading file from', FN_Azure)
+            r = requests.get(FN_Azure)
+            open(fp_data+afile, 'wb').write(r.content)
+    
 
 def make_download_options_lists(tasks,networks,features,GSCs):
     if isinstance(tasks, str):

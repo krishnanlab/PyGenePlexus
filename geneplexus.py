@@ -9,7 +9,6 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import average_precision_score
 import time
 from scipy.spatial.distance import cosine
-import requests
 import os
 
 
@@ -112,14 +111,8 @@ def download_IDconversion_data(fp_data):
             line = line.strip()
             if ('IDconversion' in line) or ('NodeOrder' in line):
                 files_to_do.append(line)
-    for afile in files_to_do:
-        if os.path.exists(fp_data+afile):
-            print('The following file already exsists so skipping download', fp_data+afile) 
-        else:   
-            FN_Azure = 'https://mancusogeneplexusstorage.blob.core.windows.net/mancusoblob2/%s'%afile
-            print('Downloading file from', FN_Azure)
-            r = requests.get(FN_Azure)
-            open(fp_data+afile, 'wb').write(r.content)
+    utls.download_from_azure(fp_data,files_to_do)
+
             
 def download_all_data(fp_data):
     with open('data_filenames.txt','r') as f:
@@ -160,7 +153,7 @@ def download_select_data(fp_data,tasks='All',networks='All',features='All',GSCs=
                             files_to_do.append(line)
                     if ('Entrez-to-Name' in line) or ('Entrez-to-Symbol' in line):
                         files_to_do.append(line)
-            print(files_to_do)
+    utls.download_from_azure(fp_data,files_to_do)
                     
             
                 
