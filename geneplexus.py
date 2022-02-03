@@ -28,8 +28,9 @@ To Do
 7. For average ps different and now sets value arbitratly to -10 so need to change
 8. work on making edge list readbale right away in networkx
 9. Ways to make downloading the data faster https://stackoverflow.com/questions/62599036/python-requests-is-slow-and-takes-very-long-to-complete-http-or-https-request
-10. With the above, what is the fastest way to download blob data?
+10. With the above, what is the fastest way to download blob data? (it took 7 hours at my house but 30 minutes on HPCC)
 11. Maybe change download functions to just read files_to_do and then one functiont to do the requests part
+12. Probably need to add Data or something to the npy feature files
 '''
 
 
@@ -115,7 +116,7 @@ def download_IDconversion_data(fp_data):
         if os.path.exists(fp_data+afile):
             print('The following file already exsists so skipping download', fp_data+afile) 
         else:   
-            FN_Azure = 'https://mancusogeneplexusstorage.blob.core.windows.net/mancusoblob/%s'%afile
+            FN_Azure = 'https://mancusogeneplexusstorage.blob.core.windows.net/mancusoblob2/%s'%afile
             print('Downloading file from', FN_Azure)
             r = requests.get(FN_Azure)
             open(fp_data+afile, 'wb').write(r.content)
@@ -127,12 +128,13 @@ def download_all_data(fp_data):
             if os.path.exists(fp_data+line):
                 print('The following file already exsists so skipping download', fp_data+line)
             else:
-                FN_Azure = 'https://mancusogeneplexusstorage.blob.core.windows.net/mancusoblob/%s'%line
+                FN_Azure = 'https://mancusogeneplexusstorage.blob.core.windows.net/mancusoblob2/%s'%line
                 print('Downloading file from', FN_Azure)
                 r = requests.get(FN_Azure)
                 open(fp_data+line, 'wb').write(r.content)
                 
 def download_select_data(fp_data,tasks='All',networks='All',features='All',GSCs='All'):
+    # Similarities and NetworkGraph will assume downloaded MachineLearning
     tasks, networks, features, GSCs = utls.make_download_options_lists(tasks,networks,features,GSCs)
     for atask in tasks:
         if atask == 'IDconversion':
@@ -146,12 +148,18 @@ def download_select_data(fp_data,tasks='All',networks='All',features='All',GSCs=
                         net_tmp = line.split('Order_')[-1].split('.tx')[0]
                         if net_tmp in networks:
                             files_to_do.append(line)
-                    if 'universe.txt' in line:
+                    if ('universe.txt' in line) or ('GoodSets.pickle' in line):
                         net_tmp = line.split('_')[2]
                         GSC_tmp = line.split('_')[1]
                         if (net_tmp in networks) and (GSC_tmp in GSCs):
                             files_to_do.append(line)
-                        
+                    if 'Data_' in line:
+                        feature_tmp = line.split('_')[1]
+                        net_tmp = line.split('_')[2].split('.n')[0]
+                        if (feature_tmp in features) and (net_tmp in networks):
+                            files_to_do.append(line)
+                    if ('Entrez-to-Name' in line) or ('Entrez-to-Symbol' in line):
+                        files_to_do.append(line)
             print(files_to_do)
                     
             

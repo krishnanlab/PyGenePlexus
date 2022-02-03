@@ -16,21 +16,21 @@ fp_new = '/Users/christophermancuso/Documents/DataSets/Geneplexus_data/'
 # FNs = glob.glob(fp_old+'Adjacency/*.npy')
 # for aFN in FNs:
 #     network = aFN.strip().split('/')[-1].split('_')[0]
-#     new_name = 'Adjacency_%s.npy'%network
+#     new_name = 'Data_Adjacency_%s.npy'%network
 #     shutil.move(aFN,fp_new+new_name)
 #
 # # change the embedding matrix folder
 # FNs = glob.glob(fp_old+'Embedding/*.npy')
 # for aFN in FNs:
 #     network = aFN.strip().split('/')[-1].split('_')[0]
-#     new_name = 'Embedding_%s.npy'%network
+#     new_name = 'Data_Embedding_%s.npy'%network
 #     shutil.move(aFN,fp_new+new_name)
 #
 # # change the influence matrix folder
 # FNs = glob.glob(fp_old+'Influence/*.npy')
 # for aFN in FNs:
 #     network = aFN.strip().split('/')[-1].split('_')[0]
-#     new_name = 'Influence_%s.npy'%network
+#     new_name = 'Data_Influence_%s.npy'%network
 #     shutil.move(aFN,fp_new+new_name)
 #
 # # change the node_order folder
