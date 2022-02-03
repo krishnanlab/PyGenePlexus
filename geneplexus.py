@@ -105,12 +105,7 @@ class GenePlexus:
         return self.df_convert_out_subset, self.positive_genes
 
 def download_IDconversion_data(fp_data):
-    files_to_do = []
-    with open('data_filenames.txt','r') as f:
-        for line in f:
-            line = line.strip()
-            if ('IDconversion' in line) or ('NodeOrder' in line):
-                files_to_do.append(line)
+    files_to_do = utls.get_IDconversion_filenames()
     utls.download_from_azure(fp_data,files_to_do)
 
             
@@ -129,31 +124,16 @@ def download_all_data(fp_data):
 def download_select_data(fp_data,tasks='All',networks='All',features='All',GSCs='All'):
     # Similarities and NetworkGraph will assume downloaded MachineLearning
     tasks, networks, features, GSCs = utls.make_download_options_lists(tasks,networks,features,GSCs)
+    all_files_to_do = []
     for atask in tasks:
         if atask == 'IDconversion':
-            download_IDconversion_data(fp_data)
+            files_to_do = utls.get_IDconversion_filenames()
+            all_files_to_do = all_files_to_do + files_to_do
         elif atask == 'MachineLearning':
-            files_to_do = []
-            with open('data_filenames.txt','r') as f:
-                for line in f:
-                    line = line.strip()
-                    if 'NodeOrder' in line:
-                        net_tmp = line.split('Order_')[-1].split('.tx')[0]
-                        if net_tmp in networks:
-                            files_to_do.append(line)
-                    if ('universe.txt' in line) or ('GoodSets.pickle' in line):
-                        net_tmp = line.split('_')[2]
-                        GSC_tmp = line.split('_')[1]
-                        if (net_tmp in networks) and (GSC_tmp in GSCs):
-                            files_to_do.append(line)
-                    if 'Data_' in line:
-                        feature_tmp = line.split('_')[1]
-                        net_tmp = line.split('_')[2].split('.n')[0]
-                        if (feature_tmp in features) and (net_tmp in networks):
-                            files_to_do.append(line)
-                    if ('Entrez-to-Name' in line) or ('Entrez-to-Symbol' in line):
-                        files_to_do.append(line)
-    utls.download_from_azure(fp_data,files_to_do)
+            files_to_do = utls.get_MachineLearning_filenames(networks,GSCs,features)
+            all_files_to_do = all_files_to_do + files_to_do
+    all_files_to_do = list(set(all_files_to_do))
+    utls.download_from_azure(fp_data,all_files_to_do)
                     
             
                 
