@@ -19,7 +19,8 @@ input_genes = [item.strip("'") for item in input_genes]
 
 # geneplexus.download_IDconversion_data('/Users/christophermancuso/Documents/DataSets/from_Azure2/')
 # geneplexus.download_all_data('/Users/christophermancuso/Documents/DataSets/from_Azure/')
-geneplexus.download_select_data('/Users/christophermancuso/Documents/DataSets/from_Azure2/',tasks='MachineLearning',networks='BioGRID',features='Embedding',GSCs='GO')
+# geneplexus.download_select_data('/Users/christophermancuso/Documents/DataSets/from_Azure2/',tasks='Similarities',networks='BioGRID',features='Embedding',GSCs='GO')
+geneplexus.download_select_data('/Users/christophermancuso/Documents/DataSets/from_Azure2/',tasks='NetworkGraph')
 
 print('The time is took to run script is',time.time()-tic)
 

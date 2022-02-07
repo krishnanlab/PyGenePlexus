@@ -229,10 +229,12 @@ def alter_validation_df(df_convert_out,table_summary,net_type):
 def download_from_azure(fp_data,files_to_do):
     for afile in files_to_do:
         if os.path.exists(fp_data+afile):
-            print('The following file already exsists so skipping download', fp_data+afile) 
+            print('The following file already exsists so skipping download: ', fp_data+afile)
+            print() 
         else:   
             FN_Azure = 'https://mancusogeneplexusstorage.blob.core.windows.net/mancusoblob2/%s'%afile
-            print('Downloading file from', FN_Azure)
+            print('Downloading the follwing file: ', FN_Azure)
+            print()
             r = requests.get(FN_Azure)
             open(fp_data+afile, 'wb').write(r.content)
     
@@ -290,6 +292,40 @@ def get_MachineLearning_filenames(networks,GSCs,features):
                     files_to_do.append(line)
             if ('Entrez-to-Name' in line) or ('Entrez-to-Symbol' in line):
                 files_to_do.append(line)
+    return files_to_do
+    
+def get_Similarities_filenames(networks, features, GSCs):
+    files_to_do = []
+    with open('data_filenames.txt','r') as f:
+        for line in f:
+            line = line.strip()
+            if 'CorrectionMatrix_' in line:
+                feature_tmp = line.split('_')[-1].split('.n')[0]
+                net_tmp = line.split('_')[3]
+                GSC_tmp = line.split('_')[1]
+                if (net_tmp in networks) and (feature_tmp in features) and (GSC_tmp in GSCs):
+                    files_to_do.append(line)
+            if 'CorrectionMatrixOrder' in line:
+                GSC_tmp = line.split('_')[1]
+                net_tmp = line.split('_')[2].split('.t')[0]
+                if (net_tmp in networks) and (GSC_tmp in GSCs):
+                    files_to_do.append(line)
+            if 'PreTrainedWeights' in line:
+                net_tmp = line.split('_')[2]
+                feature_tmp = line.split('_')[-1].split('.pic')[0]
+                if (net_tmp in networks) and (feature_tmp in features):
+                    files_to_do.append(line)
+    return files_to_do
+    
+def get_NetworkGraph_filenames(networks):
+    files_to_do = ['IDconversion_Homo-sapiens_Entrez-to-Symbol.pickle']
+    with open('data_filenames.txt','r') as f:
+        for line in f:
+            line = line.strip()
+            if 'Edgelist' in line:
+                net_tmp = line.split('_')[-1].split('.ed')[0]
+                if net_tmp in networks:
+                    files_to_do.append(line)
     return files_to_do
     
 

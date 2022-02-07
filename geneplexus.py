@@ -30,6 +30,8 @@ To Do
 10. With the above, what is the fastest way to download blob data? (it took 7 hours at my house but 30 minutes on HPCC)
 11. Maybe change download functions to just read files_to_do and then one functiont to do the requests part
 12. Probably need to add Data or something to the npy feature files
+13. Just return self dor method chaining
+14. Maybe add a column in the data_filenames.txt which would have the size of the files
 '''
 
 
@@ -104,6 +106,12 @@ class GenePlexus:
         self.positive_genes = positive_genes
         return self.df_convert_out_subset, self.positive_genes
 
+
+
+#####################################################################################################################################
+
+# functions for downloading the data
+
 def download_IDconversion_data(fp_data):
     files_to_do = utls.get_IDconversion_filenames()
     utls.download_from_azure(fp_data,files_to_do)
@@ -129,11 +137,19 @@ def download_select_data(fp_data,tasks='All',networks='All',features='All',GSCs=
         if atask == 'IDconversion':
             files_to_do = utls.get_IDconversion_filenames()
             all_files_to_do = all_files_to_do + files_to_do
-        elif atask == 'MachineLearning':
+        if atask == 'MachineLearning':
             files_to_do = utls.get_MachineLearning_filenames(networks,GSCs,features)
             all_files_to_do = all_files_to_do + files_to_do
+        if atask == 'Similarities':
+            files_to_do = utls.get_Similarities_filenames(networks, features, GSCs)
+            all_files_to_do = all_files_to_do + files_to_do
+        if atask == 'NetworkGraph':
+            files_to_do = utls.get_NetworkGraph_filenames(networks)
+            all_files_to_do = all_files_to_do + files_to_do
+            
     all_files_to_do = list(set(all_files_to_do))
-    utls.download_from_azure(fp_data,all_files_to_do)
+    print('The number of files to download is', len(files_to_do))
+    # utls.download_from_azure(fp_data,all_files_to_do)
                     
             
                 
