@@ -3,7 +3,6 @@ import pickle
 import time
 
 import numpy as np
-import pandas as pd
 from scipy.spatial.distance import cosine
 from scipy.stats import hypergeom
 from sklearn.linear_model import LogisticRegression
@@ -11,7 +10,7 @@ from sklearn.metrics import average_precision_score
 from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import StandardScaler
 
-import utls
+from . import util
 
 
 class GenePlexus:
@@ -32,8 +31,8 @@ class GenePlexus:
         self.input_genes = input_genes
 
     def convert_to_Entrez(self):
-        convert_IDs, df_convert_out = utls.intial_ID_convert(self.input_genes, self.file_loc)
-        df_convert_out, table_summary, input_count = utls.make_validation_df(df_convert_out, self.file_loc)
+        convert_IDs, df_convert_out = util.intial_ID_convert(self.input_genes, self.file_loc)
+        df_convert_out, table_summary, input_count = util.make_validation_df(df_convert_out, self.file_loc)
         self.convert_IDs = convert_IDs
         self.df_convert_out = df_convert_out
         self.table_summary = table_summary
@@ -46,7 +45,7 @@ class GenePlexus:
         self.GSC = GSC
 
     def get_pos_and_neg_genes(self):
-        pos_genes_in_net, genes_not_in_net, net_genes = utls.get_genes_in_network(
+        pos_genes_in_net, genes_not_in_net, net_genes = util.get_genes_in_network(
             self.file_loc,
             self.net_type,
             self.convert_IDs,
@@ -54,12 +53,12 @@ class GenePlexus:
         self.pos_genes_in_net = pos_genes_in_net
         self.genes_not_in_net = genes_not_in_net
         self.net_genes = net_genes
-        negative_genes = utls.get_negatives(self.file_loc, self.net_type, self.GSC, self.pos_genes_in_net)
+        negative_genes = util.get_negatives(self.file_loc, self.net_type, self.GSC, self.pos_genes_in_net)
         self.negative_genes = negative_genes
         return self.pos_genes_in_net, self.negative_genes, self.net_genes
 
     def fit_and_predict(self):
-        mdl_weights, probs, avgps = utls.run_SL(
+        mdl_weights, probs, avgps = util.run_SL(
             self.file_loc,
             self.net_type,
             self.features,
@@ -70,7 +69,7 @@ class GenePlexus:
         self.mdl_weights = mdl_weights
         self.probs = probs
         self.avgps = avgps
-        df_probs = utls.make_prob_df(
+        df_probs = util.make_prob_df(
             self.file_loc,
             self.net_genes,
             self.probs,
@@ -81,7 +80,7 @@ class GenePlexus:
         return self.mdl_weights, self.df_probs, self.avgps
 
     def make_sim_dfs(self):
-        df_sim_GO, df_sim_Dis, weights_GO, weights_Dis = utls.make_sim_dfs(
+        df_sim_GO, df_sim_Dis, weights_GO, weights_Dis = util.make_sim_dfs(
             self.file_loc,
             self.mdl_weights,
             self.GSC,
@@ -95,7 +94,7 @@ class GenePlexus:
         return self.df_sim_GO, self.df_sim_Dis, self.weights_GO, self.weights_Dis
 
     def make_small_edgelist(self, num_nodes=50):
-        df_edge, isolated_genes, df_edge_sym, isolated_genes_sym = utls.make_small_edgelist(
+        df_edge, isolated_genes, df_edge_sym, isolated_genes_sym = util.make_small_edgelist(
             self.file_loc,
             self.df_probs,
             self.net_type,
@@ -108,7 +107,7 @@ class GenePlexus:
         return self.df_edge, self.isolated_genes, self.df_edge_sym, self.isolated_genes_sym
 
     def alter_validation_df(self):
-        df_convert_out_subset, positive_genes = utls.alter_validation_df(
+        df_convert_out_subset, positive_genes = util.alter_validation_df(
             self.df_convert_out,
             self.table_summary,
             self.net_type,
@@ -119,8 +118,8 @@ class GenePlexus:
 
 
 def download_IDconversion_data(fp_data):
-    files_to_do = utls.get_IDconversion_filenames()
-    utls.download_from_azure(fp_data, files_to_do)
+    files_to_do = util.get_IDconversion_filenames()
+    util.download_from_azure(fp_data, files_to_do)
 
 
 def download_all_data(fp_data):
@@ -138,22 +137,22 @@ def download_all_data(fp_data):
 
 def download_select_data(fp_data, tasks="All", networks="All", features="All", GSCs="All"):
     # Similarities and NetworkGraph will assume downloaded MachineLearning
-    tasks, networks, features, GSCs = utls.make_download_options_lists(tasks, networks, features, GSCs)
+    tasks, networks, features, GSCs = util.make_download_options_lists(tasks, networks, features, GSCs)
     all_files_to_do = []
     for atask in tasks:
         if atask == "IDconversion":
-            files_to_do = utls.get_IDconversion_filenames()
+            files_to_do = util.get_IDconversion_filenames()
             all_files_to_do = all_files_to_do + files_to_do
         if atask == "MachineLearning":
-            files_to_do = utls.get_MachineLearning_filenames(networks, GSCs, features)
+            files_to_do = util.get_MachineLearning_filenames(networks, GSCs, features)
             all_files_to_do = all_files_to_do + files_to_do
         if atask == "Similarities":
-            files_to_do = utls.get_Similarities_filenames(networks, features, GSCs)
+            files_to_do = util.get_Similarities_filenames(networks, features, GSCs)
             all_files_to_do = all_files_to_do + files_to_do
         if atask == "NetworkGraph":
-            files_to_do = utls.get_NetworkGraph_filenames(networks)
+            files_to_do = util.get_NetworkGraph_filenames(networks)
             all_files_to_do = all_files_to_do + files_to_do
 
     all_files_to_do = list(set(all_files_to_do))
     print("The number of files to download is", len(files_to_do))
-    # utls.download_from_azure(fp_data,all_files_to_do)
+    # util.download_from_azure(fp_data,all_files_to_do)
