@@ -1,11 +1,12 @@
 import time
 
 import numpy as np
+
 from geneplexus import geneplexus
 
 # The first step is for a user to load up a set of genes as a list
 # this file can be found in the repo
-input_genes = np.loadtxt("input_genes.txt",dtype=str,delimiter=", ")
+input_genes = np.loadtxt("input_genes.txt", dtype=str, delimiter=", ")
 input_genes = [item.strip("'") for item in input_genes]
 
 # Get the data from Azure
@@ -31,7 +32,7 @@ myclass.load_genes(input_genes)
 df_convert_out = myclass.convert_to_Entrez()
 
 # Set the params you want for the rest of the pipeline
-myclass.set_params("BioGRID","Embedding","GO")
+myclass.set_params("BioGRID", "Embedding", "GO")
 
 # This gets the postives and negatvies
 pos_genes_in_net, negative_genes, net_genes = myclass.get_pos_and_neg_genes()
@@ -44,7 +45,7 @@ mdl_weights, df_probs, avgps = myclass.fit_and_predict()
 df_sim_GO, df_sim_Dis, weights_GO, weights_Dis = myclass.make_sim_dfs()
 
 # Return an edgelist
-(df_edge, isolated_genes, df_edge_sym, isolated_genes_sym = myclass.make_small_edgelist(num_nodes=50)
+df_edge, isolated_genes, df_edge_sym, isolated_genes_sym = myclass.make_small_edgelist(num_nodes=50)
 
 # Return the validation datframwe for just the network that was used in the pipeline
 df_convert_out_subset, positive_genes = myclass.alter_validation_df()
