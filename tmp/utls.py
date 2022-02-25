@@ -94,7 +94,7 @@ def get_negatives(file_loc,net_type,GSC,pos_genes_in_net):
 def run_SL(file_loc,net_type,features,pos_genes_in_net,negative_genes,net_genes):
     pos_inds = [np.where(net_genes==agene)[0][0] for agene in pos_genes_in_net]
     neg_inds = [np.where(net_genes==agene)[0][0] for agene in negative_genes]
-    data = np.load(file_loc+'%s_%s.npy'%(features,net_type))
+    data = np.load(file_loc+'Data_%s_%s.npy'%(features,net_type))
     std_scale = StandardScaler().fit(data)
     data   = std_scale.transform(data)
     Xdata = data[pos_inds+neg_inds,:]
