@@ -16,7 +16,7 @@ from . import util
 class GenePlexus:
     def __init__(
         self,
-        file_loc="/Users/christophermancuso/Documents/DataSets/Geneplexus_data/",
+        file_loc,
         network="BioGRID",
         features="Embedding",
         GSC="GO",
@@ -154,5 +154,4 @@ def download_select_data(fp_data, tasks="All", networks="All", features="All", G
             all_files_to_do = all_files_to_do + files_to_do
 
     all_files_to_do = list(set(all_files_to_do))
-    print("The number of files to download is", len(files_to_do))
-    # util.download_from_azure(fp_data,all_files_to_do)
+    util.download_from_azure(fp_data, all_files_to_do)
