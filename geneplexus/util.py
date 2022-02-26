@@ -14,6 +14,10 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import StandardScaler
 
 
+def read_gene_list(path):
+    return [gene.strip("'") for gene in open(path, "r").read().split(", ")]
+
+
 def intial_ID_convert(input_genes, file_loc):
     # load all the possible conversion dictionaries
     convert_types = ["ENSG", "Symbol", "ENSP", "ENST"]

@@ -61,9 +61,7 @@ class TestGenePlexusPipeline(unittest.TestCase):
             self.assertTrue(osp.isfile(osp.join(self.datadir, filename)))
 
     def test_pipeline(self):
-        # TODO: make a helper for this
-        with open(osp.join(HOMEDIR, "input_genes.txt"), "r") as f:
-            input_genes = [i.strip("'") for i in f.read().split(", ")]
+        input_genes = geneplexus.util.read_gene_list(osp.join(HOMEDIR, "input_genes.txt"))
         self.gp.load_genes(input_genes)
 
         df_convert_out = self.gp.convert_to_Entrez()

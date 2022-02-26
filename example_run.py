@@ -9,8 +9,7 @@ from geneplexus import geneplexus
 
 # The first step is for a user to load up a set of genes as a list
 # this file can be found in the repo
-input_genes = np.loadtxt("input_genes.txt", dtype=str, delimiter=", ")
-input_genes = [item.strip("'") for item in input_genes]
+input_genes = geneplexus.util.read_gene_list("input_genes.txt")
 
 # Set up directories
 homedir = pathlib.Path(__file__).absolute().parent
@@ -21,14 +20,13 @@ os.makedirs(outdir, exist_ok=True)
 
 # Get the data from Azure
 print(f"Start downloading data and saving to: {datadir}")
-for GSCs in ["GO", "DisGeNet"]:
-    geneplexus.download_select_data(
-        datadir,
-        tasks="All",
-        networks="BioGRID",
-        features="Embedding",
-        GSCs=GSCs,
-    )
+geneplexus.download_select_data(
+    datadir,
+    tasks="All",
+    networks="BioGRID",
+    features="Embedding",
+    GSCs=["GO", "DisGeNet"],
+)
 print("Done downlaoding")
 
 # Run through the pipeline
