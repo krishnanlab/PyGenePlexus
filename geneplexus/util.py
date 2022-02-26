@@ -1,4 +1,4 @@
-import os
+import os.path as osp
 import pickle
 import time
 
@@ -19,7 +19,8 @@ def intial_ID_convert(input_genes, file_loc):
     convert_types = ["ENSG", "Symbol", "ENSP", "ENST"]
     all_convert_dict = {}
     for anIDtype in convert_types:
-        with open(file_loc + "IDconversion_Homo-sapiens_%s-to-Entrez.pickle" % anIDtype, "rb") as handle:
+        path = osp.join(file_loc, f"IDconversion_Homo-sapiens_{anIDtype}-to-Entrez.pickle")
+        with open(path, "rb") as handle:
             convert_tmp = pickle.load(handle)
             convert_tmp = {akey.upper(): convert_tmp[akey] for akey in convert_tmp}
         all_convert_dict[anIDtype] = convert_tmp
@@ -52,8 +53,8 @@ def make_validation_df(df_convert_out, file_loc):
     input_count = df_convert_out.shape[0]
     converted_genes = df_convert_out["ID_converted_to_Entrez"].to_numpy()
     for anet in ["BioGRID", "STRING", "STRING-EXP", "GIANT-TN"]:
-        net_genes = np.loadtxt(file_loc + "NodeOrder_%s.txt" % anet, dtype=str)
-        # net_genes = load_txtfile('net_genes',file_loc,net_type_=anet)
+        path = osp.join(file_loc, f"NodeOrder_{anet}.txt")
+        net_genes = np.loadtxt(path, dtype=str)
         df_tmp = df_convert_out[df_convert_out["ID_converted_to_Entrez"].isin(net_genes)]
         pos_genes_in_net = np.intersect1d(converted_genes, net_genes)
         table_row = {"Network": anet, "NetworkGenes": len(net_genes), "PositiveGenes": len(pos_genes_in_net)}
@@ -71,15 +72,16 @@ def make_validation_df(df_convert_out, file_loc):
 
 
 def get_genes_in_network(file_loc, net_type, convert_IDs):
-    net_genes = np.loadtxt(file_loc + "NodeOrder_%s.txt" % net_type, dtype=str)
+    path = osp.join(file_loc, f"NodeOrder_{net_type}.txt")
+    net_genes = np.loadtxt(path, dtype=str)
     pos_genes_in_net = np.intersect1d(np.array(convert_IDs), net_genes)
     genes_not_in_net = np.setdiff1d(np.array(convert_IDs), net_genes)
     return pos_genes_in_net, genes_not_in_net, net_genes
 
 
 def get_negatives(file_loc, net_type, GSC, pos_genes_in_net):
-    uni_genes = np.loadtxt(file_loc + "GSC_{}_{}_universe.txt".format(GSC, net_type), dtype=str)
-    with open(file_loc + "GSC_{}_{}_GoodSets.pickle".format(GSC, net_type), "rb") as handle:
+    uni_genes = np.loadtxt(osp.join(file_loc, f"GSC_{GSC}_{net_type}_universe.txt"), dtype=str)
+    with open(osp.join(file_loc, f"GSC_{GSC}_{net_type}_GoodSets.pickle"), "rb") as handle:
         good_sets = pickle.load(handle)
     M = len(uni_genes)
     N = len(pos_genes_in_net)
@@ -97,7 +99,8 @@ def get_negatives(file_loc, net_type, GSC, pos_genes_in_net):
 def run_SL(file_loc, net_type, features, pos_genes_in_net, negative_genes, net_genes):
     pos_inds = [np.where(net_genes == agene)[0][0] for agene in pos_genes_in_net]
     neg_inds = [np.where(net_genes == agene)[0][0] for agene in negative_genes]
-    data = np.load(file_loc + "Data_{}_{}.npy".format(features, net_type))
+    path = osp.join(file_loc, f"Data_{features}_{net_type}.npy")
+    data = np.load(path)
     std_scale = StandardScaler().fit(data)
     data = std_scale.transform(data)
     Xdata = data[pos_inds + neg_inds, :]
@@ -127,9 +130,9 @@ def run_SL(file_loc, net_type, features, pos_genes_in_net, negative_genes, net_g
 
 
 def make_prob_df(file_loc, net_genes, probs, pos_genes_in_net, negative_genes):
-    with open(file_loc + "IDconversion_Homo-sapiens_Entrez-to-Symbol.pickle", "rb") as handle:
+    with open(osp.join(file_loc, "IDconversion_Homo-sapiens_Entrez-to-Symbol.pickle"), "rb") as handle:
         Entrez_to_Symbol = pickle.load(handle)
-    with open(file_loc + "IDconversion_Homo-sapiens_Entrez-to-Name.pickle", "rb") as handle:
+    with open(osp.join(file_loc, "IDconversion_Homo-sapiens_Entrez-to-Name.pickle"), "rb") as handle:
         Entrez_to_Name = pickle.load(handle)
     prob_results = []
     for idx in range(len(net_genes)):
@@ -165,7 +168,7 @@ def make_sim_dfs(file_loc, mdl_weights, GSC, net_type, features):
     dfs_out = []
     for target_set in ["GO", "DisGeNet"]:
         with open(
-            file_loc + "PreTrainedWeights_{}_{}_{}.pickle".format(target_set, net_type, features),
+            osp.join(file_loc, f"PreTrainedWeights_{target_set}_{net_type}_{features}.pickle"),
             "rb",
         ) as handle:
             weights_dict = pickle.load(handle)
@@ -173,8 +176,8 @@ def make_sim_dfs(file_loc, mdl_weights, GSC, net_type, features):
             weights_dict_GO = weights_dict
         if target_set == "DisGeNet":
             weights_dict_Dis = weights_dict
-        order = np.loadtxt(file_loc + "CorrectionMatrixOrder_{}_{}.txt".format(target_set, net_type), dtype=str)
-        cor_mat = np.load(file_loc + "CorrectionMatrix_{}_{}_{}_{}.npy".format(GSC, target_set, net_type, features))
+        order = np.loadtxt(osp.join(file_loc, f"CorrectionMatrixOrder_{target_set}_{net_type}.txt"), dtype=str)
+        cor_mat = np.load(osp.join(file_loc, f"CorrectionMatrix_{GSC}_{target_set}_{net_type}_{features}.npy"))
         add_row = np.zeros((1, len(order)))
         for idx, aset in enumerate(order):
             cos_sim = 1 - cosine(weights_dict[aset]["Weights"], mdl_weights)
@@ -202,11 +205,16 @@ def make_sim_dfs(file_loc, mdl_weights, GSC, net_type, features):
 def make_small_edgelist(file_loc, df_probs, net_type, num_nodes=50):
     # This will set the max number of genes to look at to a given number
     if net_type == "BioGRID":
-        df_edge = pd.read_csv(file_loc + "Edgelist_%s.edg" % net_type, sep="\t", header=None, names=["Node1", "Node2"])
+        df_edge = pd.read_csv(
+            osp.join(file_loc, f"Edgelist_{net_type}.edg"),
+            sep="\t",
+            header=None,
+            names=["Node1", "Node2"],
+        )
         df_edge["Weight"] = 1
     else:
         df_edge = pd.read_csv(
-            file_loc + "Edgelist_%s.edg" % net_type,
+            osp.join(file_loc, f"Edgelist_{net_type}.edg"),
             sep="\t",
             header=None,
             names=["Node1", "Node2", "Weight"],
@@ -216,7 +224,7 @@ def make_small_edgelist(file_loc, df_probs, net_type, num_nodes=50):
     df_edge = df_edge[(df_edge["Node1"].isin(top_genes)) & (df_edge["Node2"].isin(top_genes))]
     genes_in_edge = np.union1d(df_edge["Node1"].unique(), df_edge["Node2"].unique())
     isolated_genes = np.setdiff1d(top_genes, genes_in_edge)
-    with open(file_loc + "IDconversion_Homo-sapiens_Entrez-to-Symbol.pickle", "rb") as handle:
+    with open(osp.join(file_loc, "IDconversion_Homo-sapiens_Entrez-to-Symbol.pickle"), "rb") as handle:
         Entrez_to_Symbol = pickle.load(handle)
     replace_dict = {}
     for agene in genes_in_edge:
@@ -251,15 +259,14 @@ def alter_validation_df(df_convert_out, table_summary, net_type):
 
 def download_from_azure(fp_data, files_to_do):
     for afile in files_to_do:
-        if os.path.exists(fp_data + afile):
-            print("The following file already exsists so skipping download: ", fp_data + afile)
-            print()
+        path = osp.join(fp_data, afile)
+        if osp.exists(path):
+            print(f"The following file already exsists so skipping download: {path}")
         else:
-            FN_Azure = "https://mancusogeneplexusstorage.blob.core.windows.net/mancusoblob2/%s" % afile
-            print("Downloading the follwing file: ", FN_Azure)
-            print()
+            FN_Azure = f"https://mancusogeneplexusstorage.blob.core.windows.net/mancusoblob2/{afile}"
+            print(f"Downloading the follwing file: {FN_Azure}")
             r = requests.get(FN_Azure)
-            open(fp_data + afile, "wb").write(r.content)
+            open(path, "wb").write(r.content)
 
 
 def make_download_options_lists(tasks, networks, features, GSCs):
@@ -356,106 +363,13 @@ def get_NetworkGraph_filenames(networks):
     return files_to_do
 
 
-################################################################################################################################
-
-# functions just for webserver
-
-# def make_graph(df_edge, df_probs):
-#     num_nodes = 1000
-#     df_edge.fillna(0)
-#     df_edge.columns = ['source', 'target', 'weight']
-#     nodes = df_probs[0:num_nodes]
-#     nodes.rename(columns={'Entrez': 'id', 'Class-Label': 'Class'}, inplace=True)
-#     nodes = nodes.astype({'id': int})
-#
-#     graph = {}
-#     graph["nodes"] = nodes.to_dict(orient='records')
-#     graph["links"] = df_edge.to_dict(orient='records')
-#
-#     return graph
-#
-# def make_template(jobname, net_type, features, GSC, avgps, df_probs, df_GO, df_dis, input_count, positive_genes, df_convert_out_subset, graph):
-#     # Render the Jinja template, filling fields as appropriate
-#     # return rendered HTML
-#     # Find the module absolute path and locate templates
-#
-#     module_root = os.path.join(os.path.dirname(__file__), 'templates')
-#     env = Environment(loader=FileSystemLoader(module_root))
-#
-#     # Find the absolute module path and the static files
-#     context_menu_path = os.path.join(os.path.dirname(__file__), 'static', 'd3-v4-contextmenu.js')
-#     with open(context_menu_path, 'r') as f:
-#         context_menu_js = f.read()
-#
-#     tip_path = os.path.join(os.path.dirname(__file__), 'static', 'd3-tip.js')
-#     with open(tip_path, 'r') as f:
-#         d3_tip_js = f.read()
-#
-#     graph_path = os.path.join(os.path.dirname(__file__), 'static', 'graph.js')
-#     with open(graph_path, 'r') as f:
-#         graph_js = f.read()
-#
-#     datatable_path = os.path.join(os.path.dirname(__file__), 'static', 'datatable.js')
-#     with open(datatable_path, 'r') as f:
-#         datatable_js = f.read()
-#
-#     main_path = os.path.join(os.path.dirname(__file__), 'static', 'main.css')
-#     with open(main_path, 'r') as f:
-#         main_css = f.read()
-#
-#     graph_css_path = os.path.join(os.path.dirname(__file__), 'static', 'graph.css')
-#     with open(graph_css_path, 'r') as f:
-#         graph_css = f.read()
-#
-#     d3_tip_css_path = os.path.join(os.path.dirname(__file__), 'static', 'd3-tip.css')
-#     with open(d3_tip_css_path, 'r') as f:
-#         d3_tip_css = f.read()
-#
-#     template = env.get_template('result_base.html').render(
-#         jobname=jobname,
-#         network=net_type,
-#         features=features,
-#         negativeclass=GSC,
-#         avgps=avgps,
-#         input_count=input_count,
-#         positive_genes=positive_genes,
-#         context_menu_js=context_menu_js,
-#         d3_tip_js=d3_tip_js,
-#         graph_js=graph_js,
-#         datatable_js=datatable_js,
-#         main_css=main_css,
-#         graph_css=graph_css,
-#         d3_tip_css=d3_tip_css,
-#         probs_table=df_probs.to_html(index=False, classes='table table-striped table-bordered" id = "probstable'),
-#         go_table=df_GO.to_html(index=False,
-#                                classes='table table-striped table-bordered nowrap" style="width: 100%;" id = "gotable'),
-#         dis_table=df_dis.to_html(index=False, classes='table table-striped table-bordered" id = "distable'),
-#         validate_results=df_convert_out_subset.to_html(index=False,
-#                                               classes='table table-striped table-bordered" id = "validateresults'),
-#         graph=graph)
-#
-#     return template
-#
-# def save_files(fp_save,jobname,df_probs,avgps):
-#     if not os.path.exists(fp_save):
-#         os.makedirs(fp_save)
-#     df_probs.to_csv(fp_save+jobname+'--predictions.tsv',sep='\t',header=True,index=False)
-#     np.savetxt(fp_save+jobname+'--CVvalues.txt',avgps,header='CVs (log2p)')
-#
-#
-#
-#
-#
-#
-################################################################################################################################
-
 # This set of functions is for abstracting how a file is loaded
 fp_HPCC = "/mnt/research/compbio/krishnanlab/projects/GenePlexus/repos/GenePlexusBackend/"
 
 
 def load_txtfile(file_type, file_loc, dtype_=str, net_type_=None, GSC_=None, target_set_=None):
     if file_type == "net_genes":
-        output_txt = np.loadtxt(file_loc + "%s_nodelist.txt" % net_type_, dtype=dtype_)
+        output_txt = np.loadtxt(osp.join(file_loc, f"{net_type_}_nodelist.txt"), dtype=dtype_)
     elif file_type == "uni_genes":
         if file_loc == "local":
             output_txt = np.loadtxt("../data_backend2/GSCs/{}_{}_universe.txt".format(GSC_, net_type_), dtype=dtype_)
@@ -555,7 +469,7 @@ def load_df(file_type, file_loc, sep_="\t", header_=None, net_type_=None):
 
 def load_dict(file_type, file_loc, anIDtype_=None, GSC_=None, net_type_=None, target_set_=None, features_=None):
     if file_type == "to_Entrez":
-        with open(file_loc + "Homo_sapiens__%s-to-Entrez__All-Mappings.pickle" % anIDtype_, "rb") as handle:
+        with open(osp.join(file_loc, f"Homo_sapiens__{anIDtype_}-to-Entrez__All-Mappings.pickle"), "rb") as handle:
             output_dict = pickle.load(handle)
     elif file_type == "good_sets":
         if file_loc == "local":
