@@ -270,26 +270,40 @@ def download_from_azure(fp_data, files_to_do):
 
 
 def make_download_options_lists(tasks, networks, features, GSCs):
+    all_tasks = ["IDconversion", "MachineLearning", "Similarities", "NetworkGraph"]
+    all_networks = ["BioGRID", "STRING", "STRING-EXP", "GIANT-TN"]
+    all_features = ["Adjacency", "Embedding", "Influence"]
+    all_GSCs = ["GO", "DisGeNet"]
+
     if isinstance(tasks, str):
         if tasks == "All":
-            tasks = ["IDconversion", "MachineLearning", "Similarities", "NetworkGraph"]
-        else:
+            tasks = all_tasks
+        elif tasks in all_tasks:
             tasks = [tasks]
+        else:
+            raise ValueError(f"Unexpected task: {tasks!r}")
     if isinstance(networks, str):
         if networks == "All":
-            networks = ["BioGRID", "STRING", "STRING-EXP", "GIANT-TN"]
-        else:
+            networks = all_networks
+        elif networks in all_networks:
             networks = [networks]
+        else:
+            raise ValueError(f"Unexpected network: {tasks!r}")
     if isinstance(features, str):
         if features == "All":
-            features = ["Adjacency", "Embedding", "Influence"]
-        else:
+            features = all_features
+        elif features in all_features:
             features = [features]
+        else:
+            raise ValueError(f"Unexpected feature: {features!r}")
     if isinstance(GSCs, str):
         if GSCs == "All":
-            GSCs = ["GO", "DisGeNet"]
-        else:
+            GSCs = all_GSCs
+        elif GSCs in all_GSCs:
             GSCs = [GSCs]
+        else:
+            raise ValueError(f"Unexpected GSC: {GSCs!r}")
+
     return tasks, networks, features, GSCs
 
 
