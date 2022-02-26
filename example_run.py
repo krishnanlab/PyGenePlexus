@@ -1,3 +1,6 @@
+import os
+import os.path as osp
+import pathlib
 import time
 
 import numpy as np
@@ -10,19 +13,23 @@ input_genes = np.loadtxt("input_genes.txt", dtype=str, delimiter=", ")
 input_genes = [item.strip("'") for item in input_genes]
 
 # Get the data from Azure
-geneplexus.download_select_data(
-    "/Users/christophermancuso/Documents/DataSets/Geneplexus_data/",
-    tasks="All",
-    networks="BioGRID",
-    features="Embedding",
-    GSCs="GO",
-)
+homedir = pathlib.Path(__file__).absolute().parent
+datadir = osp.join(homedir, "data")
+os.makedirs(datadir, exist_ok=True)
+print(f"Start downloading data and saving to: {datadir}")
+for GSCs in ["GO", "DisGeNet"]:
+    geneplexus.download_select_data(
+        datadir,
+        tasks="All",
+        networks="BioGRID",
+        features="Embedding",
+        GSCs=GSCs,
+    )
+print("Done downlaoding")
 
 # Run through the pipeline
 # First initialize the geneplexus object
-myclass = geneplexus.GenePlexus(
-    "/Users/christophermancuso/Documents/DataSets/Geneplexus_data/",
-)
+myclass = geneplexus.GenePlexus(datadir)
 
 # Load the input genes into the class
 myclass.load_genes(input_genes)
