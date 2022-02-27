@@ -121,7 +121,7 @@ def download_all_data(fp_data):
             if os.path.exists(fp_data + line):
                 print("The following file already exsists so skipping download", fp_data + line)
             else:
-                FN_Azure = "https://mancusogeneplexusstorage.blob.core.windows.net/mancusoblob2/%s" % line
+                FN_Azure = f"https://mancusogeneplexusstorage.blob.core.windows.net/mancusoblob2/{line}"
                 print("Downloading file from", FN_Azure)
                 r = requests.get(FN_Azure)
                 open(fp_data + line, "wb").write(r.content)
