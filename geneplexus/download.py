@@ -1,25 +1,6 @@
-import os
 import os.path as osp
 
 import requests
-
-
-def download_IDconversion_data(fp_data):
-    files_to_do = get_IDconversion_filenames()
-    download_from_azure(fp_data, files_to_do)
-
-
-def download_all_data(fp_data):
-    with open("data_filenames.txt", "r") as f:
-        for line in f:
-            line = line.strip()
-            if os.path.exists(fp_data + line):
-                print("The following file already exsists so skipping download", fp_data + line)
-            else:
-                FN_Azure = f"https://mancusogeneplexusstorage.blob.core.windows.net/mancusoblob2/{line}"
-                print("Downloading file from", FN_Azure)
-                r = requests.get(FN_Azure)
-                open(fp_data + line, "wb").write(r.content)
 
 
 def download_select_data(fp_data, tasks="All", networks="All", features="All", GSCs="All"):
