@@ -1,14 +1,4 @@
 import os
-import pickle
-import time
-
-import numpy as np
-from scipy.spatial.distance import cosine
-from scipy.stats import hypergeom
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import average_precision_score
-from sklearn.model_selection import StratifiedKFold
-from sklearn.preprocessing import StandardScaler
 
 from . import util
 

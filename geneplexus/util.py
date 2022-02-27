@@ -1,6 +1,5 @@
 import os.path as osp
 import pickle
-import time
 
 import numpy as np
 import pandas as pd
