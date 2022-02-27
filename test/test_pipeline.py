@@ -56,8 +56,7 @@ def data(request):
 class TestGenePlexusPipeline(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.gp = geneplexus.GenePlexus(HOMEDIR)
-        cls.gp.set_params("BioGRID", "Embedding", "GO")
+        cls.gp = geneplexus.GenePlexus(HOMEDIR, "BioGRID", "Embedding", "GO")
 
     @pytest.mark.order(0)
     def test_filenames(self):

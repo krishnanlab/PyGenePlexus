@@ -9,12 +9,12 @@ class GenePlexus:
     def __init__(
         self,
         file_loc,
-        network="BioGRID",
+        net_type="BioGRID",
         features="Embedding",
         GSC="GO",
     ):
         self.file_loc = file_loc
-        self.network = network
+        self.net_type = net_type
         self.features = features
         self.GSC = GSC
 
