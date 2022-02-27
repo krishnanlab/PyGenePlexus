@@ -256,8 +256,6 @@ def alter_validation_df(df_convert_out, table_summary, net_type):
     return df_convert_out_subset, positive_genes
 
 
-################################################################################################################################
-
 # functions for downloading data
 
 
