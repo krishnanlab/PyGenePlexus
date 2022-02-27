@@ -1,0 +1,897 @@
+ID	Name	Similarity	Rank
+DOID:10584	retinitis pigmentosa	3.7667261093293045	1
+DOID:0060119	pharynx cancer	3.5445014078844457	2
+DOID:5744	ovary serous adenocarcinoma	3.3208915378372335	3
+DOID:0050548	hereditary sensory neuropathy	3.2844802422055626	4
+DOID:974	upper respiratory tract disease	3.2681382739945524	5
+DOID:0080379	nephrotic syndrome type 2	3.237869873998039	6
+DOID:10629	microphthalmia	3.0700609041586215	7
+DOID:4464	collecting duct carcinoma	3.0150331915710806	8
+DOID:4471	chromophobe renal cell carcinoma	3.0150331915710806	8
+DOID:4473	sarcomatoid renal cell carcinoma	3.0150331915710806	8
+DOID:0110871	congenital stationary night blindness 2A	3.013214913157421	11
+DOID:0110870	congenital stationary night blindness 1A	3.013214913157421	11
+DOID:0110865	congenital stationary night blindness 1B	3.013214913157421	11
+DOID:3030	mucinous adenocarcinoma	2.895166070548266	14
+DOID:0070161	hereditary sensory and autonomic neuropathy type 2	2.879565974295048	15
+DOID:1307	dementia	2.860331988730024	16
+DOID:0080422	Dravet syndrome	2.8538327293653123	17
+DOID:3606	ovarian mucinous adenocarcinoma	2.84650657225855	18
+DOID:4007	bladder carcinoma	2.7989532505610866	19
+DOID:4465	papillary renal cell carcinoma	2.7983715486758802	20
+DOID:4467	clear cell renal cell carcinoma	2.7970625554246586	21
+DOID:9261	nasopharynx carcinoma	2.730603363908791	22
+DOID:9561	nasopharyngeal disease	2.730603363908791	22
+DOID:3587	pancreatic ductal carcinoma	2.6863824338291753	24
+DOID:5409	lung small cell carcinoma	2.6808701493667098	25
+DOID:5572	Beckwith-Wiedemann syndrome	2.644806083142295	26
+DOID:3717	gastric adenocarcinoma	2.6387044048478105	27
+DOID:8893	psoriasis	2.608360274573711	28
+DOID:480	movement disease	2.5763754490591437	29
+DOID:2994	germ cell cancer	2.570138420273267	30
+DOID:14791	Leber congenital amaurosis	2.5009433013451585	31
+DOID:0050534	congenital stationary night blindness	2.493691595283176	32
+DOID:8498	hereditary night blindness	2.493691595283176	32
+DOID:1148	polydactyly	2.418156300590288	34
+DOID:1558	angioedema	2.391193687579171	35
+DOID:0110213	isolated cleft palate	2.382598841474709	36
+DOID:0110980	Joubert syndrome 1	2.366150300634754	37
+DOID:0050777	Joubert syndrome	2.342346187609743	38
+DOID:104	bacterial infectious disease	2.336520535269037	39
+DOID:5172	endometrium carcinoma in situ	2.2927024589221756	40
+DOID:4607	biliary tract cancer	2.270300678530224	41
+DOID:8499	night blindness	2.2663660459459884	42
+DOID:0080009	X-linked dominant disease	2.229566400185168	43
+DOID:10914	amnestic disorder	2.2147596469358155	44
+DOID:6364	migraine	2.193101039637323	45
+DOID:4451	renal carcinoma	2.1582189990468685	46
+DOID:4398	pustulosis of palm and sole	2.1544971973948295	47
+DOID:9563	bronchiectasis	2.1501966664958654	48
+DOID:2566	corneal dystrophy	2.148698581437686	49
+DOID:9476	Sheehan syndrome	2.117923160102563	50
+DOID:999	hypereosinophilic syndrome	2.0931267486652425	51
+DOID:866	vein disease	2.089558961652912	52
+DOID:4450	renal cell carcinoma	2.0760705090323084	53
+DOID:1074	kidney failure	2.0711567053024877	54
+DOID:3713	ovary adenocarcinoma	2.0290829896791136	55
+DOID:2730	epidermolysis bullosa	2.0071433625019415	56
+DOID:2731	vesiculobullous skin disease	2.0071433625019415	56
+DOID:1184	nephrotic syndrome	1.9844297118122873	58
+DOID:2590	familial nephrotic syndrome	1.9844297118122873	58
+DOID:2527	nephrosis	1.9844297118122873	58
+DOID:0050545	visceral heterotaxy	1.955512154015612	61
+DOID:2843	long QT syndrome	1.949199074327294	62
+DOID:5517	stomach carcinoma	1.9343078549168837	63
+DOID:0050426	Stevens-Johnson syndrome	1.9151052243429258	64
+DOID:13141	uveitis	1.9132518235874263	65
+DOID:11105	fundus albipunctatus	1.9107409081947921	66
+DOID:8501	fundus dystrophy	1.8988434402875058	67
+DOID:10608	celiac disease	1.8780872202081673	68
+DOID:1701	steroid inherited metabolic disorder	1.8526358876291458	69
+DOID:3146	lipid metabolism disorder	1.85175657062224	70
+DOID:8584	Burkitt lymphoma	1.835278290920981	71
+DOID:706	mature B-cell neoplasm	1.835278290920981	71
+DOID:1070	primary open angle glaucoma	1.829400999285933	73
+DOID:8778	Crohn's disease	1.8190064342686687	74
+DOID:4362	cervical cancer	1.7996007720961176	75
+DOID:2253	cervix disease	1.7996007720961176	75
+DOID:2256	osteochondrodysplasia	1.7896831631833197	77
+DOID:3635	congenital myasthenic syndrome	1.7872372517010224	78
+DOID:439	neuromuscular junction disease	1.7872372517010224	78
+DOID:0050706	variable age at onset electroclinical syndrome	1.7767633325190082	80
+DOID:891	progressive myoclonus epilepsy	1.7767633325190082	80
+DOID:3021	acute kidney failure	1.7717904419329347	82
+DOID:3121	gallbladder cancer	1.7631532412889783	83
+DOID:4948	gallbladder carcinoma	1.7631532412889783	83
+DOID:670	amphetamine abuse	1.7539065740986977	85
+DOID:12241	beta thalassemia	1.7450212184432823	86
+DOID:543	dystonia	1.7443793175311453	87
+DOID:1529	penile disease	1.7288863618955326	88
+DOID:3071	gliosarcoma	1.7210839902500006	89
+DOID:0080005	bone remodeling disease	1.717634750067937	90
+DOID:4989	pancreatitis	1.7175125932723374	91
+DOID:9120	amyloidosis	1.7047829778178556	92
+DOID:1555	urticaria	1.702673536832866	93
+DOID:841	extrinsic allergic alveolitis	1.6933960334115934	94
+DOID:9296	cleft lip	1.6876651610120719	95
+DOID:0050908	myelodysplastic syndrome	1.652731920598556	96
+DOID:3451	skin carcinoma	1.6413031261714348	97
+DOID:3753	Hermansky-Pudlak syndrome	1.631949773405274	98
+DOID:0050776	non-syndromic X-linked intellectual disability	1.6293767216656843	99
+DOID:0050889	non-syndromic intellectual disability	1.626535192695261	100
+DOID:9562	primary ciliary dyskinesia	1.6215638434580182	101
+DOID:397	restrictive cardiomyopathy	1.613766509177138	102
+DOID:0111444	progressive myoclonus epilepsy 4	1.6040584522089505	103
+DOID:0060039	autoimmune disease of skin and connective tissue	1.592000401799759	104
+DOID:6406	double outlet right ventricle	1.5913207307943757	105
+DOID:4556	lung large cell carcinoma	1.5814085038276127	106
+DOID:11014	anorectal stricture	1.577061567123514	107
+DOID:10952	nephritis	1.5735560965866087	108
+DOID:1192	peripheral nervous system neoplasm	1.5651135593048446	109
+DOID:10907	microcephaly	1.5639206916615778	110
+DOID:447	renal tubular transport disease	1.5450222572345944	111
+DOID:0050811	congenital adrenal hyperplasia	1.5441799002842211	112
+DOID:10579	leukodystrophy	1.5404242479786086	113
+DOID:4045	muscle cancer	1.52794410965189	114
+DOID:1342	congenital hypoplastic anemia	1.525860833448289	115
+DOID:0060264	pontocerebellar hypoplasia	1.5230864839266207	116
+DOID:2921	glomerulonephritis	1.511110668582355	117
+DOID:0110340	osteogenesis imperfecta type 4	1.5010027903154524	118
+DOID:10780	primary polycythemia	1.4875229015326763	119
+DOID:8986	narcolepsy	1.4846067046092069	120
+DOID:2154	nephroblastoma	1.4703617811865441	121
+DOID:674	cleft palate	1.4618517133247704	122
+DOID:1115	sarcoma	1.451436339928134	123
+DOID:0111005	cone-rod dystrophy 2	1.4436738398204692	124
+DOID:0050888	syndromic intellectual disability	1.436069166990327	125
+DOID:865	vasculitis	1.4277355917082721	126
+DOID:0050424	familial adenomatous polyposis	1.4275783898181333	127
+DOID:0080409	familial adenomatous polyposis 1	1.4275783898181333	127
+DOID:0060162	dentatorubral-pallidoluysian atrophy	1.425451730403854	129
+DOID:0050567	orofacial cleft	1.416549284590751	130
+DOID:930	orbital disease	1.3955408983809947	131
+DOID:6683	X-linked Aarskog syndrome	1.3900760318006118	132
+DOID:0111824	Aarskog syndrome	1.3900760318006118	132
+DOID:2513	basal cell carcinoma	1.384837414167317	134
+DOID:9267	urea cycle disorder	1.3806927852069315	135
+DOID:2671	transitional cell carcinoma	1.3789277475463428	136
+DOID:1417	choroid disease	1.3712662220535374	137
+DOID:10241	thalassemia	1.3635667291073355	138
+DOID:0080639	bone sarcoma	1.3601497221022387	139
+DOID:9775	diastolic heart failure	1.355585004433966	140
+DOID:8923	skin melanoma	1.3524163728760372	141
+DOID:3082	interstitial lung disease	1.346491367235055	142
+DOID:1681	heart septal defect	1.325276440986215	143
+DOID:13189	gout	1.323989976382627	144
+DOID:0040085	bacterial sepsis	1.3190299383916626	145
+DOID:12336	male infertility	1.307829237840071	146
+DOID:11971	synostosis	1.307480309495518	147
+DOID:8368	chordoid meningioma	1.301190404554345	148
+DOID:4587	benign meningioma	1.301190404554345	148
+DOID:6086	malignant leptomeningeal tumor	1.301190404554345	148
+DOID:5612	spinal cancer	1.301190404554345	148
+DOID:4594	microcystic meningioma	1.301190404554345	148
+DOID:4143	orbital cancer	1.301190404554345	148
+DOID:4210	clear cell meningioma	1.301190404554345	148
+DOID:6112	cerebral meningioma	1.301190404554345	148
+DOID:4141	intraorbital meningioma	1.301190404554345	148
+DOID:3772	intraventricular meningioma	1.301190404554345	148
+DOID:1140	spinal canal and spinal cord meningioma	1.301190404554345	148
+DOID:1138	spinal meningioma	1.301190404554345	148
+DOID:0060106	brain meningioma	1.301190404554345	148
+DOID:7689	leptomeninges sarcoma	1.301190404554345	148
+DOID:7210	psammomatous meningioma	1.301190404554345	148
+DOID:7213	transitional meningioma	1.301190404554345	148
+DOID:6114	cerebral convexity meningioma	1.301190404554345	148
+DOID:6548	angiomatous meningioma	1.301190404554345	148
+DOID:6869	parasagittal meningioma	1.301190404554345	148
+DOID:7212	meningothelial meningioma	1.301190404554345	148
+DOID:7211	fibrous meningioma	1.301190404554345	148
+DOID:12450	pancytopenia	1.296898576029279	169
+DOID:3907	lung squamous cell carcinoma	1.2950278697320474	170
+DOID:3310	atopic dermatitis	1.2920140790012404	171
+DOID:8677	perinatal necrotizing enterocolitis	1.286344620959271	172
+DOID:0080036	SOST-related sclerosing bone dysplasia	1.2852774136294758	173
+DOID:576	proteinuria	1.2777481423426618	174
+DOID:2043	hepatitis B	1.2641946630027387	175
+DOID:5119	ovarian cyst	1.2578794818004577	176
+DOID:1934	dysostosis	1.2418854296767026	177
+DOID:0060060	non-Hodgkin lymphoma	1.2261591269819399	178
+DOID:0050572	cone-rod dystrophy	1.2227945741396626	179
+DOID:0050703	infancy electroclinical syndrome	1.2106734094061526	180
+DOID:3247	rhabdomyosarcoma	1.2087834014355876	181
+DOID:707	B-cell lymphoma	1.2052926845256013	182
+DOID:627	severe combined immunodeficiency	1.2049826911901806	183
+DOID:1168	familial hyperlipidemia	1.1959185326306243	184
+DOID:649	prion disease	1.1958464022247426	185
+DOID:1657	ventricular septal defect	1.1864123713434613	186
+DOID:11949	Creutzfeldt-Jakob disease	1.1822879438466327	187
+DOID:4043	skeletal muscle cancer	1.1752313643676093	188
+DOID:679	basal ganglia disease	1.1725420388572172	189
+DOID:4606	bile duct cancer	1.172113107340148	190
+DOID:9477	pulmonary embolism	1.1685012496700562	191
+DOID:60001	pulmonary artery disease	1.1685012496700562	191
+DOID:11328	schizophreniform disorder	1.1585022677334198	193
+DOID:3128	anus disease	1.1567396055545016	194
+DOID:1285	rectal disease	1.1567396055545016	194
+DOID:11054	urinary bladder cancer	1.1515066807470766	196
+DOID:9973	substance dependence	1.150317590329812	197
+DOID:0050563	nonsyndromic deafness	1.14955888870689	198
+DOID:14717	centronuclear myopathy	1.1462608042405655	199
+DOID:9252	amino acid metabolic disorder	1.1318840940557773	200
+DOID:8466	retinal degeneration	1.129560253017236	201
+DOID:0060123	connective tissue benign neoplasm	1.1196584052663674	202
+DOID:0050851	glomerulosclerosis	1.1147599636375738	203
+DOID:1312	focal segmental glomerulosclerosis	1.1147599636375738	203
+DOID:14557	primary pulmonary hypertension	1.1143559765269762	205
+DOID:12326	chronic pulmonary heart disease	1.1143559765269762	205
+DOID:8515	Cor pulmonale	1.1143559765269762	205
+DOID:769	neuroblastoma	1.1140497143812225	208
+DOID:2621	autonomic nervous system neoplasm	1.1140497143812225	208
+DOID:0080322	polycystic kidney disease	1.1012054508622742	210
+DOID:1067	open-angle glaucoma	1.0993678937203915	211
+DOID:4624	Ollier disease	1.0989230077173728	212
+DOID:1925	Coffin-Siris syndrome	1.097246492890507	213
+DOID:205	hyperostosis	1.0930503453403781	214
+DOID:8719	in situ carcinoma	1.0911817267926154	215
+DOID:0110339	osteogenesis imperfecta type 3	1.091031635059698	216
+DOID:0060307	autosomal dominant non-syndromic intellectual disability	1.0900514470898244	217
+DOID:2452	thrombophilia	1.0895748712064408	218
+DOID:2645	benign mesothelioma	1.0875489851399467	219
+DOID:3314	angiomyolipoma	1.0875489851399467	219
+DOID:0060855	autosomal dominant pseudohypoaldosteronism type 1	1.083546905317128	221
+DOID:4479	pseudohypoaldosteronism	1.083546905317128	221
+DOID:0050562	West syndrome	1.0739640330897555	223
+DOID:12721	multiple epiphyseal dysplasia	1.0670717995004115	224
+DOID:4448	macular degeneration	1.064815532753769	225
+DOID:2477	motor peripheral neuropathy	1.0600734130613836	226
+DOID:438	autoimmune disease of the nervous system	1.0582616802011113	227
+DOID:2355	anemia	1.0575722938422079	228
+DOID:0050581	brachydactyly	1.048931957048102	229
+DOID:10871	age related macular degeneration	1.0432909452717	230
+DOID:9460	uterine corpus cancer	1.0427585332218166	231
+DOID:0050704	childhood electroclinical syndrome	1.0329503188917284	232
+DOID:0060318	acute promyelocytic leukemia	1.0308958593788526	233
+DOID:0060159	organic acidemia	1.0304281311029957	234
+DOID:5426	premature ovarian failure	1.0272066555994765	235
+DOID:0111216	autosomal recessive centronuclear myopathy	1.017952214619306	236
+DOID:3347	osteosarcoma	1.0153992525592965	237
+DOID:12522	bagassosis	1.015188888655381	238
+DOID:1059	intellectual disability	1.0052290957759928	239
+DOID:0060388	chromosomal deletion syndrome	1.0028325178565372	240
+DOID:9799	eye degenerative disease	0.9931200421568118	241
+DOID:110	lens disease	0.9900867652945847	242
+DOID:758	situs inversus	0.9891536222717084	243
+DOID:9008	psoriatic arthritis	0.9841802443964034	244
+DOID:12217	Lewy body dementia	0.9840016050996716	245
+DOID:10825	essential hypertension	0.9684131873069413	246
+DOID:3074	giant cell glioblastoma	0.9671033555165323	247
+DOID:4947	cholangiocarcinoma	0.9557156856169762	248
+DOID:4896	bile duct adenocarcinoma	0.9557156856169762	248
+DOID:4897	bile duct carcinoma	0.9557156856169762	248
+DOID:12858	Huntington's disease	0.9520420986730025	251
+DOID:0060262	gallbladder disease	0.951096407441281	252
+DOID:3939	lipomatous cancer	0.9505678333334538	253
+DOID:3382	liposarcoma	0.9505678333334538	253
+DOID:1089	tethered spinal cord syndrome	0.949626140730427	255
+DOID:0060099	musculoskeletal system benign neoplasm	0.9430517907648858	256
+DOID:0060082	breast benign neoplasm	0.94195456311954	257
+DOID:0060097	thoracic benign neoplasm	0.94195456311954	257
+DOID:5395	functioning pituitary adenoma	0.9371133232681441	259
+DOID:2986	IgA glomerulonephritis	0.9307993938477165	260
+DOID:1247	blood coagulation disease	0.9252049362286534	261
+DOID:0060190	ileocolitis	0.9198132227147455	262
+DOID:0060191	gastroduodenal Crohn's disease	0.9198132227147455	262
+DOID:440	neuromuscular disease	0.9192042178758243	264
+DOID:589	congenital hemolytic anemia	0.9143275975389764	265
+DOID:3480	uveal disease	0.9066804094337897	266
+DOID:53	pituitary gland disease	0.9023581440142923	267
+DOID:9007	sudden infant death syndrome	0.9008434465851592	268
+DOID:626	complement deficiency	0.8988002098178005	269
+DOID:0080006	bone development disease	0.8986359902966667	270
+DOID:3165	skin benign neoplasm	0.8925208000617328	271
+DOID:0060121	integumentary system benign neoplasm	0.8925208000617328	271
+DOID:2007	degeneration of macula and posterior pole	0.887800719921125	273
+DOID:0050338	primary bacterial infectious disease	0.8764519639239574	274
+DOID:4123	nail disease	0.8737900211095327	275
+DOID:1339	Diamond-Blackfan anemia	0.869462486348746	276
+DOID:0001816	angiosarcoma	0.8610301077088742	277
+DOID:0080010	bone structure disease	0.8580826010070608	278
+DOID:0090005	Schwartz-Jampel syndrome 1	0.849295365968724	279
+DOID:0080362	spondyloepiphyseal dysplasia tarda	0.849295365968724	279
+DOID:3969	thyroid gland papillary carcinoma	0.8422919608259551	281
+DOID:3327	partial motor epilepsy	0.8422371911617439	282
+DOID:3498	pancreatic ductal adenocarcinoma	0.8416089606638386	283
+DOID:4074	pancreatic adenocarcinoma	0.8416089606638386	283
+DOID:13099	Moyamoya disease	0.8361827402538985	285
+DOID:0050738	Y-linked monogenic disease	0.8356642869291249	286
+DOID:0070187	Y-linked spermatogenic failure 2	0.8356642869291249	286
+DOID:0050439	Usher syndrome	0.8352375724379185	288
+DOID:0060892	late onset Parkinson's disease	0.8338358204276066	289
+DOID:10595	Charcot-Marie-Tooth disease	0.830007972544358	290
+DOID:12712	nephronophthisis	0.8274311707139822	291
+DOID:0060004	autoimmune disease of central nervous system	0.8254355677264604	292
+DOID:0111217	autosomal dominant centronuclear myopathy	0.8239306785642894	293
+DOID:0111223	centronuclear myopathy 1	0.8239306785642894	293
+DOID:535	sleep disorder	0.8239015046401746	295
+DOID:0090070	hypogonadotropic hypogonadism	0.8232101109572947	296
+DOID:9258	Waardenburg's syndrome	0.8222542854745732	297
+DOID:83	cataract	0.812417731865555	298
+DOID:1631	benign breast phyllodes tumor	0.8081662071346196	299
+DOID:0050709	early infantile epileptic encephalopathy	0.8067978204539606	300
+DOID:0080205	CAKUT	0.7997900407561995	301
+DOID:4501	orofaciodigital syndrome	0.7990392669956076	302
+DOID:0060071	pre-malignant neoplasm	0.7915149814762323	303
+DOID:2340	craniosynostosis	0.7832584511034832	304
+DOID:14323	Marfan syndrome	0.7747449936798895	305
+DOID:11372	megacolon	0.769183084549173	306
+DOID:2975	cystic kidney disease	0.7636758866144743	307
+DOID:4254	osteosclerosis	0.7626890540655589	308
+DOID:0090078	hypogonadotropic hypogonadism 7 with or without anosmia	0.7215373109461634	309
+DOID:10003	sensorineural hearing loss	0.720809374638887	310
+DOID:898	autosomal dominant polycystic kidney disease	0.7161774981380676	311
+DOID:9053	bladder carcinoma in situ	0.7113097777738756	312
+DOID:9138	stomach carcinoma in situ	0.7101860698356125	313
+DOID:1924	hypogonadism	0.706025022027678	314
+DOID:1532	pleural disease	0.6975592658628663	315
+DOID:10487	Hirschsprung's disease	0.6952180418587384	316
+DOID:0050817	Stargardt disease	0.6950962760922444	317
+DOID:0060010	Omenn syndrome	0.6813879237629121	318
+DOID:2320	obstructive lung disease	0.6806617063031631	319
+DOID:6419	tetralogy of Fallot	0.6721602817363687	320
+DOID:0111198	autosomal dominant distal hereditary motor neuronopathy	0.6700616160200199	321
+DOID:3304	germinoma	0.6597794110873693	322
+DOID:688	embryonal cancer	0.6597794110873693	322
+DOID:3328	temporal lobe epilepsy	0.6544198509512884	324
+DOID:896	metal metabolism disorder	0.6541235681576298	325
+DOID:3458	breast adenocarcinoma	0.6512043941528391	326
+DOID:13241	Behcet's disease	0.6485811601523808	327
+DOID:0050873	follicular lymphoma	0.6475966344408057	328
+DOID:0111962	combined immunodeficiency	0.6418172199896784	329
+DOID:1414	ovarian dysfunction	0.6320490678127844	330
+DOID:0080027	spondyloepimetaphyseal dysplasia	0.6234210912407115	331
+DOID:3652	Leigh disease	0.6048184440848164	332
+DOID:3369	Ewing sarcoma	0.6006907597762617	333
+DOID:214	teeth hard tissue disease	0.5987043693291304	334
+DOID:784	chronic kidney disease	0.5956846647466215	335
+DOID:12365	malaria	0.5930707757351475	336
+DOID:1443	cerebral degeneration	0.5900834466831145	337
+DOID:12678	hypercalcemia	0.5667167773583504	338
+DOID:8432	polycythemia	0.5643585863141997	339
+DOID:0080011	bone resorption disease	0.5613584222083502	340
+DOID:2213	hemorrhagic disease	0.554010507590175	341
+DOID:272	hepatic vascular disease	0.5539784366843313	342
+DOID:7147	ankylosing spondylitis	0.5535851362910423	343
+DOID:0070115	Meckel syndrome 1	0.5534416116642015	344
+DOID:0060340	ciliopathy	0.5497930358268126	345
+DOID:1575	rheumatic disease	0.5352571889809892	346
+DOID:419	scleroderma	0.5352571889809892	346
+DOID:3829	pituitary adenoma	0.5291476074414003	348
+DOID:60009	pituitary gland benign neoplasm	0.5291476074414003	348
+DOID:854	collagen disease	0.5281432083140187	350
+DOID:0050136	systemic mycosis	0.5223067118913429	351
+DOID:1564	fungal infectious disease	0.5223067118913429	351
+DOID:2473	opportunistic mycosis	0.5223067118913429	351
+DOID:3762	cytochrome-c oxidase deficiency disease	0.521581104009042	354
+DOID:11612	polycystic ovary syndrome	0.5207458111736023	355
+DOID:0060122	integumentary system cancer	0.5177580085186418	356
+DOID:4159	skin cancer	0.5177580085186418	356
+DOID:1485	cystic fibrosis	0.5117604886498407	358
+DOID:628	combined T cell and B cell immunodeficiency	0.5104040628655957	359
+DOID:13548	secondary Parkinson disease	0.5063577068011055	360
+DOID:14450	46 XX gonadal dysgenesis	0.5033131953604649	361
+DOID:9253	gastrointestinal stromal tumor	0.5030797242434774	362
+DOID:0050836	focal dystonia	0.5022608584087241	363
+DOID:0060029	autoimmune disease of exocrine system	0.5019210516138491	364
+DOID:12894	Sjogren's syndrome	0.5019210516138491	364
+DOID:13810	familial hypercholesterolemia	0.5017014481763709	366
+DOID:231	motor neuron disease	0.4876854967400694	367
+DOID:0060309	syndromic X-linked intellectual disability	0.4841980882460406	368
+DOID:0050565	autosomal recessive nonsyndromic deafness	0.4808623467251894	369
+DOID:607	paraplegia	0.48077678056841	370
+DOID:2476	hereditary spastic paraplegia	0.48077678056841	370
+DOID:3371	chondrosarcoma	0.4656664779961906	372
+DOID:4610	intestinal benign neoplasm	0.4645127602153604	373
+DOID:10123	pigmentation disease	0.4608097973728552	374
+DOID:0050646	distal arthrogryposis	0.45976050680018093	375
+DOID:3213	demyelinating disease	0.45726960303382075	376
+DOID:2352	hemochromatosis	0.45647490383722744	377
+DOID:1824	status epilepticus	0.4520405264703782	378
+DOID:0050591	tooth agenesis	0.44814910033405647	379
+DOID:13714	anodontia	0.44814910033405647	379
+DOID:6050	esophageal disease	0.4419595381023251	381
+DOID:0060429	chromosomal duplication syndrome	0.43981977061637173	382
+DOID:176	cardiovascular cancer	0.427445233091821	383
+DOID:175	vascular cancer	0.427445233091821	383
+DOID:2377	multiple sclerosis	0.4270992211167742	385
+DOID:2237	hepatitis	0.42444824537215325	386
+DOID:0060051	autoimmune disease of cardiovascular system	0.4240497785268429	387
+DOID:1882	atrial heart septal defect	0.42277697613595344	388
+DOID:0050778	Meckel syndrome	0.4154152715674606	389
+DOID:986	alopecia areata	0.4124218524224075	390
+DOID:0060368	Parkinson's disease 2	0.4058425339347391	391
+DOID:0050904	salivary gland carcinoma	0.40447425403742754	392
+DOID:1432	blindness	0.39968039919963844	393
+DOID:5418	schizoaffective disorder	0.39800013260873646	394
+DOID:5812	MHC class II deficiency	0.3932575253284815	395
+DOID:1383	sweat gland disease	0.3927519245174241	396
+DOID:9297	lip disease	0.3895862782241175	397
+DOID:1520	colon carcinoma	0.38848901876327363	398
+DOID:219	colon cancer	0.38848901876327363	398
+DOID:13089	intracranial arterial disease	0.38369147403021964	400
+DOID:3527	cerebral arterial disease	0.38369147403021964	400
+DOID:2018	hyperinsulinism	0.38361236378352287	402
+DOID:731	urinary system benign neoplasm	0.37817275559782965	403
+DOID:0050539	Charcot-Marie-Tooth disease type 2	0.37780134919866	404
+DOID:368	cerebrum cancer	0.37759427703351495	405
+DOID:1659	supratentorial cancer	0.37759427703351495	405
+DOID:1927	sphingolipidosis	0.372935706286991	407
+DOID:2048	autoimmune hepatitis	0.37205862282760044	408
+DOID:0050543	Charcot-Marie-Tooth disease intermediate type	0.3700592699798938	409
+DOID:10320	asbestosis	0.369179034285466	410
+DOID:14291	Noonan syndrome with multiple lentigines	0.369090812773832	411
+DOID:0080690	RASopathy	0.369090812773832	411
+DOID:3827	congenital diaphragmatic hernia	0.36886475205811053	413
+DOID:10481	diaphragm disease	0.36886475205811053	413
+DOID:1849	cannabis dependence	0.3483305075700036	415
+DOID:9977	hallucinogen dependence	0.3483305075700036	415
+DOID:8538	reticulosarcoma	0.3445287535617997	417
+DOID:9744	type 1 diabetes mellitus	0.3401195035165545	418
+DOID:0050702	neonatal period electroclinical syndrome	0.3341573748068563	419
+DOID:0060868	leukoencephalopathy with vanishing white matter	0.3258690944545339	420
+DOID:365	bladder disease	0.32539099446786907	421
+DOID:883	parasitic helminthiasis infectious disease	0.311225791731054	422
+DOID:0060578	Noonan syndrome 1	0.30803743063964373	423
+DOID:0080089	tubular aggregate myopathy 1	0.30652930006799506	424
+DOID:14330	Parkinson's disease	0.3053027820115944	425
+DOID:9505	cannabis abuse	0.3029471582696016	426
+DOID:235	colonic benign neoplasm	0.30158261090416605	427
+DOID:934	viral infectious disease	0.2957446984279757	428
+DOID:10908	hydrocephalus	0.29152500543677556	429
+DOID:11664	nephrosclerosis	0.2895001169432357	430
+DOID:0060091	cardiovascular organ benign neoplasm	0.2845514042013051	431
+DOID:12583	velocardiofacial syndrome	0.2818559175667575	432
+DOID:11383	cryptorchidism	0.28085193884540144	433
+DOID:10124	corneal disease	0.2808357136706451	434
+DOID:2490	congenital nervous system abnormality	0.27001248659293225	435
+DOID:10316	pneumoconiosis	0.26082043910389446	436
+DOID:0050624	gastrointestinal system benign neoplasm	0.25858027992426924	437
+DOID:11476	osteoporosis	0.2583181112944472	438
+DOID:0060090	central nervous system benign neoplasm	0.25671146356790725	439
+DOID:5773	oral submucous fibrosis	0.24729258174212676	440
+DOID:4436	anterior cranial fossa meningioma	0.24416661906717027	441
+DOID:8057	olfactory groove meningioma	0.24416661906717027	441
+DOID:1475	lymphangioma	0.239639433495062	443
+DOID:60006	benign vascular tumor	0.239639433495062	443
+DOID:3748	esophagus squamous cell carcinoma	0.23867497245939626	445
+DOID:1588	thrombocytopenia	0.23564151308540532	446
+DOID:3565	meningioma	0.2342924195514044	447
+DOID:8649	tongue cancer	0.23030850562187238	448
+DOID:10944	tongue disease	0.23030850562187238	448
+DOID:0080014	chromosomal disease	0.21878302367961017	450
+DOID:9406	hypopituitarism	0.21567035028597925	451
+DOID:0060005	autoimmune disease of endocrine system	0.2141961707151518	452
+DOID:10854	salivary gland disease	0.21134642322182298	453
+DOID:8850	salivary gland cancer	0.21134642322182298	453
+DOID:11717	neonatal diabetes	0.2091338745837952	455
+DOID:9521	Laron syndrome	0.20912414861120557	456
+DOID:332	amyotrophic lateral sclerosis	0.20447478759238014	457
+DOID:12995	conduct disorder	0.20340761495298199	458
+DOID:2234	focal epilepsy	0.20297363515828318	459
+DOID:13359	Ehlers-Danlos syndrome	0.20135651294443074	460
+DOID:4866	salivary gland adenoid cystic carcinoma	0.19982607239065114	461
+DOID:3908	lung non-small cell carcinoma	0.1980056381741097	462
+DOID:0050571	congenital disorder of glycosylation type II	0.19280653900240077	463
+DOID:2825	nose disease	0.18794086894393397	464
+DOID:0111910	spermatogenic failure	0.18749963571561057	465
+DOID:0060115	nervous system benign neoplasm	0.1870539990006997	466
+DOID:12347	osteogenesis imperfecta	0.1846846700376509	467
+DOID:5723	optic atrophy	0.17771595727531156	468
+DOID:319	spinal cord disease	0.17718415350816735	469
+DOID:14250	Down syndrome	0.1720677459242881	470
+DOID:62	aortic valve disease	0.16480530858843678	471
+DOID:9975	cocaine dependence	0.1550524731690033	472
+DOID:3083	chronic obstructive pulmonary disease	0.1465242105293102	473
+DOID:2871	endometrial carcinoma	0.14319225553615522	474
+DOID:0050538	Charcot-Marie-Tooth disease type 1	0.1420869540867732	475
+DOID:2519	testicular disease	0.12593797333385795	476
+DOID:2218	blood platelet disease	0.11311026569796047	477
+DOID:0060233	cardiofaciocutaneous syndrome	0.11256110788360141	478
+DOID:0050469	Costello syndrome	0.11256110788360141	478
+DOID:0111460	cardiofaciocutaneous syndrome 1	0.11256110788360141	478
+DOID:906	peroxisomal disease	0.11151002172899727	481
+DOID:12449	aplastic anemia	0.10875198683723611	482
+DOID:0080307	myofibrillar myopathy	0.10867848297049934	483
+DOID:11934	head and neck cancer	0.1055836803539317	484
+DOID:3756	protein C deficiency	0.10339504345696797	485
+DOID:1203	drug-induced mental disorder	0.10046987160399747	486
+DOID:1742	drug psychosis	0.10046987160399747	486
+DOID:2789	parasitic protozoa infectious disease	0.10045528267225047	488
+DOID:0050569	Seckel syndrome	0.09786567173851307	489
+DOID:3193	peripheral nerve sheath neoplasm	0.08907794911437306	490
+DOID:809	cocaine abuse	0.07686362656396899	491
+DOID:9455	lipid storage disease	0.0740890217471378	492
+DOID:422	congenital structural myopathy	0.07359864103417606	493
+DOID:0060894	early-onset Parkinson's disease	0.07358205516033377	494
+DOID:3068	glioblastoma	0.06969251756028319	495
+DOID:3490	Noonan syndrome	0.06525707155541303	496
+DOID:0060061	cutaneous T cell lymphoma	0.06197962377277722	497
+DOID:0110861	autosomal recessive polycystic kidney disease	0.05106178050429143	498
+DOID:778	delusional disorder	0.0503673228413113	499
+DOID:255	hemangioma	0.0486104390926632	500
+DOID:1094	attention deficit hyperactivity disorder	0.047050703481460655	501
+DOID:13636	Fanconi anemia	0.04626668686200295	502
+DOID:1686	glaucoma	0.03236363872401895	503
+DOID:3008	invasive ductal carcinoma	0.029537120274525038	504
+DOID:9452	fatty liver disease	0.02522257188060595	505
+DOID:2729	dyskeratosis congenita	0.018773651308948897	506
+DOID:3069	astrocytoma	0.014460612419704803	507
+DOID:8651	Hodgkin's granuloma	0.0055259757476599615	508
+DOID:0110085	asphyxiating thoracic dystrophy 1	0.0052965917039120725	509
+DOID:0111246	amyotrophic lateral sclerosis-parkinsonism/dementia complex 1	0.00222984073302088	510
+DOID:0050559	Fukuyama congenital muscular dystrophy	0.0	511
+DOID:0050773	paraganglioma	0.0	511
+DOID:0111229	congenital muscular dystrophy-dystroglycanopathy type A	0.0	511
+DOID:0050742	nicotine dependence	0.0	511
+DOID:0060050	autoimmune disease of blood	0.0	511
+DOID:1459	hypothyroidism	0.0	511
+DOID:701	dentin dysplasia	0.0	511
+DOID:0050524	maturity-onset diabetes of the young	0.0	511
+DOID:0111140	IGSF1 deficiency syndrome	0.0	511
+DOID:1279	ocular motility disease	0.0	511
+DOID:780	placenta disease	0.0	511
+DOID:693	dental enamel hypoplasia	0.0	511
+DOID:811	lipodystrophy	0.0	511
+DOID:0050801	androgenic alopecia	0.0	511
+DOID:12177	common variable immunodeficiency	0.0	511
+DOID:0060043	sexual disorder	0.0	511
+DOID:0060786	hypomyelinating leukodystrophy	0.0	511
+DOID:0070122	Meckel syndrome 8	0.0	511
+DOID:0110087	asphyxiating thoracic dystrophy 3	0.0	511
+DOID:0111237	congenital muscular dystrophy-dystroglycanopathy type A1	0.0	511
+DOID:767	muscular atrophy	0.0	511
+DOID:10582	Refsum disease	0.0	511
+DOID:6688	autoimmune lymphoproliferative syndrome	0.0	511
+DOID:1852	intrahepatic cholestasis	0.0	511
+DOID:1883	hepatitis C	0.0	511
+DOID:3133	acute porphyria	0.0	511
+DOID:11713	diabetic angiopathy	0.0	511
+DOID:5557	testicular germ cell cancer	0.0	511
+DOID:3388	periodontal disease	0.0	511
+DOID:633	myositis	0.0	511
+DOID:705	Leber hereditary optic neuropathy	0.0	511
+DOID:0110881	holoprosencephaly 1	0.0	511
+DOID:0050032	mineral metabolism disease	0.0	511
+DOID:0060086	female reproductive organ benign neoplasm	0.0	511
+DOID:0060031	autoimmune disease of gastrointestinal tract	0.0	511
+DOID:0110222	Brugada syndrome 5	0.0	511
+DOID:0080476	peroxisome biogenesis disorder 1A	0.0	511
+DOID:0060719	autosomal recessive congenital ichthyosis 10	0.0	511
+DOID:9637	stomatitis	0.0	511
+DOID:5353	colonic disease	0.0	511
+DOID:7532	squamous papillomatosis	0.0	511
+DOID:4138	bile duct disease	0.0	511
+DOID:9741	biliary tract disease	0.0	511
+DOID:2742	auditory system disease	0.0	511
+DOID:50	thyroid gland disease	0.0	511
+DOID:2773	contact dermatitis	0.0	511
+DOID:11720	distal myopathy	0.0	511
+DOID:700	mitochondrial metabolism disease	0.0	511
+DOID:0060224	atrial fibrillation	0.0	511
+DOID:0060036	intrinsic cardiomyopathy	0.0	511
+DOID:561	trigeminal nerve disease	0.0	511
+DOID:5082	liver cirrhosis	0.0	511
+DOID:4193	intracranial thrombosis	0.0	511
+DOID:6000	congestive heart failure	0.0	511
+DOID:4015	sarcomatoid carcinoma	0.0	511
+DOID:3144	cutis laxa	0.0	511
+DOID:2224	essential thrombocythemia	0.0	511
+DOID:10041	dysplastic nevus syndrome	0.0	511
+DOID:12798	mucopolysaccharidosis	0.0	511
+DOID:0060095	uterine benign neoplasm	0.0	511
+DOID:10923	sickle cell anemia	0.0	511
+DOID:8645	subacute delirium	0.0	511
+DOID:7725	epilepsy with generalized tonic-clonic seizures	0.0	511
+DOID:7693	abdominal aortic aneurysm	0.0	511
+DOID:620	blood protein disease	0.0	511
+DOID:9352	type 2 diabetes mellitus	0.0	511
+DOID:1876	sexual dysfunction	0.0	511
+DOID:1875	impotence	0.0	511
+DOID:1393	visual pathway disease	0.0	511
+DOID:13533	osteopetrosis	0.0	511
+DOID:10273	heart conduction disease	0.0	511
+DOID:0060675	catecholaminergic polymorphic ventricular tachycardia 1	0.0	511
+DOID:13543	hyperparathyroidism	0.0	511
+DOID:9993	hypoglycemia	0.0	511
+DOID:9279	hyperhomocysteinemia	0.0	511
+DOID:8947	diabetic retinopathy	0.0	511
+DOID:6713	cerebrovascular disease	0.0	511
+DOID:7998	hyperthyroidism	0.0	511
+DOID:57	aortic valve insufficiency	0.0	511
+DOID:5327	retinal detachment	0.0	511
+DOID:4483	rhinitis	0.0	511
+DOID:3191	nemaline myopathy	0.0	511
+DOID:1037	lymphoid leukemia	0.0	511
+DOID:2174	ocular cancer	0.0	511
+DOID:11432	endometriosis of ovary	0.0	511
+DOID:14228	oligospermia	0.0	511
+DOID:171	neuroectodermal tumor	0.0	511
+DOID:0050541	Charcot-Marie-Tooth disease type 4	0.0	511
+DOID:0050431	arrhythmogenic right ventricular cardiomyopathy	0.0	511
+DOID:9743	diabetic neuropathy	0.0	511
+DOID:9446	cholangitis	0.0	511
+DOID:6193	epithelioid sarcoma	0.0	511
+DOID:5683	hereditary breast ovarian cancer syndrome	0.0	511
+DOID:4960	bone marrow cancer	0.0	511
+DOID:4794	ependymoblastoma	0.0	511
+DOID:13580	cholestasis	0.0	511
+DOID:2187	amelogenesis imperfecta	0.0	511
+DOID:14793	hypohidrotic ectodermal dysplasia	0.0	511
+DOID:139	squamous cell papilloma	0.0	511
+DOID:14448	46,XY sex reversal	0.0	511
+DOID:12785	diabetic polyneuropathy	0.0	511
+DOID:11504	autonomic neuropathy	0.0	511
+DOID:11503	diabetic autonomic neuropathy	0.0	511
+DOID:345	uterine disease	0.0	511
+DOID:0110721	neuronal ceroid lipofuscinosis 1	0.0	511
+DOID:0110297	autosomal recessive limb-girdle muscular dystrophy type 2K	0.0	511
+DOID:0110092	short-rib thoracic dysplasia 6 with or without polydactyly	0.0	511
+DOID:0060480	left ventricular noncompaction	0.0	511
+DOID:0060103	central nervous system primitive neuroectodermal neoplasm	0.0	511
+DOID:0060870	isolated growth hormone deficiency	0.0	511
+DOID:0070025	X-linked dyskeratosis congenita	0.0	511
+DOID:0110218	Brugada syndrome 1	0.0	511
+DOID:10493	adrenal cortical hypofunction	0.0	511
+DOID:12270	coloboma	0.0	511
+DOID:12098	trigeminal neuralgia	0.0	511
+DOID:4961	bone marrow disease	0.0	511
+DOID:5041	esophageal cancer	0.0	511
+DOID:0110267	cataract 44	0.0	511
+DOID:9974	drug dependence	0.0	511
+DOID:0060679	catecholaminergic polymorphic ventricular tachycardia 5	0.0	511
+DOID:0060655	autosomal recessive congenital ichthyosis	0.0	511
+DOID:0060116	sensory system cancer	0.0	511
+DOID:0050576	Senior-Loken syndrome	0.0	511
+DOID:0050328	congenital hypothyroidism	0.0	511
+DOID:446	primary hyperaldosteronism	0.0	511
+DOID:4258	Weissenbacher-Zweymuller syndrome	0.0	511
+DOID:3947	adrenal gland hyperfunction	0.0	511
+DOID:3426	vestibular disease	0.0	511
+DOID:2615	papilloma	0.0	511
+DOID:2163	nasal cavity disease	0.0	511
+DOID:13413	hepatic encephalopathy	0.0	511
+DOID:12550	hepatic coma	0.0	511
+DOID:11201	parathyroid gland disease	0.0	511
+DOID:11193	syndactyly	0.0	511
+DOID:1107	esophageal carcinoma	0.0	511
+DOID:363	uterine cancer	0.0	511
+DOID:2952	inner ear disease	0.0	511
+DOID:4676	uremia	0.0	511
+DOID:0050882	spinocerebellar ataxia type 5	0.0	511
+DOID:9884	muscular dystrophy	0.0	511
+DOID:7912	mixed oligodendroglioma-astrocytoma	0.0	511
+DOID:6204	follicular adenoma	0.0	511
+DOID:5403	microcystic adenoma	0.0	511
+DOID:3172	papillary adenoma	0.0	511
+DOID:0060496	respiratory allergy	0.0	511
+DOID:657	adenoma	0.0	511
+DOID:12930	dilated cardiomyopathy	0.0	511
+DOID:520	aortic disease	0.0	511
+DOID:161	keratosis	0.0	511
+DOID:0060286	combined oxidative phosphorylation deficiency	0.0	511
+DOID:552	pneumonia	0.0	511
+DOID:421	hair disease	0.0	511
+DOID:3868	melanotic medulloblastoma	0.0	511
+DOID:3918	pancreatic cystadenoma	0.0	511
+DOID:3526	cerebral infarction	0.0	511
+DOID:1380	endometrial cancer	0.0	511
+DOID:5603	T-cell acute lymphoblastic leukemia	0.0	511
+DOID:5212	congenital disorder of glycosylation	0.0	511
+DOID:3952	adrenal cortex disease	0.0	511
+DOID:5772	central nervous system hematologic cancer	0.0	511
+DOID:3234	central nervous system lymphoma	0.0	511
+DOID:1441	autosomal dominant cerebellar ataxia	0.0	511
+DOID:9538	multiple myeloma	0.0	511
+DOID:11465	autonomic nervous system disease	0.0	511
+DOID:6432	pulmonary hypertension	0.0	511
+DOID:0080809	chronic asthma	0.0	511
+DOID:0050954	spinocerebellar ataxia type 1	0.0	511
+DOID:0050955	spinocerebellar ataxia type 2	0.0	511
+DOID:0050956	spinocerebellar ataxia type 6	0.0	511
+DOID:0050958	spinocerebellar ataxia type 7	0.0	511
+DOID:8646	substance-induced psychosis	0.0	511
+DOID:4195	hyperglycemia	0.0	511
+DOID:3953	adrenal gland cancer	0.0	511
+DOID:14018	alcoholic liver cirrhosis	0.0	511
+DOID:0050753	cerebellar ataxia	0.0	511
+DOID:0060536	mitochondrial complex I deficiency	0.0	511
+DOID:8527	monocytic leukemia	0.0	511
+DOID:1176	bronchial disease	0.0	511
+DOID:3770	pulmonary fibrosis	0.0	511
+DOID:2583	agammaglobulinemia	0.0	511
+DOID:9500	leukocyte disease	0.0	511
+DOID:0070309	absence epilepsy	0.0	511
+DOID:890	mitochondrial encephalomyopathy	0.0	511
+DOID:1682	congenital heart disease	0.0	511
+DOID:3042	allergic contact dermatitis	0.0	511
+DOID:5844	myocardial infarction	0.0	511
+DOID:326	ischemia	0.0	511
+DOID:1426	ureteral disease	0.0	511
+DOID:13619	extrahepatic cholestasis	0.0	511
+DOID:9408	acute myocardial infarction	0.0	511
+DOID:4844	benign ependymoma	0.0	511
+DOID:2747	glycogen storage disease	0.0	511
+DOID:11724	limb-girdle muscular dystrophy	0.0	511
+DOID:0060101	benign glioma	0.0	511
+DOID:0050728	glycogen metabolism disorder	0.0	511
+DOID:615	leukopenia	0.0	511
+DOID:3525	middle cerebral artery infarction	0.0	511
+DOID:0050564	autosomal dominant nonsyndromic deafness	0.0	511
+DOID:3864	adult medulloblastoma	0.0	511
+DOID:0050588	muscular dystrophy-dystroglycanopathy	0.0	511
+DOID:0050825	endocardium disease	0.0	511
+DOID:0080524	thyroid gland adenocarcinoma	0.0	511
+DOID:1703	Richter's syndrome	0.0	511
+DOID:11394	adult respiratory distress syndrome	0.0	511
+DOID:9553	adrenal gland disease	0.0	511
+DOID:14004	thoracic aortic aneurysm	0.0	511
+DOID:0080525	differentiated thyroid gland carcinoma	0.0	511
+DOID:224	transient cerebral ischemia	0.0	511
+DOID:10575	calcium metabolism disease	0.0	511
+DOID:1040	chronic lymphocytic leukemia	0.0	511
+DOID:0050745	diffuse large B-cell lymphoma	0.0	511
+DOID:4562	subacute bacterial endocarditis	0.0	511
+DOID:10314	endocarditis	0.0	511
+DOID:0060000	infective endocarditis	0.0	511
+DOID:5520	head and neck squamous cell carcinoma	0.0	511
+DOID:3861	medullomyoblastoma	0.0	511
+DOID:1542	head and neck carcinoma	0.0	511
+DOID:5656	cranial nerve disease	0.0	511
+DOID:3223	complex regional pain syndrome	0.0	511
+DOID:1811	reflex sympathetic dystrophy	0.0	511
+DOID:8577	ulcerative colitis	0.0	511
+DOID:11162	respiratory failure	0.0	511
+DOID:2891	thyroid adenoma	0.0	511
+DOID:11984	hypertrophic cardiomyopathy	0.0	511
+DOID:3627	aortic aneurysm	0.0	511
+DOID:1091	tooth disease	0.0	511
+DOID:0060180	colitis	0.0	511
+DOID:5162	arteriolosclerosis	0.0	511
+DOID:2349	arteriosclerosis	0.0	511
+DOID:9074	systemic lupus erythematosus	0.0	511
+DOID:4706	infratentorial cancer	0.0	511
+DOID:699	mitochondrial myopathy	0.0	511
+DOID:0060903	thrombosis	0.0	511
+DOID:3454	brain infarction	0.0	511
+DOID:1891	optic nerve disease	0.0	511
+DOID:182	calcinosis	0.0	511
+DOID:0080811	extrinsic asthma	0.0	511
+DOID:720	normocytic anemia	0.0	511
+DOID:583	hemolytic anemia	0.0	511
+DOID:2115	B cell deficiency	0.0	511
+DOID:2841	asthma	0.0	511
+DOID:9415	allergic asthma	0.0	511
+DOID:0110443	dilated cardiomyopathy 1B	0.0	511
+DOID:8857	lupus erythematosus	0.0	511
+DOID:0050749	peripheral T-cell lymphoma	0.0	511
+DOID:0050743	mature T-cell and NK-cell lymphoma	0.0	511
+DOID:591	phobic disorder	0.0	511
+DOID:11727	facioscapulohumeral muscular dystrophy	0.0	511
+DOID:12236	primary biliary cholangitis	0.0	511
+DOID:2316	brain ischemia	0.0	511
+DOID:4079	heart valve disease	0.0	511
+DOID:0070004	myeloid neoplasm	0.0	511
+DOID:3869	childhood medulloblastoma	0.0	511
+DOID:1923	disorder of sexual development	0.0	511
+DOID:0110425	dilated cardiomyopathy 1A	0.0	511
+DOID:0060193	amyotrophic lateral sclerosis type 1	0.0	511
+DOID:0050902	medulloblastoma	0.0	511
+DOID:8469	influenza	0.0	511
+DOID:1398	parasitic infectious disease	0.0	511
+DOID:0080144	childhood acute lymphocytic leukemia	0.0	511
+DOID:0050950	autosomal recessive cerebellar ataxia	0.0	511
+DOID:0060469	Miller-Dieker lissencephaly syndrome	0.0	511
+DOID:0110274	autosomal recessive limb-girdle muscular dystrophy	0.0	511
+DOID:2559	opiate dependence	0.0	511
+DOID:12558	chronic progressive external ophthalmoplegia	0.0	511
+DOID:0070274	hereditary nonpolyposis colorectal cancer type 2	0.0	511
+DOID:0060308	autosomal recessive non-syndromic intellectual disability	0.0	511
+DOID:0050458	juvenile myelomonocytic leukemia	0.0	511
+DOID:9065	leishmaniasis	0.0	511
+DOID:2526	prostate adenocarcinoma	0.0	511
+DOID:1827	idiopathic generalized epilepsy	0.0	511
+DOID:10286	prostate carcinoma	0.0	511
+DOID:0050156	idiopathic pulmonary fibrosis	0.0	511
+DOID:782	renal infectious disease	0.0	511
+DOID:4235	spindle cell sarcoma	0.0	511
+DOID:2800	acute interstitial pneumonia	0.0	511
+DOID:2797	idiopathic interstitial pneumonia	0.0	511
+DOID:1800	neuroendocrine carcinoma	0.0	511
+DOID:635	acquired immunodeficiency syndrome	0.0	511
+DOID:11130	secondary hypertension	0.0	511
+DOID:1073	renal hypertension	0.0	511
+DOID:0050589	inflammatory bowel disease	0.0	511
+DOID:0050592	asphyxiating thoracic dystrophy	0.0	511
+DOID:0050890	synucleinopathy	0.0	511
+DOID:8654	Hodgkin's lymphoma, mixed cellularity	0.0	511
+DOID:8567	Hodgkin's lymphoma	0.0	511
+DOID:4903	granular cell carcinoma	0.0	511
+DOID:3687	MELAS syndrome	0.0	511
+DOID:3390	palmoplantar keratosis	0.0	511
+DOID:3007	breast ductal carcinoma	0.0	511
+DOID:2529	splenic disease	0.0	511
+DOID:2121	ectodermal dysplasia	0.0	511
+DOID:1697	ichthyosis	0.0	511
+DOID:3407	carotid artery disease	0.0	511
+DOID:4972	myelodysplastic/myeloproliferative neoplasm	0.0	511
+DOID:987	alopecia	0.0	511
+DOID:9675	pulmonary emphysema	0.0	511
+DOID:9146	visceral leishmaniasis	0.0	511
+DOID:905	Zellweger syndrome	0.0	511
+DOID:1793	pancreatic cancer	0.0	511
+DOID:2226	myeloproliferative neoplasm	0.0	511
+DOID:4905	pancreatic carcinoma	0.0	511
+DOID:14749	methylmalonic acidemia	0.0	511
+DOID:13250	diarrhea	0.0	511
+DOID:12554	hemolytic-uremic syndrome	0.0	511
+DOID:11037	dissociative amnesia	0.0	511
+DOID:10935	dissociative disorder	0.0	511
+DOID:0110123	Bardet-Biedl syndrome 1	0.0	511
+DOID:12603	acute leukemia	0.0	511
+DOID:9952	acute lymphoblastic leukemia	0.0	511
+DOID:0050701	electroclinical syndrome	0.0	511
+DOID:676	juvenile rheumatoid arthritis	0.0	511
+DOID:4621	holoprosencephaly	0.0	511
+DOID:2916	hypersensitivity reaction type IV disease	0.0	511
+DOID:240	iris disease	0.0	511
+DOID:13268	porphyria	0.0	511
+DOID:12306	vitiligo	0.0	511
+DOID:11830	myopia	0.0	511
+DOID:10808	gastric ulcer	0.0	511
+DOID:0080377	peroxisomal biogenesis disorder	0.0	511
+DOID:0070329	mitochondrial DNA depletion syndrome	0.0	511
+DOID:0060674	catecholaminergic polymorphic ventricular tachycardia	0.0	511
+DOID:0050705	adolescence-adult electroclinical syndrome	0.0	511
+DOID:2033	communication disorder	0.0	511
+DOID:4929	tubular adenocarcinoma	0.0	511
+DOID:14221	abdominal obesity-metabolic syndrome 1	0.0	511
+DOID:0050570	congenital disorder of glycosylation type I	0.0	511
+DOID:8864	acute monocytic leukemia	0.0	511
+DOID:7008	protoplasmic astrocytoma	0.0	511
+DOID:7005	gemistocytic astrocytoma	0.0	511
+DOID:6726	fibrillary astrocytoma	0.0	511
+DOID:0050771	pheochromocytoma	0.0	511
+DOID:5076	mixed glioma	0.0	511
+DOID:8541	Sezary's disease	0.0	511
+DOID:0060089	endocrine organ benign neoplasm	0.0	511
+DOID:3078	grade III astrocytoma	0.0	511
+DOID:1935	Bardet-Biedl syndrome	0.0	511
+DOID:14503	neuronal ceroid lipofuscinosis	0.0	511
+DOID:12377	spinal muscular atrophy	0.0	511
+DOID:2978	carbohydrate metabolic disorder	0.0	511
+DOID:341	peripheral vascular disease	0.0	511
+DOID:2326	gastroenteritis	0.0	511
+DOID:0110226	Brugada syndrome 9	0.0	511
+DOID:0050557	congenital muscular dystrophy	0.0	511
+DOID:0050451	Brugada syndrome	0.0	511
+DOID:526	human immunodeficiency virus infectious disease	0.0	511
+DOID:9206	Barrett's esophagus	0.0	511
+DOID:8552	chronic myeloid leukemia	0.0	511
+DOID:5200	urinary tract obstruction	0.0	511
+DOID:4535	hypotrichosis	0.0	511
+DOID:3883	Lynch syndrome	0.0	511
+DOID:3602	toxic encephalopathy	0.0	511
+DOID:3529	central core myopathy	0.0	511
+DOID:14447	gonadal dysgenesis	0.0	511
+DOID:3963	thyroid gland carcinoma	0.0	511
+DOID:0070297	primary microcephaly	0.0	511
+DOID:10591	pre-eclampsia	0.0	511
+DOID:0080829	low-grade glioma	0.0	511
+DOID:0080326	familial hypertrophic cardiomyopathy	0.0	511
+DOID:0060056	hypersensitivity reaction disease	0.0	511
+DOID:0050650	familial atrial fibrillation	0.0	511
+DOID:0050622	reproductive organ benign neoplasm	0.0	511
+DOID:660	adrenal cortex cancer	0.0	511
+DOID:5675	cribriform carcinoma	0.0	511
+DOID:2998	testicular cancer	0.0	511
+DOID:0060611	abdominal obesity-metabolic syndrome	0.0	511
+DOID:893	Wilson disease	0.0	511
+DOID:750	peptic ulcer disease	0.0	511
+DOID:5199	ureteral obstruction	0.0	511
+DOID:0050951	hereditary ataxia	0.0	511
+DOID:2786	cerebellar disease	0.0	511
+DOID:2462	retinal vascular disease	0.0	511
+DOID:0070296	primary autosomal recessive microcephaly	0.0	511
+DOID:9835	refractive error	0.0	511
+DOID:7007	childhood cerebral astrocytoma	0.0	511
+DOID:6811	juvenile pilocytic astrocytoma	0.0	511
+DOID:8618	oral cavity cancer	0.0	511
+DOID:5077	subependymal giant cell astrocytoma	0.0	511
+DOID:4851	pilocytic astrocytoma	0.0	511
+DOID:4843	subependymal glioma	0.0	511
+DOID:1781	thyroid gland cancer	0.0	511
+DOID:2744	pyelitis	0.0	511
+DOID:12987	agranulocytosis	0.0	511
+DOID:11716	prediabetes syndrome	0.0	511
+DOID:0080830	pediatric low-grade glioma	0.0	511
+DOID:9923	developmental coordination disorder	0.0	511

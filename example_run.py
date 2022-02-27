@@ -9,22 +9,24 @@ from geneplexus import geneplexus
 
 # The first step is for a user to load up a set of genes as a list
 # this file can be found in the repo
-input_genes = np.loadtxt("input_genes.txt", dtype=str, delimiter=", ")
-input_genes = [item.strip("'") for item in input_genes]
+input_genes = geneplexus.util.read_gene_list("input_genes.txt")
 
-# Get the data from Azure
+# Set up directories
 homedir = pathlib.Path(__file__).absolute().parent
 datadir = osp.join(homedir, "data")
+outdir = osp.join(homedir, "result")
 os.makedirs(datadir, exist_ok=True)
+os.makedirs(outdir, exist_ok=True)
+
+# Get the data from Azure
 print(f"Start downloading data and saving to: {datadir}")
-for GSCs in ["GO", "DisGeNet"]:
-    geneplexus.download_select_data(
-        datadir,
-        tasks="All",
-        networks="BioGRID",
-        features="Embedding",
-        GSCs=GSCs,
-    )
+geneplexus.download_select_data(
+    datadir,
+    tasks="All",
+    networks="BioGRID",
+    features="Embedding",
+    GSCs=["GO", "DisGeNet"],
+)
 print("Done downlaoding")
 
 # Run through the pipeline
@@ -58,6 +60,6 @@ df_edge, isolated_genes, df_edge_sym, isolated_genes_sym = myclass.make_small_ed
 df_convert_out_subset, positive_genes = myclass.alter_validation_df()
 
 # Save a few things for checking
-df_probs.to_csv("df_probs.tsv", sep="\t", header=True, index=False)
-df_sim_GO.to_csv("df_sim_GO.tsv", sep="\t", header=True, index=False)
-df_convert_out_subset.to_csv("df_convert_out_subset.tsv", sep="\t", header=True, index=False)
+df_probs.to_csv(osp.join(outdir, "df_probs.tsv"), sep="\t", header=True, index=False)
+df_sim_GO.to_csv(osp.join(outdir, "df_sim_GO.tsv"), sep="\t", header=True, index=False)
+df_convert_out_subset.to_csv(osp.join(outdir, "df_convert_out_subset.tsv"), sep="\t", header=True, index=False)
