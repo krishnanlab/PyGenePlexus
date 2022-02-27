@@ -5,7 +5,7 @@ import unittest
 import pandas as pd
 import pytest
 
-from geneplexus import geneplexus
+import geneplexus
 
 
 HOMEDIR = pathlib.Path(__file__).parent.parent
@@ -42,7 +42,7 @@ FILENAMES = [
 @pytest.fixture(scope="class")
 def data(request):
     datadir = request.config.cache.makedir("download")
-    geneplexus.download_select_data(
+    geneplexus.download.download_select_data(
         datadir,
         "All",
         "BioGRID",
