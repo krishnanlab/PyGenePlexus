@@ -4,4 +4,4 @@ ALL_NETWORKS = ["BioGRID", "STRING", "STRING-EXP", "GIANT-TN"]
 ALL_FEATURES = ["Adjacency", "Embedding", "Influence"]
 ALL_GSCS = ["GO", "DisGeNet"]
 
-URL_AZURE = f"https://mancusogeneplexusstorage.blob.core.windows.net/mancusoblob2/"
+URL_AZURE = "https://mancusogeneplexusstorage.blob.core.windows.net/mancusoblob2/"
