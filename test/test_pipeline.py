@@ -41,31 +41,42 @@ FILENAMES = [
 
 @pytest.fixture(scope="class")
 def data(request):
-    datadir = request.config.cache.makedir("download")
+    global DATADIR
+    DATADIR = request.config.cache.makedir("download")
     geneplexus.download.download_select_data(
-        datadir,
+        DATADIR,
         "All",
         "BioGRID",
         "Embedding",
         ["GO", "DisGeNet"],
     )
-    request.cls.datadir = datadir
+
+
+def test_download_exist(capsys):
+    geneplexus.download.download_select_data(
+        DATADIR,
+        "All",
+        "BioGRID",
+        "Embedding",
+        ["GO", "DisGeNet"],
+    )
+    assert capsys.readouterr().out.startswith("The following file already exsists so skipping download")
 
 
 @pytest.mark.usefixtures("data")
 class TestGenePlexusPipeline(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.gp = geneplexus.GenePlexus(HOMEDIR, "BioGRID", "Embedding", "GO")
+        cls.gp = geneplexus.GenePlexus(None, "BioGRID", "Embedding", "GO")
 
     @pytest.mark.order(0)
     def test_filenames(self):
         for filename in FILENAMES:
-            self.assertTrue(osp.isfile(osp.join(self.datadir, filename)))
+            self.assertTrue(osp.isfile(osp.join(DATADIR, filename)))
 
     @pytest.mark.order(1)
     def test_init_geneplexus(self):
-        self.gp.file_loc = self.datadir
+        self.gp.file_loc = DATADIR
         input_genes_path = osp.join(HOMEDIR, "input_genes.txt")
         input_genes = geneplexus.util.read_gene_list(input_genes_path)
         self.gp.load_genes(input_genes)
