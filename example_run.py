@@ -5,7 +5,7 @@ import time
 
 import numpy as np
 
-from geneplexus import geneplexus
+import geneplexus
 
 # The first step is for a user to load up a set of genes as a list
 # this file can be found in the repo
@@ -20,7 +20,7 @@ os.makedirs(outdir, exist_ok=True)
 
 # Get the data from Azure
 print(f"Start downloading data and saving to: {datadir}")
-geneplexus.download_select_data(
+geneplexus.download.download_select_data(
     datadir,
     tasks="All",
     networks="BioGRID",

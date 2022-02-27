@@ -1,7 +1,3 @@
-import os
-
-import requests
-
 from . import util
 
 
@@ -9,12 +5,12 @@ class GenePlexus:
     def __init__(
         self,
         file_loc,
-        network="BioGRID",
+        net_type="BioGRID",
         features="Embedding",
         GSC="GO",
     ):
         self.file_loc = file_loc
-        self.network = network
+        self.net_type = net_type
         self.features = features
         self.GSC = GSC
 
@@ -107,43 +103,3 @@ class GenePlexus:
         self.df_convert_out_subset = df_convert_out_subset
         self.positive_genes = positive_genes
         return self.df_convert_out_subset, self.positive_genes
-
-
-def download_IDconversion_data(fp_data):
-    files_to_do = util.get_IDconversion_filenames()
-    util.download_from_azure(fp_data, files_to_do)
-
-
-def download_all_data(fp_data):
-    with open("data_filenames.txt", "r") as f:
-        for line in f:
-            line = line.strip()
-            if os.path.exists(fp_data + line):
-                print("The following file already exsists so skipping download", fp_data + line)
-            else:
-                FN_Azure = f"https://mancusogeneplexusstorage.blob.core.windows.net/mancusoblob2/{line}"
-                print("Downloading file from", FN_Azure)
-                r = requests.get(FN_Azure)
-                open(fp_data + line, "wb").write(r.content)
-
-
-def download_select_data(fp_data, tasks="All", networks="All", features="All", GSCs="All"):
-    # Similarities and NetworkGraph will assume downloaded MachineLearning
-    tasks, networks, features, GSCs = util.make_download_options_lists(tasks, networks, features, GSCs)
-    all_files_to_do = []
-    for atask in tasks:
-        if atask == "IDconversion":
-            files_to_do = util.get_IDconversion_filenames()
-            all_files_to_do = all_files_to_do + files_to_do
-        if atask == "MachineLearning":
-            files_to_do = util.get_MachineLearning_filenames(networks, GSCs, features)
-            all_files_to_do = all_files_to_do + files_to_do
-        if atask == "Similarities":
-            files_to_do = util.get_Similarities_filenames(networks, features, GSCs)
-            all_files_to_do = all_files_to_do + files_to_do
-        if atask == "NetworkGraph":
-            files_to_do = util.get_NetworkGraph_filenames(networks)
-            all_files_to_do = all_files_to_do + files_to_do
-
-    all_files_to_do = list(set(all_files_to_do))
-    util.download_from_azure(fp_data, all_files_to_do)
