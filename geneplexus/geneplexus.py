@@ -1,4 +1,4 @@
-from . import util
+from . import _geneplexus
 
 
 class GenePlexus:
@@ -19,8 +19,8 @@ class GenePlexus:
         self.input_genes = input_genes
 
     def convert_to_Entrez(self):
-        convert_IDs, df_convert_out = util.intial_ID_convert(self.input_genes, self.file_loc)
-        df_convert_out, table_summary, input_count = util.make_validation_df(df_convert_out, self.file_loc)
+        convert_IDs, df_convert_out = _geneplexus.intial_ID_convert(self.input_genes, self.file_loc)
+        df_convert_out, table_summary, input_count = _geneplexus.make_validation_df(df_convert_out, self.file_loc)
         self.convert_IDs = convert_IDs
         self.df_convert_out = df_convert_out
         self.table_summary = table_summary
@@ -33,7 +33,7 @@ class GenePlexus:
         self.GSC = GSC
 
     def get_pos_and_neg_genes(self):
-        pos_genes_in_net, genes_not_in_net, net_genes = util.get_genes_in_network(
+        pos_genes_in_net, genes_not_in_net, net_genes = _geneplexus.get_genes_in_network(
             self.file_loc,
             self.net_type,
             self.convert_IDs,
@@ -41,12 +41,12 @@ class GenePlexus:
         self.pos_genes_in_net = pos_genes_in_net
         self.genes_not_in_net = genes_not_in_net
         self.net_genes = net_genes
-        negative_genes = util.get_negatives(self.file_loc, self.net_type, self.GSC, self.pos_genes_in_net)
+        negative_genes = _geneplexus.get_negatives(self.file_loc, self.net_type, self.GSC, self.pos_genes_in_net)
         self.negative_genes = negative_genes
         return self.pos_genes_in_net, self.negative_genes, self.net_genes
 
     def fit_and_predict(self):
-        mdl_weights, probs, avgps = util.run_SL(
+        mdl_weights, probs, avgps = _geneplexus.run_SL(
             self.file_loc,
             self.net_type,
             self.features,
@@ -57,7 +57,7 @@ class GenePlexus:
         self.mdl_weights = mdl_weights
         self.probs = probs
         self.avgps = avgps
-        df_probs = util.make_prob_df(
+        df_probs = _geneplexus.make_prob_df(
             self.file_loc,
             self.net_genes,
             self.probs,
@@ -68,7 +68,7 @@ class GenePlexus:
         return self.mdl_weights, self.df_probs, self.avgps
 
     def make_sim_dfs(self):
-        df_sim_GO, df_sim_Dis, weights_GO, weights_Dis = util.make_sim_dfs(
+        df_sim_GO, df_sim_Dis, weights_GO, weights_Dis = _geneplexus.make_sim_dfs(
             self.file_loc,
             self.mdl_weights,
             self.GSC,
@@ -82,7 +82,7 @@ class GenePlexus:
         return self.df_sim_GO, self.df_sim_Dis, self.weights_GO, self.weights_Dis
 
     def make_small_edgelist(self, num_nodes=50):
-        df_edge, isolated_genes, df_edge_sym, isolated_genes_sym = util.make_small_edgelist(
+        df_edge, isolated_genes, df_edge_sym, isolated_genes_sym = _geneplexus.make_small_edgelist(
             self.file_loc,
             self.df_probs,
             self.net_type,
@@ -95,7 +95,7 @@ class GenePlexus:
         return self.df_edge, self.isolated_genes, self.df_edge_sym, self.isolated_genes_sym
 
     def alter_validation_df(self):
-        df_convert_out_subset, positive_genes = util.alter_validation_df(
+        df_convert_out_subset, positive_genes = _geneplexus.alter_validation_df(
             self.df_convert_out,
             self.table_summary,
             self.net_type,
