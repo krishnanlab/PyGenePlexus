@@ -19,7 +19,7 @@ class GenePlexus:
         self.input_genes = input_genes
 
     def convert_to_Entrez(self):
-        convert_IDs, df_convert_out = _geneplexus.intial_ID_convert(self.input_genes, self.file_loc)
+        convert_IDs, df_convert_out = _geneplexus.initial_ID_convert(self.input_genes, self.file_loc)
         df_convert_out, table_summary, input_count = _geneplexus.make_validation_df(df_convert_out, self.file_loc)
         self.convert_IDs = convert_IDs
         self.df_convert_out = df_convert_out

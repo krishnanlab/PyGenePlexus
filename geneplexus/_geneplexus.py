@@ -12,7 +12,7 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import StandardScaler
 
 
-def intial_ID_convert(input_genes, file_loc):  # TODO: fix typo
+def initial_ID_convert(input_genes, file_loc):
     # load all the possible conversion dictionaries
     convert_types = ["ENSG", "Symbol", "ENSP", "ENST"]
     all_convert_dict = {}
