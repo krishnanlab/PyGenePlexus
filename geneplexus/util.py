@@ -1,6 +1,5 @@
 import os.path as osp
 import pickle
-import time
 
 import numpy as np
 import pandas as pd
@@ -65,7 +64,7 @@ def make_validation_df(df_convert_out, file_loc):
         table_summary.append(dict(table_row))
         tmp_ins = np.full(len(converted_genes), "N", dtype=str)
         tmp_ins[df_tmp.index.to_numpy()] = "Y"
-        df_convert_out["In %s?" % anet] = tmp_ins
+        df_convert_out[f"In {anet}?"] = tmp_ins
 
     df_convert_out = df_convert_out.rename(
         columns={"Original_ID": "Original ID", "ID_converted_to_Entrez": "Entrez ID"},
@@ -129,7 +128,8 @@ def run_SL(file_loc, net_type, features, pos_genes_in_net, negative_genes, net_g
             prior = num_tst_pos / Xdata[tst_inds].shape[0]
             log2_prior = np.log2(avgp / prior)
             avgps.append(log2_prior)
-        # avgp = '{0:.2f}'.format(np.median(avgps)) # used in webserver but not for inflamation work
+        # TODO: add this to log?
+        # avgp = f"{np.median(avgps):.2f}" # used in webserver but not for inflamation work
     return mdl_weights, probs, avgps
 
 
@@ -250,13 +250,11 @@ def make_small_edgelist(file_loc, df_probs, net_type, num_nodes=50):
 
 
 def alter_validation_df(df_convert_out, table_summary, net_type):
-    df_convert_out_subset = df_convert_out[["Original ID", "Entrez ID", "In %s?" % net_type]]
+    df_convert_out_subset = df_convert_out[["Original ID", "Entrez ID", f"In {net_type}?"]]
     network = next((item for item in table_summary if item["Network"] == net_type), None)
     positive_genes = network.get("PositiveGenes")
     return df_convert_out_subset, positive_genes
 
-
-################################################################################################################################
 
 # functions for downloading data
 
@@ -382,7 +380,7 @@ def get_NetworkGraph_filenames(networks):
 
 
 # This set of functions is for abstracting how a file is loaded
-fp_HPCC = "/mnt/research/compbio/krishnanlab/projects/GenePlexus/repos/GenePlexusBackend/"
+FP_HPCC = "/mnt/research/compbio/krishnanlab/projects/GenePlexus/repos/GenePlexusBackend/"
 
 
 def load_txtfile(file_type, file_loc, dtype_=str, net_type_=None, GSC_=None, target_set_=None):
@@ -390,10 +388,10 @@ def load_txtfile(file_type, file_loc, dtype_=str, net_type_=None, GSC_=None, tar
         output_txt = np.loadtxt(osp.join(file_loc, f"{net_type_}_nodelist.txt"), dtype=dtype_)
     elif file_type == "uni_genes":
         if file_loc == "local":
-            output_txt = np.loadtxt("../data_backend2/GSCs/{}_{}_universe.txt".format(GSC_, net_type_), dtype=dtype_)
+            output_txt = np.loadtxt(f"../data_backend2/GSCs/{GSC_}_{net_type_}_universe.txt", dtype=dtype_)
         elif file_loc == "HPCC":
             output_txt = np.loadtxt(
-                fp_HPCC + "data_backend2/GSCs/{}_{}_universe.txt".format(GSC_, net_type_),
+                FP_HPCC + f"data_backend2/GSCs/{GSC_}_{net_type_}_universe.txt",
                 dtype=dtype_,
             )
         elif file_loc == "cloud":
@@ -401,12 +399,12 @@ def load_txtfile(file_type, file_loc, dtype_=str, net_type_=None, GSC_=None, tar
     elif file_type == "GSC_order":
         if file_loc == "local":
             output_txt = np.loadtxt(
-                "../data_backend2/CorrectionMatrices/{}_{}_Orders.txt".format(target_set_, net_type_),
+                f"../data_backend2/CorrectionMatrices/{target_set_}_{net_type_}_Orders.txt",
                 dtype=dtype_,
             )
         elif file_loc == "HPCC":
             output_txt = np.loadtxt(
-                fp_HPCC + "data_backend2/CorrectionMatrices/{}_{}_Orders.txt".format(target_set_, net_type_),
+                FP_HPCC + f"data_backend2/CorrectionMatrices/{target_set_}_{net_type_}_Orders.txt",
                 dtype=dtype_,
             )
         elif file_loc == "cloud":
@@ -417,30 +415,19 @@ def load_txtfile(file_type, file_loc, dtype_=str, net_type_=None, GSC_=None, tar
 def load_npyfile(file_type, file_loc, features_=None, net_type_=None, GSC_=None, target_set_=None):
     if file_type == "data":
         if file_loc == "local":
-            output_npy = np.load("../data_backend2/{}/{}_data.npy".format(features_, net_type_))
+            output_npy = np.load(f"../data_backend2/{features_}/{net_type_}_data.npy")
         elif file_loc == "HPCC":
-            output_npy = np.load(fp_HPCC + "data_backend2/{}/{}_data.npy".format(features_, net_type_))
+            output_npy = np.load(FP_HPCC + "data_backend2/{features_}/{net_type_}_data.npy")
         elif file_loc == "cloud":
             raise ValueError("cloud is not yet implemented")
     elif file_type == "cor_mat":
         if file_loc == "local":
             output_npy = np.load(
-                "../data_backend2/CorrectionMatrices/{}_{}_{}_{}_CorMat.npy".format(
-                    GSC_,
-                    target_set_,
-                    net_type_,
-                    features_,
-                ),
+                f"../data_backend2/CorrectionMatrices/{GSC_}_{target_set_}_{net_type_}_{features_}_CorMat.npy",
             )
         elif file_loc == "HPCC":
             output_npy = np.load(
-                fp_HPCC
-                + "data_backend2/CorrectionMatrices/{}_{}_{}_{}_CorMat.npy".format(
-                    GSC_,
-                    target_set_,
-                    net_type_,
-                    features_,
-                ),
+                FP_HPCC + f"data_backend2/CorrectionMatrices/{GSC_}_{target_set_}_{net_type_}_{features_}_CorMat.npy",
             )
         elif file_loc == "cloud":
             raise ValueError("cloud is not yet implemented")
@@ -452,14 +439,14 @@ def load_df(file_type, file_loc, sep_="\t", header_=None, net_type_=None):
         if file_loc == "local":
             if net_type_ == "BioGRID":
                 output_df = pd.read_csv(
-                    "../data_backend2/Edgelists/%s.edg" % net_type_,
+                    f"../data_backend2/Edgelists/{net_type_}.edg",
                     sep=sep_,
                     header=header_,
                     names=["Node1", "Node2"],
                 )
             else:
                 output_df = pd.read_csv(
-                    "../data_backend2/Edgelists/%s.edg" % net_type_,
+                    f"../data_backend2/Edgelists/{net_type_}.edg",
                     sep=sep_,
                     header=header_,
                     names=["Node1", "Node2", "Weight"],
@@ -467,7 +454,7 @@ def load_df(file_type, file_loc, sep_="\t", header_=None, net_type_=None):
         elif file_loc == "HPCC":
             if net_type_ == "BioGRID":
                 output_df = pd.read_csv(
-                    fp_HPCC + "data_backend2/Edgelists/%s.edg" % net_type_,
+                    FP_HPCC + f"data_backend2/Edgelists/{net_type_}.edg",
                     sep=sep_,
                     header=header_,
                     names=["Node1", "Node2"],
@@ -475,7 +462,7 @@ def load_df(file_type, file_loc, sep_="\t", header_=None, net_type_=None):
                 output_df["Weight"] = 1
             else:
                 output_df = pd.read_csv(
-                    fp_HPCC + "data_backend2/Edgelists/%s.edg" % net_type_,
+                    FP_HPCC + f"data_backend2/Edgelists/{net_type_}.edg",
                     sep=sep_,
                     header=header_,
                     names=["Node1", "Node2", "Weight"],
@@ -491,10 +478,10 @@ def load_dict(file_type, file_loc, anIDtype_=None, GSC_=None, net_type_=None, ta
             output_dict = pickle.load(handle)
     elif file_type == "good_sets":
         if file_loc == "local":
-            with open("../data_backend2/GSCs/{}_{}_GoodSets.pickle".format(GSC_, net_type_), "rb") as handle:
+            with open(f"../data_backend2/GSCs/{GSC_}_{net_type_}_GoodSets.pickle", "rb") as handle:
                 output_dict = pickle.load(handle)
         elif file_loc == "HPCC":
-            with open(fp_HPCC + "data_backend2/GSCs/{}_{}_GoodSets.pickle".format(GSC_, net_type_), "rb") as handle:
+            with open(FP_HPCC + f"data_backend2/GSCs/{GSC_}_{net_type_}_GoodSets.pickle", "rb") as handle:
                 output_dict = pickle.load(handle)
         elif file_loc == "cloud":
             raise ValueError("cloud is not yet implemented")
@@ -507,7 +494,7 @@ def load_dict(file_type, file_loc, anIDtype_=None, GSC_=None, net_type_=None, ta
                 output_dict = pickle.load(handle)
         elif file_loc == "HPCC":
             with open(
-                fp_HPCC + "data_backend2/ID_conversion/Homo_sapiens__Entrez-to-Symbol__All-Mappings.pickle",
+                FP_HPCC + "data_backend2/ID_conversion/Homo_sapiens__Entrez-to-Symbol__All-Mappings.pickle",
                 "rb",
             ) as handle:
                 output_dict = pickle.load(handle)
@@ -522,7 +509,7 @@ def load_dict(file_type, file_loc, anIDtype_=None, GSC_=None, net_type_=None, ta
                 output_dict = pickle.load(handle)
         elif file_loc == "HPCC":
             with open(
-                fp_HPCC + "data_backend2/ID_conversion/Homo_sapiens__Entrez-to-Name__All-Mappings.pickle",
+                FP_HPCC + "data_backend2/ID_conversion/Homo_sapiens__Entrez-to-Name__All-Mappings.pickle",
                 "rb",
             ) as handle:
                 output_dict = pickle.load(handle)
@@ -531,22 +518,13 @@ def load_dict(file_type, file_loc, anIDtype_=None, GSC_=None, net_type_=None, ta
     elif file_type == "weights":
         if file_loc == "local":
             with open(
-                "../data_backend2/PreTrainedModels/{}_{}_{}_ModelWeights.pickle".format(
-                    target_set_,
-                    net_type_,
-                    features_,
-                ),
+                f"../data_backend2/PreTrainedModels/{target_set_}_{net_type_}_{features_}_ModelWeights.pickle",
                 "rb",
             ) as handle:
                 output_dict = pickle.load(handle)
         elif file_loc == "HPCC":
             with open(
-                fp_HPCC
-                + "data_backend2/PreTrainedModels/{}_{}_{}_ModelWeights.pickle".format(
-                    target_set_,
-                    net_type_,
-                    features_,
-                ),
+                FP_HPCC + f"data_backend2/PreTrainedModels/{target_set_}_{net_type_}_{features_}_ModelWeights.pickle",
                 "rb",
             ) as handle:
                 output_dict = pickle.load(handle)
