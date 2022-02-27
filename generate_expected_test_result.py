@@ -29,7 +29,6 @@ geneplexus.download_select_data(
 )
 
 myclass = geneplexus.GenePlexus(datadir, "BioGRID", "Embedding", "GO")
-myclass.set_params("BioGRID", "Embedding", "GO")  # TODO: remove this?
 myclass.load_genes(input_genes)
 
 myclass.convert_to_Entrez()
