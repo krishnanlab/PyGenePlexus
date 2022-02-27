@@ -391,7 +391,7 @@ def load_txtfile(file_type, file_loc, dtype_=str, net_type_=None, GSC_=None, tar
             output_txt = np.loadtxt(f"../data_backend2/GSCs/{GSC_}_{net_type_}_universe.txt", dtype=dtype_)
         elif file_loc == "HPCC":
             output_txt = np.loadtxt(
-                FP_HPCC + f"data_backend2/GSCs/{GSC_}_{net_type_}_universe.txt",
+                osp.join(FP_HPCC, f"data_backend2/GSCs/{GSC_}_{net_type_}_universe.txt"),
                 dtype=dtype_,
             )
         elif file_loc == "cloud":
@@ -404,7 +404,7 @@ def load_txtfile(file_type, file_loc, dtype_=str, net_type_=None, GSC_=None, tar
             )
         elif file_loc == "HPCC":
             output_txt = np.loadtxt(
-                FP_HPCC + f"data_backend2/CorrectionMatrices/{target_set_}_{net_type_}_Orders.txt",
+                osp.join(FP_HPCC, f"data_backend2/CorrectionMatrices/{target_set_}_{net_type_}_Orders.txt"),
                 dtype=dtype_,
             )
         elif file_loc == "cloud":
@@ -417,7 +417,7 @@ def load_npyfile(file_type, file_loc, features_=None, net_type_=None, GSC_=None,
         if file_loc == "local":
             output_npy = np.load(f"../data_backend2/{features_}/{net_type_}_data.npy")
         elif file_loc == "HPCC":
-            output_npy = np.load(FP_HPCC + "data_backend2/{features_}/{net_type_}_data.npy")
+            output_npy = np.load(osp.join(FP_HPCC, "data_backend2/{features_}/{net_type_}_data.npy"))
         elif file_loc == "cloud":
             raise ValueError("cloud is not yet implemented")
     elif file_type == "cor_mat":
@@ -427,7 +427,12 @@ def load_npyfile(file_type, file_loc, features_=None, net_type_=None, GSC_=None,
             )
         elif file_loc == "HPCC":
             output_npy = np.load(
-                FP_HPCC + f"data_backend2/CorrectionMatrices/{GSC_}_{target_set_}_{net_type_}_{features_}_CorMat.npy",
+                osp.join(
+                    FP_HPCC,
+                    "data_backend2",
+                    "CorrectionMatrices",
+                    f"{GSC_}_{target_set_}_{net_type_}_{features_}_CorMat.npy",
+                ),
             )
         elif file_loc == "cloud":
             raise ValueError("cloud is not yet implemented")
@@ -454,7 +459,7 @@ def load_df(file_type, file_loc, sep_="\t", header_=None, net_type_=None):
         elif file_loc == "HPCC":
             if net_type_ == "BioGRID":
                 output_df = pd.read_csv(
-                    FP_HPCC + f"data_backend2/Edgelists/{net_type_}.edg",
+                    osp.join(FP_HPCC, "data_backend2", "Edgelists", f"{net_type_}.edg"),
                     sep=sep_,
                     header=header_,
                     names=["Node1", "Node2"],
@@ -462,7 +467,7 @@ def load_df(file_type, file_loc, sep_="\t", header_=None, net_type_=None):
                 output_df["Weight"] = 1
             else:
                 output_df = pd.read_csv(
-                    FP_HPCC + f"data_backend2/Edgelists/{net_type_}.edg",
+                    osp.join(FP_HPCC, "data_backend2", "Edgelists", f"{net_type_}.edg"),
                     sep=sep_,
                     header=header_,
                     names=["Node1", "Node2", "Weight"],
@@ -481,7 +486,10 @@ def load_dict(file_type, file_loc, anIDtype_=None, GSC_=None, net_type_=None, ta
             with open(f"../data_backend2/GSCs/{GSC_}_{net_type_}_GoodSets.pickle", "rb") as handle:
                 output_dict = pickle.load(handle)
         elif file_loc == "HPCC":
-            with open(FP_HPCC + f"data_backend2/GSCs/{GSC_}_{net_type_}_GoodSets.pickle", "rb") as handle:
+            with open(
+                osp.join(FP_HPCC, "data_backend2", "GSCs", f"{GSC_}_{net_type_}_GoodSets.pickle"),
+                "rb",
+            ) as handle:
                 output_dict = pickle.load(handle)
         elif file_loc == "cloud":
             raise ValueError("cloud is not yet implemented")
@@ -494,7 +502,12 @@ def load_dict(file_type, file_loc, anIDtype_=None, GSC_=None, net_type_=None, ta
                 output_dict = pickle.load(handle)
         elif file_loc == "HPCC":
             with open(
-                FP_HPCC + "data_backend2/ID_conversion/Homo_sapiens__Entrez-to-Symbol__All-Mappings.pickle",
+                osp.join(
+                    FP_HPCC,
+                    "data_backend2",
+                    "ID_conversion",
+                    "Homo_sapiens__Entrez-to-Symbol__All-Mappings.pickle",
+                ),
                 "rb",
             ) as handle:
                 output_dict = pickle.load(handle)
@@ -509,7 +522,12 @@ def load_dict(file_type, file_loc, anIDtype_=None, GSC_=None, net_type_=None, ta
                 output_dict = pickle.load(handle)
         elif file_loc == "HPCC":
             with open(
-                FP_HPCC + "data_backend2/ID_conversion/Homo_sapiens__Entrez-to-Name__All-Mappings.pickle",
+                osp.join(
+                    FP_HPCC,
+                    "data_backend2",
+                    "ID_conversion",
+                    "Homo_sapiens__Entrez-to-Name__All-Mappings.pickle",
+                ),
                 "rb",
             ) as handle:
                 output_dict = pickle.load(handle)
@@ -524,7 +542,12 @@ def load_dict(file_type, file_loc, anIDtype_=None, GSC_=None, net_type_=None, ta
                 output_dict = pickle.load(handle)
         elif file_loc == "HPCC":
             with open(
-                FP_HPCC + f"data_backend2/PreTrainedModels/{target_set_}_{net_type_}_{features_}_ModelWeights.pickle",
+                osp.join(
+                    FP_HPCC,
+                    "data_backend2",
+                    "PreTrainedModels",
+                    f"{target_set_}_{net_type_}_{features_}_ModelWeights.pickle",
+                ),
                 "rb",
             ) as handle:
                 output_dict = pickle.load(handle)
