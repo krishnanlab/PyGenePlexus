@@ -1,5 +1,7 @@
+import logging
 import os.path as osp
 import pickle
+from typing import Optional
 
 import numpy as np
 import pandas as pd
@@ -31,15 +33,18 @@ def initial_ID_convert(input_genes, file_loc):
             convert_out.append([agene_int, agene_int])
             convert_IDs.append(agene_int)
         except ValueError:
-            for idx, anIDtype in enumerate(convert_types):
-                if agene in all_convert_dict[anIDtype]:
-                    convert_IDs = convert_IDs + all_convert_dict[anIDtype][agene]
-                    convert_out.append([agene, ", ".join(all_convert_dict[anIDtype][agene])])
+            converted_gene: Optional[str] = None
+            for anIDtype, conversion_map in convert_types.items():
+                if agene in conversion_map:
+                    convert_IDs.extend(conversion_map[agene])
+                    converted_gene = ", ".join(conversion_map[agene])
+                    logging.debug(f"Found mapping ({anIDtype}) {agene} -> {conversion_map[agene]}")
                     break
-                elif idx == len(convert_types) - 1:
-                    convert_out.append([agene, "Could Not be mapped to Entrez"])
-    df_convert_out = pd.DataFrame(convert_out, columns=["Original_ID", "ID_converted_to_Entrez"])
-    df_convert_out = df_convert_out.astype({"Original_ID": str, "ID_converted_to_Entrez": str})
+            convert_out.append([agene, converted_gene or "Could Not be mapped to Entrez"])
+
+    column_names = ["Original_ID", "ID_converted_to_Entrez"]
+    df_convert_out = pd.DataFrame(convert_out, columns=column_names).astype(str)
+
     return convert_IDs, df_convert_out
 
 
