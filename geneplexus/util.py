@@ -1,9 +1,9 @@
 import os.path as osp
 import pickle
+from typing import Any
 from typing import Dict
 from typing import List
 from typing import Literal
-from typing import Union
 
 import numpy as np
 
@@ -38,12 +38,18 @@ def read_gene_list(
     return [gene.strip("'") for gene in open(path, "r").read().split(sep)]
 
 
+def _load_pickle_file(file_loc: str, file_name: str) -> Dict[str, Any]:
+    file_path = osp.join(file_loc, file_name)
+    check_file(file_path)
+    return pickle.load(open(file_path, "rb"))
+
+
 def load_geneid_conversion(
     file_loc: str,
     src_id_type: config.ID_SRC_TYPE,
     dst_id_type: config.ID_DST_TYPE,
     upper: bool = False,
-) -> Dict[str, List[str]]:
+) -> config.ID_CONVERSION_MAP_TYPE:
     """Load the gene ID conversion mapping.
 
     Args:
@@ -57,11 +63,7 @@ def load_geneid_conversion(
         raise ValueError(f"Invalid ID conversion from {src_id_type} to {dst_id_type}")
 
     file_name = f"IDconversion_Homo-sapiens_{src_id_type}-to-{dst_id_type}.pickle"
-    file_path = osp.join(file_loc, file_name)
-    check_file(file_path)
-
-    with open(file_path, "rb") as handle:
-        conversion_map = pickle.load(handle)
+    conversion_map = _load_pickle_file(file_loc, file_name)
 
     if upper:
         conversion_map = {src.upper(): dst for src, dst in conversion_map.items()}
@@ -73,15 +75,10 @@ def load_gsc(
     file_loc: str,
     GSC: config.GSC_TYPE,
     net_type: config.NET_TYPE,
-) -> Dict[str, Dict[Literal["Name", "Genes"], Union[str, np.ndarray]]]:
+) -> config.GSC_DATA_TYPE:
+    """Load gene set collection dictionary."""
     file_name = f"GSC_{GSC}_{net_type}_GoodSets.pickle"
-    file_path = osp.join(file_loc, file_name)
-    check_file(file_path)
-
-    with open(file_path, "rb") as handle:
-        good_sets = pickle.load(handle)
-
-    return good_sets
+    return _load_pickle_file(file_loc, file_name)
 
 
 def load_pretrained_weights(
@@ -89,15 +86,10 @@ def load_pretrained_weights(
     target_set: config.GSC_TYPE,
     net_type: config.NET_TYPE,
     features: config.FEATURE_TYPE,
-) -> Dict[str, Dict[Literal["Name", "Weights", "PosGenes"], Union[str, np.ndarray]]]:
+) -> config.PRETRAINED_DATA_TYPE:
+    """Load pretrained model dictionary."""
     file_name = f"PreTrainedWeights_{target_set}_{net_type}_{features}.pickle"
-    file_path = osp.join(file_loc, file_name)
-    check_file(file_path)
-
-    with open(file_path, "rb") as handle:
-        weights_dict = pickle.load(handle)
-
-    return weights_dict
+    return _load_pickle_file(file_loc, file_name)
 
 
 def _load_np_file(
