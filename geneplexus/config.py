@@ -21,3 +21,6 @@ VALID_ID_CONVERSION: Set[Tuple[ID_SRC_TYPE, ID_DST_TYPE]] = {
     ("Entrez", "Symbol"),
     ("Symbol", "Entrez"),
 }
+NET_TYPE = Literal["BioGRID", "STRING", "STRING-EXP", "GIANT-TN"]
+GSC_TYPE = Literal["GO", "DisGeNet"]
+FEATURE_TYPE = Literal["Adjacency", "Embedding", "Influence"]

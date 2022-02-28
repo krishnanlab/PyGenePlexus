@@ -14,6 +14,7 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import StandardScaler
 
 from . import config
+from . import loader
 from . import util
 
 
@@ -55,7 +56,7 @@ def make_validation_df(df_convert_out, file_loc):
     converted_genes = df_convert_out["Entrez ID"].to_numpy()
 
     for anet in config.ALL_NETWORKS:
-        net_genes = np.loadtxt(osp.join(file_loc, f"NodeOrder_{anet}.txt"), dtype=str)
+        net_genes = loader.load_node_order(file_loc, anet)
         df_tmp = df_convert_out[df_convert_out["Entrez ID"].isin(net_genes)]
         pos_genes_in_net = np.intersect1d(converted_genes, net_genes)
         table_row = {"Network": anet, "NetworkGenes": len(net_genes), "PositiveGenes": len(pos_genes_in_net)}
@@ -68,15 +69,14 @@ def make_validation_df(df_convert_out, file_loc):
 
 
 def get_genes_in_network(file_loc, net_type, convert_IDs):
-    path = osp.join(file_loc, f"NodeOrder_{net_type}.txt")
-    net_genes = np.loadtxt(path, dtype=str)
+    net_genes = loader.load_node_order(file_loc, net_type)
     pos_genes_in_net = np.intersect1d(np.array(convert_IDs), net_genes)
     genes_not_in_net = np.setdiff1d(np.array(convert_IDs), net_genes)
     return pos_genes_in_net, genes_not_in_net, net_genes
 
 
 def get_negatives(file_loc, net_type, GSC, pos_genes_in_net):
-    uni_genes = np.loadtxt(osp.join(file_loc, f"GSC_{GSC}_{net_type}_universe.txt"), dtype=str)
+    uni_genes = loader.load_genes_universe(file_loc, GSC, net_type)
     with open(osp.join(file_loc, f"GSC_{GSC}_{net_type}_GoodSets.pickle"), "rb") as handle:
         good_sets = pickle.load(handle)
     M = len(uni_genes)
@@ -95,7 +95,7 @@ def get_negatives(file_loc, net_type, GSC, pos_genes_in_net):
 def run_SL(file_loc, net_type, features, pos_genes_in_net, negative_genes, net_genes):
     pos_inds = [np.where(net_genes == agene)[0][0] for agene in pos_genes_in_net]
     neg_inds = [np.where(net_genes == agene)[0][0] for agene in negative_genes]
-    data = np.load(osp.join(file_loc, f"Data_{features}_{net_type}.npy"))
+    data = loader.load_gene_features(file_loc, features, net_type)
     std_scale = StandardScaler().fit(data)
     data = std_scale.transform(data)
     Xdata = data[pos_inds + neg_inds, :]
@@ -170,8 +170,8 @@ def make_sim_dfs(file_loc, mdl_weights, GSC, net_type, features):
             weights_dict_GO = weights_dict
         if target_set == "DisGeNet":
             weights_dict_Dis = weights_dict
-        order = np.loadtxt(osp.join(file_loc, f"CorrectionMatrixOrder_{target_set}_{net_type}.txt"), dtype=str)
-        cor_mat = np.load(osp.join(file_loc, f"CorrectionMatrix_{GSC}_{target_set}_{net_type}_{features}.npy"))
+        order = loader.load_correction_order(file_loc, target_set, net_type)
+        cor_mat = loader.load_correction_mat(file_loc, GSC, target_set, net_type, features)
         add_row = np.zeros((1, len(order)))
         for idx, aset in enumerate(order):
             cos_sim = 1 - cosine(weights_dict[aset]["Weights"], mdl_weights)
