@@ -41,8 +41,6 @@ def initial_ID_convert(input_genes, file_loc):
                     convert_out.append([agene, "Could Not be mapped to Entrez"])
     df_convert_out = pd.DataFrame(convert_out, columns=["Original_ID", "ID_converted_to_Entrez"])
     df_convert_out = df_convert_out.astype({"Original_ID": str, "ID_converted_to_Entrez": str})
-    # convert_IDs = convert_IDs
-    # df_convert_out = df_convert_out
     return convert_IDs, df_convert_out
 
 
@@ -64,8 +62,6 @@ def make_validation_df(df_convert_out, file_loc):
     df_convert_out = df_convert_out.rename(
         columns={"Original_ID": "Original ID", "ID_converted_to_Entrez": "Entrez ID"},
     )
-    # table_summary = table_summary
-    # input_count = input_count
     return df_convert_out, table_summary, input_count
 
 
@@ -97,8 +93,7 @@ def get_negatives(file_loc, net_type, GSC, pos_genes_in_net):
 def run_SL(file_loc, net_type, features, pos_genes_in_net, negative_genes, net_genes):
     pos_inds = [np.where(net_genes == agene)[0][0] for agene in pos_genes_in_net]
     neg_inds = [np.where(net_genes == agene)[0][0] for agene in negative_genes]
-    path = osp.join(file_loc, f"Data_{features}_{net_type}.npy")
-    data = np.load(path)
+    data = np.load(osp.join(file_loc, f"Data_{features}_{net_type}.npy"))
     std_scale = StandardScaler().fit(data)
     data = std_scale.transform(data)
     Xdata = data[pos_inds + neg_inds, :]
