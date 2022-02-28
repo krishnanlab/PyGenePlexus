@@ -1,6 +1,9 @@
 import os.path as osp
+from urllib.parse import urljoin
 
 import requests
+
+from . import config
 
 
 def download_select_data(fp_data, tasks="All", networks="All", features="All", GSCs="All"):
@@ -31,43 +34,41 @@ def download_from_azure(fp_data, files_to_do):
         if osp.exists(path):
             print(f"The following file already exsists so skipping download: {path}")
         else:
-            FN_Azure = f"https://mancusogeneplexusstorage.blob.core.windows.net/mancusoblob2/{afile}"
-            print(f"Downloading the follwing file: {FN_Azure}")
-            r = requests.get(FN_Azure)
-            open(path, "wb").write(r.content)
+            fn = urljoin(config.URL_AZURE, afile)
+            print(f"Downloading the follwing file: {fn}")
+            r = requests.get(fn)
+            if r.ok:
+                open(path, "wb").write(r.content)
+            else:
+                raise requests.exceptions.RequestException(r)
 
 
 def make_download_options_lists(tasks, networks, features, GSCs):
-    all_tasks = ["IDconversion", "MachineLearning", "Similarities", "NetworkGraph"]
-    all_networks = ["BioGRID", "STRING", "STRING-EXP", "GIANT-TN"]
-    all_features = ["Adjacency", "Embedding", "Influence"]
-    all_GSCs = ["GO", "DisGeNet"]
-
     if isinstance(tasks, str):
         if tasks == "All":
-            tasks = all_tasks
-        elif tasks in all_tasks:
+            tasks = config.ALL_TASKS
+        elif tasks in config.ALL_TASKS:
             tasks = [tasks]
         else:
             raise ValueError(f"Unexpected task: {tasks!r}")
     if isinstance(networks, str):
         if networks == "All":
-            networks = all_networks
-        elif networks in all_networks:
+            networks = config.ALL_NETWORKS
+        elif networks in config.ALL_NETWORKS:
             networks = [networks]
         else:
             raise ValueError(f"Unexpected network: {tasks!r}")
     if isinstance(features, str):
         if features == "All":
-            features = all_features
-        elif features in all_features:
+            features = config.ALL_FEATURES
+        elif features in config.ALL_FEATURES:
             features = [features]
         else:
             raise ValueError(f"Unexpected feature: {features!r}")
     if isinstance(GSCs, str):
         if GSCs == "All":
-            GSCs = all_GSCs
-        elif GSCs in all_GSCs:
+            GSCs = config.ALL_GSCS
+        elif GSCs in config.ALL_GSCS:
             GSCs = [GSCs]
         else:
             raise ValueError(f"Unexpected GSC: {GSCs!r}")
