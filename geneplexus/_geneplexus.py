@@ -13,6 +13,7 @@ from sklearn.metrics import average_precision_score
 from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import StandardScaler
 
+from . import config
 from . import util
 
 
@@ -42,7 +43,7 @@ def initial_ID_convert(input_genes, file_loc):
                     break
             convert_out.append([agene, converted_gene or "Could Not be mapped to Entrez"])
 
-    column_names = ["Original_ID", "ID_converted_to_Entrez"]
+    column_names = ["Original ID", "Entrez ID"]
     df_convert_out = pd.DataFrame(convert_out, columns=column_names).astype(str)
 
     return convert_IDs, df_convert_out
@@ -51,11 +52,11 @@ def initial_ID_convert(input_genes, file_loc):
 def make_validation_df(df_convert_out, file_loc):
     table_summary = []
     input_count = df_convert_out.shape[0]
-    converted_genes = df_convert_out["ID_converted_to_Entrez"].to_numpy()
-    for anet in ["BioGRID", "STRING", "STRING-EXP", "GIANT-TN"]:
-        path = osp.join(file_loc, f"NodeOrder_{anet}.txt")
-        net_genes = np.loadtxt(path, dtype=str)
-        df_tmp = df_convert_out[df_convert_out["ID_converted_to_Entrez"].isin(net_genes)]
+    converted_genes = df_convert_out["Entrez ID"].to_numpy()
+
+    for anet in config.ALL_NETWORKS:
+        net_genes = np.loadtxt(osp.join(file_loc, f"NodeOrder_{anet}.txt"), dtype=str)
+        df_tmp = df_convert_out[df_convert_out["Entrez ID"].isin(net_genes)]
         pos_genes_in_net = np.intersect1d(converted_genes, net_genes)
         table_row = {"Network": anet, "NetworkGenes": len(net_genes), "PositiveGenes": len(pos_genes_in_net)}
         table_summary.append(dict(table_row))
@@ -63,9 +64,6 @@ def make_validation_df(df_convert_out, file_loc):
         tmp_ins[df_tmp.index.to_numpy()] = "Y"
         df_convert_out[f"In {anet}?"] = tmp_ins
 
-    df_convert_out = df_convert_out.rename(
-        columns={"Original_ID": "Original ID", "ID_converted_to_Entrez": "Entrez ID"},
-    )
     return df_convert_out, table_summary, input_count
 
 
