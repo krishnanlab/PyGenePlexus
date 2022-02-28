@@ -38,6 +38,7 @@ def get_geneid_conversion(
     file_loc: str,
     src_id_type: config.ID_SRC_TYPE,
     dst_id_type: config.ID_DST_TYPE,
+    upper: bool = False,
 ) -> Dict[str, List[str]]:
     """Obtain the gene ID conversion mapping.
 
@@ -45,6 +46,7 @@ def get_geneid_conversion(
         file_loc (str): Directory containig the ID conversion file.
         src_id_type (ID_SRC_TYPE): Souce gene ID type.
         dst_id_type (ID_DST_TYPE): Destination gene ID type.
+        upper (bool): If set to True, then convert all keys to upper case.
 
     """
     if (src_id_type, dst_id_type) not in config.VALID_ID_CONVERSION:
@@ -56,5 +58,8 @@ def get_geneid_conversion(
 
     with open(file_path, "rb") as handle:
         conversion_map = pickle.load(handle)
+
+    if upper:
+        conversion_map = {src.upper(): dst for src, dst in conversion_map.items()}
 
     return conversion_map

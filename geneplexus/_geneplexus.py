@@ -19,8 +19,7 @@ def initial_ID_convert(input_genes, file_loc):
     convert_types = ["ENSG", "Symbol", "ENSP", "ENST"]
     all_convert_dict = {}
     for anIDtype in convert_types:
-        convert_tmp = util.get_geneid_conversion(file_loc, anIDtype, "Entrez")
-        convert_tmp = {akey.upper(): convert_tmp[akey] for akey in convert_tmp}
+        convert_tmp = util.get_geneid_conversion(file_loc, anIDtype, "Entrez", upper=True)
         all_convert_dict[anIDtype] = convert_tmp
 
     # make some place holder arrays
