@@ -11,16 +11,16 @@ from sklearn.metrics import average_precision_score
 from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import StandardScaler
 
+from . import util
+
 
 def initial_ID_convert(input_genes, file_loc):
     # load all the possible conversion dictionaries
     convert_types = ["ENSG", "Symbol", "ENSP", "ENST"]
     all_convert_dict = {}
     for anIDtype in convert_types:
-        path = osp.join(file_loc, f"IDconversion_Homo-sapiens_{anIDtype}-to-Entrez.pickle")
-        with open(path, "rb") as handle:
-            convert_tmp = pickle.load(handle)
-            convert_tmp = {akey.upper(): convert_tmp[akey] for akey in convert_tmp}
+        convert_tmp = util.get_geneid_conversion(file_loc, anIDtype, "Entrez")
+        convert_tmp = {akey.upper(): convert_tmp[akey] for akey in convert_tmp}
         all_convert_dict[anIDtype] = convert_tmp
 
     # make some place holder arrays
@@ -129,10 +129,8 @@ def run_SL(file_loc, net_type, features, pos_genes_in_net, negative_genes, net_g
 
 
 def make_prob_df(file_loc, net_genes, probs, pos_genes_in_net, negative_genes):
-    with open(osp.join(file_loc, "IDconversion_Homo-sapiens_Entrez-to-Symbol.pickle"), "rb") as handle:
-        Entrez_to_Symbol = pickle.load(handle)
-    with open(osp.join(file_loc, "IDconversion_Homo-sapiens_Entrez-to-Name.pickle"), "rb") as handle:
-        Entrez_to_Name = pickle.load(handle)
+    Entrez_to_Symbol = util.get_geneid_conversion(file_loc, "Entrez", "Symbol")
+    Entrez_to_Name = util.get_geneid_conversion(file_loc, "Entrez", "Name")
     prob_results = []
     for idx in range(len(net_genes)):
         if net_genes[idx] in pos_genes_in_net:
@@ -223,8 +221,7 @@ def make_small_edgelist(file_loc, df_probs, net_type, num_nodes=50):
     df_edge = df_edge[(df_edge["Node1"].isin(top_genes)) & (df_edge["Node2"].isin(top_genes))]
     genes_in_edge = np.union1d(df_edge["Node1"].unique(), df_edge["Node2"].unique())
     isolated_genes = np.setdiff1d(top_genes, genes_in_edge)
-    with open(osp.join(file_loc, "IDconversion_Homo-sapiens_Entrez-to-Symbol.pickle"), "rb") as handle:
-        Entrez_to_Symbol = pickle.load(handle)
+    Entrez_to_Symbol = util.get_geneid_conversion(file_loc, "Entrez", "Symbol")
     replace_dict = {}
     for agene in genes_in_edge:
         try:
