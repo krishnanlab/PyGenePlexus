@@ -109,7 +109,6 @@ def save_results(gp, outdir):
 
 
 def main():
-    """Main function for the GenePlexus analysis."""
     args = parse_args()
     datadir, outdir = preprocess(args)
 
