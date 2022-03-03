@@ -3,6 +3,8 @@ import shutil
 import tempfile
 import unittest
 
+from parameterized import parameterized
+
 from geneplexus import util
 
 
@@ -19,36 +21,20 @@ class TestReadGeneList(unittest.TestCase):
         shutil.rmtree(cls.tmpdir)
         print(f"\nDeconstructed temporary folder: {cls.tmpdir}")
 
-    def test_read_csv(self):
+    @parameterized.expand(
+        [
+            (",", ","),
+            ("|", "|"),
+            ("\t", "tab"),
+            ("\n", "newline"),
+        ],
+    )
+    def test_read(self, delimiter, delimiter_arg):
         file_path = osp.join(self.tmpdir, "lst.txt")
         with open(file_path, "w") as f:
-            f.write(",".join(self.lst))
+            f.write(delimiter.join(self.lst))
 
-        lst = util.read_gene_list(file_path, ",")
-        self.assertEqual(lst, self.lst)
-
-    def test_read_tsv(self):
-        file_path = osp.join(self.tmpdir, "lst.txt")
-        with open(file_path, "w") as f:
-            f.write("\t".join(self.lst))
-
-        lst = util.read_gene_list(file_path, "tab")
-        self.assertEqual(lst, self.lst)
-
-    def test_read_linesep(self):
-        file_path = osp.join(self.tmpdir, "lst.txt")
-        with open(file_path, "w") as f:
-            f.write("\n".join(self.lst))
-
-        lst = util.read_gene_list(file_path, "newline")
-        self.assertEqual(lst, self.lst)
-
-    def test_read_pipesep(self):
-        file_path = osp.join(self.tmpdir, "lst.txt")
-        with open(file_path, "w") as f:
-            f.write("|".join(self.lst))
-
-        lst = util.read_gene_list(file_path, "|")
+        lst = util.read_gene_list(file_path, delimiter_arg)
         self.assertEqual(lst, self.lst)
 
 
