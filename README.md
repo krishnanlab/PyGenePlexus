@@ -51,4 +51,6 @@ optional arguments:
   --output_dir OUTPUT_DIR
                         Output directory with respect to the repo root
                         directory. (default: result/)
+  --zip_output          If set, then compress the output directory into a Tar
+                        Gz file. (default: False)
 ```
