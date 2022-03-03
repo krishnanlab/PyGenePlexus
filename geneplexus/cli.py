@@ -31,6 +31,14 @@ def parse_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
+        "--gene_list_delimiter",
+        default=", ",
+        help="Delimiter used in the gene list. Use 'newline' if the genes are "
+        "separated by new line, and use 'tab' if the genes are seperate by "
+        "tabs. Other generic separator are also supported, e.g. ', '.",
+    )
+
+    parser.add_argument(
         "--network",
         default="BioGRID",
         choices=config.ALL_NETWORKS,
@@ -126,7 +134,7 @@ def main():
     datadir, outdir = preprocess(args)
 
     gp = GenePlexus(datadir, args.network, args.feature, args.GSC)
-    gp.load_genes(read_gene_list(args.input_file))
+    gp.load_genes(read_gene_list(args.input_file, args.gene_list_delimiter))
 
     run_pipeline(gp, args.input_file)
     save_results(gp, outdir, args.zip_output)
