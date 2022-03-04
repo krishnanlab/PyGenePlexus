@@ -35,6 +35,10 @@ def read_gene_list(
         sep (str): Seperator between genes.
 
     """
+    if sep == "newline":
+        sep = None
+    elif sep == "tab":
+        sep = "\t"
     return [gene.strip("'") for gene in open(path, "r").read().split(sep)]
 
 
