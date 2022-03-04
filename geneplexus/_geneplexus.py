@@ -15,6 +15,17 @@ from sklearn.preprocessing import StandardScaler
 from . import config
 from . import util
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+formatter = logging.Formatter("%(name)s:%(funcName)s:%(levelname)s:%(message)s")
+
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(formatter)
+stream_handler.setLevel(logging.INFO)
+
+logger.addHandler(stream_handler)
+
 
 def initial_ID_convert(input_genes, file_loc):
     # load all the possible conversion dictionaries
@@ -38,7 +49,7 @@ def initial_ID_convert(input_genes, file_loc):
                 if agene in conversion_map:
                     convert_IDs.extend(conversion_map[agene])
                     converted_gene = ", ".join(conversion_map[agene])
-                    logging.debug(f"Found mapping ({anIDtype}) {agene} -> {conversion_map[agene]}")
+                    logger.debug(f"Found mapping ({anIDtype}) {agene} -> {conversion_map[agene]}")
                     break
             convert_out.append([agene, converted_gene or "Could Not be mapped to Entrez"])
 
@@ -117,8 +128,9 @@ def run_SL(file_loc, net_type, features, pos_genes_in_net, negative_genes, net_g
             prior = num_tst_pos / Xdata[tst_inds].shape[0]
             log2_prior = np.log2(avgp / prior)
             avgps.append(log2_prior)
-        # TODO: add this to log?
-        # avgp = f"{np.median(avgps):.2f}" # used in webserver but not for inflamation work
+        logger.info(f"{avgps=}")
+        logger.info(f"{np.median(avgps)=:.2f}")
+        logger.info(f"{np.mean(avgps)=:.2f}")
     return mdl_weights, probs, avgps
 
 
