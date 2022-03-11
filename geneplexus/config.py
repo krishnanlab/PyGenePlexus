@@ -13,7 +13,7 @@ ALL_NETWORKS = ["BioGRID", "STRING", "STRING-EXP", "GIANT-TN"]
 ALL_FEATURES = ["Adjacency", "Embedding", "Influence"]
 ALL_GSCS = ["GO", "DisGeNet"]
 
-URL_AZURE = "https://mancusogeneplexusstorage.blob.core.windows.net/mancusoblob2/"
+URL_AZURE = "https://pygeneplexusstacct.blob.core.windows.net/geneplexusblob/"
 
 ID_SRC_TYPE = Literal["ENSG", "ENSP", "ENST", "Entrez", "Symbol"]
 ID_DST_TYPE = Literal["Entrez", "ENSG", "Name", "Symbol"]
