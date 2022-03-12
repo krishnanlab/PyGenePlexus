@@ -4,6 +4,7 @@ from typing import Any
 from typing import Dict
 from typing import List
 from typing import Literal
+from typing import Optional
 
 import numpy as np
 
@@ -26,7 +27,7 @@ def check_file(path: str):
 
 def read_gene_list(
     path: str,
-    sep: str = ", ",
+    sep: Optional[str] = ", ",
 ) -> List[str]:
     """Read gene list from flie.
 
