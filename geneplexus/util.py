@@ -1,5 +1,5 @@
+import json
 import os.path as osp
-import pickle
 from typing import Any
 from typing import Dict
 from typing import List
@@ -42,10 +42,10 @@ def read_gene_list(
     return [gene.strip("'") for gene in open(path, "r").read().split(sep)]
 
 
-def _load_pickle_file(file_loc: str, file_name: str) -> Dict[str, Any]:
+def _load_json_file(file_loc: str, file_name: str) -> Dict[str, Any]:
     file_path = osp.join(file_loc, file_name)
     check_file(file_path)
-    return pickle.load(open(file_path, "rb"))
+    return json.load(open(file_path, "rb"))
 
 
 def load_geneid_conversion(
@@ -66,8 +66,8 @@ def load_geneid_conversion(
     if (src_id_type, dst_id_type) not in config.VALID_ID_CONVERSION:
         raise ValueError(f"Invalid ID conversion from {src_id_type} to {dst_id_type}")
 
-    file_name = f"IDconversion_Homo-sapiens_{src_id_type}-to-{dst_id_type}.pickle"
-    conversion_map = _load_pickle_file(file_loc, file_name)
+    file_name = f"IDconversion_Homo-sapiens_{src_id_type}-to-{dst_id_type}.json"
+    conversion_map = _load_json_file(file_loc, file_name)
 
     if upper:
         conversion_map = {src.upper(): dst for src, dst in conversion_map.items()}
@@ -81,8 +81,8 @@ def load_gsc(
     net_type: config.NET_TYPE,
 ) -> config.GSC_DATA_TYPE:
     """Load gene set collection dictionary."""
-    file_name = f"GSC_{GSC}_{net_type}_GoodSets.pickle"
-    return _load_pickle_file(file_loc, file_name)
+    file_name = f"GSC_{GSC}_{net_type}_GoodSets.json"
+    return _load_json_file(file_loc, file_name)
 
 
 def load_pretrained_weights(
@@ -92,8 +92,8 @@ def load_pretrained_weights(
     features: config.FEATURE_TYPE,
 ) -> config.PRETRAINED_DATA_TYPE:
     """Load pretrained model dictionary."""
-    file_name = f"PreTrainedWeights_{target_set}_{net_type}_{features}.pickle"
-    return _load_pickle_file(file_loc, file_name)
+    file_name = f"PreTrainedWeights_{target_set}_{net_type}_{features}.json"
+    return _load_json_file(file_loc, file_name)
 
 
 def _load_np_file(

@@ -128,7 +128,7 @@ def get_Similarities_filenames(networks, features, GSCs):
                     files_to_do.append(line)
             if "PreTrainedWeights" in line:
                 net_tmp = line.split("_")[2]
-                feature_tmp = line.split("_")[-1].split(".pic")[0]
+                feature_tmp = line.split("_")[-1].split(".json")[0]
                 if (net_tmp in networks) and (feature_tmp in features):
                     files_to_do.append(line)
     return files_to_do
