@@ -40,7 +40,7 @@ def download_from_azure(fp_data, files_to_do):
             if r.ok:
                 open(path, "wb").write(r.content)
             else:
-                raise requests.exceptions.RequestException(r)
+                raise requests.exceptions.RequestException(r, fn)
 
 
 def make_download_options_lists(tasks, networks, features, GSCs):
@@ -95,7 +95,7 @@ def get_MachineLearning_filenames(networks, GSCs, features):
                 net_tmp = line.split("Order_")[-1].split(".tx")[0]
                 if net_tmp in networks:
                     files_to_do.append(line)
-            if ("universe.txt" in line) or ("GoodSets.pickle" in line):
+            if ("universe.txt" in line) or ("GoodSets.json" in line):
                 net_tmp = line.split("_")[2]
                 GSC_tmp = line.split("_")[1]
                 if (net_tmp in networks) and (GSC_tmp in GSCs):
@@ -135,7 +135,7 @@ def get_Similarities_filenames(networks, features, GSCs):
 
 
 def get_NetworkGraph_filenames(networks):
-    files_to_do = ["IDconversion_Homo-sapiens_Entrez-to-Symbol.pickle"]
+    files_to_do = ["IDconversion_Homo-sapiens_Entrez-to-Symbol.json"]
     with open("data_filenames.txt", "r") as f:
         for line in f:
             line = line.strip()
