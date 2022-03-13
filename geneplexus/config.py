@@ -15,6 +15,8 @@ ALL_GSCS = ["GO", "DisGeNet"]
 
 URL_AZURE = "https://pygeneplexusstacct.blob.core.windows.net/geneplexusblob/"
 
+LOG_LEVEL_TYPE = Literal["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"]
+
 ID_SRC_TYPE = Literal["ENSG", "ENSP", "ENST", "Entrez", "Symbol"]
 ID_DST_TYPE = Literal["Entrez", "ENSG", "Name", "Symbol"]
 VALID_ID_CONVERSION: Set[Tuple[ID_SRC_TYPE, ID_DST_TYPE]] = {

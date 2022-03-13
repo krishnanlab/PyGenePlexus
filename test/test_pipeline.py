@@ -52,7 +52,7 @@ def data(request):
     )
 
 
-def test_download_exist(capsys):
+def test_download_exist(caplog):
     geneplexus.download.download_select_data(
         DATADIR,
         "All",
@@ -60,7 +60,7 @@ def test_download_exist(capsys):
         "Embedding",
         ["GO", "DisGeNet"],
     )
-    assert capsys.readouterr().out.startswith("The following file already exsists so skipping download")
+    assert "The following file already exsists so skipping download" in caplog.text
 
 
 @pytest.mark.usefixtures("data")
