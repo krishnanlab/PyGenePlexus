@@ -52,23 +52,19 @@ def download_from_azure(data_dir: str, files_to_do: List[str]):
 
 def _make_download_options_list(
     name: str,
-    raw: Union[str, List[str]],
+    opts: Union[str, List[str]],
     check_list: List[str],
 ) -> List[str]:
-    if isinstance(raw, str):
-        if raw == "All":
-            return check_list
-        elif raw in check_list:
-            return [raw]
-        else:
-            raise ValueError(f"Unexpected {name}: {raw!r}")
-    elif isinstance(raw, list):
-        for i in raw:
-            if i not in check_list:
-                raise ValueError(f"Unexpected {name}: {raw!r}")
-        return raw
-    else:
-        raise TypeError(f"Expcted str type or list of str type, got {type(raw)}")
+    if isinstance(opts, str):
+        opts = check_list if opts == "All" else [opts]
+    elif not isinstance(opts, list):
+        raise TypeError(f"Expcted str type or list of str type, got {type(opts)}")
+
+    for i in opts:
+        if i not in check_list:
+            raise ValueError(f"Unexpected {name}: {opts!r}")
+
+    return opts
 
 
 def make_download_options_lists(
