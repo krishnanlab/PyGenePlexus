@@ -60,7 +60,7 @@ def test_download_exist(caplog):
         "Embedding",
         ["GO", "DisGeNet"],
     )
-    assert "The following file already exsists so skipping download" in caplog.text
+    assert "File exists, skipping download:" in caplog.text
 
 
 @pytest.mark.usefixtures("data")
@@ -77,7 +77,7 @@ class TestGenePlexusPipeline(unittest.TestCase):
     @pytest.mark.order(1)
     def test_init_geneplexus(self):
         self.gp.file_loc = DATADIR
-        input_genes_path = osp.join(HOMEDIR, "input_genes.txt")
+        input_genes_path = osp.join(HOMEDIR, "example", "input_genes.txt")
         input_genes = geneplexus.util.read_gene_list(input_genes_path)
         self.gp.load_genes(input_genes)
         self.assertEqual(self.gp.input_genes, input_genes)

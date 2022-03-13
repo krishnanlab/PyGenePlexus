@@ -33,10 +33,10 @@ def download_from_azure(fp_data, files_to_do):
     for afile in files_to_do:
         path = osp.join(fp_data, afile)
         if osp.exists(path):
-            logger.info(f"The following file already exsists so skipping download: {path}")
+            logger.info(f"File exists, skipping download: {path}")
         else:
             fn = urljoin(config.URL_AZURE, afile)
-            logger.info(f"Downloading the follwing file: {fn}")
+            logger.info(f"Downloading: {fn}")
             r = requests.get(fn)
             if r.ok:
                 open(path, "wb").write(r.content)
