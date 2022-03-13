@@ -3,8 +3,8 @@ from urllib.parse import urljoin
 
 import requests
 
-from . import config
-from . import logger
+from ._config import config
+from ._config import logger
 
 
 def download_select_data(fp_data, tasks="All", networks="All", features="All", GSCs="All"):
@@ -33,10 +33,10 @@ def download_from_azure(fp_data, files_to_do):
     for afile in files_to_do:
         path = osp.join(fp_data, afile)
         if osp.exists(path):
-            logger.info(f"The following file already exsists so skipping download: {path}")
+            logger.info(f"File exists, skipping download: {path}")
         else:
             fn = urljoin(config.URL_AZURE, afile)
-            logger.info(f"Downloading the follwing file: {fn}")
+            logger.info(f"Downloading: {fn}")
             r = requests.get(fn)
             if r.ok:
                 open(path, "wb").write(r.content)
@@ -79,7 +79,7 @@ def make_download_options_lists(tasks, networks, features, GSCs):
 
 def get_IDconversion_filenames():
     files_to_do = []
-    with open("data_filenames.txt", "r") as f:
+    with open(config.DATA_FILENAMES_PATH, "r") as f:
         for line in f:
             line = line.strip()
             if ("IDconversion" in line) or ("NodeOrder" in line):
@@ -89,7 +89,7 @@ def get_IDconversion_filenames():
 
 def get_MachineLearning_filenames(networks, GSCs, features):
     files_to_do = []
-    with open("data_filenames.txt", "r") as f:
+    with open(config.DATA_FILENAMES_PATH, "r") as f:
         for line in f:
             line = line.strip()
             if "NodeOrder" in line:
@@ -113,7 +113,7 @@ def get_MachineLearning_filenames(networks, GSCs, features):
 
 def get_Similarities_filenames(networks, features, GSCs):
     files_to_do = []
-    with open("data_filenames.txt", "r") as f:
+    with open(config.DATA_FILENAMES_PATH, "r") as f:
         for line in f:
             line = line.strip()
             if "CorrectionMatrix_" in line:
@@ -137,7 +137,7 @@ def get_Similarities_filenames(networks, features, GSCs):
 
 def get_NetworkGraph_filenames(networks):
     files_to_do = ["IDconversion_Homo-sapiens_Entrez-to-Symbol.json"]
-    with open("data_filenames.txt", "r") as f:
+    with open(config.DATA_FILENAMES_PATH, "r") as f:
         for line in f:
             line = line.strip()
             if "Edgelist" in line:
