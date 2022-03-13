@@ -10,7 +10,7 @@ import geneplexus
 
 # The first step is for a user to load up a set of genes as a list
 # this file can be found in the repo
-input_genes = geneplexus.util.read_gene_list("input_genes.txt")
+input_genes = geneplexus.util.read_gene_list("example/input_genes.txt")
 
 # Set up directories
 homedir = pathlib.Path(__file__).absolute().parent
