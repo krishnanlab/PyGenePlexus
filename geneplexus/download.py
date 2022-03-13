@@ -1,4 +1,5 @@
 import os.path as osp
+from typing import List
 from urllib.parse import urljoin
 
 import requests
@@ -8,29 +9,31 @@ from ._config import config
 from ._config import logger
 
 
-def download_select_data(fp_data, tasks="All", networks="All", features="All", GSCs="All"):
+def download_select_data(
+    fp_data: str,
+    tasks: str = "All",
+    networks: str = "All",
+    features: str = "All",
+    GSCs: str = "All",
+):
     # Similarities and NetworkGraph will assume downloaded MachineLearning
     tasks, networks, features, GSCs = make_download_options_lists(tasks, networks, features, GSCs)
     all_files_to_do = []
     for atask in tasks:
         if atask == "IDconversion":
-            files_to_do = get_IDconversion_filenames()
-            all_files_to_do = all_files_to_do + files_to_do
+            all_files_to_do.extend(get_IDconversion_filenames())
         if atask == "MachineLearning":
-            files_to_do = get_MachineLearning_filenames(networks, GSCs, features)
-            all_files_to_do = all_files_to_do + files_to_do
+            all_files_to_do.extend(get_MachineLearning_filenames(networks, GSCs, features))
         if atask == "Similarities":
-            files_to_do = get_Similarities_filenames(networks, features, GSCs)
-            all_files_to_do = all_files_to_do + files_to_do
+            all_files_to_do.extend(get_Similarities_filenames(networks, features, GSCs))
         if atask == "NetworkGraph":
-            files_to_do = get_NetworkGraph_filenames(networks)
-            all_files_to_do = all_files_to_do + files_to_do
+            all_files_to_do.extend(get_NetworkGraph_filenames(networks))
 
     all_files_to_do = list(set(all_files_to_do))
     download_from_azure(fp_data, all_files_to_do)
 
 
-def download_from_azure(fp_data, files_to_do):
+def download_from_azure(fp_data: str, files_to_do: List[str]):
     for afile in files_to_do:
         path = osp.join(fp_data, afile)
         if osp.exists(path):
