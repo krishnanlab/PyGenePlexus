@@ -79,7 +79,7 @@ def make_download_options_lists(tasks, networks, features, GSCs):
 
 def get_IDconversion_filenames():
     files_to_do = []
-    with open("data_filenames.txt", "r") as f:
+    with open(config.DATA_FILENAMES_PATH, "r") as f:
         for line in f:
             line = line.strip()
             if ("IDconversion" in line) or ("NodeOrder" in line):
@@ -89,7 +89,7 @@ def get_IDconversion_filenames():
 
 def get_MachineLearning_filenames(networks, GSCs, features):
     files_to_do = []
-    with open("data_filenames.txt", "r") as f:
+    with open(config.DATA_FILENAMES_PATH, "r") as f:
         for line in f:
             line = line.strip()
             if "NodeOrder" in line:
@@ -113,7 +113,7 @@ def get_MachineLearning_filenames(networks, GSCs, features):
 
 def get_Similarities_filenames(networks, features, GSCs):
     files_to_do = []
-    with open("data_filenames.txt", "r") as f:
+    with open(config.DATA_FILENAMES_PATH, "r") as f:
         for line in f:
             line = line.strip()
             if "CorrectionMatrix_" in line:
@@ -137,7 +137,7 @@ def get_Similarities_filenames(networks, features, GSCs):
 
 def get_NetworkGraph_filenames(networks):
     files_to_do = ["IDconversion_Homo-sapiens_Entrez-to-Symbol.json"]
-    with open("data_filenames.txt", "r") as f:
+    with open(config.DATA_FILENAMES_PATH, "r") as f:
         for line in f:
             line = line.strip()
             if "Edgelist" in line:
