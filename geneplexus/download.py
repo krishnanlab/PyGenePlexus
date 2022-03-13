@@ -1,21 +1,10 @@
-import logging
 import os.path as osp
 from urllib.parse import urljoin
 
 import requests
 
 from . import config
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-
-formatter = logging.Formatter("%(name)s:%(funcName)s:%(levelname)s:%(message)s")
-
-stream_handler = logging.StreamHandler()
-stream_handler.setFormatter(formatter)
-stream_handler.setLevel(logging.INFO)
-
-logger.addHandler(stream_handler)
+from . import logger
 
 
 def download_select_data(fp_data, tasks="All", networks="All", features="All", GSCs="All"):

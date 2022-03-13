@@ -1,4 +1,3 @@
-import logging
 import os.path as osp
 from typing import Optional
 
@@ -13,18 +12,8 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import StandardScaler
 
 from . import config
+from . import logger
 from . import util
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-
-formatter = logging.Formatter("%(name)s:%(funcName)s:%(levelname)s:%(message)s")
-
-stream_handler = logging.StreamHandler()
-stream_handler.setFormatter(formatter)
-stream_handler.setLevel(logging.INFO)
-
-logger.addHandler(stream_handler)
 
 
 def initial_ID_convert(input_genes, file_loc):
