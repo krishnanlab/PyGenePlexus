@@ -1,20 +1,22 @@
 import os.path as osp
 from typing import List
+from typing import Tuple
+from typing import Union
 from urllib.parse import urljoin
 
 import requests
 
+from . import config
 from . import util
-from ._config import config
 from ._config import logger
 
 
 def download_select_data(
     data_dir: str,
-    tasks: str = "All",
-    networks: str = "All",
-    features: str = "All",
-    GSCs: str = "All",
+    tasks: Union[str, List[str]] = "All",
+    networks: Union[str, List[str]] = "All",
+    features: Union[str, List[str]] = "All",
+    GSCs: Union[str, List[str]] = "All",
 ):
     # Similarities and NetworkGraph will assume downloaded MachineLearning
     tasks, networks, features, GSCs = make_download_options_lists(tasks, networks, features, GSCs)
@@ -48,37 +50,42 @@ def download_from_azure(data_dir: str, files_to_do: List[str]):
                 raise requests.exceptions.RequestException(r, fn)
 
 
-def make_download_options_lists(tasks, networks, features, GSCs):
-    if isinstance(tasks, str):
-        if tasks == "All":
-            tasks = config.ALL_TASKS
-        elif tasks in config.ALL_TASKS:
-            tasks = [tasks]
+def _make_download_options_list(
+    name: str,
+    raw: Union[str, List[str]],
+    check_list: List[str],
+) -> List[str]:
+    if isinstance(raw, str):
+        if raw == "All":
+            return check_list
+        elif raw in check_list:
+            return [raw]
         else:
-            raise ValueError(f"Unexpected task: {tasks!r}")
-    if isinstance(networks, str):
-        if networks == "All":
-            networks = config.ALL_NETWORKS
-        elif networks in config.ALL_NETWORKS:
-            networks = [networks]
-        else:
-            raise ValueError(f"Unexpected network: {tasks!r}")
-    if isinstance(features, str):
-        if features == "All":
-            features = config.ALL_FEATURES
-        elif features in config.ALL_FEATURES:
-            features = [features]
-        else:
-            raise ValueError(f"Unexpected feature: {features!r}")
-    if isinstance(GSCs, str):
-        if GSCs == "All":
-            GSCs = config.ALL_GSCS
-        elif GSCs in config.ALL_GSCS:
-            GSCs = [GSCs]
-        else:
-            raise ValueError(f"Unexpected GSC: {GSCs!r}")
+            raise ValueError(f"Unexpected {name}: {raw!r}")
+    elif isinstance(raw, list):
+        for i in raw:
+            if i not in check_list:
+                raise ValueError(f"Unexpected {name}: {raw!r}")
+        return raw
+    else:
+        raise TypeError(f"Expcted str type or list of str type, got {type(raw)}")
 
-    return tasks, networks, features, GSCs
+
+def make_download_options_lists(
+    tasks: Union[str, List[str]],
+    networks: Union[str, List[str]],
+    features: Union[str, List[str]],
+    GSCs: Union[str, List[str]],
+) -> Tuple[List[str], List[str], List[str], List[str]]:
+    return map(
+        _make_download_options_list,
+        *zip(
+            ("tasks", tasks, config.ALL_TASKS),
+            ("network", networks, config.ALL_NETWORKS),
+            ("feature", features, config.ALL_FEATURES),
+            ("GSC", GSCs, config.ALL_GSCS),
+        ),
+    )
 
 
 def get_IDconversion_filenames():
