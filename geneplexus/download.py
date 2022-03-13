@@ -90,7 +90,7 @@ def make_download_options_lists(
 
 def get_IDconversion_filenames():
     files_to_do = []
-    for line in util.get_filenames():
+    for line in util.get_all_filenames():
         if ("IDconversion" in line) or ("NodeOrder" in line):
             files_to_do.append(line)
     return files_to_do
@@ -98,7 +98,7 @@ def get_IDconversion_filenames():
 
 def get_MachineLearning_filenames(networks, GSCs, features):
     files_to_do = []
-    for line in util.get_filenames():
+    for line in util.get_all_filenames():
         if "NodeOrder" in line:
             net_tmp = osp.splitext(line.split("Order_")[-1])[0]
             if net_tmp in networks:
@@ -120,7 +120,7 @@ def get_MachineLearning_filenames(networks, GSCs, features):
 
 def get_Similarities_filenames(networks, features, GSCs):
     files_to_do = []
-    for line in util.get_filenames():
+    for line in util.get_all_filenames():
         if "CorrectionMatrix_" in line:
             feature_tmp = osp.splitext(line.split("_")[-1])[0]
             net_tmp = line.split("_")[3]
@@ -142,7 +142,7 @@ def get_Similarities_filenames(networks, features, GSCs):
 
 def get_NetworkGraph_filenames(networks):
     files_to_do = ["IDconversion_Homo-sapiens_Entrez-to-Symbol.json"]
-    for line in util.get_filenames():
+    for line in util.get_all_filenames():
         if "Edgelist" in line:
             net_tmp = osp.splitext(line.split("_")[-1])[0]
             if net_tmp in networks:

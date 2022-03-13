@@ -11,7 +11,7 @@ import numpy as np
 from . import config
 
 
-def get_filenames():
+def get_all_filenames():
     """Iterate over filenames."""
     with open(config.DATA_FILENAMES_PATH, "r") as f:
         for line in f:
