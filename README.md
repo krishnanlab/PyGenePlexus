@@ -12,14 +12,14 @@ Install the ``GenePlexus`` analysis package via ``pip``.
 ```bash
 pip install .
 
-# Alternatively, install in editable mode
-pip install -e .
+# Alternatively, install in editable mode, with dev dependencies
+pip install -e .[dev]
 ```
 
 ## Run GenePlexus pipline
 
 ```bash
-geneplexus --input_file input_genes.txt --output_dir result/ --daat_dir data/
+geneplexus --input_file example/input_genes.txt --output_dir result/ --daat_dir data/
 ```
 
 Full options (check out with ``geneplexus --help``)
