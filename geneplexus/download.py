@@ -3,8 +3,8 @@ from urllib.parse import urljoin
 
 import requests
 
-from . import config
-from . import logger
+from ._config import config
+from ._config import logger
 
 
 def download_select_data(fp_data, tasks="All", networks="All", features="All", GSCs="All"):

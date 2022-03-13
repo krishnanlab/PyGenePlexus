@@ -12,8 +12,8 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import StandardScaler
 
 from . import config
-from . import logger
 from . import util
+from ._config import logger
 
 
 def initial_ID_convert(input_genes, file_loc):
