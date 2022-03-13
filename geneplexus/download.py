@@ -3,6 +3,7 @@ from urllib.parse import urljoin
 
 import requests
 
+from . import util
 from ._config import config
 from ._config import logger
 
@@ -79,69 +80,61 @@ def make_download_options_lists(tasks, networks, features, GSCs):
 
 def get_IDconversion_filenames():
     files_to_do = []
-    with open(config.DATA_FILENAMES_PATH, "r") as f:
-        for line in f:
-            line = line.strip()
-            if ("IDconversion" in line) or ("NodeOrder" in line):
-                files_to_do.append(line)
+    for line in util.get_filenames():
+        if ("IDconversion" in line) or ("NodeOrder" in line):
+            files_to_do.append(line)
     return files_to_do
 
 
 def get_MachineLearning_filenames(networks, GSCs, features):
     files_to_do = []
-    with open(config.DATA_FILENAMES_PATH, "r") as f:
-        for line in f:
-            line = line.strip()
-            if "NodeOrder" in line:
-                net_tmp = line.split("Order_")[-1].split(".tx")[0]
-                if net_tmp in networks:
-                    files_to_do.append(line)
-            if ("universe.txt" in line) or ("GoodSets.json" in line):
-                net_tmp = line.split("_")[2]
-                GSC_tmp = line.split("_")[1]
-                if (net_tmp in networks) and (GSC_tmp in GSCs):
-                    files_to_do.append(line)
-            if "Data_" in line:
-                feature_tmp = line.split("_")[1]
-                net_tmp = line.split("_")[2].split(".n")[0]
-                if (feature_tmp in features) and (net_tmp in networks):
-                    files_to_do.append(line)
-            if ("Entrez-to-Name" in line) or ("Entrez-to-Symbol" in line):
+    for line in util.get_filenames():
+        if "NodeOrder" in line:
+            net_tmp = osp.splitext(line.split("Order_")[-1])[0]
+            if net_tmp in networks:
                 files_to_do.append(line)
+        if ("universe.txt" in line) or ("GoodSets.json" in line):
+            net_tmp = line.split("_")[2]
+            GSC_tmp = line.split("_")[1]
+            if (net_tmp in networks) and (GSC_tmp in GSCs):
+                files_to_do.append(line)
+        if "Data_" in line:
+            feature_tmp = line.split("_")[1]
+            net_tmp = osp.splitext(line.split("_")[2])[0]
+            if (feature_tmp in features) and (net_tmp in networks):
+                files_to_do.append(line)
+        if ("Entrez-to-Name" in line) or ("Entrez-to-Symbol" in line):
+            files_to_do.append(line)
     return files_to_do
 
 
 def get_Similarities_filenames(networks, features, GSCs):
     files_to_do = []
-    with open(config.DATA_FILENAMES_PATH, "r") as f:
-        for line in f:
-            line = line.strip()
-            if "CorrectionMatrix_" in line:
-                feature_tmp = line.split("_")[-1].split(".n")[0]
-                net_tmp = line.split("_")[3]
-                GSC_tmp = line.split("_")[1]
-                if (net_tmp in networks) and (feature_tmp in features) and (GSC_tmp in GSCs):
-                    files_to_do.append(line)
-            if "CorrectionMatrixOrder" in line:
-                GSC_tmp = line.split("_")[1]
-                net_tmp = line.split("_")[2].split(".t")[0]
-                if (net_tmp in networks) and (GSC_tmp in GSCs):
-                    files_to_do.append(line)
-            if "PreTrainedWeights" in line:
-                net_tmp = line.split("_")[2]
-                feature_tmp = line.split("_")[-1].split(".json")[0]
-                if (net_tmp in networks) and (feature_tmp in features):
-                    files_to_do.append(line)
+    for line in util.get_filenames():
+        if "CorrectionMatrix_" in line:
+            feature_tmp = osp.splitext(line.split("_")[-1])[0]
+            net_tmp = line.split("_")[3]
+            GSC_tmp = line.split("_")[1]
+            if (net_tmp in networks) and (feature_tmp in features) and (GSC_tmp in GSCs):
+                files_to_do.append(line)
+        if "CorrectionMatrixOrder" in line:
+            GSC_tmp = line.split("_")[1]
+            net_tmp = osp.splitext(line.split("_")[2])[0]
+            if (net_tmp in networks) and (GSC_tmp in GSCs):
+                files_to_do.append(line)
+        if "PreTrainedWeights" in line:
+            net_tmp = line.split("_")[2]
+            feature_tmp = osp.splitext(line.split("_")[-1])[0]
+            if (net_tmp in networks) and (feature_tmp in features):
+                files_to_do.append(line)
     return files_to_do
 
 
 def get_NetworkGraph_filenames(networks):
     files_to_do = ["IDconversion_Homo-sapiens_Entrez-to-Symbol.json"]
-    with open(config.DATA_FILENAMES_PATH, "r") as f:
-        for line in f:
-            line = line.strip()
-            if "Edgelist" in line:
-                net_tmp = line.split("_")[-1].split(".ed")[0]
-                if net_tmp in networks:
-                    files_to_do.append(line)
+    for line in util.get_filenames():
+        if "Edgelist" in line:
+            net_tmp = osp.splitext(line.split("_")[-1])[0]
+            if net_tmp in networks:
+                files_to_do.append(line)
     return files_to_do
