@@ -10,7 +10,7 @@ from ._config import logger
 
 
 def download_select_data(
-    fp_data: str,
+    data_dir: str,
     tasks: str = "All",
     networks: str = "All",
     features: str = "All",
@@ -30,12 +30,12 @@ def download_select_data(
             all_files_to_do.extend(get_NetworkGraph_filenames(networks))
 
     all_files_to_do = list(set(all_files_to_do))
-    download_from_azure(fp_data, all_files_to_do)
+    download_from_azure(data_dir, all_files_to_do)
 
 
-def download_from_azure(fp_data: str, files_to_do: List[str]):
+def download_from_azure(data_dir: str, files_to_do: List[str]):
     for afile in files_to_do:
-        path = osp.join(fp_data, afile)
+        path = osp.join(data_dir, afile)
         if osp.exists(path):
             logger.info(f"File exists, skipping download: {path}")
         else:
