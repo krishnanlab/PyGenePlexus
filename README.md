@@ -1,7 +1,10 @@
 # GeneplexusPublic
-The point of the repo is to a get code base that can be imported by ADS folks without them having to alter any of the python code
 
-To see how this can be run see the `example_run.py` script
+A Python package of the GenePlexus analysis pipeline.
+
+* The [GenePlexus paper](https://academic.oup.com/bioinformatics/article/36/11/3457/5780279)
+* The [repository](https://github.com/krishnanlab/GenePlexus) for reproducing the experiments
+* The [webserver](https://www.geneplexus.net/)
 
 # Quick start
 
@@ -17,6 +20,12 @@ pip install -e .[dev]
 ```
 
 ## Run GenePlexus pipline
+
+### Example script
+
+To see an example usage of the API, see the `example/example_run.py` script
+
+### Command-line interface
 
 ```bash
 geneplexus --input_file example/input_genes.txt --output_dir result/ --daat_dir data/
