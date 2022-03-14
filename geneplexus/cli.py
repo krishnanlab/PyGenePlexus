@@ -14,9 +14,6 @@ from .geneplexus import GenePlexus
 from .util import read_gene_list
 
 
-HOMEDIR = pathlib.Path(__file__).absolute().parent.parent
-
-
 def parse_args() -> argparse.Namespace:
     """Parse arguments from command line."""
     parser = argparse.ArgumentParser(
@@ -89,8 +86,8 @@ def parse_args() -> argparse.Namespace:
 
 def preprocess(args: argparse.Namespace) -> Tuple[str, str]:
     """Set up data and result directories and download data if necessary."""
-    datadir = osp.join(HOMEDIR, args.data_dir)
-    outdir = osp.join(HOMEDIR, args.output_dir)
+    datadir = osp.normpath(osp.expanduser(args.data_dir))
+    outdir = osp.normpath(osp.expanduser(args.output_dir))
     os.makedirs(datadir, exist_ok=True)
     os.makedirs(outdir, exist_ok=True)
     download_select_data(datadir, "All", args.network, args.feature, ["GO", "DisGeNet"])
