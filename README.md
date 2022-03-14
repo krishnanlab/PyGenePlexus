@@ -10,7 +10,7 @@ A Python package of the GenePlexus analysis pipeline.
 
 ## Installation
 
-Install the ``GenePlexus`` analysis package via ``pip``.
+Install the ``GenePlexus`` package via ``pip``.
 
 ```bash
 pip install .
@@ -23,7 +23,7 @@ pip install -e .[dev]
 
 ### Example script
 
-To see an example usage of the API, see the `example/example_run.py` script
+See `example/example_run.py` for an example usage of the API.
 
 ### Command-line interface
 
