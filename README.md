@@ -14,16 +14,13 @@ Install the ``GenePlexus`` package via ``pip``.
 
 ```bash
 pip install .
-
-# Alternatively, install in editable mode, with dev dependencies
-pip install -e .[dev]
 ```
 
 ## Run GenePlexus pipline
 
 ### Example script
 
-See `example/example_run.py` for an example usage of the API.
+See `example/example_run.py` for example usage of the API.
 
 ### Command-line interface
 
@@ -63,3 +60,37 @@ optional arguments:
   --zip_output          If set, then compress the output directory into a Tar
                         Gz file. (default: False)
 ```
+
+# Dev
+
+## Installation
+
+Install the PyGenePlexus package in editable mode, with dev dependencies
+
+```bash
+pip install -2 ."[dev]"
+```
+
+## Testing
+
+Run the default test suit
+
+```bash
+pytest test/
+```
+
+By default, test data will be cached. Thus, after the first test run, data redownload will not be tested. To force redownload, specify the ``--cache-clear`` option
+
+```bash
+pytest test/ --clear-cache
+```
+
+## Building Documentation
+
+1. Install doc dependencies ``pip install -r docs/requirements.txt``
+2. Build
+```bash
+cd docs
+make html
+```
+3. Open doc ``open build/html/index.html``
