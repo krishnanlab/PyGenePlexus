@@ -38,26 +38,32 @@ class GenePlexus:
             input_count (int): Number of input genes. Created by
                 :meth:`GenePlexus.convert_to_Entrez`
             pos_genes_in_net (array of str): Array of input gene Entrez IDs
-                that are present in the network.
+                that are present in the network. Created by
+                :meth:`GenePlexus.get_pos_and_neg_genes`
             genes_not_in_net (array of str): Array of input gene Entrez IDs
-                that are absent in the network.
+                that are absent in the network. Created by
+                :meth:`GenePlexus.get_pos_and_neg_genes`
             net_genes (array of str): Array of network gene Entrez IDs.
+                Created by :meth:`GenePlexus.get_pos_and_neg_genes`
             negative_genes (array of str): Array of negative gene Entrez IDs
                 derived using the input genes and the background gene set
-                collection (GSC).
-            mdl_weights (array of float): Trained model parameters.
+                collection (GSC). Created by
+                :meth:`GenePlexus.get_pos_and_neg_genes`
+            mdl_weights (array of float): Trained model parameters. Created
+                by :meth:`GenePlexus.fit_and_predict`
             probs (array of float): Genome wide gene prediction scores. A high
                 value indicates the relevance of the gene to the input gene
-                list.
+                list. Created by :meth:`GenePlexus.fit_and_predict`
             avgps (array of float): Cross validation results. Performance
-                is measured using log2(auprc/prior)
+                is measured using log2(auprc/prior). Created by
+                :meth:`GenePlexus.fit_and_predict`
             df_probs (DataFrame): A table with 7 columns: **Entrez** (the gene
                 Entrez ID), **Symbol** (the gene Symbol), **Name** (the gene
                 Name), **Probability** (the probability of a gene being part of
                 the input gene list), **Known/Novel** (whether the gene is in
                 the input gene list), **Class-Label** (positive, negative, or
                 neutral), **Rank** (rank of relevance of the gene to the input
-                gene list).
+                gene list). Created by :meth:`GenePlexus.fit_and_predict`
 
         Todos:
             - :attr:`genes_not_in_net` has wrong type (array of int).
