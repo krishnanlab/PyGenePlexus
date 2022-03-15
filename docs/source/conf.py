@@ -31,6 +31,8 @@ release = '0.0.0'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'sphinx.ext.autodoc',
+    'sphinx.ext.viewcode',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -55,8 +57,7 @@ exclude_patterns = []
 # a list of builtin themes.
 #
 import sphinx_nameko_theme
-html_theme = 'nameko'
-html_theme_path = [sphinx_nameko_theme.get_html_theme_path()]
+html_theme = 'sphinx_rtd_theme'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
