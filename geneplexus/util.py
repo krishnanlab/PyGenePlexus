@@ -24,7 +24,7 @@ def check_file(path: str):
     Args:
         path (str): Path to the file.
 
-    Raise:
+    Raises:
         FileNotFoundError: if file not exist.
 
     """

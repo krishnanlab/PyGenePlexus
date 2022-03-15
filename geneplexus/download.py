@@ -84,7 +84,7 @@ def make_download_options_lists(
     )
 
 
-def get_IDconversion_filenames():
+def get_IDconversion_filenames() -> List[str]:
     files_to_do = []
     for line in util.get_all_filenames():
         if ("IDconversion" in line) or ("NodeOrder" in line):
@@ -92,7 +92,12 @@ def get_IDconversion_filenames():
     return files_to_do
 
 
-def get_MachineLearning_filenames(networks, GSCs, features):
+def get_MachineLearning_filenames(
+    networks: config.NET_TYPE,
+    GSCs: config.GSC_TYPE,
+    features: config.FEATURE_TYPE,
+) -> List[str]:
+    # TODO: switch GSCs and features position to make it consistent
     files_to_do = []
     for line in util.get_all_filenames():
         if "NodeOrder" in line:
@@ -114,7 +119,11 @@ def get_MachineLearning_filenames(networks, GSCs, features):
     return files_to_do
 
 
-def get_Similarities_filenames(networks, features, GSCs):
+def get_Similarities_filenames(
+    networks: config.NET_TYPE,
+    features: config.FEATURE_TYPE,
+    GSCs: config.GSC_TYPE,
+) -> List[str]:
     files_to_do = []
     for line in util.get_all_filenames():
         if "CorrectionMatrix_" in line:
@@ -136,7 +145,9 @@ def get_Similarities_filenames(networks, features, GSCs):
     return files_to_do
 
 
-def get_NetworkGraph_filenames(networks):
+def get_NetworkGraph_filenames(
+    networks: config.NET_TYPE,
+) -> List[str]:
     files_to_do = ["IDconversion_Homo-sapiens_Entrez-to-Symbol.json"]
     for line in util.get_all_filenames():
         if "Edgelist" in line:
