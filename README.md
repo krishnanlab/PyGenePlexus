@@ -73,7 +73,7 @@ pip install -e ."[dev]"
 
 ## Testing
 
-Run the default test suit
+Run the default test suite
 
 ```bash
 pytest test/
@@ -82,7 +82,7 @@ pytest test/
 By default, test data will be cached. Thus, after the first test run, data redownload will not be tested. To force redownload, specify the ``--cache-clear`` option
 
 ```bash
-pytest test/ --clear-cache
+pytest test/ --cache-clear
 ```
 
 ## Building Documentation
