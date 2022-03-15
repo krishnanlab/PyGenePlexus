@@ -65,10 +65,10 @@ optional arguments:
 
 ## Installation
 
-Install the PyGenePlexus package in editable mode, with dev dependencies
+Install the PyGenePlexus package in editable mode with dev dependencies
 
 ```bash
-pip install -2 ."[dev]"
+pip install -e ."[dev]"
 ```
 
 ## Testing
