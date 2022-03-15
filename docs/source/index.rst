@@ -10,6 +10,10 @@ Welcome to PyGenePlexus's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   geneplexus
+   download
+   cli
+   util
 
 
 Indices and tables
