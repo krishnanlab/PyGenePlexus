@@ -31,6 +31,7 @@ release = '0.0.0'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'sphinx.ext.todo',
     'sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
     'sphinxcontrib.napoleon',
@@ -50,6 +51,10 @@ language = 'en'
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
+
+# -- Napoleon settings -------------------------------------------------------
+
+napoleon_include_init_with_doc = True
 
 
 # -- Options for HTML output -------------------------------------------------

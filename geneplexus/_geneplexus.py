@@ -69,6 +69,7 @@ def make_validation_df(df_convert_out, file_loc):
 def get_genes_in_network(file_loc, net_type, convert_IDs):
     net_genes = util.load_node_order(file_loc, net_type)
     pos_genes_in_net = np.intersect1d(np.array(convert_IDs), net_genes)
+    # XXX: gene_not_in_net turns out to be str type, do we want to force str type?
     genes_not_in_net = np.setdiff1d(np.array(convert_IDs), net_genes)
     return pos_genes_in_net, genes_not_in_net, net_genes
 
@@ -103,6 +104,9 @@ def run_SL(file_loc, net_type, features, pos_genes_in_net, negative_genes, net_g
     probs = clf.predict_proba(data)[:, 1]
 
     if len(pos_genes_in_net) < 15:
+        logger.warning(
+            "Not enough genes supplied for cross validation ({len(pos_genes_in_net)}), skipping cross validation.",
+        )
         avgps = [-10, -10, -10]
     else:
         avgps = []
