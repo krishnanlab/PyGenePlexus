@@ -196,26 +196,22 @@ def make_sim_dfs(file_loc, mdl_weights, GSC, net_type, features):
 
 def make_small_edgelist(file_loc, df_probs, net_type, num_nodes=50):
     # This will set the max number of genes to look at to a given number
+    # Load network as edge list dataframe
+    filepath = osp.join(file_loc, f"Edgelist_{net_type}.edg")
     if net_type == "BioGRID":
-        df_edge = pd.read_csv(
-            osp.join(file_loc, f"Edgelist_{net_type}.edg"),
-            sep="\t",
-            header=None,
-            names=["Node1", "Node2"],
-        )
+        df_edge = pd.read_csv(filepath, sep="\t", header=None, names=["Node1", "Node2"])
         df_edge["Weight"] = 1
     else:
-        df_edge = pd.read_csv(
-            osp.join(file_loc, f"Edgelist_{net_type}.edg"),
-            sep="\t",
-            header=None,
-            names=["Node1", "Node2", "Weight"],
-        )
+        df_edge = pd.read_csv(filepath, sep="\t", header=None, names=["Node1", "Node2", "Weight"])
     df_edge = df_edge.astype({"Node1": str, "Node2": str})
+
+    # Take subgraph induced by top genes
     top_genes = df_probs["Entrez"].to_numpy()[0:num_nodes]
     df_edge = df_edge[(df_edge["Node1"].isin(top_genes)) & (df_edge["Node2"].isin(top_genes))]
     genes_in_edge = np.union1d(df_edge["Node1"].unique(), df_edge["Node2"].unique())
-    isolated_genes = np.setdiff1d(top_genes, genes_in_edge)
+    isolated_genes = np.setdiff1d(top_genes, genes_in_edge).tolist()
+
+    # Convert to gene symbol
     Entrez_to_Symbol = util.load_geneid_conversion(file_loc, "Entrez", "Symbol")
     replace_dict = {}
     for agene in genes_in_edge:
@@ -225,7 +221,7 @@ def make_small_edgelist(file_loc, df_probs, net_type, num_nodes=50):
             syms_tmp = "N/A"
         replace_dict[agene] = syms_tmp
     df_edge_sym = df_edge.replace(to_replace=replace_dict)
-    # make smae network as above just with gene symbols instead of entrez IDs
+
     isolated_genes_sym = []
     for agene in isolated_genes:
         try:
@@ -233,6 +229,7 @@ def make_small_edgelist(file_loc, df_probs, net_type, num_nodes=50):
         except KeyError:
             syms_tmp = "N/A"
         isolated_genes_sym.append(syms_tmp)
+
     return df_edge, isolated_genes, df_edge_sym, isolated_genes_sym
 
 
