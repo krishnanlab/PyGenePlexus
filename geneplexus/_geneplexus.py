@@ -68,9 +68,9 @@ def make_validation_df(df_convert_out, file_loc):
 
 def get_genes_in_network(file_loc, net_type, convert_IDs):
     net_genes = util.load_node_order(file_loc, net_type)
-    pos_genes_in_net = np.intersect1d(np.array(convert_IDs), net_genes)
-    # XXX: gene_not_in_net turns out to be str type, do we want to force str type?
-    genes_not_in_net = np.setdiff1d(np.array(convert_IDs), net_genes)
+    convert_IDs_array = np.array(convert_IDs, dtype=str)
+    pos_genes_in_net = np.intersect1d(convert_IDs_array, net_genes)
+    genes_not_in_net = np.setdiff1d(convert_IDs_array, net_genes)
     return pos_genes_in_net, genes_not_in_net, net_genes
 
 

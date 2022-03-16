@@ -21,9 +21,6 @@ class GenePlexus:
             GSC (GSC_TYPE): Type of gene set collection to use for generating
                 negatives.
 
-        Todos:
-            - :attr:`genes_not_in_net` has wrong type (array of int).
-
         """
         self.file_loc = file_loc
         self.net_type = net_type
