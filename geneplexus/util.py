@@ -11,8 +11,8 @@ import numpy as np
 from . import config
 
 
-def get_symbol(gene: str, entrez_to_symbol: Dict[str, List[str]]) -> str:
-    """Map entrez to gene symbol.
+def mapgene(gene: str, entrez_to_symbol: Dict[str, List[str]]) -> str:
+    """Map entrez to other representations.
 
     Args:
         gene (str): Entrez gene ID.

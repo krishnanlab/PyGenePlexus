@@ -141,14 +141,8 @@ def make_prob_df(file_loc, net_genes, probs, pos_genes_in_net, negative_genes):
         else:
             class_label = "U"
             novel_label = "Novel"
-        try:
-            syms_tmp = "/".join(Entrez_to_Symbol[net_genes[idx]])  # allows for multimapping
-        except KeyError:
-            syms_tmp = "N/A"
-        try:
-            name_tmp = "/".join(Entrez_to_Name[net_genes[idx]])  # allows for multimapping
-        except KeyError:
-            name_tmp = "N/A"
+        syms_tmp = util.mapgene(net_genes[idx], Entrez_to_Symbol)
+        name_tmp = util.mapgene(net_genes[idx], Entrez_to_Name)
         prob_results.append([net_genes[idx], syms_tmp, name_tmp, probs[idx], novel_label, class_label])
     df_probs = pd.DataFrame(
         prob_results,
@@ -213,8 +207,8 @@ def make_small_edgelist(file_loc, df_probs, net_type, num_nodes=50):
 
     # Convert to gene symbol
     Entrez_to_Symbol = util.load_geneid_conversion(file_loc, "Entrez", "Symbol")
-    replace_dict = {gene: util.get_symbol(gene, Entrez_to_Symbol) for gene in genes_in_edge}
-    isolated_genes_sym = [util.get_symbol(gene, Entrez_to_Symbol) for gene in isolated_genes]
+    replace_dict = {gene: util.mapgene(gene, Entrez_to_Symbol) for gene in genes_in_edge}
+    isolated_genes_sym = [util.mapgene(gene, Entrez_to_Symbol) for gene in isolated_genes]
     df_edge_sym = df_edge.replace(to_replace=replace_dict)
 
     return df_edge, isolated_genes, df_edge_sym, isolated_genes_sym
