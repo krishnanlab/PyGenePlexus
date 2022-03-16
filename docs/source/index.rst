@@ -10,9 +10,9 @@ Welcome to PyGenePlexus's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   cli
    geneplexus
    download
-   cli
    util
 
 

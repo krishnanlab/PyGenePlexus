@@ -11,6 +11,28 @@ import numpy as np
 from . import config
 
 
+def get_symbol(gene: str, entrez_to_symbol: Dict[str, List[str]]) -> str:
+    """Map entrez to gene symbol.
+
+    Args:
+        gene (str): Entrez gene ID.
+        entrez_to_symbol (Dict[str, List[str]]): Mapping from Entrez to list of
+            gene symbols.
+
+    Returns:
+        str: Gene symbol corresponding to the gene entrez ID.
+
+    Note:
+        Multiple symbols is allowed, separated by '/'.
+
+    """
+    try:
+        syms = "/".join(entrez_to_symbol[gene])
+    except KeyError:
+        syms = "N/A"
+    return syms
+
+
 def get_all_filenames():
     """Iterate over filenames."""
     with open(config.DATA_FILENAMES_PATH, "r") as f:
@@ -24,7 +46,7 @@ def check_file(path: str):
     Args:
         path (str): Path to the file.
 
-    Raise:
+    Raises:
         FileNotFoundError: if file not exist.
 
     """
