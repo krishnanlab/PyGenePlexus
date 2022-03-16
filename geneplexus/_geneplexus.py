@@ -215,20 +215,12 @@ def make_small_edgelist(file_loc, df_probs, net_type, num_nodes=50):
     Entrez_to_Symbol = util.load_geneid_conversion(file_loc, "Entrez", "Symbol")
     replace_dict = {}
     for agene in genes_in_edge:
-        try:
-            syms_tmp = "/".join(Entrez_to_Symbol[agene])  # allows for multimapping
-        except KeyError:
-            syms_tmp = "N/A"
-        replace_dict[agene] = syms_tmp
+        replace_dict[agene] = util.get_symbol(agene, Entrez_to_Symbol)
     df_edge_sym = df_edge.replace(to_replace=replace_dict)
 
     isolated_genes_sym = []
     for agene in isolated_genes:
-        try:
-            syms_tmp = "/".join(Entrez_to_Symbol[agene])  # allows for multimapping
-        except KeyError:
-            syms_tmp = "N/A"
-        isolated_genes_sym.append(syms_tmp)
+        isolated_genes_sym.append(util.get_symbol(agene, Entrez_to_Symbol))
 
     return df_edge, isolated_genes, df_edge_sym, isolated_genes_sym
 
