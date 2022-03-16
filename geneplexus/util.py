@@ -11,23 +11,24 @@ import numpy as np
 from . import config
 
 
-def mapgene(gene: str, entrez_to_symbol: Dict[str, List[str]]) -> str:
+def mapgene(gene: str, entrez_to_other: Dict[str, List[str]]) -> str:
     """Map entrez to other representations.
 
     Args:
         gene (str): Entrez gene ID.
-        entrez_to_symbol (Dict[str, List[str]]): Mapping from Entrez to list of
-            gene symbols.
+        entrez_to_other (Dict[str, List[str]]): Mapping from Entrez to list of
+            other gene representations of interest.
 
     Returns:
-        str: Gene symbol corresponding to the gene entrez ID.
+        str: Gene representation corresponding to the gene Entrez ID.
 
     Note:
-        Multiple symbols is allowed, separated by '/'.
+        Mapping from a single Entrez to multiple representations is allowed and
+        the representations will be separated by '/'.
 
     """
     try:
-        syms = "/".join(entrez_to_symbol[gene])
+        syms = "/".join(entrez_to_other[gene])
     except KeyError:
         syms = "N/A"
     return syms
@@ -62,7 +63,7 @@ def read_gene_list(
 
     Args:
         path (str): Path to the input gene list file.
-        sep (str): Seperator between genes.
+        sep (str): Seperator between genes (default: ", ").
 
     """
     if sep == "newline":

@@ -30,7 +30,7 @@ class GenePlexus:
     def load_genes(self, input_genes: List[str]):
         """Load list of genes into the GenePlexus object.
 
-        * :attr:`GenePlexus.input_genes` (List[str]): Input gene list.
+        :attr:`GenePlexus.input_genes` (List[str]): Input gene list.
 
         Args:
             input_genes (List[str]): Input genes, can be mixed type.
@@ -46,17 +46,17 @@ class GenePlexus:
     def convert_to_Entrez(self):
         """Convert the loaded genes to Entrez.
 
-        * :attr:`GenePlexus.df_convert_out` (DataFrame)
+        :attr:`GenePlexus.df_convert_out` (DataFrame)
             A table where the first column contains the original gene IDs, the
             second column contains the corresponding converted Entrez gene IDs.
             The rest of the columns are indicators of whether a given gene is
             present in any one of the networks.
-        * :attr:`GenePlexus.table_summary` (List[Dict[str, int]])
+        :attr:`GenePlexus.table_summary` (List[Dict[str, int]])
             List of netowrk stats summary dictionaries. Each dictionary has
             three keys: **Network**, **NetworkGenes**, and **PositiveGenes**
             (the number intersection between the input genes and the network
             genes).
-        * :attr:`GenePlexus.input_count` (int)
+        :attr:`GenePlexus.input_count` (int)
             Number of input genes.
 
         """
@@ -81,13 +81,13 @@ class GenePlexus:
     def get_pos_and_neg_genes(self):
         """Set up positive and negative genes given the network.
 
-        * :attr:`GenePlexus.pos_genes_in_net` (array of str)
+        :attr:`GenePlexus.pos_genes_in_net` (array of str)
             Array of input gene Entrez IDs that are present in the network.
-        * :attr:`GenePlexus.genes_not_in_net` (array of str)
+        :attr:`GenePlexus.genes_not_in_net` (array of str)
             Array of input gene Entrez IDs that are absent in the network.
-        * :attr:`GenePlexus.net_genes` (array of str)
+        :attr:`GenePlexus.net_genes` (array of str)
             Array of network gene Entrez IDs.
-        * :attr:`GenePlexus.negative_genes` (array of str)
+        :attr:`GenePlexus.negative_genes` (array of str)
             Array of negative gene Entrez IDs derived using the input genes and
             the background gene set collection (GSC).
 
@@ -108,15 +108,15 @@ class GenePlexus:
     def fit_and_predict(self):
         """Fit a model and predict gene scores.
 
-        * :attr:`GenePlexus.mdl_weights` (array of float)
+        :attr:`GenePlexus.mdl_weights` (array of float)
             Trained model parameters.
-        * :attr:`GenePlexus.probs` (array of float)
+        :attr:`GenePlexus.probs` (array of float)
             Genome wide gene prediction scores. A high value indicates the
             relevance of the gene to the input gene list.
-        * :attr:`GenePlexus.avgps` (array of float)
+        :attr:`GenePlexus.avgps` (array of float)
             Cross validation results. Performance is measured using
             log2(auprc/prior).
-        * :attr:`GenePlexus.df_probs` (DataFrame)
+        :attr:`GenePlexus.df_probs` (DataFrame)
             A table with 7 columns: **Entrez** (the gene Entrez ID), **Symbol**
             (the gene Symbol), **Name** (the gene Name), **Probability** (the
             probability of a gene being part of the input gene list),
@@ -145,22 +145,22 @@ class GenePlexus:
     def make_sim_dfs(self):
         """Compute similarities bewteen the input genes and GO or DisGeNet.
 
-        * :attr:`GenePlexus.df_sim_GO` (DataFrame)
+        :attr:`GenePlexus.df_sim_GO` (DataFrame)
             A table with 4 columns: **ID** (the GO term ID), **Name** (name of
             the GO temr), **Similarity** (similarity between the input gene
             list and a GO term), **Rank** (rank of GO term similarity with the
             input gene list).
-        * :attr:`GenePlexus.df_sim_Dis` (DataFrame)
+        :attr:`GenePlexus.df_sim_Dis` (DataFrame)
             A table with 4 columns: **ID** (the DO term ID), **Name** (name of
             the DO temr), **Similarity** (similarity between the input gene
             list and a DO term), **Rank** (rank of DO term similarity with the
             input gene list).
-        * :attr:`GenePlexus.weights_GO`
+        :attr:`GenePlexus.weights_GO`
             Dictionary of pretrained model weights for GO. A key is a GO term,
             and the value is a dictionary with three keys: **Name** (name of
             the GO term), **Weights** (pretrained model weights), **PosGenes**
             (positive genes for this GO term).
-        * :attr:`GenePlexus.weights_Dis`
+        :attr:`GenePlexus.weights_Dis`
             Dictionary of pretrained model weights for DisGeNet. A key is a DO
             term, and the value is a dictionary with three keys: **Name** (name
             of the DO term), **Weights** (pretrained model weights),
@@ -179,16 +179,16 @@ class GenePlexus:
     def make_small_edgelist(self, num_nodes: int = 50):
         """Make a subgraph induced by the top predicted genes.
 
-        * :attr:`GenePlexus.df_edge` (DataFrame)
+        :attr:`GenePlexus.df_edge` (DataFrame)
             Table of edge list corresponding to the subgraph induced by the top
             predicted genes (in Entrez gene ID).
-        * :attr:`GenePlexus.isolated_genes` (List[str])
+        :attr:`GenePlexus.isolated_genes` (List[str])
             List of top predicted genes (in Entrez gene ID) are are isolated
             from other top predicted genes in the network.
-        * :attr:`GenePlexus.df_edge_sym` (DataFrame)
+        :attr:`GenePlexus.df_edge_sym` (DataFrame)
             Table of edge list corresponding to the subgraph induced by the top
             predicted genes (in gene symbol).
-        * :attr:`GenePlexus.isolated_genes_sym` (List[str])
+        :attr:`GenePlexus.isolated_genes_sym` (List[str])
             List of top predicted genes (in gene symbol) are are isolated from
             other top predicted genes in the network.
 
@@ -207,8 +207,8 @@ class GenePlexus:
     def alter_validation_df(self):
         """Make table about presence of input genes in the network.
 
-        * :attr:`df_convert_out_subset`
-        * :attr:`positive_genes`
+        :attr:`df_convert_out_subset`
+        :attr:`positive_genes`
 
         """
         self.df_convert_out_subset, self.positive_genes = _geneplexus.alter_validation_df(
