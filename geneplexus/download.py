@@ -25,7 +25,7 @@ from ._config.config import URL_AZURE
 
 def download_select_data(
     data_dir: str,
-    tasks: TASK_SELECTION_TYPE,
+    tasks: TASK_SELECTION_TYPE = "All",
     networks: NET_SELECTION_TYPE = "All",
     features: FEATURE_SELECTION_TYPE = "All",
     GSCs: GSC_SELECTION_TYPE = "All",
