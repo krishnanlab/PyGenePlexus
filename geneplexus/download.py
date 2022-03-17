@@ -13,10 +13,10 @@ from ._config import logger
 
 def download_select_data(
     data_dir: str,
-    tasks: Union[str, List[str]] = "All",
-    networks: Union[str, List[config.NET_TYPE]] = "All",
-    features: Union[str, List[config.FEATURE_TYPE]] = "All",
-    GSCs: Union[str, List[config.GSC_TYPE]] = "All",
+    tasks: config.TASK_SELECTION_TYPE,
+    networks: config.NET_SELECTION_TYPE = "All",
+    features: config.FEATURE_SELECTION_TYPE = "All",
+    GSCs: config.GSC_SELECTION_TYPE = "All",
 ):
     """Select subset of data to download.
 
@@ -86,10 +86,10 @@ def _make_download_options_list(
 
 
 def make_download_options_lists(
-    tasks: Union[str, List[str]],
-    networks: Union[str, List[config.NET_TYPE]],
-    features: Union[str, List[config.FEATURE_TYPE]],
-    GSCs: Union[str, List[config.GSC_TYPE]],
+    tasks: config.TASK_SELECTION_TYPE,
+    networks: config.NET_SELECTION_TYPE,
+    features: config.FEATURE_SELECTION_TYPE,
+    GSCs: config.GSC_SELECTION_TYPE,
 ) -> Tuple[List[str], List[config.NET_TYPE], List[config.FEATURE_TYPE], List[config.GSC_TYPE]]:
     args = (
         ("tasks", tasks, config.ALL_TASKS),

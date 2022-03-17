@@ -32,9 +32,16 @@ VALID_ID_CONVERSION: Set[Tuple[ID_SRC_TYPE, ID_DST_TYPE]] = {
     ("Entrez", "Symbol"),
     ("Symbol", "Entrez"),
 }
+
+TASK_TYPE = Literal["IDconversion", "MachineLearning", "Similarities", "NetworkGraph"]
 NET_TYPE = Literal["BioGRID", "STRING", "STRING-EXP", "GIANT-TN"]
 GSC_TYPE = Literal["GO", "DisGeNet"]
 FEATURE_TYPE = Literal["Adjacency", "Embedding", "Influence"]
+
+TASK_SELECTION_TYPE = Union[Literal["All"], List[str]]
+NET_SELECTION_TYPE = Union[Literal["All"], List[NET_TYPE]]
+FEATURE_SELECTION_TYPE = Union[Literal["All"], List[FEATURE_TYPE]]
+GSC_SELECTION_TYPE = Union[Literal["All"], List[GSC_TYPE]]
 
 ID_CONVERSION_MAP_TYPE = Dict[str, List[str]]
 GSC_DATA_TYPE = Dict[str, Dict[Literal["Name", "Genes"], Union[str, np.ndarray]]]
@@ -52,6 +59,7 @@ __all__ = [
     "ID_SRC_TYPE",
     "ID_DST_TYPE",
     "VALID_ID_CONVERSION",
+    "TASK_TYPE",
     "NET_TYPE",
     "GSC_TYPE",
     "FEATURE_TYPE",
