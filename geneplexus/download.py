@@ -54,7 +54,7 @@ def download_select_data(
         if atask == "IDconversion":
             all_files_to_do.extend(get_IDconversion_filenames())
         if atask == "MachineLearning":
-            all_files_to_do.extend(get_MachineLearning_filenames(networks, GSCs, features))
+            all_files_to_do.extend(get_MachineLearning_filenames(networks, features, GSCs))
         if atask == "Similarities":
             all_files_to_do.extend(get_Similarities_filenames(networks, features, GSCs))
         if atask == "NetworkGraph":
@@ -121,8 +121,8 @@ def get_IDconversion_filenames() -> List[str]:
 
 def get_MachineLearning_filenames(
     networks: List[NET_TYPE],
-    GSCs: List[GSC_TYPE],
     features: List[FEATURE_TYPE],
+    GSCs: List[GSC_TYPE],
 ) -> List[str]:
     # TODO: switch GSCs and features position to make it consistent
     files_to_do = []
