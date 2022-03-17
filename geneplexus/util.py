@@ -2,6 +2,7 @@ import json
 import os.path as osp
 from typing import Any
 from typing import Dict
+from typing import Generator
 from typing import List
 from typing import Literal
 from typing import Optional
@@ -34,7 +35,7 @@ def mapgene(gene: str, entrez_to_other: Dict[str, List[str]]) -> str:
     return syms
 
 
-def get_all_filenames():
+def get_all_filenames() -> Generator[str, None, None]:
     """Iterate over filenames."""
     with open(config.DATA_FILENAMES_PATH, "r") as f:
         for line in f:
@@ -74,6 +75,13 @@ def read_gene_list(
 
 
 def _load_json_file(file_loc: str, file_name: str) -> Dict[str, Any]:
+    """Load JSON into dictionary.
+
+    Args:
+        file_loc (str): Location of data files.
+        file_name (str): Name of the file.
+
+    """
     file_path = osp.join(file_loc, file_name)
     check_file(file_path)
     return json.load(open(file_path, "rb"))
@@ -111,7 +119,14 @@ def load_gsc(
     GSC: config.GSC_TYPE,
     net_type: config.NET_TYPE,
 ) -> config.GSC_DATA_TYPE:
-    """Load gene set collection dictionary."""
+    """Load gene set collection dictionary.
+
+    Args:
+        file_loc (str): Location of data files.
+        target_set (GSC_TYPE): Target gene set collection.
+        net_type (NET_TYPE): Network used.
+
+    """
     file_name = f"GSC_{GSC}_{net_type}_GoodSets.json"
     return _load_json_file(file_loc, file_name)
 
@@ -122,7 +137,15 @@ def load_pretrained_weights(
     net_type: config.NET_TYPE,
     features: config.FEATURE_TYPE,
 ) -> config.PRETRAINED_DATA_TYPE:
-    """Load pretrained model dictionary."""
+    """Load pretrained model dictionary.
+
+    Args:
+        file_loc (str): Location of data files.
+        target_set (GSC_TYPE): Target gene set collection.
+        net_type (NET_TYPE): Network used.
+        features (FEATURE_TYPE): Type of features used.
+
+    """
     file_name = f"PreTrainedWeights_{target_set}_{net_type}_{features}.json"
     return _load_json_file(file_loc, file_name)
 
@@ -132,7 +155,14 @@ def _load_np_file(
     file_name: str,
     load_method: Literal["npy", "txt"],
 ) -> np.ndarray:
-    """Check np file existence and load."""
+    """Check np file existence and load.
+
+    Args:
+        file_loc (str): Location of data files.
+        file_name (str): Name of the file.
+        load_method (str): How to load the file ('npy' or 'txt').
+
+    """
     file_path = osp.join(file_loc, file_name)
     check_file(file_path)
 
@@ -145,7 +175,13 @@ def _load_np_file(
 
 
 def load_node_order(file_loc: str, net_type: config.NET_TYPE) -> np.ndarray:
-    """Load network genes."""
+    """Load network genes.
+
+    Args:
+        file_loc (str): Location of data files.
+        net_type (NET_TYPE): Network used.
+
+    """
     file_name = f"NodeOrder_{net_type}.txt"
     return _load_np_file(file_loc, file_name, load_method="txt")
 
@@ -155,7 +191,14 @@ def load_genes_universe(
     GSC: config.GSC_TYPE,
     net_type: config.NET_TYPE,
 ) -> np.ndarray:
-    """Load gene universe a given network and GSC."""
+    """Load gene universe a given network and GSC.
+
+    Args:
+        file_loc (str): Location of data files.
+        GSC (GSC_TYPE): Gene set collection.
+        net_type (NET_TYPE): Network used.
+
+    """
     file_name = f"GSC_{GSC}_{net_type}_universe.txt"
     return _load_np_file(file_loc, file_name, load_method="txt")
 
@@ -165,7 +208,14 @@ def load_gene_features(
     features: config.FEATURE_TYPE,
     net_type: config.NET_TYPE,
 ) -> np.ndarray:
-    """Load gene features."""
+    """Load gene features.
+
+    Args:
+        file_loc (str): Location of data files.
+        net_type (NET_TYPE): Network used.
+        features (FEATURE_TYPE): Type of features used.
+
+    """
     file_name = f"Data_{features}_{net_type}.npy"
     return _load_np_file(file_loc, file_name, load_method="npy")
 
@@ -175,7 +225,14 @@ def load_correction_order(
     target_set: config.GSC_TYPE,
     net_type: config.NET_TYPE,
 ) -> np.ndarray:
-    """Load correction matrix order."""
+    """Load correction matrix order.
+
+    Args:
+        file_loc (str): Location of data files.
+        target_set (GSC_TYPE): Target gene set collection.
+        net_type (NET_TYPE): Network used.
+
+    """
     file_name = f"CorrectionMatrixOrder_{target_set}_{net_type}.txt"
     return _load_np_file(file_loc, file_name, load_method="txt")
 
@@ -187,6 +244,15 @@ def load_correction_mat(
     net_type: config.NET_TYPE,
     features: config.FEATURE_TYPE,
 ) -> np.ndarray:
-    """Load correction matrix."""
+    """Load correction matrix.
+
+    Args:
+        file_loc (str): Location of data files.
+        GSC (GSC_TYPE): Gene set collection.
+        target_set (GSC_TYPE): Target gene set collection.
+        net_type (NET_TYPE): Network used.
+        features (FEATURE_TYPE): Type of features used.
+
+    """
     file_name = f"CorrectionMatrix_{GSC}_{target_set}_{net_type}_{features}.npy"
     return _load_np_file(file_loc, file_name, load_method="npy")

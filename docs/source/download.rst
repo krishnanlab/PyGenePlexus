@@ -1,5 +1,6 @@
 Data downloader module
 ======================
-.. automodule:: geneplexus.download
-   :members:
-   :undoc-members:
+
+.. currentmodule:: geneplexus.download
+
+.. autofunction:: download_select_data
