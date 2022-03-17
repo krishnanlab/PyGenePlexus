@@ -35,8 +35,8 @@ VALID_ID_CONVERSION: Set[Tuple[ID_SRC_TYPE, ID_DST_TYPE]] = {
 
 TASK_TYPE = Literal["IDconversion", "MachineLearning", "Similarities", "NetworkGraph"]
 NET_TYPE = Literal["BioGRID", "STRING", "STRING-EXP", "GIANT-TN"]
-GSC_TYPE = Literal["GO", "DisGeNet"]
 FEATURE_TYPE = Literal["Adjacency", "Embedding", "Influence"]
+GSC_TYPE = Literal["GO", "DisGeNet"]
 
 TASK_SELECTION_TYPE = Union[Literal["All"], List[str]]
 NET_SELECTION_TYPE = Union[Literal["All"], List[NET_TYPE]]
@@ -61,8 +61,12 @@ __all__ = [
     "VALID_ID_CONVERSION",
     "TASK_TYPE",
     "NET_TYPE",
-    "GSC_TYPE",
     "FEATURE_TYPE",
+    "GSC_TYPE",
+    "TASK_SELECTION_TYPE",
+    "NET_SELECTION_TYPE",
+    "FEATURE_SELECTION_TYPE",
+    "GSC_SELECTION_TYPE",
     "ID_CONVERSION_MAP_TYPE",
     "GSC_DATA_TYPE",
     "PRETRAINED_DATA_TYPE",

@@ -6,17 +6,28 @@ from urllib.parse import urljoin
 
 import requests
 
-from . import config
 from . import util
 from ._config import logger
+from ._config.config import ALL_FEATURES
+from ._config.config import ALL_GSCS
+from ._config.config import ALL_NETWORKS
+from ._config.config import ALL_TASKS
+from ._config.config import FEATURE_SELECTION_TYPE
+from ._config.config import FEATURE_TYPE
+from ._config.config import GSC_SELECTION_TYPE
+from ._config.config import GSC_TYPE
+from ._config.config import NET_SELECTION_TYPE
+from ._config.config import NET_TYPE
+from ._config.config import TASK_SELECTION_TYPE
+from ._config.config import URL_AZURE
 
 
 def download_select_data(
     data_dir: str,
-    tasks: config.TASK_SELECTION_TYPE,
-    networks: config.NET_SELECTION_TYPE = "All",
-    features: config.FEATURE_SELECTION_TYPE = "All",
-    GSCs: config.GSC_SELECTION_TYPE = "All",
+    tasks: TASK_SELECTION_TYPE,
+    networks: NET_SELECTION_TYPE = "All",
+    features: FEATURE_SELECTION_TYPE = "All",
+    GSCs: GSC_SELECTION_TYPE = "All",
 ):
     """Select subset of data to download.
 
@@ -59,7 +70,7 @@ def download_from_azure(data_dir: str, files_to_do: List[str]):
         if osp.exists(path):
             logger.info(f"File exists, skipping download: {path}")
         else:
-            fn = urljoin(config.URL_AZURE, afile)
+            fn = urljoin(URL_AZURE, afile)
             logger.info(f"Downloading: {fn}")
             r = requests.get(fn)
             if r.ok:
@@ -86,16 +97,16 @@ def _make_download_options_list(
 
 
 def make_download_options_lists(
-    tasks: config.TASK_SELECTION_TYPE,
-    networks: config.NET_SELECTION_TYPE,
-    features: config.FEATURE_SELECTION_TYPE,
-    GSCs: config.GSC_SELECTION_TYPE,
-) -> Tuple[List[str], List[config.NET_TYPE], List[config.FEATURE_TYPE], List[config.GSC_TYPE]]:
+    tasks: TASK_SELECTION_TYPE,
+    networks: NET_SELECTION_TYPE,
+    features: FEATURE_SELECTION_TYPE,
+    GSCs: GSC_SELECTION_TYPE,
+) -> Tuple[List[str], List[NET_TYPE], List[FEATURE_TYPE], List[GSC_TYPE]]:
     args = (
-        ("tasks", tasks, config.ALL_TASKS),
-        ("network", networks, config.ALL_NETWORKS),
-        ("feature", features, config.ALL_FEATURES),
-        ("GSC", GSCs, config.ALL_GSCS),
+        ("tasks", tasks, ALL_TASKS),
+        ("network", networks, ALL_NETWORKS),
+        ("feature", features, ALL_FEATURES),
+        ("GSC", GSCs, ALL_GSCS),
     )
     return tuple(map(_make_download_options_list, *zip(*args)))  # type: ignore
 
@@ -109,9 +120,9 @@ def get_IDconversion_filenames() -> List[str]:
 
 
 def get_MachineLearning_filenames(
-    networks: List[config.NET_TYPE],
-    GSCs: List[config.GSC_TYPE],
-    features: List[config.FEATURE_TYPE],
+    networks: List[NET_TYPE],
+    GSCs: List[GSC_TYPE],
+    features: List[FEATURE_TYPE],
 ) -> List[str]:
     # TODO: switch GSCs and features position to make it consistent
     files_to_do = []
@@ -136,9 +147,9 @@ def get_MachineLearning_filenames(
 
 
 def get_Similarities_filenames(
-    networks: List[config.NET_TYPE],
-    features: List[config.FEATURE_TYPE],
-    GSCs: List[config.GSC_TYPE],
+    networks: List[NET_TYPE],
+    features: List[FEATURE_TYPE],
+    GSCs: List[GSC_TYPE],
 ) -> List[str]:
     files_to_do = []
     for line in util.get_all_filenames():
@@ -161,9 +172,7 @@ def get_Similarities_filenames(
     return files_to_do
 
 
-def get_NetworkGraph_filenames(
-    networks: List[config.NET_TYPE],
-) -> List[str]:
+def get_NetworkGraph_filenames(networks: List[NET_TYPE]) -> List[str]:
     files_to_do = ["IDconversion_Homo-sapiens_Entrez-to-Symbol.json"]
     for line in util.get_all_filenames():
         if "Edgelist" in line:
