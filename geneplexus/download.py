@@ -18,6 +18,24 @@ def download_select_data(
     features: Union[str, List[config.FEATURE_TYPE]] = "All",
     GSCs: Union[str, List[config.GSC_TYPE]] = "All",
 ):
+    """Select subset of data to download.
+
+    Args:
+        data_dir (str): Location of data files.
+        tasks: Task of interest ("IDConversion", "MachineLearning",
+            "Similarities", "NetworkGraph"), accept multiple selection as a
+            list. Do all the tasks if set to "All" (default: "All").
+        networks: Networks of interest ("BioGRID", "STRING", "STRING-EXP",
+            "GIANT-TN"), accept multiple selection as a list. Do all the
+            networks if set to "All" (default: "All").
+        features: Network features of interest ("Adjacency", "Embedding",
+            "Influence"), accept multiple selection as a list. Do all the
+            features if set to "All" (default: "All").
+        GSCs: Gene set collection of interest ("GO", "DisGeNet"), accept
+            multiple selection as a list. Do all the GSC if set to "All",
+            (default: "All").
+
+    """
     # Similarities and NetworkGraph will assume downloaded MachineLearning
     tasks, networks, features, GSCs = make_download_options_lists(tasks, networks, features, GSCs)
     all_files_to_do = []
