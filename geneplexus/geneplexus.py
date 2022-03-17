@@ -1,4 +1,7 @@
+from typing import Any
+from typing import Dict
 from typing import List
+from typing import Optional
 
 from . import _geneplexus
 from ._config import config
@@ -105,8 +108,14 @@ class GenePlexus:
         )
         return self.pos_genes_in_net, self.negative_genes, self.net_genes
 
-    def fit_and_predict(self):
+    def fit_and_predict(self, logreg_kwargs: Optional[Dict[str, Any]] = None):
         """Fit a model and predict gene scores.
+
+        Args:
+            logreg_kwargs (Dict[str, Any], optional): Scikit-learn logistic
+                regression settings. If not set, then use the default logistic
+                regression settings (l2 penalty, 10,000 max iterations, lbfgs
+                solver).
 
         :attr:`GenePlexus.mdl_weights` (array of float)
             Trained model parameters.
@@ -132,6 +141,7 @@ class GenePlexus:
             self.pos_genes_in_net,
             self.negative_genes,
             self.net_genes,
+            logreg_kwargs=logreg_kwargs,
         )
         self.df_probs = _geneplexus.make_prob_df(
             self.file_loc,

@@ -1,4 +1,6 @@
 import os.path as osp
+from typing import Any
+from typing import Dict
 from typing import Optional
 
 import numpy as np
@@ -14,6 +16,7 @@ from sklearn.preprocessing import StandardScaler
 from . import config
 from . import util
 from ._config import logger
+from ._config.config import DEFAULT_LOGREG_KWARGS
 
 
 def initial_ID_convert(input_genes, file_loc):
@@ -90,7 +93,21 @@ def get_negatives(file_loc, net_type, GSC, pos_genes_in_net):
     return negative_genes
 
 
-def run_SL(file_loc, net_type, features, pos_genes_in_net, negative_genes, net_genes):
+def run_SL(
+    file_loc,
+    net_type,
+    features,
+    pos_genes_in_net,
+    negative_genes,
+    net_genes,
+    logreg_kwargs: Optional[Dict[str, Any]] = None,
+):
+    if logreg_kwargs is None:
+        logreg_kwargs = DEFAULT_LOGREG_KWARGS
+        logger.info(f"Using default logistic regression settings: {logreg_kwargs}")
+    else:
+        logger.info(f"Using custom logistic regression settings: {logreg_kwargs}")
+
     pos_inds = [np.where(net_genes == agene)[0][0] for agene in pos_genes_in_net]
     neg_inds = [np.where(net_genes == agene)[0][0] for agene in negative_genes]
     data = util.load_gene_features(file_loc, features, net_type)
@@ -98,7 +115,7 @@ def run_SL(file_loc, net_type, features, pos_genes_in_net, negative_genes, net_g
     data = std_scale.transform(data)
     Xdata = data[pos_inds + neg_inds, :]
     ydata = np.array([1] * len(pos_inds) + [0] * len(neg_inds))
-    clf = LogisticRegression(max_iter=10000, solver="lbfgs", penalty="l2", C=1.0)
+    clf = LogisticRegression(**logreg_kwargs)
     clf.fit(Xdata, ydata)
     mdl_weights = np.squeeze(clf.coef_)
     probs = clf.predict_proba(data)[:, 1]
@@ -113,7 +130,7 @@ def run_SL(file_loc, net_type, features, pos_genes_in_net, negative_genes, net_g
         n_folds = 3
         skf = StratifiedKFold(n_splits=n_folds, shuffle=True, random_state=None)
         for trn_inds, tst_inds in skf.split(Xdata, ydata):
-            clf_cv = LogisticRegression(max_iter=10000, solver="lbfgs", penalty="l2", C=1.0)
+            clf_cv = LogisticRegression(**logreg_kwargs)
             clf_cv.fit(Xdata[trn_inds], ydata[trn_inds])
             probs_cv = clf_cv.predict_proba(Xdata[tst_inds])[:, 1]
             avgp = average_precision_score(ydata[tst_inds], probs_cv)
