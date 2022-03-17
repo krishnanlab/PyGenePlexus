@@ -14,9 +14,9 @@ from ._config import logger
 def download_select_data(
     data_dir: str,
     tasks: Union[str, List[str]] = "All",
-    networks: Union[str, List[str]] = "All",
-    features: Union[str, List[str]] = "All",
-    GSCs: Union[str, List[str]] = "All",
+    networks: Union[str, List[config.NET_TYPE]] = "All",
+    features: Union[str, List[config.FEATURE_TYPE]] = "All",
+    GSCs: Union[str, List[config.GSC_TYPE]] = "All",
 ):
     # Similarities and NetworkGraph will assume downloaded MachineLearning
     tasks, networks, features, GSCs = make_download_options_lists(tasks, networks, features, GSCs)
@@ -69,19 +69,17 @@ def _make_download_options_list(
 
 def make_download_options_lists(
     tasks: Union[str, List[str]],
-    networks: Union[str, List[str]],
-    features: Union[str, List[str]],
-    GSCs: Union[str, List[str]],
-) -> Tuple[List[str], List[str], List[str], List[str]]:
-    return map(
-        _make_download_options_list,
-        *zip(
-            ("tasks", tasks, config.ALL_TASKS),
-            ("network", networks, config.ALL_NETWORKS),
-            ("feature", features, config.ALL_FEATURES),
-            ("GSC", GSCs, config.ALL_GSCS),
-        ),
+    networks: Union[str, List[config.NET_TYPE]],
+    features: Union[str, List[config.FEATURE_TYPE]],
+    GSCs: Union[str, List[config.GSC_TYPE]],
+) -> Tuple[List[str], List[config.NET_TYPE], List[config.FEATURE_TYPE], List[config.GSC_TYPE]]:
+    args = (
+        ("tasks", tasks, config.ALL_TASKS),
+        ("network", networks, config.ALL_NETWORKS),
+        ("feature", features, config.ALL_FEATURES),
+        ("GSC", GSCs, config.ALL_GSCS),
     )
+    return tuple(map(_make_download_options_list, *zip(*args)))  # type: ignore
 
 
 def get_IDconversion_filenames() -> List[str]:
@@ -93,9 +91,9 @@ def get_IDconversion_filenames() -> List[str]:
 
 
 def get_MachineLearning_filenames(
-    networks: config.NET_TYPE,
-    GSCs: config.GSC_TYPE,
-    features: config.FEATURE_TYPE,
+    networks: List[config.NET_TYPE],
+    GSCs: List[config.GSC_TYPE],
+    features: List[config.FEATURE_TYPE],
 ) -> List[str]:
     # TODO: switch GSCs and features position to make it consistent
     files_to_do = []
@@ -120,9 +118,9 @@ def get_MachineLearning_filenames(
 
 
 def get_Similarities_filenames(
-    networks: config.NET_TYPE,
-    features: config.FEATURE_TYPE,
-    GSCs: config.GSC_TYPE,
+    networks: List[config.NET_TYPE],
+    features: List[config.FEATURE_TYPE],
+    GSCs: List[config.GSC_TYPE],
 ) -> List[str]:
     files_to_do = []
     for line in util.get_all_filenames():
@@ -146,7 +144,7 @@ def get_Similarities_filenames(
 
 
 def get_NetworkGraph_filenames(
-    networks: config.NET_TYPE,
+    networks: List[config.NET_TYPE],
 ) -> List[str]:
     files_to_do = ["IDconversion_Homo-sapiens_Entrez-to-Symbol.json"]
     for line in util.get_all_filenames():
