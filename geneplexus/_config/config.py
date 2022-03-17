@@ -38,7 +38,7 @@ NET_TYPE = Literal["BioGRID", "STRING", "STRING-EXP", "GIANT-TN"]
 FEATURE_TYPE = Literal["Adjacency", "Embedding", "Influence"]
 GSC_TYPE = Literal["GO", "DisGeNet"]
 
-TASK_SELECTION_TYPE = Union[Literal["All"], List[str]]
+TASK_SELECTION_TYPE = Union[Literal["All"], List[TASK_TYPE]]
 NET_SELECTION_TYPE = Union[Literal["All"], List[NET_TYPE]]
 FEATURE_SELECTION_TYPE = Union[Literal["All"], List[FEATURE_TYPE]]
 GSC_SELECTION_TYPE = Union[Literal["All"], List[GSC_TYPE]]

@@ -19,6 +19,7 @@ from ._config.config import GSC_TYPE
 from ._config.config import NET_SELECTION_TYPE
 from ._config.config import NET_TYPE
 from ._config.config import TASK_SELECTION_TYPE
+from ._config.config import TASK_TYPE
 from ._config.config import URL_AZURE
 
 
@@ -101,7 +102,7 @@ def make_download_options_lists(
     networks: NET_SELECTION_TYPE,
     features: FEATURE_SELECTION_TYPE,
     GSCs: GSC_SELECTION_TYPE,
-) -> Tuple[List[str], List[NET_TYPE], List[FEATURE_TYPE], List[GSC_TYPE]]:
+) -> Tuple[List[TASK_TYPE], List[NET_TYPE], List[FEATURE_TYPE], List[GSC_TYPE]]:
     args = (
         ("tasks", tasks, ALL_TASKS),
         ("network", networks, ALL_NETWORKS),
@@ -124,7 +125,6 @@ def get_MachineLearning_filenames(
     features: List[FEATURE_TYPE],
     GSCs: List[GSC_TYPE],
 ) -> List[str]:
-    # TODO: switch GSCs and features position to make it consistent
     files_to_do = []
     for line in util.get_all_filenames():
         if "NodeOrder" in line:
