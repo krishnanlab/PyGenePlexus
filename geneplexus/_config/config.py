@@ -1,6 +1,7 @@
 """Global variables used by the GenePlexus library."""
 import os.path as osp
 import pathlib
+from typing import Any
 from typing import Dict
 from typing import List
 from typing import Literal
@@ -18,6 +19,13 @@ ALL_TASKS = ["IDconversion", "MachineLearning", "Similarities", "NetworkGraph"]
 ALL_NETWORKS = ["BioGRID", "STRING", "STRING-EXP", "GIANT-TN"]
 ALL_FEATURES = ["Adjacency", "Embedding", "Influence"]
 ALL_GSCS = ["GO", "DisGeNet"]
+
+DEFAULT_LOGREG_KWARGS: Dict[str, Any] = {
+    "max_iter": 10000,
+    "solver": "lbfgs",
+    "penalty": "l2",
+    "C": 1.0,
+}
 
 LOG_LEVEL_TYPE = Literal["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"]
 
