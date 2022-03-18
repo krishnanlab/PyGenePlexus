@@ -113,9 +113,10 @@ class GenePlexus:
 
         Args:
             logreg_kwargs (Dict[str, Any], optional): Scikit-learn logistic
-                regression settings. If not set, then use the default logistic
-                regression settings (l2 penalty, 10,000 max iterations, lbfgs
-                solver).
+                regression settings (see
+                :class:`~sklearn.linear_model.LogisticRegression`). If not set,
+                then use the default logistic regression settings (l2 penalty,
+                10,000 max iterations, lbfgs solver).
 
         :attr:`GenePlexus.mdl_weights` (array of float)
             Trained model parameters.
