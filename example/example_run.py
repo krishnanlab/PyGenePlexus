@@ -18,7 +18,7 @@ outdir = osp.join(homedir, "result")
 os.makedirs(datadir, exist_ok=True)
 os.makedirs(outdir, exist_ok=True)
 
-# Get the data from Azure
+# Get the data from URL
 print(f"Start downloading data and saving to: {datadir}")
 geneplexus.download.download_select_data(
     datadir,
