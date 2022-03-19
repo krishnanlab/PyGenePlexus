@@ -33,6 +33,7 @@ release = '0.0.0'
 extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.autodoc',
+    'sphinx_autodoc_typehints',
     'sphinx.ext.viewcode',
     'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
@@ -70,8 +71,13 @@ napoleon_include_init_with_doc = True
 #
 html_theme = 'sphinx_rtd_theme'
 
-autodoc_member_order = 'alphabetical'
 autoclass_content = 'both'
+
+autodoc_member_order = 'alphabetical'
+autodoc_typehints = 'description'
+
+# sphinx_autodoc_typehints settings
+simplify_optional_unions = False
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
