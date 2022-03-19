@@ -1,5 +1,5 @@
 sphinx==4.4.0
 sphinx_rtd_theme==1.0.0
 sphinxcontrib-napoleon==0.7
-pillow>=6.2.0
+sphinx-autodoc-typehints==1.17.0
 numpy
