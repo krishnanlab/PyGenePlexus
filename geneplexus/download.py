@@ -78,9 +78,14 @@ def download_from_url(data_dir: str, files_to_do: List[str]):
             if not r.ok:
                 raise requests.exceptions.RequestException(r, url)
 
-            total_size_in_bytes = int(r.headers.get("content-length", 0))
             block_size = 1024  # 1 KB
-            pbar = tqdm(total=total_size_in_bytes, unit="iB", unit_scale=True)
+            total_size_in_bytes = int(r.headers.get("content-length", 0))
+            pbar = tqdm(
+                total=total_size_in_bytes,
+                unit="iB",
+                unit_scale=True,
+                disable=total_size_in_bytes == 0,
+            )
             with open(path, "wb") as f:
                 for data in r.iter_content(block_size):
                     pbar.update(len(data))
