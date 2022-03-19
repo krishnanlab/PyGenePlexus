@@ -5,6 +5,7 @@ from typing import Union
 from urllib.parse import urljoin
 
 import requests
+from tqdm import tqdm
 
 from . import util
 from ._config import logger
@@ -20,7 +21,7 @@ from ._config.config import NET_SELECTION_TYPE
 from ._config.config import NET_TYPE
 from ._config.config import TASK_SELECTION_TYPE
 from ._config.config import TASK_TYPE
-from ._config.config import URL_AZURE
+from ._config.config import URL_DATA
 
 
 def download_select_data(
@@ -62,22 +63,29 @@ def download_select_data(
             all_files_to_do.extend(get_NetworkGraph_filenames(networks))
 
     all_files_to_do = list(set(all_files_to_do))
-    download_from_azure(data_dir, all_files_to_do)
+    download_from_url(data_dir, all_files_to_do)
 
 
-def download_from_azure(data_dir: str, files_to_do: List[str]):
+def download_from_url(data_dir: str, files_to_do: List[str]):
     for afile in files_to_do:
         path = osp.join(data_dir, afile)
         if osp.exists(path):
             logger.info(f"File exists, skipping download: {path}")
         else:
-            fn = urljoin(URL_AZURE, afile)
-            logger.info(f"Downloading: {fn}")
-            r = requests.get(fn)
-            if r.ok:
-                open(path, "wb").write(r.content)
-            else:
-                raise requests.exceptions.RequestException(r, fn)
+            url = urljoin(URL_DATA, afile)
+            logger.info(f"Downloading: {url}")
+            r = requests.get(url, stream=True)
+            if not r.ok:
+                raise requests.exceptions.RequestException(r, url)
+
+            total_size_in_bytes = int(r.headers.get("content-length", 0))
+            block_size = 1024  # 1 KB
+            pbar = tqdm(total=total_size_in_bytes, unit="iB", unit_scale=True)
+            with open(path, "wb") as f:
+                for data in r.iter_content(block_size):
+                    pbar.update(len(data))
+                    f.write(data)
+            pbar.close()
 
 
 def _make_download_options_list(

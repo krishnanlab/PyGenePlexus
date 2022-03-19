@@ -37,11 +37,11 @@ def initial_ID_convert(input_genes, file_loc):
             convert_IDs.append(agene_int)
         except ValueError:
             converted_gene: Optional[str] = None
-            for anIDtype, conversion_map in convert_types.items():
-                if agene in conversion_map:
-                    convert_IDs.extend(conversion_map[agene])
-                    converted_gene = ", ".join(conversion_map[agene])
-                    logger.debug(f"Found mapping ({anIDtype}) {agene} -> {conversion_map[agene]}")
+            for anIDtype in convert_types:
+                if agene in all_convert_dict[anIDtype]:
+                    convert_IDs.extend(all_convert_dict[anIDtype][agene])
+                    converted_gene = ", ".join(all_convert_dict[anIDtype][agene])
+                    logger.debug(f"Found mapping ({anIDtype}) {agene} -> {all_convert_dict[anIDtype][agene]}")
                     break
             convert_out.append([agene, converted_gene or "Could Not be mapped to Entrez"])
 

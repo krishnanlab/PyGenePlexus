@@ -9,17 +9,17 @@
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+
+import os
+import sys
+sys.path.insert(0, os.path.abspath('../..'))
 
 
 # -- Project information -----------------------------------------------------
 
 project = 'PyGenePlexus'
-copyright = '2022, Remy Liu \\and Christopher A. Mancuso'
-author = 'Remy Liu \\and Christopher A. Mancuso'
+copyright = '2022, Remy Liu and Christopher A. Mancuso'
+author = 'Remy Liu and Christopher A. Mancuso'
 
 # The full version, including alpha/beta/rc tags
 release = '0.0.0'
@@ -69,6 +69,9 @@ napoleon_include_init_with_doc = True
 # a list of builtin themes.
 #
 html_theme = 'sphinx_rtd_theme'
+
+autodoc_member_order = 'alphabetical'
+autoclass_content = 'both'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

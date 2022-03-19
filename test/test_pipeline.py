@@ -100,58 +100,64 @@ class TestGenePlexusPipeline(unittest.TestCase):
     def test_get_pos_and_neg_genes(self):
         self.gp.get_pos_and_neg_genes()
 
-    @pytest.mark.xfail(reason="Randomness, need to set random state.")
     @pytest.mark.order(4)
     def test_fit_and_predict(self):
+        # First check if the gene IDs and the corresponding attributes are
+        # aligned. Then check if the computed probabilities are close to the
+        # expected results (up to third places)
         self.gp.fit_and_predict()
         df_probs = self.gp.df_probs.copy()
         df_probs["Entrez"] = df_probs["Entrez"].astype(int)
 
         path = osp.join(ANSWERDIR, "df_probs.tsv")
         df_probs_expected = pd.read_csv(path, sep="\t")
-        columns = ["Entrez", "Symbol", "Name", "Known/Novel", "Class-Label", "Rank"]
+
+        # Ignore rank and prob for now as they might be susceptible to randomns
+        columns = ["Entrez", "Symbol", "Name", "Known/Novel", "Class-Label"]
         self.assertEqual(
-            df_probs[columns].values.tolist(),
-            df_probs_expected[columns].values.tolist(),
+            df_probs.sort_values("Entrez")[columns].values.tolist(),
+            df_probs_expected.sort_values("Entrez")[columns].values.tolist(),
         )
 
+        # But at least the proababilities should be close
         for prob, prob_expected in zip(
-            df_probs["Probability"],
-            df_probs_expected["Probability"],
+            df_probs.sort_values("Entrez")["Probability"],
+            df_probs_expected.sort_values("Entrez")["Probability"],
         ):
-            self.assertAlmostEqual(prob, prob_expected)
+            self.assertAlmostEqual(prob, prob_expected, places=3)
 
-    @pytest.mark.xfail(reason="Randomness, need to set random state.")
     @pytest.mark.order(5)
     def test_make_sim_dfs(self):
+        # First check if ID and Name are aligned. Then check if the computed
+        # similarities are close to the expected results (up to third places)
         df_sim_GO, df_sim_Dis, _, _ = self.gp.make_sim_dfs()
-        columns = ["ID", "Rank"]
+        columns = ["ID", "Name"]
 
         with self.subTest("GO similarity"):
             path = osp.join(ANSWERDIR, "df_sim_GO.tsv")
-            df_sim_GO_expected = pd.read_csv(path, sep="\t")
+            df_sim_GO_expected = pd.read_csv(path, sep="\t").fillna("NA")
             self.assertEqual(
-                df_sim_GO[columns].values.tolist(),
-                df_sim_GO_expected[columns].values.tolist(),
+                df_sim_GO.sort_values("ID")[columns].values.tolist(),
+                df_sim_GO_expected.sort_values("ID")[columns].values.tolist(),
             )
             for sim, sim_expected in zip(
-                df_sim_GO["Similarity"],
-                df_sim_GO_expected["Similarity"],
+                df_sim_GO.sort_values("ID")["Similarity"],
+                df_sim_GO_expected.sort_values("ID")["Similarity"],
             ):
-                self.assertAlmostEqual(sim, sim_expected)
+                self.assertAlmostEqual(sim, sim_expected, places=3)
 
         with self.subTest("Dis similarity"):
             path = osp.join(ANSWERDIR, "df_sim_Dis.tsv")
-            df_sim_Dis_expected = pd.read_csv(path, sep="\t")
+            df_sim_Dis_expected = pd.read_csv(path, sep="\t").fillna("NA")
             self.assertEqual(
-                df_sim_Dis[columns].values.tolist(),
-                df_sim_Dis_expected[columns].values.tolist(),
+                df_sim_Dis.sort_values("ID")[columns].values.tolist(),
+                df_sim_Dis_expected.sort_values("ID")[columns].values.tolist(),
             )
             for sim, sim_expected in zip(
-                df_sim_Dis["Similarity"],
-                df_sim_Dis_expected["Similarity"],
+                df_sim_Dis.sort_values("ID")["Similarity"],
+                df_sim_Dis_expected.sort_values("ID")["Similarity"],
             ):
-                self.assertAlmostEqual(sim, sim_expected)
+                self.assertAlmostEqual(sim, sim_expected, places=3)
 
     @pytest.mark.order(6)
     def test_make_small_edgelist(self):

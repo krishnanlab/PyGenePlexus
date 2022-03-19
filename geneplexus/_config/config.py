@@ -11,7 +11,7 @@ from typing import Union
 
 import numpy as np
 
-URL_AZURE = "https://pygeneplexusstacct.blob.core.windows.net/geneplexusblob/"
+URL_DATA = "https://zenodo.org/record/6369426/files/"
 CONFIG_PATH = pathlib.Path(__file__).parent.absolute()
 DATA_FILENAMES_PATH = osp.join(CONFIG_PATH, "data_filenames.txt")
 
@@ -56,7 +56,7 @@ GSC_DATA_TYPE = Dict[str, Dict[Literal["Name", "Genes"], Union[str, np.ndarray]]
 PRETRAINED_DATA_TYPE = Dict[str, Dict[Literal["Name", "Weights", "PosGenes"], Union[str, np.ndarray]]]
 
 __all__ = [
-    "URL_AZURE",
+    "URL_DATA",
     "CONFIG_PATH",
     "DATA_FILENAMES_PATH",
     "ALL_TASKS",

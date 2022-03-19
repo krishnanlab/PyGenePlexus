@@ -14,6 +14,7 @@ PreTrainedWeights_GO_GIANT-TN_Embedding.json
 CorrectionMatrix_GO_GO_GIANT-TN_Influence.npy
 CorrectionMatrix_DisGeNet_GO_STRING-EXP_Adjacency.npy
 CorrectionMatrix_DisGeNet_DisGeNet_STRING-EXP_Influence.npy
+GSCOriginal_DisGeNet.json
 GSC_GO_GIANT-TN_GoodSets.json
 PreTrainedWeights_GO_GIANT-TN_Influence.json
 GSC_DisGeNet_BioGRID_GoodSets.json
@@ -37,6 +38,7 @@ PreTrainedWeights_GO_STRING-EXP_Embedding.json
 CorrectionMatrix_GO_DisGeNet_STRING-EXP_Adjacency.npy
 CorrectionMatrix_DisGeNet_GO_GIANT-TN_Influence.npy
 CorrectionMatrix_DisGeNet_GO_BioGRID_Adjacency.npy
+GSCOriginal_GO.json
 CorrectionMatrixOrder_GO_BioGRID.txt
 CorrectionMatrix_GO_DisGeNet_STRING_Embedding.npy
 PreTrainedWeights_DisGeNet_BioGRID_Embedding.json
