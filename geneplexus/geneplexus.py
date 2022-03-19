@@ -18,10 +18,10 @@ class GenePlexus:
         """Initialize the GenePlexus object.
 
         Args:
-            file_loc (str): Location of data files.
-            net_type (NET_TYPE): Type of network to use.
-            features (FEATURE_TYPE): Type of features of the network to use.
-            GSC (GSC_TYPE): Type of gene set collection to use for generating
+            file_loc: Location of data files.
+            net_type: Type of network to use.
+            features: Type of features of the network to use.
+            GSC: Type of gene set collection to use for generating
                 negatives.
 
         """
@@ -36,7 +36,7 @@ class GenePlexus:
         :attr:`GenePlexus.input_genes` (List[str]): Input gene list.
 
         Args:
-            input_genes (List[str]): Input genes, can be mixed type.
+            input_genes: Input genes, can be mixed type.
 
         See also:
             Use :meth:`geneplexus.util.read_gene_list` to load a gene list
@@ -112,8 +112,7 @@ class GenePlexus:
         """Fit a model and predict gene scores.
 
         Args:
-            logreg_kwargs (Dict[str, Any], optional): Scikit-learn logistic
-                regression settings (see
+            logreg_kwargs: Scikit-learn logistic regression settings (see
                 :class:`~sklearn.linear_model.LogisticRegression`). If not set,
                 then use the default logistic regression settings (l2 penalty,
                 10,000 max iterations, lbfgs solver).
@@ -204,7 +203,7 @@ class GenePlexus:
             other top predicted genes in the network.
 
         Args:
-            num_nodes (int): Number of top genes to include.
+            num_nodes: Number of top genes to include.
 
         """
         self.df_edge, self.isolated_genes, self.df_edge_sym, self.isolated_genes_sym = _geneplexus.make_small_edgelist(

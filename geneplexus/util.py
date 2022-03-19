@@ -16,8 +16,8 @@ def mapgene(gene: str, entrez_to_other: Dict[str, List[str]]) -> str:
     """Map entrez to other representations.
 
     Args:
-        gene (str): Entrez gene ID.
-        entrez_to_other (Dict[str, List[str]]): Mapping from Entrez to list of
+        gene: Entrez gene ID.
+        entrez_to_other: Mapping from Entrez to list of
             other gene representations of interest.
 
     Returns:
@@ -46,7 +46,7 @@ def check_file(path: str):
     """Check existence of a file.
 
     Args:
-        path (str): Path to the file.
+        path: Path to the file.
 
     Raises:
         FileNotFoundError: if file not exist.
@@ -63,8 +63,8 @@ def read_gene_list(
     """Read gene list from flie.
 
     Args:
-        path (str): Path to the input gene list file.
-        sep (str): Seperator between genes (default: ", ").
+        path: Path to the input gene list file.
+        sep: Seperator between genes (default: ", ").
 
     """
     if sep == "newline":
@@ -78,8 +78,8 @@ def _load_json_file(file_loc: str, file_name: str) -> Dict[str, Any]:
     """Load JSON into dictionary.
 
     Args:
-        file_loc (str): Location of data files.
-        file_name (str): Name of the file.
+        file_loc: Location of data files.
+        file_name: Name of the file.
 
     """
     file_path = osp.join(file_loc, file_name)
@@ -96,10 +96,10 @@ def load_geneid_conversion(
     """Load the gene ID conversion mapping.
 
     Args:
-        file_loc (str): Directory containig the ID conversion file.
-        src_id_type (ID_SRC_TYPE): Souce gene ID type.
-        dst_id_type (ID_DST_TYPE): Destination gene ID type.
-        upper (bool): If set to True, then convert all keys to upper case.
+        file_loc: Directory containig the ID conversion file.
+        src_id_type: Souce gene ID type.
+        dst_id_type: Destination gene ID type.
+        upper: If set to True, then convert all keys to upper case.
 
     """
     if (src_id_type, dst_id_type) not in config.VALID_ID_CONVERSION:
@@ -122,9 +122,9 @@ def load_gsc(
     """Load gene set collection dictionary.
 
     Args:
-        file_loc (str): Location of data files.
-        target_set (GSC_TYPE): Target gene set collection.
-        net_type (NET_TYPE): Network used.
+        file_loc: Location of data files.
+        target_set: Target gene set collection.
+        net_type: Network used.
 
     """
     file_name = f"GSC_{GSC}_{net_type}_GoodSets.json"
@@ -140,10 +140,10 @@ def load_pretrained_weights(
     """Load pretrained model dictionary.
 
     Args:
-        file_loc (str): Location of data files.
-        target_set (GSC_TYPE): Target gene set collection.
-        net_type (NET_TYPE): Network used.
-        features (FEATURE_TYPE): Type of features used.
+        file_loc: Location of data files.
+        target_set: Target gene set collection.
+        net_type: Network used.
+        features: Type of features used.
 
     """
     file_name = f"PreTrainedWeights_{target_set}_{net_type}_{features}.json"
@@ -158,9 +158,9 @@ def _load_np_file(
     """Check np file existence and load.
 
     Args:
-        file_loc (str): Location of data files.
-        file_name (str): Name of the file.
-        load_method (str): How to load the file ('npy' or 'txt').
+        file_loc: Location of data files.
+        file_name: Name of the file.
+        load_method: How to load the file ('npy' or 'txt').
 
     """
     file_path = osp.join(file_loc, file_name)
@@ -178,8 +178,8 @@ def load_node_order(file_loc: str, net_type: config.NET_TYPE) -> np.ndarray:
     """Load network genes.
 
     Args:
-        file_loc (str): Location of data files.
-        net_type (NET_TYPE): Network used.
+        file_loc: Location of data files.
+        net_type: Network used.
 
     """
     file_name = f"NodeOrder_{net_type}.txt"
@@ -194,9 +194,9 @@ def load_genes_universe(
     """Load gene universe a given network and GSC.
 
     Args:
-        file_loc (str): Location of data files.
-        GSC (GSC_TYPE): Gene set collection.
-        net_type (NET_TYPE): Network used.
+        file_loc: Location of data files.
+        GSC: Gene set collection.
+        net_type: Network used.
 
     """
     file_name = f"GSC_{GSC}_{net_type}_universe.txt"
@@ -211,9 +211,9 @@ def load_gene_features(
     """Load gene features.
 
     Args:
-        file_loc (str): Location of data files.
-        net_type (NET_TYPE): Network used.
-        features (FEATURE_TYPE): Type of features used.
+        file_loc: Location of data files.
+        net_type: Network used.
+        features: Type of features used.
 
     """
     file_name = f"Data_{features}_{net_type}.npy"
@@ -228,9 +228,9 @@ def load_correction_order(
     """Load correction matrix order.
 
     Args:
-        file_loc (str): Location of data files.
-        target_set (GSC_TYPE): Target gene set collection.
-        net_type (NET_TYPE): Network used.
+        file_loc: Location of data files.
+        target_set: Target gene set collection.
+        net_type: Network used.
 
     """
     file_name = f"CorrectionMatrixOrder_{target_set}_{net_type}.txt"
@@ -247,11 +247,11 @@ def load_correction_mat(
     """Load correction matrix.
 
     Args:
-        file_loc (str): Location of data files.
-        GSC (GSC_TYPE): Gene set collection.
-        target_set (GSC_TYPE): Target gene set collection.
-        net_type (NET_TYPE): Network used.
-        features (FEATURE_TYPE): Type of features used.
+        file_loc: Location of data files.
+        GSC: Gene set collection.
+        target_set: Target gene set collection.
+        net_type: Network used.
+        features: Type of features used.
 
     """
     file_name = f"CorrectionMatrix_{GSC}_{target_set}_{net_type}_{features}.npy"
