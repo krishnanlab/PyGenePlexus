@@ -32,17 +32,15 @@ def edgelist_to_nodeorder(
     """
     logger.info("Making the NodeOrder File")
     with open(edgelist_loc, "r") as f:
-        nodelist = set()
+        nodeset = set()
         for idx, line in enumerate(f):
             if idx - skiplines < 0:
                 continue
             else:
-                terms = line.strip().split(sep)
-                nodelist.add(terms[0])
-                nodelist.add(terms[1])
+                nodeset.update(line.strip().split(sep)[:2])
     outfile = osp.join(data_dir, f"NodeOrder_{net_name}.txt")
     logger.info(f"Saving NodeOrder file to {outfile}")
-    np.savetxt(outfile, list(nodelist), fmt="%s")
+    np.savetxt(outfile, list(nodeset), fmt="%s")
 
 
 def edgelist_to_matrix(
