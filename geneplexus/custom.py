@@ -37,9 +37,9 @@ def edgelist_to_nodeorder(
             if idx - skiplines < 0:
                 continue
             else:
-                line = line.strip().split(sep)
-                nodelist.add(line[0])
-                nodelist.add(line[1])
+                terms = line.strip().split(sep)
+                nodelist.add(terms[0])
+                nodelist.add(terms[1])
     outfile = osp.join(data_dir, f"NodeOrder_{net_name}.txt")
     logger.info(f"Saving NodeOrder file to {outfile}")
     np.savetxt(outfile, list(nodelist), fmt="%s")
@@ -86,15 +86,15 @@ def edgelist_to_matrix(
         for idx, line in enumerate(f):
             if idx - skiplines < 0:
                 continue
-            line = line.strip().split(sep)
-            if (line[0] not in node_to_ind) or (line[1] not in node_to_ind):
+            terms = line.strip().split(sep)
+            if (terms[0] not in node_to_ind) or (terms[1] not in node_to_ind):
                 raise KeyError("Nodes in Edgelist not in NodeOrder file")
-            if len(line) == 2:
-                adj_mat[node_to_ind[line[0]], node_to_ind[line[1]]] = 1.0
-                adj_mat[node_to_ind[line[1]], node_to_ind[line[0]]] = 1.0
-            elif len(line) == 3:
-                adj_mat[node_to_ind[line[0]], node_to_ind[line[1]]] = float(line[2])
-                adj_mat[node_to_ind[line[1]], node_to_ind[line[0]]] = float(line[2])
+            if len(terms) == 2:
+                adj_mat[node_to_ind[terms[0]], node_to_ind[terms[1]]] = 1.0
+                adj_mat[node_to_ind[terms[1]], node_to_ind[terms[0]]] = 1.0
+            elif len(terms) == 3:
+                adj_mat[node_to_ind[terms[0]], node_to_ind[terms[1]]] = float(terms[2])
+                adj_mat[node_to_ind[terms[1]], node_to_ind[terms[0]]] = float(terms[2])
             else:
                 raise ValueError("Too many columns in edgelist file")
     if (features == "Influence") or (features == "All"):
