@@ -102,7 +102,7 @@ def edgelist_to_matrix(
         # make influence matrix
         adj_mat_norm = adj_mat / adj_mat.sum(axis=0)
         id_mat = np.identity(len(nodelist))
-        F_mat = 0.85 * sla.inv(id_mat - (1 - 0.85) * adj_mat_norm)
+        F_mat = 0.85 * np.linalg.inv.inv(id_mat - (1 - 0.85) * adj_mat_norm)
     # save the data
     logger.info("Saving the data")
     if (features == "Adjacency") or (features == "All"):
