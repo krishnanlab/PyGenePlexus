@@ -15,7 +15,7 @@ URL_DATA = "https://zenodo.org/record/6375679/files/"
 CONFIG_PATH = pathlib.Path(__file__).parent.absolute()
 DATA_FILENAMES_PATH = osp.join(CONFIG_PATH, "data_filenames.txt")
 
-ALL_TASKS = ["IDconversion", "MachineLearning", "Similarities", "NetworkGraph"]
+ALL_TASKS = ["IDconversion", "MachineLearning", "Similarities", "NetworkGraph", "OriginalGSCs"]
 ALL_NETWORKS = ["BioGRID", "STRING", "STRING-EXP", "GIANT-TN"]
 ALL_FEATURES = ["Adjacency", "Embedding", "Influence"]
 ALL_GSCS = ["GO", "DisGeNet"]
@@ -41,7 +41,7 @@ VALID_ID_CONVERSION: Set[Tuple[ID_SRC_TYPE, ID_DST_TYPE]] = {
     ("Symbol", "Entrez"),
 }
 
-TASK_TYPE = Literal["IDconversion", "MachineLearning", "Similarities", "NetworkGraph"]
+TASK_TYPE = Literal["IDconversion", "MachineLearning", "Similarities", "NetworkGraph", "OriginalGSCs"]
 NET_TYPE = Literal["BioGRID", "STRING", "STRING-EXP", "GIANT-TN"]
 FEATURE_TYPE = Literal["Adjacency", "Embedding", "Influence"]
 GSC_TYPE = Literal["GO", "DisGeNet"]

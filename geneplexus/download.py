@@ -57,6 +57,8 @@ def download_select_data(
             all_files_to_do.extend(get_Similarities_filenames(networks, features, GSCs))
         if atask == "NetworkGraph":
             all_files_to_do.extend(get_NetworkGraph_filenames(networks))
+        if atask == "OriginalGSCs":
+            all_files_to_do.extend(get_OriginalGSCs_filenames())
 
     all_files_to_do = list(set(all_files_to_do))
     download_from_url(data_dir, all_files_to_do)
@@ -188,4 +190,12 @@ def get_NetworkGraph_filenames(networks: List[NET_TYPE]) -> List[str]:
             net_tmp = osp.splitext(line.split("_")[-1])[0]
             if net_tmp in networks:
                 files_to_do.append(line)
+    return files_to_do
+
+
+def get_OriginalGSCs_filenames() -> List[str]:
+    files_to_do = []
+    for line in util.get_all_filenames():
+        if "GSCOriginal" in line:
+            files_to_do.append(line)
     return files_to_do
