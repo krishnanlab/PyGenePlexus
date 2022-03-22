@@ -4,12 +4,20 @@ import os
 import numpy as np
 
 
-def edgelist_to_nodeorder(edgelist_loc, data_dir, net_name, sep="\t", skiplines=0):
-    """
-    The edgelist file needs to be two or three columns
-    The first two columns being the edges
-    The third column is assumed to be the edge weight if it exsits
-    If not supplying custom GSC, the file needs to be in Entrez ID space
+def edgelist_to_nodeorder(
+    edgelist_loc: str,
+    data_dir: str,
+    net_name: str,
+    sep: str = "\t",
+    skiplines: int = 0,
+):
+    """Convert edge list to node order.
+
+    Note:
+        The edgelist file needs to be two or three columns. The first two
+        columns being the edges. The third column is assumed to be the edge
+        weight if it exsits. If not supplying custom GSC, the file needs to be
+        in Entrez ID space.
 
     Args:
         edgelist_loc: Location of the edgelist
@@ -17,6 +25,7 @@ def edgelist_to_nodeorder(edgelist_loc, data_dir, net_name, sep="\t", skiplines=
         net_name: The name of the network
         sep: The separation used in the edgelist file (default tab)
         skiplines: The number of lines to skip for header
+
     """
     print("Making the NodeOrder File")
     with open(file_loc, "r") as f:
@@ -32,14 +41,23 @@ def edgelist_to_nodeorder(edgelist_loc, data_dir, net_name, sep="\t", skiplines=
     np.savetxt(data_dir + "NodeOrder_%s.txt" % net_name, list(nodelist), fmt="%s")
 
 
-def edgelist_to_matrix(edgelist_loc, nodeorder_loc, data_dir, name_name, features, sep="\t", skiplines=0):
-    """
-    The edgelist file needs to be two or three columns
-    The first two columns being the edges
-    The third column is assumed to be the edge weight if it exsits
-    If not supplying custom GSC, the file needs to be in Entrez ID space
+def edgelist_to_matrix(
+    edgelist_loc: str,
+    nodeorder_loc: str,
+    data_dir: str,
+    net_name: str,
+    features: str,
+    sep: str = "\t",
+    skiplines: int = 0,
+):
+    """Convert edge list to adjacency matrix.
 
-    The NodeOrder file needs to be a single column text file
+    Note:
+        The edgelist file needs to be two or three columns. The first two
+        columns being the edges. The third column is assumed to be the edge
+        weight if it exsits. If not supplying custom GSC, the file needs to be
+        in Entrez ID space. Finally, the NodeOrder file needs to be a single
+        column text file.
 
     Args:
         edgelist_loc: Location of the edgelist
@@ -49,6 +67,7 @@ def edgelist_to_matrix(edgelist_loc, nodeorder_loc, data_dir, name_name, feature
         features: Features for the networks (Adjacency or Influence, All)
         sep: The separation used in the edgelist file (default tab)
         skiplines: The number of lines to skip for header
+
     """
     # load in the NodeOrder file
     nodelist = np.loadtxt(nodeorder_loc, dtype=str)
@@ -88,17 +107,25 @@ def edgelist_to_matrix(edgelist_loc, nodeorder_loc, data_dir, name_name, feature
         np.save(data_dir + "Data_Influence_%s.npy" % net_name, F_mat)
 
 
-def subset_GSC_to_network(nodeorder_loc, data_dir, GSC_name):
-    """
-    Can use download_select_data function to get preprocessed GO and DisGeNet files
+def subset_GSC_to_network(
+    nodeorder_loc: str,
+    data_dir: str,
+    GSC_name: str,
+):
+    """Subset geneset collection using network genes.
 
-    The NodeOrder file needs to be a single column text file
-    If not supplying custom GSC, the file needs to be in Entrez ID space
+    Note:
+        Use the :meth:`geneplexus.download.download_select_data` function to
+        get the preprocessed GO and DisGeNet files first.
+
+        The NodeOrder file needs to be a single column text file. If not
+        supplying custom GSC, the file needs to be in Entrez ID space.
 
     Args:
         nodeorder_loc: Location of the NodeOrder file
         data_dir: The directory to save the file
         GSC_name: The name of the GSC
+
     """
     print("Subsetting the GSC")
     print("This make take a few minutes")
