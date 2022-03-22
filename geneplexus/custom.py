@@ -90,16 +90,14 @@ def edgelist_to_matrix(
             if idx - skiplines < 0:
                 continue
             terms = line.strip().split(sep)
-            if (terms[0] not in node_to_ind) or (terms[1] not in node_to_ind):
-                raise KeyError("Nodes in Edgelist not in NodeOrder file")
-            if len(terms) == 2:
-                adj_mat[node_to_ind[terms[0]], node_to_ind[terms[1]]] = 1.0
-                adj_mat[node_to_ind[terms[1]], node_to_ind[terms[0]]] = 1.0
-            elif len(terms) == 3:
-                adj_mat[node_to_ind[terms[0]], node_to_ind[terms[1]]] = float(terms[2])
-                adj_mat[node_to_ind[terms[1]], node_to_ind[terms[0]]] = float(terms[2])
-            else:
+            node1, node2 = terms[:2]
+            if len(terms) > 3:
                 raise ValueError("Too many columns in edgelist file")
+            if (node1 not in node_to_ind) or (node2 not in node_to_ind):
+                raise KeyError(f"Nodes in Edgelist but not in NodeOrder file ({node1!r} or {node2!r})")
+            i, j = node_to_ind[node1], node_to_ind[node2]
+            weight = 1.0 if len(terms) == 2 else terms[2]
+            adj_mat[i, j] = adj_mat[j, i] = weight
 
     # Optionally make influence matrix
     if (features == "Influence") or (features == "All"):
