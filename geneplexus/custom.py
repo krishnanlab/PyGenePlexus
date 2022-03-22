@@ -1,5 +1,6 @@
 import json
 import os
+import os.path as osp
 
 import numpy as np
 
@@ -37,8 +38,9 @@ def edgelist_to_nodeorder(
                 line = line.strip().split(sep)
                 nodelist.add(line[0])
                 nodelist.add(line[1])
-    print("Saving NodeOrder file")
-    np.savetxt(data_dir + "NodeOrder_%s.txt" % net_name, list(nodelist), fmt="%s")
+    outfile = osp.join(data_dir, f"NodeOrder_{net_name}.txt")
+    print("Saving NodeOrder file to {outfile}")
+    np.savetxt(outfile, list(nodelist), fmt="%s")
 
 
 def edgelist_to_matrix(
@@ -102,9 +104,9 @@ def edgelist_to_matrix(
     # save the data
     print("Saving the data")
     if (features == "Adjacency") or (features == "All"):
-        np.save(data_dir + "Data_Adjacency_%s.npy" % net_name, adj_mat)
+        np.save(osp.join(data_dir, f"Data_Adjacency_{net_name}.npy"), adj_mat)
     if (features == "Influence") or (features == "All"):
-        np.save(data_dir + "Data_Influence_%s.npy" % net_name, F_mat)
+        np.save(osp.join(data_dir, f"Data_Influence_{net_name}.npy"), F_mat)
 
 
 def subset_GSC_to_network(
@@ -132,7 +134,7 @@ def subset_GSC_to_network(
     # load in the NodeOrder file
     nodelist = np.loadtxt(nodeorder_loc, dtype=str)
     # load the orginal GSC
-    with open(data_dir + "GSCOriginal_%s.json" % GSC_name, "r") as handle:
+    with open(osp.join(data_dir, f"GSCOriginal_{GSC_name}.json"), "r") as handle:
         GSCorg = json.load(handle)
     # subset GSc based on network
     universe_genes = np.array([])
@@ -145,6 +147,6 @@ def subset_GSC_to_network(
             universe_genes = np.union1d(universe_genes, genes_tmp)
     print("Saving the data")
     net_name = os.path.basename(nodeorder_loc).split("_")[1].split(".t")[0]
-    with open(data_dir + "GSC_{}_{}_GoodSets.json".format(GSC_name, net_name), "w") as f:
+    with open(osp.join(data_dir, f"GSC_{GSC_name}_{net_name}_GoodSets.json"), "w") as f:
         json.dump(GSCsubset, f, ensure_ascii=False, indent=4)
-    np.savetxt(data_dir + "GSC_{}_{}_universe.txt".format(GSC_name, net_name), universe_genes, fmt="%s")
+    np.savetxt(osp.join(data_dir, f"GSC_{GSC_name}_{net_name}_universe.txt"), universe_genes, fmt="%s")
