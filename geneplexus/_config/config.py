@@ -11,7 +11,7 @@ from typing import Union
 
 import numpy as np
 
-URL_DATA = "https://zenodo.org/record/6369426/files/"
+URL_DATA = "https://zenodo.org/record/6375679/files/"
 CONFIG_PATH = pathlib.Path(__file__).parent.absolute()
 DATA_FILENAMES_PATH = osp.join(CONFIG_PATH, "data_filenames.txt")
 
