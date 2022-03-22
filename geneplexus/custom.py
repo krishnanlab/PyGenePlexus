@@ -4,6 +4,8 @@ import os.path as osp
 
 import numpy as np
 
+from ._config import logger
+
 
 def edgelist_to_nodeorder(
     edgelist_loc: str,
@@ -28,7 +30,7 @@ def edgelist_to_nodeorder(
         skiplines: The number of lines to skip for header
 
     """
-    print("Making the NodeOrder File")
+    logger.info("Making the NodeOrder File")
     with open(edgelist_loc, "r") as f:
         nodelist = set()
         for idx, line in enumerate(f):
@@ -39,7 +41,7 @@ def edgelist_to_nodeorder(
                 nodelist.add(line[0])
                 nodelist.add(line[1])
     outfile = osp.join(data_dir, f"NodeOrder_{net_name}.txt")
-    print("Saving NodeOrder file to {outfile}")
+    logger.info(f"Saving NodeOrder file to {outfile}")
     np.savetxt(outfile, list(nodelist), fmt="%s")
 
 
@@ -78,7 +80,7 @@ def edgelist_to_matrix(
     for idx, anode in enumerate(nodelist):
         node_to_ind[anode] = idx
     # make adjacency matrix
-    print("Making the adjacency matrix")
+    logger.info("Making the adjacency matrix")
     adj_mat = np.zeros((len(nodelist), len(nodelist)), dtype=float)
     with open(edgelist_loc, "r") as f:
         for idx, line in enumerate(f):
@@ -96,13 +98,13 @@ def edgelist_to_matrix(
             else:
                 raise ValueError("Too many columns in edgelist file")
     if (features == "Influence") or (features == "All"):
-        print("Making the influence matrix")
+        logger.info("Making the influence matrix")
         # make influence matrix
         adj_mat_norm = adj_mat / adj_mat.sum(axis=0)
         id_mat = np.identity(len(nodelist))
         F_mat = 0.85 * sla.inv(id_mat - (1 - 0.85) * adj_mat_norm)
     # save the data
-    print("Saving the data")
+    logger.info("Saving the data")
     if (features == "Adjacency") or (features == "All"):
         np.save(osp.join(data_dir, f"Data_Adjacency_{net_name}.npy"), adj_mat)
     if (features == "Influence") or (features == "All"):
@@ -129,8 +131,8 @@ def subset_GSC_to_network(
         GSC_name: The name of the GSC
 
     """
-    print("Subsetting the GSC")
-    print("This make take a few minutes")
+    logger.info("Subsetting the GSC")
+    logger.info("This make take a few minutes")
     # load in the NodeOrder file
     nodelist = np.loadtxt(nodeorder_loc, dtype=str)
     # load the orginal GSC
@@ -145,7 +147,7 @@ def subset_GSC_to_network(
         if (len(genes_tmp) <= 200) and (len(genes_tmp) >= 10):
             GSCsubset[akey] = {"Name": GSCorg[akey]["Name"], "Genes": genes_tmp.tolist()}
             universe_genes = np.union1d(universe_genes, genes_tmp)
-    print("Saving the data")
+    logger.info("Saving the data")
     net_name = os.path.basename(nodeorder_loc).split("_")[1].split(".t")[0]
     with open(osp.join(data_dir, f"GSC_{GSC_name}_{net_name}_GoodSets.json"), "w") as f:
         json.dump(GSCsubset, f, ensure_ascii=False, indent=4)
