@@ -28,7 +28,7 @@ def edgelist_to_nodeorder(
 
     """
     print("Making the NodeOrder File")
-    with open(file_loc, "r") as f:
+    with open(edgelist_loc, "r") as f:
         nodelist = set()
         for idx, line in enumerate(f):
             if idx - skiplines < 0:
