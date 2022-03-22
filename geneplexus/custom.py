@@ -49,6 +49,7 @@ def edgelist_to_matrix(
     data_dir: str,
     net_name: str,
     features: str,
+    beta: float = 0.85,
     sep: str = "\t",
     skiplines: int = 0,
 ):
@@ -67,17 +68,21 @@ def edgelist_to_matrix(
         data_dir: The directory to save the file
         net_name: The name of the network
         features: Features for the networks (Adjacency or Influence, All)
+        beta: Restart parameter.
         sep: The separation used in the edgelist file (default tab)
         skiplines: The number of lines to skip for header
 
     """
-    # load in the NodeOrder file
+    if beta < 0 or beta > 1:
+        raise ValueError(f"Restart parameter (beta) must be between 0 and 1, got {beta!r}")
+
+    # Load in the NodeOrder file and make node index map
     nodelist = np.loadtxt(nodeorder_loc, dtype=str)
-    # make node to ind dict
     node_to_ind = {}
     for idx, anode in enumerate(nodelist):
         node_to_ind[anode] = idx
-    # make adjacency matrix
+
+    # Make adjacency matrix
     logger.info("Making the adjacency matrix")
     adj_mat = np.zeros((len(nodelist), len(nodelist)), dtype=float)
     with open(edgelist_loc, "r") as f:
@@ -95,13 +100,15 @@ def edgelist_to_matrix(
                 adj_mat[node_to_ind[terms[1]], node_to_ind[terms[0]]] = float(terms[2])
             else:
                 raise ValueError("Too many columns in edgelist file")
+
+    # Optionally make influence matrix
     if (features == "Influence") or (features == "All"):
         logger.info("Making the influence matrix")
-        # make influence matrix
         adj_mat_norm = adj_mat / adj_mat.sum(axis=0)
         id_mat = np.identity(len(nodelist))
-        F_mat = 0.85 * np.linalg.inv.inv(id_mat - (1 - 0.85) * adj_mat_norm)
-    # save the data
+        F_mat = beta * np.linalg.inv(id_mat - (1 - beta) * adj_mat_norm)
+
+    # Save the data
     logger.info("Saving the data")
     if (features == "Adjacency") or (features == "All"):
         np.save(osp.join(data_dir, f"Data_Adjacency_{net_name}.npy"), adj_mat)
