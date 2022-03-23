@@ -1,3 +1,4 @@
+"""The GenePlexus package."""
 from ._config import config  # noreorder
 from . import download
 from . import util
