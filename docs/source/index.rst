@@ -12,6 +12,7 @@ Welcome to PyGenePlexus's documentation!
 
    cli
    geneplexus
+   custom
    download
    util
 

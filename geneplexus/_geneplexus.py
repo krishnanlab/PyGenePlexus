@@ -19,7 +19,7 @@ from ._config import logger
 from ._config.config import DEFAULT_LOGREG_KWARGS
 
 
-def initial_ID_convert(input_genes, file_loc):
+def _initial_ID_convert(input_genes, file_loc):
     # load all the possible conversion dictionaries
     convert_types = ["ENSG", "Symbol", "ENSP", "ENST"]
     all_convert_dict = {}
@@ -51,7 +51,7 @@ def initial_ID_convert(input_genes, file_loc):
     return convert_IDs, df_convert_out
 
 
-def make_validation_df(df_convert_out, file_loc):
+def _make_validation_df(df_convert_out, file_loc):
     table_summary = []
     input_count = df_convert_out.shape[0]
     converted_genes = df_convert_out["Entrez ID"].to_numpy()
@@ -69,7 +69,7 @@ def make_validation_df(df_convert_out, file_loc):
     return df_convert_out, table_summary, input_count
 
 
-def get_genes_in_network(file_loc, net_type, convert_IDs):
+def _get_genes_in_network(file_loc, net_type, convert_IDs):
     net_genes = util.load_node_order(file_loc, net_type)
     convert_IDs_array = np.array(convert_IDs, dtype=str)
     pos_genes_in_net = np.intersect1d(convert_IDs_array, net_genes)
@@ -77,7 +77,7 @@ def get_genes_in_network(file_loc, net_type, convert_IDs):
     return pos_genes_in_net, genes_not_in_net, net_genes
 
 
-def get_negatives(file_loc, net_type, GSC, pos_genes_in_net):
+def _get_negatives(file_loc, net_type, GSC, pos_genes_in_net):
     uni_genes = util.load_genes_universe(file_loc, GSC, net_type)
     good_sets = util.load_gsc(file_loc, GSC, net_type)
     M = len(uni_genes)
@@ -93,7 +93,7 @@ def get_negatives(file_loc, net_type, GSC, pos_genes_in_net):
     return negative_genes
 
 
-def run_SL(
+def _run_SL(
     file_loc,
     net_type,
     features,
@@ -144,7 +144,7 @@ def run_SL(
     return mdl_weights, probs, avgps
 
 
-def make_prob_df(file_loc, net_genes, probs, pos_genes_in_net, negative_genes):
+def _make_prob_df(file_loc, net_genes, probs, pos_genes_in_net, negative_genes):
     Entrez_to_Symbol = util.load_geneid_conversion(file_loc, "Entrez", "Symbol")
     Entrez_to_Name = util.load_geneid_conversion(file_loc, "Entrez", "Name")
     prob_results = []
@@ -171,7 +171,7 @@ def make_prob_df(file_loc, net_genes, probs, pos_genes_in_net, negative_genes):
     return df_probs
 
 
-def make_sim_dfs(file_loc, mdl_weights, GSC, net_type, features):
+def _make_sim_dfs(file_loc, mdl_weights, GSC, net_type, features):
     dfs_out = []
     for target_set in ["GO", "DisGeNet"]:
         weights_dict = util.load_pretrained_weights(file_loc, target_set, net_type, features)
@@ -205,7 +205,7 @@ def make_sim_dfs(file_loc, mdl_weights, GSC, net_type, features):
     return dfs_out[0], dfs_out[1], weights_dict_GO, weights_dict_Dis
 
 
-def make_small_edgelist(file_loc, df_probs, net_type, num_nodes=50):
+def _make_small_edgelist(file_loc, df_probs, net_type, num_nodes=50):
     # This will set the max number of genes to look at to a given number
     # Load network as edge list dataframe
     filepath = osp.join(file_loc, f"Edgelist_{net_type}.edg")
@@ -231,7 +231,7 @@ def make_small_edgelist(file_loc, df_probs, net_type, num_nodes=50):
     return df_edge, isolated_genes, df_edge_sym, isolated_genes_sym
 
 
-def alter_validation_df(df_convert_out, table_summary, net_type):
+def _alter_validation_df(df_convert_out, table_summary, net_type):
     df_convert_out_subset = df_convert_out[["Original ID", "Entrez ID", f"In {net_type}?"]]
     network = next((item for item in table_summary if item["Network"] == net_type), None)
     positive_genes = network.get("PositiveGenes")

@@ -1,3 +1,4 @@
+"""Data download module."""
 import os.path as osp
 from typing import List
 from typing import Tuple
@@ -34,19 +35,15 @@ def download_select_data(
     """Select subset of data to download.
 
     Args:
-        data_dir (str): Location of data files.
-        tasks: Task of interest ("IDConversion", "MachineLearning",
-            "Similarities", "NetworkGraph"), accept multiple selection as a
-            list. Do all the tasks if set to "All" (default: "All").
-        networks: Networks of interest ("BioGRID", "STRING", "STRING-EXP",
-            "GIANT-TN"), accept multiple selection as a list. Do all the
-            networks if set to "All" (default: "All").
-        features: Network features of interest ("Adjacency", "Embedding",
-            "Influence"), accept multiple selection as a list. Do all the
-            features if set to "All" (default: "All").
-        GSCs: Gene set collection of interest ("GO", "DisGeNet"), accept
-            multiple selection as a list. Do all the GSC if set to "All",
-            (default: "All").
+        data_dir: Location of data files.
+        tasks: Task of interest, accept multiple selection as a list. Do all
+            the tasks if set to "All".
+        networks: Networks of interest, accept multiple selection as a list. Do
+            all the networks if set to "All".
+        features: Network features of interest, accept multiple selection as a
+            list. Do all the features if set to "All".
+        GSCs: Gene set collection of interest, accept multiple selection as a
+            list. Do all the GSC if set to "All".
 
     """
     # Similarities and NetworkGraph will assume downloaded MachineLearning
@@ -61,12 +58,21 @@ def download_select_data(
             all_files_to_do.extend(get_Similarities_filenames(networks, features, GSCs))
         if atask == "NetworkGraph":
             all_files_to_do.extend(get_NetworkGraph_filenames(networks))
+        if atask == "OriginalGSCs":
+            all_files_to_do.extend(get_OriginalGSCs_filenames())
 
     all_files_to_do = list(set(all_files_to_do))
     download_from_url(data_dir, all_files_to_do)
 
 
 def download_from_url(data_dir: str, files_to_do: List[str]):
+    """Download file using the base url.
+
+    Args:
+        data_dir: Location of data files.
+        files_to_do: List of files to download from the the url.
+
+    """
     for afile in files_to_do:
         path = osp.join(data_dir, afile)
         if osp.exists(path):
@@ -78,9 +84,14 @@ def download_from_url(data_dir: str, files_to_do: List[str]):
             if not r.ok:
                 raise requests.exceptions.RequestException(r, url)
 
-            total_size_in_bytes = int(r.headers.get("content-length", 0))
             block_size = 1024  # 1 KB
-            pbar = tqdm(total=total_size_in_bytes, unit="iB", unit_scale=True)
+            total_size_in_bytes = int(r.headers.get("content-length", 0))
+            pbar = tqdm(
+                total=total_size_in_bytes,
+                unit="iB",
+                unit_scale=True,
+                disable=total_size_in_bytes == 0,
+            )
             with open(path, "wb") as f:
                 for data in r.iter_content(block_size):
                     pbar.update(len(data))
@@ -111,6 +122,7 @@ def make_download_options_lists(
     features: FEATURE_SELECTION_TYPE,
     GSCs: GSC_SELECTION_TYPE,
 ) -> Tuple[List[TASK_TYPE], List[NET_TYPE], List[FEATURE_TYPE], List[GSC_TYPE]]:
+    """Compile a list of files to download based on the selections."""
     args = (
         ("tasks", tasks, ALL_TASKS),
         ("network", networks, ALL_NETWORKS),
@@ -121,6 +133,7 @@ def make_download_options_lists(
 
 
 def get_IDconversion_filenames() -> List[str]:
+    """Get gene ID conversion file names."""
     files_to_do = []
     for line in util.get_all_filenames():
         if ("IDconversion" in line) or ("NodeOrder" in line):
@@ -133,6 +146,7 @@ def get_MachineLearning_filenames(
     features: List[FEATURE_TYPE],
     GSCs: List[GSC_TYPE],
 ) -> List[str]:
+    """Get dataset file names."""
     files_to_do = []
     for line in util.get_all_filenames():
         if "NodeOrder" in line:
@@ -159,6 +173,7 @@ def get_Similarities_filenames(
     features: List[FEATURE_TYPE],
     GSCs: List[GSC_TYPE],
 ) -> List[str]:
+    """Get pretrained model similarity file names."""
     files_to_do = []
     for line in util.get_all_filenames():
         if "CorrectionMatrix_" in line:
@@ -181,10 +196,20 @@ def get_Similarities_filenames(
 
 
 def get_NetworkGraph_filenames(networks: List[NET_TYPE]) -> List[str]:
+    """Get network file names."""
     files_to_do = ["IDconversion_Homo-sapiens_Entrez-to-Symbol.json"]
     for line in util.get_all_filenames():
         if "Edgelist" in line:
             net_tmp = osp.splitext(line.split("_")[-1])[0]
             if net_tmp in networks:
                 files_to_do.append(line)
+    return files_to_do
+
+
+def get_OriginalGSCs_filenames() -> List[str]:
+    """Get original GSC file names."""
+    files_to_do = []
+    for line in util.get_all_filenames():
+        if "GSCOriginal" in line:
+            files_to_do.append(line)
     return files_to_do

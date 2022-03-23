@@ -127,6 +127,7 @@ def save_results(gp, outdir, zip_output):
 
 
 def main():
+    """Command line interface."""
     args = parse_args()
     datadir, outdir = preprocess(args)
 

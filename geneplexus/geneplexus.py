@@ -1,3 +1,4 @@
+"""GenePlexus API."""
 from typing import Any
 from typing import Dict
 from typing import List
@@ -8,6 +9,8 @@ from ._config import config
 
 
 class GenePlexus:
+    """The GenePlexus API class."""
+
     def __init__(
         self,
         file_loc: str,
@@ -18,10 +21,10 @@ class GenePlexus:
         """Initialize the GenePlexus object.
 
         Args:
-            file_loc (str): Location of data files.
-            net_type (NET_TYPE): Type of network to use.
-            features (FEATURE_TYPE): Type of features of the network to use.
-            GSC (GSC_TYPE): Type of gene set collection to use for generating
+            file_loc: Location of data files.
+            net_type: Type of network to use.
+            features: Type of features of the network to use.
+            GSC: Type of gene set collection to use for generating
                 negatives.
 
         """
@@ -36,7 +39,7 @@ class GenePlexus:
         :attr:`GenePlexus.input_genes` (List[str]): Input gene list.
 
         Args:
-            input_genes (List[str]): Input genes, can be mixed type.
+            input_genes: Input genes, can be mixed type.
 
         See also:
             Use :meth:`geneplexus.util.read_gene_list` to load a gene list
@@ -63,8 +66,8 @@ class GenePlexus:
             Number of input genes.
 
         """
-        self.convert_IDs, df_convert_out = _geneplexus.initial_ID_convert(self.input_genes, self.file_loc)
-        self.df_convert_out, self.table_summary, self.input_count = _geneplexus.make_validation_df(
+        self.convert_IDs, df_convert_out = _geneplexus._initial_ID_convert(self.input_genes, self.file_loc)
+        self.df_convert_out, self.table_summary, self.input_count = _geneplexus._make_validation_df(
             df_convert_out,
             self.file_loc,
         )
@@ -95,12 +98,12 @@ class GenePlexus:
             the background gene set collection (GSC).
 
         """
-        self.pos_genes_in_net, self.genes_not_in_net, self.net_genes = _geneplexus.get_genes_in_network(
+        self.pos_genes_in_net, self.genes_not_in_net, self.net_genes = _geneplexus._get_genes_in_network(
             self.file_loc,
             self.net_type,
             self.convert_IDs,
         )
-        self.negative_genes = _geneplexus.get_negatives(
+        self.negative_genes = _geneplexus._get_negatives(
             self.file_loc,
             self.net_type,
             self.GSC,
@@ -112,8 +115,7 @@ class GenePlexus:
         """Fit a model and predict gene scores.
 
         Args:
-            logreg_kwargs (Dict[str, Any], optional): Scikit-learn logistic
-                regression settings (see
+            logreg_kwargs: Scikit-learn logistic regression settings (see
                 :class:`~sklearn.linear_model.LogisticRegression`). If not set,
                 then use the default logistic regression settings (l2 penalty,
                 10,000 max iterations, lbfgs solver).
@@ -135,7 +137,7 @@ class GenePlexus:
             relevance of the gene to the input gene list).
 
         """
-        self.mdl_weights, self.probs, self.avgps = _geneplexus.run_SL(
+        self.mdl_weights, self.probs, self.avgps = _geneplexus._run_SL(
             self.file_loc,
             self.net_type,
             self.features,
@@ -144,7 +146,7 @@ class GenePlexus:
             self.net_genes,
             logreg_kwargs=logreg_kwargs,
         )
-        self.df_probs = _geneplexus.make_prob_df(
+        self.df_probs = _geneplexus._make_prob_df(
             self.file_loc,
             self.net_genes,
             self.probs,
@@ -178,7 +180,7 @@ class GenePlexus:
             **PosGenes** (positive genes for this DO term).
 
         """
-        self.df_sim_GO, self.df_sim_Dis, self.weights_GO, self.weights_Dis = _geneplexus.make_sim_dfs(
+        self.df_sim_GO, self.df_sim_Dis, self.weights_GO, self.weights_Dis = _geneplexus._make_sim_dfs(
             self.file_loc,
             self.mdl_weights,
             self.GSC,
@@ -204,10 +206,10 @@ class GenePlexus:
             other top predicted genes in the network.
 
         Args:
-            num_nodes (int): Number of top genes to include.
+            num_nodes: Number of top genes to include.
 
         """
-        self.df_edge, self.isolated_genes, self.df_edge_sym, self.isolated_genes_sym = _geneplexus.make_small_edgelist(
+        self.df_edge, self.isolated_genes, self.df_edge_sym, self.isolated_genes_sym = _geneplexus._make_small_edgelist(
             self.file_loc,
             self.df_probs,
             self.net_type,
@@ -222,7 +224,7 @@ class GenePlexus:
         :attr:`positive_genes`
 
         """
-        self.df_convert_out_subset, self.positive_genes = _geneplexus.alter_validation_df(
+        self.df_convert_out_subset, self.positive_genes = _geneplexus._alter_validation_df(
             self.df_convert_out,
             self.table_summary,
             self.net_type,
