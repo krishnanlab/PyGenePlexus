@@ -1,4 +1,4 @@
-"""GenePlexus API class."""
+"""GenePlexus API."""
 from typing import Any
 from typing import Dict
 from typing import List
@@ -9,6 +9,8 @@ from ._config import config
 
 
 class GenePlexus:
+    """The GenePlexus API class."""
+
     def __init__(
         self,
         file_loc: str,
