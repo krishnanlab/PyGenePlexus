@@ -1,3 +1,4 @@
+"""Utilities including file and path handling."""
 import json
 import os.path as osp
 from typing import Any

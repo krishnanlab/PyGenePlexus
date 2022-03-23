@@ -1,3 +1,4 @@
+"""Data download module."""
 import os.path as osp
 from typing import List
 from typing import Tuple
@@ -65,6 +66,13 @@ def download_select_data(
 
 
 def download_from_url(data_dir: str, files_to_do: List[str]):
+    """Download file using the base url.
+
+    Args:
+        data_dir: Location of data files.
+        files_to_do: List of files to download from the the url.
+
+    """
     for afile in files_to_do:
         path = osp.join(data_dir, afile)
         if osp.exists(path):
@@ -114,6 +122,7 @@ def make_download_options_lists(
     features: FEATURE_SELECTION_TYPE,
     GSCs: GSC_SELECTION_TYPE,
 ) -> Tuple[List[TASK_TYPE], List[NET_TYPE], List[FEATURE_TYPE], List[GSC_TYPE]]:
+    """Compile a list of files to download based on the selections."""
     args = (
         ("tasks", tasks, ALL_TASKS),
         ("network", networks, ALL_NETWORKS),
@@ -124,6 +133,7 @@ def make_download_options_lists(
 
 
 def get_IDconversion_filenames() -> List[str]:
+    """Get gene ID conversion file names."""
     files_to_do = []
     for line in util.get_all_filenames():
         if ("IDconversion" in line) or ("NodeOrder" in line):
@@ -136,6 +146,7 @@ def get_MachineLearning_filenames(
     features: List[FEATURE_TYPE],
     GSCs: List[GSC_TYPE],
 ) -> List[str]:
+    """Get dataset file names."""
     files_to_do = []
     for line in util.get_all_filenames():
         if "NodeOrder" in line:
@@ -162,6 +173,7 @@ def get_Similarities_filenames(
     features: List[FEATURE_TYPE],
     GSCs: List[GSC_TYPE],
 ) -> List[str]:
+    """Get pretrained model similarity file names."""
     files_to_do = []
     for line in util.get_all_filenames():
         if "CorrectionMatrix_" in line:
@@ -184,6 +196,7 @@ def get_Similarities_filenames(
 
 
 def get_NetworkGraph_filenames(networks: List[NET_TYPE]) -> List[str]:
+    """Get network file names."""
     files_to_do = ["IDconversion_Homo-sapiens_Entrez-to-Symbol.json"]
     for line in util.get_all_filenames():
         if "Edgelist" in line:
@@ -194,6 +207,7 @@ def get_NetworkGraph_filenames(networks: List[NET_TYPE]) -> List[str]:
 
 
 def get_OriginalGSCs_filenames() -> List[str]:
+    """Get original GSC file names."""
     files_to_do = []
     for line in util.get_all_filenames():
         if "GSCOriginal" in line:
