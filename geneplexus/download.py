@@ -1,3 +1,4 @@
+"""Data download module."""
 import os.path as osp
 from typing import List
 from typing import Tuple
