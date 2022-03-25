@@ -1,10 +1,8 @@
 """Data download module."""
 import os
 import os.path as osp
-import time
 from concurrent.futures import ThreadPoolExecutor
 from threading import local
-from threading import Thread
 from typing import List
 from typing import Tuple
 from typing import Union
@@ -13,7 +11,6 @@ from zipfile import ZipFile
 
 import requests
 from requests.sessions import Session
-from tqdm import tqdm
 
 from . import util
 from ._config import logger
