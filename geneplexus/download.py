@@ -1,6 +1,7 @@
 """Data download module."""
 import io
 import os.path as osp
+import time
 from concurrent.futures import ThreadPoolExecutor
 from itertools import repeat
 from threading import local
@@ -83,8 +84,17 @@ def _get_session() -> Session:
 def _download_file(file: str, data_dir: str):
     session = _get_session()
     url = urljoin(URL_DATA, f"{file}.zip")
-    with session.get(url) as r:
-        ZipFile(io.BytesIO(r.content)).extractall(data_dir)
+    while True:
+        with session.get(url) as r:
+            if r.ok:
+                ZipFile(io.BytesIO(r.content)).extractall(data_dir)
+                break
+            elif r.status_code == 429:  # Retry later
+                t = r.headers["Retry-after"]
+                logger.warning(f"Too many requests, waiting for {t} sec")
+                time.sleep(int(t))
+            else:
+                raise requests.exceptions.RequestException(r, url)
     logger.info(f"Downloaded {file}")
 
 
