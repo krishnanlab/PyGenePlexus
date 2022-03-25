@@ -1,7 +1,8 @@
 """Data download module."""
-import os
+import io
 import os.path as osp
 from concurrent.futures import ThreadPoolExecutor
+from itertools import repeat
 from threading import local
 from typing import List
 from typing import Tuple
@@ -37,6 +38,7 @@ def download_select_data(
     networks: NET_SELECTION_TYPE = "All",
     features: FEATURE_SELECTION_TYPE = "All",
     GSCs: GSC_SELECTION_TYPE = "All",
+    n_jobs: int = 10,
 ):
     """Select subset of data to download.
 
@@ -50,6 +52,7 @@ def download_select_data(
             list. Do all the features if set to "All".
         GSCs: Gene set collection of interest, accept multiple selection as a
             list. Do all the GSC if set to "All".
+        n_jobs: Number of concurrent downloading threads.
 
     """
     # Similarities and NetworkGraph will assume downloaded MachineLearning
@@ -68,7 +71,7 @@ def download_select_data(
             all_files_to_do.extend(get_OriginalGSCs_filenames())
 
     all_files_to_do = list(set(all_files_to_do))
-    download_from_url(data_dir, all_files_to_do)
+    download_from_url(data_dir, all_files_to_do, n_jobs)
 
 
 def _get_session() -> Session:
@@ -77,13 +80,12 @@ def _get_session() -> Session:
     return thread_local.session
 
 
-def _download_single(file: str):
+def _download_file(file: str, data_dir: str):
     session = _get_session()
     url = urljoin(URL_DATA, f"{file}.zip")
     with session.get(url) as r:
-        data = r.content
+        ZipFile(io.BytesIO(r.content)).extractall(data_dir)
     logger.info(f"Downloaded {file}")
-    return file, data
 
 
 def _get_files_to_download(data_dir: str, files: List[str]) -> List[str]:
@@ -109,14 +111,7 @@ def download_from_url(data_dir: str, files_to_do: List[str], n_jobs: int = 10):
     files_to_download = _get_files_to_download(data_dir, files_to_do)
     logger.info(f"Total number of files to download: {len(files_to_download)}")
     with ThreadPoolExecutor(max_workers=n_jobs) as executor:
-        for file, data in executor.map(_download_single, files_to_download):
-            path = osp.join(data_dir, file)
-            zpath = f"{path}.zip"
-            with open(zpath, "wb") as f:
-                f.write(data)
-            with ZipFile(zpath) as zf:
-                zf.extractall(data_dir)
-            os.remove(zpath)
+        executor.map(_download_file, files_to_download, repeat(data_dir))
 
 
 def _make_download_options_list(
