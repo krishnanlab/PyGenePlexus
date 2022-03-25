@@ -3,11 +3,11 @@ import pytest
 import geneplexus
 
 
-@pytest.fixture(scope="class")
+@pytest.fixture(scope="session")
 def data(request):
-    pytest.datadir = request.config.cache.makedir("download")
+    pytest.DATADIR = request.config.cache.makedir("download")
     geneplexus.download.download_select_data(
-        pytest.datadir,
+        pytest.DATADIR,
         "All",
         "BioGRID",
         "Embedding",

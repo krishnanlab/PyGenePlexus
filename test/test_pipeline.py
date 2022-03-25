@@ -41,7 +41,7 @@ FILENAMES = [
 
 def test_download_exist(caplog):
     geneplexus.download.download_select_data(
-        pytest.datadir,
+        pytest.DATADIR,
         "All",
         "BioGRID",
         "Embedding",
@@ -59,11 +59,11 @@ class TestGenePlexusPipeline(unittest.TestCase):
     @pytest.mark.order(0)
     def test_filenames(self):
         for filename in FILENAMES:
-            self.assertTrue(osp.isfile(osp.join(pytest.datadir, filename)))
+            self.assertTrue(osp.isfile(osp.join(pytest.DATADIR, filename)))
 
     @pytest.mark.order(1)
     def test_init_geneplexus(self):
-        self.gp.file_loc = pytest.datadir
+        self.gp.file_loc = pytest.DATADIR
         input_genes_path = osp.join(HOMEDIR, "example", "input_genes.txt")
         input_genes = geneplexus.util.read_gene_list(input_genes_path)
         self.gp.load_genes(input_genes)
