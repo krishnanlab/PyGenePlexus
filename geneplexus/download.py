@@ -96,17 +96,16 @@ def download_from_url(data_dir: str, files_to_do: List[str]):
                 unit_scale=True,
                 disable=total_size_in_bytes == 0,
             )
-            with open(path, "wb") as f:
+            zpath = f"{path}.zip"
+            with open(zpath, "wb") as f:
                 for data in r.iter_content(block_size):
                     pbar.update(len(data))
                     f.write(data)
             pbar.close()
 
             # Unzip file
-            zpath = f"{path}.zip"
-            logger.info(f"Unzipping {zpath}")
             with ZipFile(zpath) as zf:
-                zf.extractall()
+                zf.extractall(data_dir)
             os.remove(zpath)
 
 
