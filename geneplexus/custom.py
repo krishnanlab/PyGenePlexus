@@ -1,6 +1,5 @@
 """Helper functions for setting up custom networks and GSCs."""
 import json
-import os
 import os.path as osp
 
 import numpy as np
@@ -46,7 +45,6 @@ def edgelist_to_nodeorder(
 
 def edgelist_to_matrix(
     edgelist_loc: str,
-    nodeorder_loc: str,
     data_dir: str,
     net_name: str,
     features: str,
@@ -65,7 +63,6 @@ def edgelist_to_matrix(
 
     Args:
         edgelist_loc: Location of the edgelist
-        nodeorder_loc: Location of the NodeOrder file
         data_dir: The directory to save the file
         net_name: The name of the network
         features: Features for the networks (Adjacency or Influence, All)
@@ -78,6 +75,7 @@ def edgelist_to_matrix(
         raise ValueError(f"Restart parameter (beta) must be between 0 and 1, got {beta!r}")
 
     # Load in the NodeOrder file and make node index map
+    nodeorder_loc = osp.join(data_dir, f"NodeOrder_{net_name}.txt")
     nodelist = np.loadtxt(nodeorder_loc, dtype=str)
     node_to_ind = {}
     for idx, anode in enumerate(nodelist):
@@ -116,8 +114,8 @@ def edgelist_to_matrix(
 
 
 def subset_GSC_to_network(
-    nodeorder_loc: str,
     data_dir: str,
+    net_name: str,
     GSC_name: str,
 ):
     """Subset geneset collection using network genes.
@@ -130,14 +128,14 @@ def subset_GSC_to_network(
         supplying custom GSC, the file needs to be in Entrez ID space.
 
     Args:
-        nodeorder_loc: Location of the NodeOrder file
         data_dir: The directory to save the file
+        net_name: The name of the network
         GSC_name: The name of the GSC
 
     """
-    logger.info("Subsetting the GSC")
-    logger.info("This make take a few minutes")
+    logger.info("Subsetting the GSC (this make take a few minutes)")
     # load in the NodeOrder file
+    nodeorder_loc = osp.join(data_dir, f"NodeOrder_{net_name}.txt")
     nodelist = np.loadtxt(nodeorder_loc, dtype=str)
     # load the orginal GSC
     with open(osp.join(data_dir, f"GSCOriginal_{GSC_name}.json"), "r") as handle:
@@ -152,7 +150,6 @@ def subset_GSC_to_network(
             GSCsubset[akey] = {"Name": GSCorg[akey]["Name"], "Genes": genes_tmp.tolist()}
             universe_genes = np.union1d(universe_genes, genes_tmp)
     logger.info("Saving the data")
-    net_name = os.path.basename(nodeorder_loc).split("_")[1].split(".t")[0]
     with open(osp.join(data_dir, f"GSC_{GSC_name}_{net_name}_GoodSets.json"), "w") as f:
         json.dump(GSCsubset, f, ensure_ascii=False, indent=4)
     np.savetxt(osp.join(data_dir, f"GSC_{GSC_name}_{net_name}_universe.txt"), universe_genes, fmt="%s")
