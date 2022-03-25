@@ -1,5 +1,4 @@
 import os.path as osp
-import pathlib
 import unittest
 
 import pandas as pd
@@ -8,8 +7,6 @@ import pytest
 import geneplexus
 
 
-HOMEDIR = pathlib.Path(__file__).parent.parent
-ANSWERDIR = osp.join(HOMEDIR, "test", "expected_result")
 FILENAMES = [
     "CorrectionMatrix_DisGeNet_DisGeNet_BioGRID_Embedding.npy",
     "CorrectionMatrix_DisGeNet_GO_BioGRID_Embedding.npy",
@@ -39,22 +36,9 @@ FILENAMES = [
 ]
 
 
-@pytest.fixture(scope="class")
-def data(request):
-    global DATADIR
-    DATADIR = request.config.cache.makedir("download")
-    geneplexus.download.download_select_data(
-        DATADIR,
-        "All",
-        "BioGRID",
-        "Embedding",
-        ["GO", "DisGeNet"],
-    )
-
-
 def test_download_exist(caplog):
     geneplexus.download.download_select_data(
-        DATADIR,
+        pytest.DATADIR,
         "All",
         "BioGRID",
         "Embedding",
@@ -72,13 +56,13 @@ class TestGenePlexusPipeline(unittest.TestCase):
     @pytest.mark.order(0)
     def test_filenames(self):
         for filename in FILENAMES:
-            self.assertTrue(osp.isfile(osp.join(DATADIR, filename)))
+            self.assertTrue(osp.isfile(osp.join(pytest.DATADIR, filename)))
 
     @pytest.mark.order(1)
     def test_init_geneplexus(self):
-        self.gp.file_loc = DATADIR
-        input_genes_path = osp.join(HOMEDIR, "example", "input_genes.txt")
-        input_genes = geneplexus.util.read_gene_list(input_genes_path)
+        self.gp.file_loc = pytest.DATADIR
+        input_path = osp.join(pytest.HOMEDIR, "example", "input_genes.txt")
+        input_genes = geneplexus.util.read_gene_list(input_path)
         self.gp.load_genes(input_genes)
         self.assertEqual(self.gp.input_genes, input_genes)
 
@@ -89,7 +73,7 @@ class TestGenePlexusPipeline(unittest.TestCase):
         columns = ["Original ID", "Entrez ID"]
         df_convert_out[columns] = df_convert_out[columns].astype(int)
 
-        path = osp.join(ANSWERDIR, "df_convert_out.tsv")
+        path = osp.join(pytest.ANSWERDIR, "df_convert_out.tsv")
         df_convert_out_expected = pd.read_csv(path, sep="\t")
         self.assertEqual(
             df_convert_out.values.tolist(),
@@ -109,7 +93,7 @@ class TestGenePlexusPipeline(unittest.TestCase):
         df_probs = self.gp.df_probs.copy()
         df_probs["Entrez"] = df_probs["Entrez"].astype(int)
 
-        path = osp.join(ANSWERDIR, "df_probs.tsv")
+        path = osp.join(pytest.ANSWERDIR, "df_probs.tsv")
         df_probs_expected = pd.read_csv(path, sep="\t")
 
         # Ignore rank and prob for now as they might be susceptible to randomns
@@ -134,7 +118,7 @@ class TestGenePlexusPipeline(unittest.TestCase):
         columns = ["ID", "Name"]
 
         with self.subTest("GO similarity"):
-            path = osp.join(ANSWERDIR, "df_sim_GO.tsv")
+            path = osp.join(pytest.ANSWERDIR, "df_sim_GO.tsv")
             df_sim_GO_expected = pd.read_csv(path, sep="\t").fillna("NA")
             self.assertEqual(
                 df_sim_GO.sort_values("ID")[columns].values.tolist(),
@@ -147,7 +131,7 @@ class TestGenePlexusPipeline(unittest.TestCase):
                 self.assertAlmostEqual(sim, sim_expected, places=3)
 
         with self.subTest("Dis similarity"):
-            path = osp.join(ANSWERDIR, "df_sim_Dis.tsv")
+            path = osp.join(pytest.ANSWERDIR, "df_sim_Dis.tsv")
             df_sim_Dis_expected = pd.read_csv(path, sep="\t").fillna("NA")
             self.assertEqual(
                 df_sim_Dis.sort_values("ID")[columns].values.tolist(),
@@ -167,7 +151,7 @@ class TestGenePlexusPipeline(unittest.TestCase):
         with self.subTest("Edge"):
             df_edge = self.gp.df_edge.copy()
             df_edge[columns] = df_edge[columns].astype(int)
-            path = osp.join(ANSWERDIR, "df_edge.tsv")
+            path = osp.join(pytest.ANSWERDIR, "df_edge.tsv")
             df_edge_expected = pd.read_csv(path, sep="\t")
             self.assertEqual(
                 df_edge[columns].values.tolist(),
@@ -181,7 +165,7 @@ class TestGenePlexusPipeline(unittest.TestCase):
 
         with self.subTest("Edge sym"):
             df_edge_sym = self.gp.df_edge_sym.copy()
-            path = osp.join(ANSWERDIR, "df_edge_sym.tsv")
+            path = osp.join(pytest.ANSWERDIR, "df_edge_sym.tsv")
             df_edge_sym_expected = pd.read_csv(path, sep="\t")
             self.assertEqual(
                 df_edge_sym[columns].values.tolist(),
@@ -200,7 +184,7 @@ class TestGenePlexusPipeline(unittest.TestCase):
         columns = ["Original ID", "Entrez ID"]
         df_convert_out_subset[columns] = df_convert_out_subset[columns].astype(int)
 
-        path = osp.join(ANSWERDIR, "df_convert_out_subset.tsv")
+        path = osp.join(pytest.ANSWERDIR, "df_convert_out_subset.tsv")
         df_convert_out_subset_expected = pd.read_csv(path, sep="\t")
         self.assertEqual(
             df_convert_out_subset.values.tolist(),
