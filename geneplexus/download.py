@@ -1,6 +1,7 @@
 """Data download module."""
 import os
 import os.path as osp
+import time
 from typing import List
 from typing import Tuple
 from typing import Union
@@ -79,13 +80,21 @@ def download_from_url(data_dir: str, files_to_do: List[str]):
         path = osp.join(data_dir, afile)
         if osp.exists(path):
             logger.info(f"File exists, skipping download: {path}")
+            continue
         else:
             # Check url
             url = urljoin(URL_DATA, f"{afile}.zip")
             logger.info(f"Downloading: {url}")
-            r = requests.get(url, stream=True)
-            if not r.ok:
-                raise requests.exceptions.RequestException(r, url)
+            while True:  # TODO: this is very slow, try multithread later.
+                r = requests.get(url, stream=True)
+                if r.ok:
+                    break
+                elif r.status_code == 429:  # Retry later
+                    t = r.headers["Retry-after"]
+                    logger.warning(f"Too many requests, waiting for {t} sec")
+                    time.sleep(int(t))
+                else:
+                    raise requests.exceptions.RequestException(r, url)
 
             # Retrieve file
             block_size = 1024  # 1 KB
