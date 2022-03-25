@@ -1,9 +1,11 @@
 """Data download module."""
+import os
 import os.path as osp
 from typing import List
 from typing import Tuple
 from typing import Union
 from urllib.parse import urljoin
+from zipfile import ZipFile
 
 import requests
 from tqdm import tqdm
@@ -78,12 +80,14 @@ def download_from_url(data_dir: str, files_to_do: List[str]):
         if osp.exists(path):
             logger.info(f"File exists, skipping download: {path}")
         else:
-            url = urljoin(URL_DATA, afile)
+            # Check url
+            url = urljoin(URL_DATA, f"{afile}.zip")
             logger.info(f"Downloading: {url}")
             r = requests.get(url, stream=True)
             if not r.ok:
                 raise requests.exceptions.RequestException(r, url)
 
+            # Retrieve file
             block_size = 1024  # 1 KB
             total_size_in_bytes = int(r.headers.get("content-length", 0))
             pbar = tqdm(
@@ -92,11 +96,17 @@ def download_from_url(data_dir: str, files_to_do: List[str]):
                 unit_scale=True,
                 disable=total_size_in_bytes == 0,
             )
-            with open(path, "wb") as f:
+            zpath = f"{path}.zip"
+            with open(zpath, "wb") as f:
                 for data in r.iter_content(block_size):
                     pbar.update(len(data))
                     f.write(data)
             pbar.close()
+
+            # Unzip file
+            with ZipFile(zpath) as zf:
+                zf.extractall(data_dir)
+            os.remove(zpath)
 
 
 def _make_download_options_list(
