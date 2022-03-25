@@ -24,7 +24,6 @@ from ._config.config import NET_SELECTION_TYPE
 from ._config.config import NET_TYPE
 from ._config.config import TASK_SELECTION_TYPE
 from ._config.config import TASK_TYPE
-from ._config.config import URL_DATA
 
 
 def download_select_data(
@@ -33,6 +32,7 @@ def download_select_data(
     networks: NET_SELECTION_TYPE = "All",
     features: FEATURE_SELECTION_TYPE = "All",
     GSCs: GSC_SELECTION_TYPE = "All",
+    data_loc: str = "Azure"
 ):
     """Select subset of data to download.
 
@@ -64,10 +64,10 @@ def download_select_data(
             all_files_to_do.extend(get_OriginalGSCs_filenames())
 
     all_files_to_do = list(set(all_files_to_do))
-    download_from_url(data_dir, all_files_to_do)
+    download_from_url(data_dir, all_files_to_do, data_loc)
 
 
-def download_from_url(data_dir: str, files_to_do: List[str]):
+def download_from_url(data_dir: str, files_to_do: List[str], data_loc: str):
     """Download file using the base url.
 
     Args:
@@ -81,7 +81,11 @@ def download_from_url(data_dir: str, files_to_do: List[str]):
             logger.info(f"File exists, skipping download: {path}")
         else:
             # Check url
-            url = urljoin(URL_DATA, f"{afile}.zip")
+            if data_loc == "Zenodo":
+                myurl = "https://zenodo.org/record/6383205/files/"
+            elif data_loc == "Azure":
+                myurl = "https://pygeneplexusstacct.blob.core.windows.net/geneplexusblobzip/"
+            url = urljoin(myurl, f"{afile}.zip")
             logger.info(f"Downloading: {url}")
             r = requests.get(url, stream=True)
             if not r.ok:
