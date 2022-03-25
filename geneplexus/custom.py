@@ -40,7 +40,7 @@ def edgelist_to_nodeorder(
                 nodeset.update(line.strip().split(sep)[:2])
     outfile = osp.join(data_dir, f"NodeOrder_{net_name}.txt")
     logger.info(f"Saving NodeOrder file to {outfile}")
-    np.savetxt(outfile, list(nodeset), fmt="%s")
+    np.savetxt(outfile, sorted(nodeset), fmt="%s")
 
 
 def edgelist_to_matrix(
@@ -77,9 +77,7 @@ def edgelist_to_matrix(
     # Load in the NodeOrder file and make node index map
     nodeorder_loc = osp.join(data_dir, f"NodeOrder_{net_name}.txt")
     nodelist = np.loadtxt(nodeorder_loc, dtype=str)
-    node_to_ind = {}
-    for idx, anode in enumerate(nodelist):
-        node_to_ind[anode] = idx
+    node_to_ind = {j: i for i, j in enumerate(nodelist)}
 
     # Make adjacency matrix
     logger.info("Making the adjacency matrix")
