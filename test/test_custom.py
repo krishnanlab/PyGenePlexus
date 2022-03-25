@@ -1,4 +1,5 @@
 import json
+import os
 import os.path as osp
 import pathlib
 import shutil
@@ -37,19 +38,25 @@ ADJMAT_WEIGHTED = [
 
 @pytest.mark.usefixtures("data")
 class TestCustom(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.tmpdir = tempfile.mkdtemp()
+        cls.nodeorder_path = osp.join(pytest.DATADIR, "NodeOrder_custom.txt")
+        np.savetxt(cls.nodeorder_path, NODEORDER, fmt="%s")
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.tmpdir)
+        os.remove(cls.nodeorder_path)
+
     @parameterized.expand(
         [
             (EDGELIST_UNWEIGHTED_LOC,),
             (EDGELIST_WEIGHTED_LOC,),
         ],
     )
-    @pytest.mark.order(0)
     def test_edgelist_to_nodeorder(self, edgelist_loc):
-        geneplexus.custom.edgelist_to_nodeorder(
-            edgelist_loc,
-            pytest.DATADIR,
-            "custom",
-        )
+        geneplexus.custom.edgelist_to_nodeorder(edgelist_loc, self.tmpdir, "custom")
         outpath = osp.join(pytest.DATADIR, "NodeOrder_custom.txt")
         self.assertEqual(np.loadtxt(outpath, dtype=str).tolist(), NODEORDER)
 
@@ -59,7 +66,6 @@ class TestCustom(unittest.TestCase):
             (EDGELIST_WEIGHTED_LOC, ADJMAT_WEIGHTED),
         ],
     )
-    @pytest.mark.order(1)
     def test_edgelist_to_matrix(self, edgelist_loc, adjmat):
         geneplexus.custom.edgelist_to_matrix(
             edgelist_loc,
@@ -70,7 +76,6 @@ class TestCustom(unittest.TestCase):
         outpath = osp.join(pytest.DATADIR, "Data_Adjacency_custom.npy")
         self.assertEqual(np.load(outpath).tolist(), adjmat)
 
-    @pytest.mark.order(2)
     def test_subset_GSC_to_network(self):
         geneplexus.custom.subset_GSC_to_network(
             pytest.DATADIR,
