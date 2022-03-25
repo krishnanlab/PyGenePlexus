@@ -37,14 +37,6 @@ ADJMAT_WEIGHTED = [
 
 @pytest.mark.usefixtures("data")
 class TestCustom(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.tmpdir = tempfile.mkdtemp()
-
-    @classmethod
-    def tearDownClass(cls):
-        shutil.rmtree(cls.tmpdir)
-
     @parameterized.expand(
         [
             (EDGELIST_UNWEIGHTED_LOC,),
@@ -55,10 +47,10 @@ class TestCustom(unittest.TestCase):
     def test_edgelist_to_nodeorder(self, edgelist_loc):
         geneplexus.custom.edgelist_to_nodeorder(
             edgelist_loc,
-            self.tmpdir,
+            pytest.DATADIR,
             "custom",
         )
-        outpath = osp.join(self.tmpdir, "NodeOrder_custom.txt")
+        outpath = osp.join(pytest.DATADIR, "NodeOrder_custom.txt")
         self.assertEqual(np.loadtxt(outpath, dtype=str).tolist(), NODEORDER)
 
     @parameterized.expand(
@@ -71,11 +63,11 @@ class TestCustom(unittest.TestCase):
     def test_edgelist_to_matrix(self, edgelist_loc, adjmat):
         geneplexus.custom.edgelist_to_matrix(
             edgelist_loc,
-            self.tmpdir,
+            pytest.DATADIR,
             "custom",
             "Adjacency",
         )
-        outpath = osp.join(self.tmpdir, "Data_Adjacency_custom.npy")
+        outpath = osp.join(pytest.DATADIR, "Data_Adjacency_custom.npy")
         self.assertEqual(np.load(outpath).tolist(), adjmat)
 
     @pytest.mark.order(2)
@@ -84,6 +76,7 @@ class TestCustom(unittest.TestCase):
             pytest.DATADIR,
             "custom",
             "GO",
+            min_size=6,
         )
         outpath = osp.join(pytest.DATADIR, "GSC_GO_custom_GoodSets.json")
 
@@ -93,14 +86,18 @@ class TestCustom(unittest.TestCase):
         self.assertEqual(
             sorted(goodsets),
             [
+                "GO:0006810",
                 "GO:0007154",
                 "GO:0007165",
                 "GO:0008150",
                 "GO:0009987",
+                "GO:0016192",
                 "GO:0023052",
                 "GO:0050789",
                 "GO:0050794",
                 "GO:0050896",
+                "GO:0051179",
+                "GO:0051234",
                 "GO:0051716",
                 "GO:0065007",
             ],

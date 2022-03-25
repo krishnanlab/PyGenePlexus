@@ -115,6 +115,8 @@ def subset_GSC_to_network(
     data_dir: str,
     net_name: str,
     GSC_name: str,
+    max_size: int = 200,
+    min_size: int = 10,
 ):
     """Subset geneset collection using network genes.
 
@@ -129,6 +131,8 @@ def subset_GSC_to_network(
         data_dir: The directory to save the file
         net_name: The name of the network
         GSC_name: The name of the GSC
+        max_size: Maximum geneset size.
+        max_size: Minimum geneset size.
 
     """
     logger.info("Subsetting the GSC (this make take a few minutes)")
@@ -144,7 +148,7 @@ def subset_GSC_to_network(
     for akey in GSCorg:
         org_genes = GSCorg[akey]["Genes"]
         genes_tmp = np.intersect1d(nodelist, org_genes)
-        if (len(genes_tmp) <= 200) and (len(genes_tmp) >= 10):
+        if (len(genes_tmp) <= max_size) and (len(genes_tmp) >= min_size):
             GSCsubset[akey] = {"Name": GSCorg[akey]["Name"], "Genes": genes_tmp.tolist()}
             universe_genes = np.union1d(universe_genes, genes_tmp)
     logger.info("Saving the data")
