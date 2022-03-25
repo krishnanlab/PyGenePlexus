@@ -1,4 +1,57 @@
-"""Helper functions for setting up custom networks and GSCs."""
+"""Helper functions for setting up custom networks and GSCs.
+
+PyGenePlexus provides helper functions for setting up the necessary files in
+order to run the pipeline using a custom network. The required files are:
+
+``NodeOrder_{your_net_name}.txt`` Network node ordering
+    A text file with a single column containing all genes present in the
+    network. The ordering of nodes in this file serves as the index map for the
+    adjacency matrix.
+``Data_{feature_type}_{your_net_name}.npy`` Network feature data
+    The feature representing your network. Currently supported are
+    :term:`Adjacency` and :term:`Influence`.
+``GSC_{gsc_type}_{your_net_name}_GoodSets.json`` Filtered GSC for the network
+    A subsetted :term:`GSC` where only the genes present in the network are
+    considered. After the intersection, any gene set with size larger than
+    ``max_size`` or smaller than ``min_size`` is discarded.
+``GSC_{gsc_type}_{your_net_name}_universe.txt`` Common genes in GSC and the\
+    network
+    All the genes that are present both in the network and in the :term:`GSC`.
+
+Example:
+    Suppose you have an :term:`edgelist` file located at ``path/to/net.edg``
+    that represents your network (named ``your_net_name``) of interest. And
+    your working data files are located at ``path/to/data/``. You need to first
+    set up the working files by
+
+    .. code-block:: python
+
+        from geneplexus import custom
+        from geneplexus import GenePlexus
+
+        custom.edgelist_to_node("path/to/net.edg", "path/to/data",
+                                "your_net_name")
+
+        # Set up adjacency feature
+        custom.edgelist_to_matrix("path/to/net.edg", "path/to/data",
+                                  "your_net_name", "Adjacency")
+
+        # Alternatively, set up influence feature
+        custom.edgelist_to_matrix("path/to/net.edg", "path/to/data",
+                                  "your_net_name", "Influence", beta=0.85)
+
+        # Set up GO GSC with a minimum gene set size of five
+        custom.subset_GSC_to_network("path/to/data", "your_net_name", "GO",
+                                     min_size=5)
+
+        # Finally, run the GenePlexus pipeline using your network
+        gp = GenePlexus("path/to/data/", "your_net_name", "Adjacency", "GO")
+        ...
+
+Note:
+    The custom network setup above only needs obe done once.
+
+"""
 import json
 import os.path as osp
 
@@ -14,13 +67,7 @@ def edgelist_to_nodeorder(
     sep: str = "\t",
     skiplines: int = 0,
 ):
-    """Convert edge list to node order.
-
-    Note:
-        The edgelist file needs to be two or three columns. The first two
-        columns being the edges. The third column is assumed to be the edge
-        weight if it exsits. If not supplying custom GSC, the file needs to be
-        in Entrez ID space.
+    """Convert :term:`edgelist` to node order.
 
     Args:
         edgelist_loc: Location of the edgelist
@@ -52,14 +99,7 @@ def edgelist_to_matrix(
     sep: str = "\t",
     skiplines: int = 0,
 ):
-    """Convert edge list to adjacency matrix.
-
-    Note:
-        The edgelist file needs to be two or three columns. The first two
-        columns being the edges. The third column is assumed to be the edge
-        weight if it exsits. If not supplying custom GSC, the file needs to be
-        in Entrez ID space. Finally, the NodeOrder file needs to be a single
-        column text file.
+    """Convert :term:`edgelist` to adjacency matrix.
 
     Args:
         edgelist_loc: Location of the edgelist
@@ -118,7 +158,7 @@ def subset_GSC_to_network(
     max_size: int = 200,
     min_size: int = 10,
 ):
-    """Subset geneset collection using network genes.
+    """Subset :term:`GSC` using network genes.
 
     Note:
         Use the :meth:`geneplexus.download.download_select_data` function to
