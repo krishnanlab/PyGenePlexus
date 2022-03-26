@@ -38,7 +38,7 @@ def download_select_data(
     networks: NET_SELECTION_TYPE = "All",
     features: FEATURE_SELECTION_TYPE = "All",
     GSCs: GSC_SELECTION_TYPE = "All",
-    data_loc: str = "Azure"
+    data_loc: str = "Azure",
     n_jobs: int = 10,
 ):
     """Select subset of data to download.
@@ -72,7 +72,7 @@ def download_select_data(
             all_files_to_do.extend(get_OriginalGSCs_filenames())
 
     all_files_to_do = list(set(all_files_to_do))
-    download_from_url(data_dir, all_files_to_do,n_jobs, data_loc)
+    download_from_url(data_dir, all_files_to_do,data_loc,n_jobs)
 
 def _get_session() -> Session:
     if not hasattr(thread_local, "session"):
@@ -80,9 +80,13 @@ def _get_session() -> Session:
     return thread_local.session
 
 
-def _download_file(file: str, data_dir: str):
+def _download_file(file: str, data_dir: str, data_loc: str):
     session = _get_session()
-    url = urljoin(URL_DATA, f"{file}.zip")
+    if data_loc == "Zenodo":
+        myurl = "https://zenodo.org/record/6383205/files/"
+    elif data_loc == "Azure":
+        myurl = "https://pygeneplexusstacct.blob.core.windows.net/geneplexusblobzip/"
+    url = urljoin(myurl, f"{file}.zip")
     while True:
         with session.get(url) as r:
             if r.ok:
@@ -108,7 +112,7 @@ def _get_files_to_download(data_dir: str, files: List[str]) -> List[str]:
     return files_to_download
 
 
-def download_from_url(data_dir: str, files_to_do: List[str], n_jobs: int = 10, data_loc: str = "Azure"):
+def download_from_url(data_dir: str, files_to_do: List[str], data_loc: str, n_jobs: int = 10):
     """Download file using the base url.
 
     Args:
@@ -120,7 +124,7 @@ def download_from_url(data_dir: str, files_to_do: List[str], n_jobs: int = 10, d
     files_to_download = _get_files_to_download(data_dir, files_to_do)
     logger.info(f"Total number of files to download: {len(files_to_download)}")
     with ThreadPoolExecutor(max_workers=n_jobs) as executor:
-        executor.map(_download_file, files_to_download, repeat(data_dir))
+        executor.map(_download_file, files_to_download, repeat(data_dir), repeat(data_loc))
 
 
 def _make_download_options_list(
