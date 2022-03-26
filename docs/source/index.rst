@@ -15,7 +15,7 @@ Welcome to PyGenePlexus's documentation!
    custom
    download
    util
-   glossary
+   appendix
 
 
 Indices and tables

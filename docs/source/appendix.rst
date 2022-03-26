@@ -1,5 +1,5 @@
-Glossary and references
-=======================
+Appendix
+========
 
 Glossary
 --------
