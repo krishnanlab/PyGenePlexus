@@ -26,8 +26,8 @@ Glossary
       .. math::
 
          A_{i,j} = \begin{cases}
-            w(i, j) & \text{if} (i, j) \in E\\
-            0 & \text{if} (i, j) \notin E\\
+            w(i, j) & \text{if } (i, j) \in E\\
+            0 & \text{if } (i, j) \notin E\\
          \end{cases}
 
    RWR
@@ -35,12 +35,12 @@ Glossary
       the graph :math:`G` with some propability :math:`\beta \in (0, 1)` to
       restart, i.e., teleporting back to the starting node.
 
-      More specifically, let :math:`P = A D^{-1}` be the random walk matrix (
-      column normalized), where :math:`D` is a diagonal matrix of node degrees:
-      :math:`D_{i,i} = \text{deg}(i) = \sum_{j \in V} A_{i,j}`. Furthermore,
-      let :math:`y \in \mathbb{R}^{|V|}` be a probability distribution of
-      initial "heat" in each node. Then, the one hop random walk (or
-      propagation) is :math:`\text{PROP}(G, y) = P y`.
+      More specifically, let :math:`P = A D^{-1}` be the random walk matrix
+      (column normalized), where :math:`D` is a diagonal matrix of node
+      degrees: :math:`D_{i,i} = \text{deg}(i) = \sum_{j \in V} A_{i,j}`.
+      Furthermore, let :math:`y \in \mathbb{R}^{|V|}` be a probability
+      distribution of initial "heat" in each node. Then, the one hop random
+      walk (or propagation) is :math:`\text{PROP}(G, y) = P y`.
 
       Finally, we can iteratively compute the random walk (or heat)
       distribution :math:`y^{(t+1)}` at :math:`t+1` step as

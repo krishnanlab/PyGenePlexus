@@ -1,6 +1,10 @@
 """Data download module."""
-import os
+import io
 import os.path as osp
+import time
+from concurrent.futures import ThreadPoolExecutor
+from itertools import repeat
+from threading import local
 from typing import List
 from typing import Tuple
 from typing import Union
@@ -8,7 +12,7 @@ from urllib.parse import urljoin
 from zipfile import ZipFile
 
 import requests
-from tqdm import tqdm
+from requests.sessions import Session
 
 from . import util
 from ._config import logger
@@ -26,6 +30,8 @@ from ._config.config import TASK_SELECTION_TYPE
 from ._config.config import TASK_TYPE
 from ._config.config import URL_DATA
 
+thread_local = local()
+
 
 def download_select_data(
     data_dir: str,
@@ -33,6 +39,7 @@ def download_select_data(
     networks: NET_SELECTION_TYPE = "All",
     features: FEATURE_SELECTION_TYPE = "All",
     GSCs: GSC_SELECTION_TYPE = "All",
+    n_jobs: int = 10,
 ):
     """Select subset of data to download.
 
@@ -46,6 +53,7 @@ def download_select_data(
             list. Do all the features if set to "All".
         GSCs: Gene set collection of interest, accept multiple selection as a
             list. Do all the GSC if set to "All".
+        n_jobs: Number of concurrent downloading threads.
 
     """
     # Similarities and NetworkGraph will assume downloaded MachineLearning
@@ -64,49 +72,56 @@ def download_select_data(
             all_files_to_do.extend(get_OriginalGSCs_filenames())
 
     all_files_to_do = list(set(all_files_to_do))
-    download_from_url(data_dir, all_files_to_do)
+    download_from_url(data_dir, all_files_to_do, n_jobs)
 
 
-def download_from_url(data_dir: str, files_to_do: List[str]):
+def _get_session() -> Session:
+    if not hasattr(thread_local, "session"):
+        thread_local.session = requests.Session()
+    return thread_local.session
+
+
+def _download_file(file: str, data_dir: str):
+    session = _get_session()
+    url = urljoin(URL_DATA, f"{file}.zip")
+    while True:
+        with session.get(url) as r:
+            if r.ok:
+                ZipFile(io.BytesIO(r.content)).extractall(data_dir)
+                break
+            elif r.status_code == 429:  # Retry later
+                t = r.headers["Retry-after"]
+                logger.warning(f"Too many requests, waiting for {t} sec")
+                time.sleep(int(t))
+            else:
+                raise requests.exceptions.RequestException(r, url)
+    logger.info(f"Downloaded {file}")
+
+
+def _get_files_to_download(data_dir: str, files: List[str]) -> List[str]:
+    files_to_download = []
+    for file in files:
+        path = osp.join(data_dir, file)
+        if osp.exists(path):
+            logger.info(f"File exists, skipping download: {path}")
+        else:
+            files_to_download.append(file)
+    return files_to_download
+
+
+def download_from_url(data_dir: str, files_to_do: List[str], n_jobs: int = 10):
     """Download file using the base url.
 
     Args:
         data_dir: Location of data files.
         files_to_do: List of files to download from the the url.
+        n_jobs: Number of concurrent downloading threads.
 
     """
-    for afile in files_to_do:
-        path = osp.join(data_dir, afile)
-        if osp.exists(path):
-            logger.info(f"File exists, skipping download: {path}")
-        else:
-            # Check url
-            url = urljoin(URL_DATA, f"{afile}.zip")
-            logger.info(f"Downloading: {url}")
-            r = requests.get(url, stream=True)
-            if not r.ok:
-                raise requests.exceptions.RequestException(r, url)
-
-            # Retrieve file
-            block_size = 1024  # 1 KB
-            total_size_in_bytes = int(r.headers.get("content-length", 0))
-            pbar = tqdm(
-                total=total_size_in_bytes,
-                unit="iB",
-                unit_scale=True,
-                disable=total_size_in_bytes == 0,
-            )
-            zpath = f"{path}.zip"
-            with open(zpath, "wb") as f:
-                for data in r.iter_content(block_size):
-                    pbar.update(len(data))
-                    f.write(data)
-            pbar.close()
-
-            # Unzip file
-            with ZipFile(zpath) as zf:
-                zf.extractall(data_dir)
-            os.remove(zpath)
+    files_to_download = _get_files_to_download(data_dir, files_to_do)
+    logger.info(f"Total number of files to download: {len(files_to_download)}")
+    with ThreadPoolExecutor(max_workers=n_jobs) as executor:
+        executor.map(_download_file, files_to_download, repeat(data_dir))
 
 
 def _make_download_options_list(
