@@ -7,6 +7,15 @@ PyGenePlexus
 ============
 
 .. toctree::
+   :maxdepth: 1
+   :caption: Notes
+
+   notes/installation
+   notes/quickstart
+   notes/custom
+
+
+.. toctree::
    :maxdepth: 2
    :caption: Reference
 

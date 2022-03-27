@@ -38,6 +38,7 @@ extensions = [
     'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
     'sphinxcontrib.napoleon',
+    'sphinx_copybutton',
 ]
 
 intersphinx_mapping = {
