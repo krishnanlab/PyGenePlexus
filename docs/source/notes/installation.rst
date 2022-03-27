@@ -15,7 +15,7 @@ Install the latest version of PyGenePlexus directly from source on
 
 .. code-block:: bash
 
-   pip install git:https://github.com/krishnanlab/PyGenePlexus.git
+   pip install git+https://github.com/krishnanlab/PyGenePlexus.git
 
 Development
 -----------
