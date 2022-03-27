@@ -11,7 +11,8 @@ PyGenePlexus
    :caption: Notes
 
    notes/installation
-   notes/quickstart
+   notes/cli
+   notes/api
    notes/custom
 
 
