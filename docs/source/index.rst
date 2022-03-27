@@ -29,6 +29,7 @@ PyGenePlexus
    :maxdepth: 1
    :caption: Appendix
 
+   appendix/license
    appendix/glossary
    appendix/references
 
