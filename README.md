@@ -32,7 +32,7 @@ See `example/example_run.py` for example usage of the API.
 geneplexus --input_file example/input_genes.txt --output_dir result/ --data_dir data/
 ```
 
-Full options (check out with ``geneplexus --help``)
+Full CLI options (check out with ``geneplexus --help``)
 
 ```txt
 Run the GenePlexus pipline on a input gene list.
