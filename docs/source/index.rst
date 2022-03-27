@@ -16,8 +16,8 @@ PyGenePlexus
 
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Reference
+   :maxdepth: 1
+   :caption: Package reference
 
    geneplexus/custom
    geneplexus/download
@@ -25,7 +25,7 @@ PyGenePlexus
    geneplexus/util
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Appendix
 
    appendix/glossary
