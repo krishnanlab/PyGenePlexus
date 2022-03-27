@@ -35,3 +35,34 @@ List of data options
 
 Run the PyGenePlexus pipeline
 -----------------------------
+
+First, specify the input genes (can have mixed gene ID types, e.g., Entrez
+gene ID, gene Symbol)
+
+.. code-block:: python
+
+   input_genes = ["6457", "7037", "3134", "TTC8"," BBS5", "BBS12", ...]
+
+Alternatively, read the gene list from file
+
+.. code-block:: python
+
+   import geneplexus
+   input_genes = geneplexus.util.read_gene_list("my_gene_list.txt")
+
+Next, run the pipline via the :class:`geneplexus.GenePlexus` object. The data
+files are stored under the ``data/`` directory.
+
+.. code-block:: python
+
+   gp = geneplexus.GenePlexus("data", network="BioGRID", feature="Embedding", GSC="GO")
+
+   # Obtain positive and negative genes in the network with background GSC
+   pos_genes_in_net, negative_genes, net_genes = gp.get_pos_and_neg_genes()
+
+   # Train logistic regression model and get genomewide gene predictions
+   mdl_weights, df_probs, avgps = gp.fit_and_predict()
+
+   # Optionally, compute modle similarity against pretrained models for GO and DisGeNet
+   df_sim_GO, df_sim_Dis, weights_GO, weights_Dis = gp.make_sim_dfs()
+
