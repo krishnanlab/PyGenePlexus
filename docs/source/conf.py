@@ -39,6 +39,7 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinxcontrib.napoleon',
     'sphinx_copybutton',
+    'sphinx.ext.autosectionlabel',
 ]
 
 intersphinx_mapping = {
