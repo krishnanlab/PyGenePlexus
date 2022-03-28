@@ -59,13 +59,13 @@ def check_file(path: str):
 
 def read_gene_list(
     path: str,
-    sep: Optional[str] = ", ",
+    sep: Optional[str] = "newline",
 ) -> List[str]:
     """Read gene list from flie.
 
     Args:
         path: Path to the input gene list file.
-        sep: Seperator between genes (default: ", ").
+        sep: Seperator between genes (default: "newline").
 
     """
     if sep == "newline":

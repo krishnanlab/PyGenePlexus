@@ -1,8 +1,5 @@
-Glossary and references
-=======================
-
 Glossary
---------
+========
 
 .. glossary::
    Edgelist
@@ -74,14 +71,3 @@ Glossary
       A gene set collection (GSC) is a set of gene sets, each of which defines
       a set of positive genes for a specific term (i.e., a label). Currently
       supported GSCs are [GO]_ and [DisGeNet]_.
-
-References
-----------
-
-.. [GO]
-.. [DisGeNet]
-.. [BioGRID]
-.. [STRING]
-.. [STRING-EXP]
-.. [GIANT-TN]
-.. [node2vec]

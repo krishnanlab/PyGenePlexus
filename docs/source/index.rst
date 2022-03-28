@@ -3,19 +3,35 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to PyGenePlexus's documentation!
-========================================
+PyGenePlexus
+============
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+   :maxdepth: 1
+   :caption: Notes
 
-   cli
-   geneplexus
-   custom
-   download
-   util
-   glossary
+   notes/installation
+   notes/cli
+   notes/api
+   notes/custom
+
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Package reference
+
+   geneplexus/custom
+   geneplexus/download
+   geneplexus/geneplexus
+   geneplexus/util
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Appendix
+
+   appendix/license
+   appendix/glossary
+   appendix/references
 
 
 Indices and tables
