@@ -4,11 +4,12 @@ Installation
 Regular usage
 -------------
 
-Install the latest stable version of PyGenePlexus via PyPI:
+Install the latest stable version of PyGenePlexus via
+`PyPI <https://pypi.org/project/geneplexus/>`_:
 
 .. code-block:: bash
 
-   pip install pygeneplexus
+   pip install geneplexus
 
 Install the latest version of PyGenePlexus directly from source on
 `GitHub <https://github.com/krishnanlab/PyGenePlexus>`_:
