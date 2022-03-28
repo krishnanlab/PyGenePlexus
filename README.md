@@ -2,7 +2,7 @@
 [![Documentation Status](https://readthedocs.org/projects/pygeneplexus/badge/?version=main)](https://pygeneplexus.readthedocs.io/en/main/?badge=main)
 [![Tests](https://github.com/krishnanlab/PyGenePlexus/actions/workflows/tests.yml/badge.svg)](https://github.com/krishnanlab/PyGenePlexus/actions/workflows/tests.yml)
 
-# GeneplexusPublic
+# PyGeneplexus
 
 A Python package of the GenePlexus analysis pipeline.
 
@@ -17,7 +17,7 @@ A Python package of the GenePlexus analysis pipeline.
 Install the ``GenePlexus`` package via ``pip``.
 
 ```bash
-pip install .
+pip install geneplexus
 ```
 
 ## Run GenePlexus pipline
