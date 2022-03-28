@@ -1,5 +1,5 @@
-LISCENSE
-========
+LICENSE
+=======
 
 Copyright (c) 2022 Krishnan Laboratory at Michigan State University
 
