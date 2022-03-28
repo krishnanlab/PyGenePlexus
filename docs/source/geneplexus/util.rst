@@ -1,5 +1,5 @@
-Utilities
-=========
+geneplexus.util
+===============
 .. automodule:: geneplexus.util
    :members:
    :undoc-members:

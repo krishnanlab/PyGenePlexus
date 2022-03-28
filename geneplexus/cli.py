@@ -29,7 +29,7 @@ def parse_args() -> argparse.Namespace:
 
     parser.add_argument(
         "--gene_list_delimiter",
-        default=", ",
+        default="newline",
         help="Delimiter used in the gene list. Use 'newline' if the genes are "
         "separated by new line, and use 'tab' if the genes are seperate by "
         "tabs. Other generic separator are also supported, e.g. ', '.",

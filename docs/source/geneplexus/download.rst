@@ -1,6 +1,4 @@
-Data downloader module
-======================
-
+geneplexus.download
+===================
 .. currentmodule:: geneplexus.download
-
 .. autofunction:: download_select_data

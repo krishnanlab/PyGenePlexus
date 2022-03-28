@@ -29,10 +29,10 @@ See `example/example_run.py` for example usage of the API.
 ### Command-line interface
 
 ```bash
-geneplexus --input_file example/input_genes.txt --output_dir result/ --daat_dir data/
+geneplexus --input_file example/input_genes.txt --output_dir result/ --data_dir data/
 ```
 
-Full options (check out with ``geneplexus --help``)
+Full CLI options (check out with ``geneplexus --help``)
 
 ```txt
 Run the GenePlexus pipline on a input gene list.
@@ -46,7 +46,7 @@ optional arguments:
                         Delimiter used in the gene list. Use 'newline' if the
                         genes are separated by new line, and use 'tab' if the
                         genes are seperate by tabs. Other generic separator are
-                        also supported, e.g. ', '. (default: , )
+                        also supported, e.g. ', '. (default: newline)
   --network {BioGRID,STRING,STRING-EXP,GIANT-TN}
                         Network to use for generating features.
                         (default: BioGRID)
