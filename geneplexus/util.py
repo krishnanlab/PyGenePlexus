@@ -13,6 +13,11 @@ import numpy as np
 from . import config
 
 
+def normexpand(path: str) -> str:
+    """Normalize and expand path."""
+    return osp.normpath(osp.expanduser(path))
+
+
 def format_choices(choices: List[str]) -> str:
     """Convert list of str to choices format."""
     return f"The choices are: {{{', '.join(choices)}}}"

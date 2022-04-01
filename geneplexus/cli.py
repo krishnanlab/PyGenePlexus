@@ -14,6 +14,7 @@ from ._config import logger
 from .download import download_select_data
 from .geneplexus import GenePlexus
 from .util import format_choices
+from .util import normexpand
 from .util import read_gene_list
 
 
@@ -120,8 +121,8 @@ def parse_args() -> argparse.Namespace:
 
 def preprocess(args: argparse.Namespace) -> Tuple[str, str]:
     """Set up data and result directories and download data if necessary."""
-    datadir = osp.normpath(osp.expanduser(args.data_dir))
-    outdir = osp.normpath(osp.expanduser(args.output_dir))
+    datadir = normexpand(args.data_dir)
+    outdir = normexpand(args.output_dir)
     os.makedirs(datadir, exist_ok=True)
     os.makedirs(outdir, exist_ok=True)
     download_select_data(datadir, "All", args.network, args.feature, ["GO", "DisGeNet"])
