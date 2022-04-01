@@ -16,7 +16,7 @@ class GenePlexus:
         file_loc: str,
         net_type: config.NET_TYPE = "BioGRID",
         features: config.FEATURE_TYPE = "Embedding",
-        GSC: config.GSC_TYPE = "GO",
+        gsc: config.GSC_TYPE = "GO",
     ):
         """Initialize the GenePlexus object.
 
@@ -24,14 +24,14 @@ class GenePlexus:
             file_loc: Location of data files.
             net_type: Type of network to use.
             features: Type of features of the network to use.
-            GSC: Type of gene set collection to use for generating
+            gsc: Type of gene set collection to use for generating
                 negatives.
 
         """
         self.file_loc = file_loc
         self.net_type = net_type
         self.features = features
-        self.GSC = GSC
+        self.gsc = gsc
 
     def load_genes(self, input_genes: List[str]):
         """Load list of genes into the GenePlexus object.
@@ -77,12 +77,12 @@ class GenePlexus:
         self,
         net_type: config.NET_TYPE,
         features: config.FEATURE_TYPE,
-        GSC: config.GSC_TYPE,
+        gsc: config.GSC_TYPE,
     ):
         """Set GenePlexus parameters."""
         self.net_type = net_type
         self.features = features
-        self.GSC = GSC
+        self.gsc = gsc
 
     def get_pos_and_neg_genes(self):
         """Set up positive and negative genes given the network.
@@ -106,7 +106,7 @@ class GenePlexus:
         self.negative_genes = _geneplexus._get_negatives(
             self.file_loc,
             self.net_type,
-            self.GSC,
+            self.gsc,
             self.pos_genes_in_net,
         )
         return self.pos_genes_in_net, self.negative_genes, self.net_genes
@@ -183,7 +183,7 @@ class GenePlexus:
         self.df_sim_GO, self.df_sim_Dis, self.weights_GO, self.weights_Dis = _geneplexus._make_sim_dfs(
             self.file_loc,
             self.mdl_weights,
-            self.GSC,
+            self.gsc,
             self.net_type,
             self.features,
         )

@@ -98,10 +98,10 @@ def edgelist_to_matrix(
         np.save(osp.join(data_dir, f"Data_Influence_{net_name}.npy"), F_mat)
 
 
-def subset_GSC_to_network(
+def subset_gsc_to_network(
     data_dir: str,
     net_name: str,
-    GSC_name: str,
+    gsc_name: str,
     max_size: int = 200,
     min_size: int = 10,
 ):
@@ -117,7 +117,7 @@ def subset_GSC_to_network(
     Args:
         data_dir: The directory to save the file
         net_name: The name of the network
-        GSC_name: The name of the GSC
+        gsc_name: The name of the GSC
         max_size: Maximum geneset size.
         max_size: Minimum geneset size.
 
@@ -127,18 +127,18 @@ def subset_GSC_to_network(
     nodeorder_loc = osp.join(data_dir, f"NodeOrder_{net_name}.txt")
     nodelist = np.loadtxt(nodeorder_loc, dtype=str)
     # load the orginal GSC
-    with open(osp.join(data_dir, f"GSCOriginal_{GSC_name}.json"), "r") as handle:
-        GSCorg = json.load(handle)
+    with open(osp.join(data_dir, f"GSCOriginal_{gsc_name}.json"), "r") as handle:
+        gsc_orig = json.load(handle)
     # subset GSc based on network
     universe_genes = np.array([])
-    GSCsubset = {}
-    for akey in GSCorg:
-        org_genes = GSCorg[akey]["Genes"]
+    gsc_subset = {}
+    for akey in gsc_orig:
+        org_genes = gsc_orig[akey]["Genes"]
         genes_tmp = np.intersect1d(nodelist, org_genes)
         if (len(genes_tmp) <= max_size) and (len(genes_tmp) >= min_size):
-            GSCsubset[akey] = {"Name": GSCorg[akey]["Name"], "Genes": genes_tmp.tolist()}
+            gsc_subset[akey] = {"Name": gsc_orig[akey]["Name"], "Genes": genes_tmp.tolist()}
             universe_genes = np.union1d(universe_genes, genes_tmp)
     logger.info("Saving the data")
-    with open(osp.join(data_dir, f"GSC_{GSC_name}_{net_name}_GoodSets.json"), "w") as f:
-        json.dump(GSCsubset, f, ensure_ascii=False, indent=4)
-    np.savetxt(osp.join(data_dir, f"GSC_{GSC_name}_{net_name}_universe.txt"), universe_genes, fmt="%s")
+    with open(osp.join(data_dir, f"GSC_{gsc_name}_{net_name}_GoodSets.json"), "w") as f:
+        json.dump(gsc_subset, f, ensure_ascii=False, indent=4)
+    np.savetxt(osp.join(data_dir, f"GSC_{gsc_name}_{net_name}_universe.txt"), universe_genes, fmt="%s")

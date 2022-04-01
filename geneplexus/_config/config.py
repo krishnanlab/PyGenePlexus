@@ -1,4 +1,5 @@
 """Global variables used by the GenePlexus library."""
+import os
 import os.path as osp
 import pathlib
 from typing import Any
@@ -11,9 +12,13 @@ from typing import Union
 
 import numpy as np
 
+os.environ["COLUMNS"] = "100"  # for CLI help page wrap line
+
 URL_DATA = "https://zenodo.org/record/6383205/files/"
 CONFIG_PATH = pathlib.Path(__file__).parent.absolute()
 DATA_FILENAMES_PATH = osp.join(CONFIG_PATH, "data_filenames.txt")
+
+LOG_LEVELS = ["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"]
 
 ALL_TASKS = ["IDconversion", "MachineLearning", "Similarities", "NetworkGraph", "OriginalGSCs"]
 ALL_NETWORKS = ["BioGRID", "STRING", "STRING-EXP", "GIANT-TN"]

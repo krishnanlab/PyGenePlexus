@@ -77,9 +77,9 @@ def _get_genes_in_network(file_loc, net_type, convert_IDs):
     return pos_genes_in_net, genes_not_in_net, net_genes
 
 
-def _get_negatives(file_loc, net_type, GSC, pos_genes_in_net):
-    uni_genes = util.load_genes_universe(file_loc, GSC, net_type)
-    good_sets = util.load_gsc(file_loc, GSC, net_type)
+def _get_negatives(file_loc, net_type, gsc, pos_genes_in_net):
+    uni_genes = util.load_genes_universe(file_loc, gsc, net_type)
+    good_sets = util.load_gsc(file_loc, gsc, net_type)
     M = len(uni_genes)
     N = len(pos_genes_in_net)
     genes_to_remove = pos_genes_in_net
@@ -171,7 +171,7 @@ def _make_prob_df(file_loc, net_genes, probs, pos_genes_in_net, negative_genes):
     return df_probs
 
 
-def _make_sim_dfs(file_loc, mdl_weights, GSC, net_type, features):
+def _make_sim_dfs(file_loc, mdl_weights, gsc, net_type, features):
     dfs_out = []
     for target_set in ["GO", "DisGeNet"]:
         weights_dict = util.load_pretrained_weights(file_loc, target_set, net_type, features)
@@ -180,7 +180,7 @@ def _make_sim_dfs(file_loc, mdl_weights, GSC, net_type, features):
         if target_set == "DisGeNet":
             weights_dict_Dis = weights_dict
         order = util.load_correction_order(file_loc, target_set, net_type)
-        cor_mat = util.load_correction_mat(file_loc, GSC, target_set, net_type, features)
+        cor_mat = util.load_correction_mat(file_loc, gsc, target_set, net_type, features)
         add_row = np.zeros((1, len(order)))
         for idx, aset in enumerate(order):
             cos_sim = 1 - cosine(weights_dict[aset]["Weights"], mdl_weights)
@@ -189,7 +189,7 @@ def _make_sim_dfs(file_loc, mdl_weights, GSC, net_type, features):
         last_row = cor_mat[-1, :]
         zq = np.maximum(0, (last_row - np.mean(last_row)) / np.std(last_row))
         zs = np.maximum(0, (last_row - np.mean(cor_mat, axis=0)) / np.std(cor_mat, axis=0))
-        z = np.sqrt(zq ** 2 + zs ** 2)
+        z = np.sqrt(zq**2 + zs**2)
         results_tmp = []
         for idx2, termID_tmp in enumerate(order):
             ID_tmp = termID_tmp

@@ -25,7 +25,7 @@ geneplexus.download.download_select_data(
     tasks="All",
     networks="BioGRID",
     features="Embedding",
-    GSCs=["GO", "DisGeNet"],
+    gscs=["GO", "DisGeNet"],
 )
 print("Done downlaoding")
 

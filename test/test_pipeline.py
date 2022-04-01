@@ -56,7 +56,8 @@ class TestGenePlexusPipeline(unittest.TestCase):
     @pytest.mark.order(0)
     def test_filenames(self):
         for filename in FILENAMES:
-            self.assertTrue(osp.isfile(osp.join(pytest.DATADIR, filename)))
+            with self.subTest(filename=filename):
+                self.assertTrue(osp.isfile(osp.join(pytest.DATADIR, filename)))
 
     @pytest.mark.order(1)
     def test_init_geneplexus(self):
