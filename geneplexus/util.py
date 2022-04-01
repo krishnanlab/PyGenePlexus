@@ -13,6 +13,11 @@ import numpy as np
 from . import config
 
 
+def format_choices(choices: List[str]) -> str:
+    """Convert list of str to choices format."""
+    return f"The choices are: {{{', '.join(choices)}}}"
+
+
 def mapgene(gene: str, entrez_to_other: Dict[str, List[str]]) -> str:
     """Map entrez to other representations.
 

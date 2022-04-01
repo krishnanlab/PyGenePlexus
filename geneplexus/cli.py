@@ -13,6 +13,7 @@ from . import config
 from ._config import logger
 from .download import download_select_data
 from .geneplexus import GenePlexus
+from .util import format_choices
 from .util import read_gene_list
 
 
@@ -24,73 +25,91 @@ def parse_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
+        "-i",
         "--input_file",
+        metavar="",
         required=True,
         help="Input gene list (.txt) file (one gene per line).",
     )
 
     parser.add_argument(
+        "-d",
         "--gene_list_delimiter",
         default="newline",
+        metavar="",
         help="Delimiter used in the gene list. Use 'newline' if the genes are "
         "separated by new line, and use 'tab' if the genes are seperate by "
         "tabs. Other generic separator are also supported, e.g. ', '.",
     )
 
     parser.add_argument(
+        "-n",
         "--network",
         default="BioGRID",
-        choices=config.ALL_NETWORKS,
-        help="Network to use for generating features.",
+        metavar="",
+        help="Network to use. {format_choices(config.ALL_NETWORKS)}",
     )
 
     parser.add_argument(
+        "-f",
         "--feature",
         default="Embedding",
+        metavar="",
         choices=config.ALL_FEATURES,
-        help="Types of feature to use.",
+        help=f"Types of feature to use. {format_choices(config.ALL_FEATURES)}",
     )
 
     parser.add_argument(
+        "-g",
         "--GSC",
         default="GO",
-        choices=config.ALL_GSCS,
-        help="Geneset collection used to generate negatives and the model similarities.",
+        metavar="",
+        help="Geneset collection used to generate negatives and the model"
+        f"similarities. {format_choices(config.ALL_GSCS)}",
     )
 
     parser.add_argument(
+        "-s",
         "--small_edgelist_num_nodes",
         default=50,
+        metavar="",
         type=int,
         help="Number of nodes in the small edgelist.",
     )
 
     parser.add_argument(
+        "-dd",
         "--data_dir",
         default="data/",
+        metavar="",
         help="Directory in which the data are stored.",
     )
 
     parser.add_argument(
+        "-od",
         "--output_dir",
         default="result/",
+        metavar="",
         help="Output directory with respect to the repo root directory.",
     )
 
     parser.add_argument(
+        "-z",
         "--zip_output",
         action="store_true",
         help="If set, then compress the output directory into a Tar Gz file.",
     )
 
     parser.add_argument(
+        "-l",
         "--log_level",
         default="INFO",
-        choices=["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"],
-        help="Logging level.",
+        metavar="",
+        help=f"Logging level. {format_choices(config.LOG_LEVELS)}",
     )
 
     parser.add_argument(
+        "-q",
         "--quiet",
         action="store_true",
         help="Suppress log messages (same as setting lov_level to CRITICAL).",
