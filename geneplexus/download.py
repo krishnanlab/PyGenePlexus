@@ -70,6 +70,7 @@ def download_select_data(
             all_files_to_do.extend(get_NetworkGraph_filenames(networks))
         if atask == "OriginalGSCs":
             all_files_to_do.extend(get_OriginalGSCs_filenames())
+    logger.setLevel("INFO")  # TODO: pass logger instead of using global
 
     files_to_download = _get_files_to_download(data_dir, list(set(all_files_to_do)))
     logger.info(f"Total number of files to download: {len(files_to_download)}")

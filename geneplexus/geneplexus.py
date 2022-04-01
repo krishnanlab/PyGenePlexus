@@ -62,8 +62,8 @@ class GenePlexus:
         if file_loc is None:
             self._file_loc = pystow.join("geneplexus")
         else:
-            normexpand(file_loc)
-        logger.info(f"Data direcory set to {self.file_loc}")
+            self._file_loc = normexpand(file_loc)
+        logger.info(f"Data direcory set to {self._file_loc}")
 
     def load_genes(self, input_genes: List[str]):
         """Load list of genes into the GenePlexus object.
