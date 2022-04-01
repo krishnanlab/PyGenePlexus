@@ -38,12 +38,12 @@ class GenePlexus:
             log_level: Logging level.
 
         """
+        logger.setLevel(logging.getLevelName(log_level))
         self.file_loc = file_loc
         self.net_type = net_type
         self.features = features
         self.gsc = gsc
 
-        logger.setLevel(logging.getLevelName(log_level))
         if auto_download:
             download_select_data(
                 self.file_loc,
@@ -51,6 +51,7 @@ class GenePlexus:
                 self.net_type,
                 self.features,
                 ["GO", "DisGeNet"],
+                log_level=log_level,
             )
 
     @property
