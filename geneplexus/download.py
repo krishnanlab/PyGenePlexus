@@ -71,8 +71,9 @@ def download_select_data(
         if atask == "OriginalGSCs":
             all_files_to_do.extend(get_OriginalGSCs_filenames())
 
-    all_files_to_do = list(set(all_files_to_do))
-    download_from_url(data_dir, all_files_to_do, n_jobs)
+    files_to_download = _get_files_to_download(data_dir, list(set(all_files_to_do)))
+    logger.info(f"Total number of files to download: {len(files_to_download)}")
+    download_from_url(data_dir, files_to_download, n_jobs)
 
 
 def _get_session() -> Session:
@@ -98,30 +99,47 @@ def _download_file(file: str, data_dir: str):
     logger.info(f"Downloaded {file}")
 
 
-def _get_files_to_download(data_dir: str, files: List[str]) -> List[str]:
+def _get_files_to_download(
+    data_dir: str,
+    files: List[str],
+    silent: bool = False,
+) -> List[str]:
     files_to_download = []
     for file in files:
         path = osp.join(data_dir, file)
         if osp.exists(path):
-            logger.info(f"File exists, skipping download: {path}")
+            if not silent:
+                logger.info(f"File exists, skipping download: {path}")
         else:
             files_to_download.append(file)
     return files_to_download
 
 
-def download_from_url(data_dir: str, files_to_do: List[str], n_jobs: int = 10):
+def download_from_url(
+    data_dir: str,
+    files_to_do: List[str],
+    n_jobs: int = 10,
+    retry: bool = True,
+):
     """Download file using the base url.
 
     Args:
         data_dir: Location of data files.
         files_to_do: List of files to download from the the url.
         n_jobs: Number of concurrent downloading threads.
+        retry: If set to True, then retry downloading any missing file.
 
     """
-    files_to_download = _get_files_to_download(data_dir, files_to_do)
-    logger.info(f"Total number of files to download: {len(files_to_download)}")
     with ThreadPoolExecutor(max_workers=n_jobs) as executor:
-        executor.map(_download_file, files_to_download, repeat(data_dir))
+        executor.map(_download_file, files_to_do, repeat(data_dir))
+
+    missed_files = _get_files_to_download(data_dir, files_to_do, silent=True)
+    if missed_files and retry:
+        missed = "".join(f"\n\t{i}" for i in missed_files)
+        logger.warning(
+            f"Failed to download the following files, retrying...{missed}",
+        )
+        download_from_url(data_dir, missed_files, n_jobs=n_jobs, retry=True)
 
 
 def _make_download_options_list(
