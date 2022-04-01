@@ -4,6 +4,7 @@ import logging
 import os
 import os.path as osp
 import pathlib
+import shutil
 import tarfile
 from typing import Tuple
 
@@ -96,13 +97,6 @@ def parse_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
-        "-z",
-        "--zip_output",
-        action="store_true",
-        help="If set, then compress the output directory into a Tar Gz file.",
-    )
-
-    parser.add_argument(
         "-l",
         "--log_level",
         default="INFO",
@@ -115,6 +109,19 @@ def parse_args() -> argparse.Namespace:
         "--quiet",
         action="store_true",
         help="Suppress log messages (same as setting lov_level to CRITICAL).",
+    )
+
+    parser.add_argument(
+        "-z",
+        "--zip-output",
+        action="store_true",
+        help="If set, then compress the output directory into a Tar Gz file.",
+    )
+
+    parser.add_argument(
+        "--clear-data",
+        action="store_true",
+        help="Clear data directory and exit.",
     )
 
     return parser.parse_args()
@@ -152,10 +159,29 @@ def save_results(gp, outdir, zip_output):
             tar.add(pathlib.Path(outdir), arcname=file_name)
 
 
+def clear_data(args):
+    """Clear data path.
+
+    If data_dir is default, then remove directly. Otherwise, prompt for
+    acknowledgement.
+
+    """
+    if args.clear_data:
+        if args.data_dir is None:
+            shutil.rmtree(GenePlexus(log_level="CRITICAL").file_loc)
+        else:
+            data_dir = normexpand(args.data_dir)
+            if input("Remove directory {data_dir}? [y/n]") == "y":
+                shutil.rmtree(data_dir)
+        exit()
+
+
 def main():
     """Command line interface."""
     args = parse_args()
     log_level = logging.getLevelName("CRITICAL" if args.quiet else args.log_level)
+
+    clear_data(args)
 
     # Create geneplexus object and auto download data files
     gp = GenePlexus(
