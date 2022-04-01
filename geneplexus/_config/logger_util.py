@@ -23,6 +23,6 @@ def make_logger(
     logger_name = "geneplexus" if name is None else f"geneplexus.{name}"
     logger = logging.getLogger(logger_name)
     logger.addHandler(stream_handler)
-    logger.setLevel(getattr(logging, log_level))
+    logger.setLevel(logging.getLevelName(log_level))
 
     return logger
