@@ -1,5 +1,6 @@
 """Utilities including file and path handling."""
 import json
+import os
 import os.path as osp
 from typing import Any
 from typing import Dict
@@ -13,9 +14,12 @@ import numpy as np
 from . import config
 
 
-def normexpand(path: str) -> str:
-    """Normalize and expand path."""
-    return osp.normpath(osp.expanduser(path))
+def normexpand(path: str, create: bool = True) -> str:
+    """Normalize then expand path and optionally create dir."""
+    new_path = osp.normpath(osp.expanduser(path))
+    if create:
+        os.makedirs(new_path, exist_ok=True)
+    return new_path
 
 
 def format_choices(choices: List[str]) -> str:
