@@ -76,8 +76,8 @@ class TestCustom(unittest.TestCase):
         outpath = osp.join(pytest.DATADIR, "Data_Adjacency_custom.npy")
         self.assertEqual(np.load(outpath).tolist(), adjmat)
 
-    def test_subset_GSC_to_network(self):
-        geneplexus.custom.subset_GSC_to_network(
+    def test_subset_gsc_to_network(self):
+        geneplexus.custom.subset_gsc_to_network(
             pytest.DATADIR,
             "custom",
             "GO",

@@ -13,6 +13,11 @@ import numpy as np
 from . import config
 
 
+def format_choices(choices: List[str]) -> str:
+    """Convert list of str to choices format."""
+    return f"The choices are: {{{', '.join(choices)}}}"
+
+
 def mapgene(gene: str, entrez_to_other: Dict[str, List[str]]) -> str:
     """Map entrez to other representations.
 
@@ -117,7 +122,7 @@ def load_geneid_conversion(
 
 def load_gsc(
     file_loc: str,
-    GSC: config.GSC_TYPE,
+    gsc: config.GSC_TYPE,
     net_type: config.NET_TYPE,
 ) -> config.GSC_DATA_TYPE:
     """Load gene set collection dictionary.
@@ -128,7 +133,7 @@ def load_gsc(
         net_type: Network used.
 
     """
-    file_name = f"GSC_{GSC}_{net_type}_GoodSets.json"
+    file_name = f"GSC_{gsc}_{net_type}_GoodSets.json"
     return _load_json_file(file_loc, file_name)
 
 
@@ -189,18 +194,18 @@ def load_node_order(file_loc: str, net_type: config.NET_TYPE) -> np.ndarray:
 
 def load_genes_universe(
     file_loc: str,
-    GSC: config.GSC_TYPE,
+    gsc: config.GSC_TYPE,
     net_type: config.NET_TYPE,
 ) -> np.ndarray:
     """Load gene universe a given network and GSC.
 
     Args:
         file_loc: Location of data files.
-        GSC: Gene set collection.
+        gsc: Gene set collection.
         net_type: Network used.
 
     """
-    file_name = f"GSC_{GSC}_{net_type}_universe.txt"
+    file_name = f"GSC_{gsc}_{net_type}_universe.txt"
     return _load_np_file(file_loc, file_name, load_method="txt")
 
 
@@ -240,7 +245,7 @@ def load_correction_order(
 
 def load_correction_mat(
     file_loc: str,
-    GSC: config.GSC_TYPE,
+    gsc: config.GSC_TYPE,
     target_set: config.GSC_TYPE,
     net_type: config.NET_TYPE,
     features: config.FEATURE_TYPE,
@@ -249,11 +254,11 @@ def load_correction_mat(
 
     Args:
         file_loc: Location of data files.
-        GSC: Gene set collection.
+        gsc: Gene set collection.
         target_set: Target gene set collection.
         net_type: Network used.
         features: Type of features used.
 
     """
-    file_name = f"CorrectionMatrix_{GSC}_{target_set}_{net_type}_{features}.npy"
+    file_name = f"CorrectionMatrix_{gsc}_{target_set}_{net_type}_{features}.npy"
     return _load_np_file(file_loc, file_name, load_method="npy")

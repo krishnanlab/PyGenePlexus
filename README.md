@@ -35,34 +35,33 @@ geneplexus --input_file example/input_genes.txt --output_dir result/ --data_dir 
 Full CLI options (check out with ``geneplexus --help``)
 
 ```txt
+usage: geneplexus [-h] -i  [-d] [-n] [-f] [-g] [-s] [-dd] [-od] [-z] [-l] [-q]
+
 Run the GenePlexus pipline on a input gene list.
 
 optional arguments:
   -h, --help            show this help message and exit
-  --input_file INPUT_FILE
-                        Input gene list (.txt) file (one gene per line).
-                        (default: None)
-  --gene_list_delimiter GENE_LIST_DELIMITER
-                        Delimiter used in the gene list. Use 'newline' if the
-                        genes are separated by new line, and use 'tab' if the
-                        genes are seperate by tabs. Other generic separator are
-                        also supported, e.g. ', '. (default: newline)
-  --network {BioGRID,STRING,STRING-EXP,GIANT-TN}
-                        Network to use for generating features.
-                        (default: BioGRID)
-  --feature {Adjacency,Embedding,Influence}
-                        Types of feature to use. (default: Embedding)
-  --GSC {GO,DisGeNet}   Geneset collection used to generate negatives and the
-                        model similarities. (default: GO)
-  --small_edgelist_num_nodes SMALL_EDGELIST_NUM_NODES
+  -i , --input_file     Input gene list (.txt) file (one gene per line). (default: None)
+  -d , --gene_list_delimiter
+                        Delimiter used in the gene list. Use 'newline' if the genes are separated
+                        by new line, and use 'tab' if the genes are seperate by tabs. Other
+                        generic separator are also supported, e.g. ', '. (default: newline)
+  -n , --network        Network to use. {format_choices(config.ALL_NETWORKS)} (default: BioGRID)
+  -f , --feature        Types of feature to use. The choices are: {Adjacency, Embedding,
+                        Influence} (default: Embedding)
+  -g , --gsc            Geneset collection used to generate negatives and the modelsimilarities.
+                        The choices are: {GO, DisGeNet} (default: GO)
+  -s , --small_edgelist_num_nodes
                         Number of nodes in the small edgelist. (default: 50)
-  --data_dir DATA_DIR   Directory in which the data are stored.
-                        (default: data/)
-  --output_dir OUTPUT_DIR
-                        Output directory with respect to the repo root
-                        directory. (default: result/)
-  --zip_output          If set, then compress the output directory into a Tar
-                        Gz file. (default: False)
+  -dd , --data_dir      Directory in which the data are stored. (default: data/)
+  -od , --output_dir    Output directory with respect to the repo root directory. (default:
+                        result/)
+  -z, --zip_output      If set, then compress the output directory into a Tar Gz file. (default:
+                        False)
+  -l , --log_level      Logging level. The choices are: {CRITICAL, ERROR, WARNING, INFO, DEBUG}
+                        (default: INFO)
+  -q, --quiet           Suppress log messages (same as setting lov_level to CRITICAL). (default:
+                        False)
 ```
 
 # Dev
