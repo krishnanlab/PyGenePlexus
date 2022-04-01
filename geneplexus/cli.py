@@ -81,9 +81,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "-dd",
         "--data_dir",
-        default="data/",
+        default=None,
         metavar="",
-        help="Directory in which the data are stored.",
+        help="Directory in which the data are stored, if set to None, then use "
+        "the default data directory ~/.data/geneplexus",
     )
 
     parser.add_argument(
@@ -117,16 +118,6 @@ def parse_args() -> argparse.Namespace:
     )
 
     return parser.parse_args()
-
-
-def preprocess(args: argparse.Namespace) -> Tuple[str, str]:
-    """Set up data and result directories and download data if necessary."""
-    datadir = normexpand(args.data_dir)
-    outdir = normexpand(args.output_dir)
-    os.makedirs(datadir, exist_ok=True)
-    os.makedirs(outdir, exist_ok=True)
-    download_select_data(datadir, "All", args.network, args.feature, ["GO", "DisGeNet"])
-    return datadir, outdir
 
 
 def run_pipeline(gp: GenePlexus, num_nodes: int):
@@ -164,14 +155,24 @@ def save_results(gp, outdir, zip_output):
 def main():
     """Command line interface."""
     args = parse_args()
-    logger.setLevel(logging.getLevelName("CRITICAL" if args.quiet else args.log_level))
-    datadir, outdir = preprocess(args)
+    log_level = logging.getLevelName("CRITICAL" if args.quiet else args.log_level)
 
-    gp = GenePlexus(datadir, args.network, args.feature, args.gsc)
+    # Create geneplexus object and auto download data files
+    gp = GenePlexus(
+        args.data_dir,
+        args.network,
+        args.feature,
+        args.gsc,
+        auto_download=True,
+        log_level=log_level,
+    )
+
+    # Load input gene list
     gp.load_genes(read_gene_list(args.input_file, args.gene_list_delimiter))
 
+    # Run pipeline and save results
     run_pipeline(gp, args.input_file)
-    save_results(gp, outdir, args.zip_output)
+    save_results(gp, normexpand(args.output_dir), args.zip_output)
 
 
 if __name__ == "__main__":
