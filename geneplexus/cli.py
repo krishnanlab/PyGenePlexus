@@ -1,5 +1,6 @@
 """Command line interface for the GenePlexus pipeline."""
 import argparse
+import logging
 import os
 import os.path as osp
 import pathlib
@@ -9,6 +10,7 @@ from typing import Tuple
 import pandas as pd
 
 from . import config
+from ._config import logger
 from .download import download_select_data
 from .geneplexus import GenePlexus
 from .util import read_gene_list
@@ -81,6 +83,19 @@ def parse_args() -> argparse.Namespace:
         help="If set, then compress the output directory into a Tar Gz file.",
     )
 
+    parser.add_argument(
+        "--log_level",
+        default="INFO",
+        choices=["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"],
+        help="Logging level.",
+    )
+
+    parser.add_argument(
+        "--quiet",
+        action="store_true",
+        help="Suppress log messages (same as setting lov_level to CRITICAL).",
+    )
+
     return parser.parse_args()
 
 
@@ -129,6 +144,7 @@ def save_results(gp, outdir, zip_output):
 def main():
     """Command line interface."""
     args = parse_args()
+    logger.setLevel(logging.getLevelName("CRITICAL" if args.quiet else args.log_level))
     datadir, outdir = preprocess(args)
 
     gp = GenePlexus(datadir, args.network, args.feature, args.GSC)
