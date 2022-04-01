@@ -38,7 +38,7 @@ def download_select_data(
     tasks: TASK_SELECTION_TYPE = "All",
     networks: NET_SELECTION_TYPE = "All",
     features: FEATURE_SELECTION_TYPE = "All",
-    GSCs: GSC_SELECTION_TYPE = "All",
+    gscs: GSC_SELECTION_TYPE = "All",
     n_jobs: int = 10,
 ):
     """Select subset of data to download.
@@ -51,21 +51,21 @@ def download_select_data(
             all the networks if set to "All".
         features: Network features of interest, accept multiple selection as a
             list. Do all the features if set to "All".
-        GSCs: Gene set collection of interest, accept multiple selection as a
+        gscs: Gene set collection of interest, accept multiple selection as a
             list. Do all the GSC if set to "All".
         n_jobs: Number of concurrent downloading threads.
 
     """
     # Similarities and NetworkGraph will assume downloaded MachineLearning
-    tasks, networks, features, GSCs = make_download_options_lists(tasks, networks, features, GSCs)
+    tasks, networks, features, gscs = make_download_options_lists(tasks, networks, features, gscs)
     all_files_to_do = []
     for atask in tasks:
         if atask == "IDconversion":
             all_files_to_do.extend(get_IDconversion_filenames())
         if atask == "MachineLearning":
-            all_files_to_do.extend(get_MachineLearning_filenames(networks, features, GSCs))
+            all_files_to_do.extend(get_MachineLearning_filenames(networks, features, gscs))
         if atask == "Similarities":
-            all_files_to_do.extend(get_Similarities_filenames(networks, features, GSCs))
+            all_files_to_do.extend(get_Similarities_filenames(networks, features, gscs))
         if atask == "NetworkGraph":
             all_files_to_do.extend(get_NetworkGraph_filenames(networks))
         if atask == "OriginalGSCs":
@@ -145,14 +145,14 @@ def make_download_options_lists(
     tasks: TASK_SELECTION_TYPE,
     networks: NET_SELECTION_TYPE,
     features: FEATURE_SELECTION_TYPE,
-    GSCs: GSC_SELECTION_TYPE,
+    gscs: GSC_SELECTION_TYPE,
 ) -> Tuple[List[TASK_TYPE], List[NET_TYPE], List[FEATURE_TYPE], List[GSC_TYPE]]:
     """Compile a list of files to download based on the selections."""
     args = (
         ("tasks", tasks, ALL_TASKS),
         ("network", networks, ALL_NETWORKS),
         ("feature", features, ALL_FEATURES),
-        ("GSC", GSCs, ALL_GSCS),
+        ("gsc", gscs, ALL_GSCS),
     )
     return tuple(map(_make_download_options_list, *zip(*args)))  # type: ignore
 
@@ -169,7 +169,7 @@ def get_IDconversion_filenames() -> List[str]:
 def get_MachineLearning_filenames(
     networks: List[NET_TYPE],
     features: List[FEATURE_TYPE],
-    GSCs: List[GSC_TYPE],
+    gscs: List[GSC_TYPE],
 ) -> List[str]:
     """Get dataset file names."""
     files_to_do = []
@@ -180,8 +180,8 @@ def get_MachineLearning_filenames(
                 files_to_do.append(line)
         if ("universe.txt" in line) or ("GoodSets.json" in line):
             net_tmp = line.split("_")[2]
-            GSC_tmp = line.split("_")[1]
-            if (net_tmp in networks) and (GSC_tmp in GSCs):
+            gsc_tmp = line.split("_")[1]
+            if (net_tmp in networks) and (gsc_tmp in gscs):
                 files_to_do.append(line)
         if "Data_" in line:
             feature_tmp = line.split("_")[1]
@@ -196,7 +196,7 @@ def get_MachineLearning_filenames(
 def get_Similarities_filenames(
     networks: List[NET_TYPE],
     features: List[FEATURE_TYPE],
-    GSCs: List[GSC_TYPE],
+    gscs: List[GSC_TYPE],
 ) -> List[str]:
     """Get pretrained model similarity file names."""
     files_to_do = []
@@ -204,13 +204,13 @@ def get_Similarities_filenames(
         if "CorrectionMatrix_" in line:
             feature_tmp = osp.splitext(line.split("_")[-1])[0]
             net_tmp = line.split("_")[3]
-            GSC_tmp = line.split("_")[1]
-            if (net_tmp in networks) and (feature_tmp in features) and (GSC_tmp in GSCs):
+            gsc_tmp = line.split("_")[1]
+            if (net_tmp in networks) and (feature_tmp in features) and (gsc_tmp in gscs):
                 files_to_do.append(line)
         if "CorrectionMatrixOrder" in line:
-            GSC_tmp = line.split("_")[1]
+            gsc_tmp = line.split("_")[1]
             net_tmp = osp.splitext(line.split("_")[2])[0]
-            if (net_tmp in networks) and (GSC_tmp in GSCs):
+            if (net_tmp in networks) and (gsc_tmp in gscs):
                 files_to_do.append(line)
         if "PreTrainedWeights" in line:
             net_tmp = line.split("_")[2]

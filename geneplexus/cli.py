@@ -61,7 +61,7 @@ def parse_args() -> argparse.Namespace:
 
     parser.add_argument(
         "-g",
-        "--GSC",
+        "--gsc",
         default="GO",
         metavar="",
         help="Geneset collection used to generate negatives and the model"
@@ -166,7 +166,7 @@ def main():
     logger.setLevel(logging.getLevelName("CRITICAL" if args.quiet else args.log_level))
     datadir, outdir = preprocess(args)
 
-    gp = GenePlexus(datadir, args.network, args.feature, args.GSC)
+    gp = GenePlexus(datadir, args.network, args.feature, args.gsc)
     gp.load_genes(read_gene_list(args.input_file, args.gene_list_delimiter))
 
     run_pipeline(gp, args.input_file)
