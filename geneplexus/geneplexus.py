@@ -81,9 +81,22 @@ class GenePlexus:
         if net_type not in config.ALL_NETWORKS:
             # TODO: custom network?
             raise ValueError(
-                f"Unexpected network {net_type!r}, available choise are: {config.ALL_NETWORKS}",
+                f"Unexpected network {net_type!r}, available choices are: {config.ALL_NETWORKS}",
             )
         self._net_type = net_type
+
+    @property
+    def features(self) -> config.FEATURE_TYPE:
+        """Features to use."""
+        return self._features
+
+    @features.setter
+    def features(self, features: config.FEATURE_TYPE):
+        if features not in config.ALL_FEATURES:
+            raise ValueError(
+                f"Unexpected feature {features!r}, available choices are: {config.ALL_FEATURES}",
+            )
+        self._features = features
 
     def load_genes(self, input_genes: List[str]):
         """Load list of genes into the GenePlexus object.

@@ -202,15 +202,28 @@ NET_TEST_PAIRS = [
     ("GiANT-TN", False),
     ("TRiNG", False),
 ]
+FEATURE_TEST_PAIRS = [
+    ("Adjacency", True),
+    ("Embedding", True),
+    ("Influence", True),
+    ("adjd", False),
+    ("randomStufF", False),
+]
 
 
+@pytest.mark.parametrize("features,features_correct", FEATURE_TEST_PAIRS)
 @pytest.mark.parametrize("net_type,net_correct", NET_TEST_PAIRS)
-def test_geneplexus_param(net_type, net_correct):
-    if net_correct:
-        geneplexus.GenePlexus(net_type=net_type)
+def test_geneplexus_param(
+    net_type,
+    net_correct,
+    features,
+    features_correct,
+):
+    if net_correct and features_correct:
+        geneplexus.GenePlexus(net_type=net_type, features=features)
     else:
         with pytest.raises(ValueError):
-            geneplexus.GenePlexus(net_type=net_type)
+            geneplexus.GenePlexus(net_type=net_type, features=features)
 
 
 if __name__ == "__main__":
