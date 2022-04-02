@@ -36,6 +36,7 @@ FILENAMES = [
 ]
 
 
+@pytest.mark.usefixtures("data")
 def test_download_exist(caplog):
     geneplexus.download.download_select_data(
         pytest.DATADIR,
@@ -190,6 +191,47 @@ class TestGenePlexusPipeline(unittest.TestCase):
             df_convert_out_subset.values.tolist(),
             df_convert_out_subset_expected.values.tolist(),
         )
+
+
+NET_TEST_PAIRS = [
+    ("BioGRID", True),
+    ("STRING", True),
+    ("STRING-EXP", True),
+    ("GIANT-TN", True),
+    ("GiANT-TN", False),
+    ("TRiNG", False),
+]
+FEATURE_TEST_PAIRS = [
+    ("Adjacency", True),
+    ("Embedding", True),
+    ("Influence", True),
+    ("adjd", False),
+    ("randomStufF", False),
+]
+GSC_TEST_PAIRS = [
+    ("GO", True),
+    ("DisGeNet", True),
+    ("gO", False),
+    ("CrAzyStuff", False),
+]
+
+
+@pytest.mark.parametrize("gsc,gsc_correct", GSC_TEST_PAIRS)
+@pytest.mark.parametrize("features,features_correct", FEATURE_TEST_PAIRS)
+@pytest.mark.parametrize("net_type,net_correct", NET_TEST_PAIRS)
+def test_geneplexus_param(
+    net_type,
+    net_correct,
+    features,
+    features_correct,
+    gsc,
+    gsc_correct,
+):
+    if net_correct and features_correct and gsc_correct:
+        geneplexus.GenePlexus(net_type=net_type, features=features, gsc=gsc)
+    else:
+        with pytest.raises(ValueError):
+            geneplexus.GenePlexus(net_type=net_type, features=features, gsc=gsc)
 
 
 if __name__ == "__main__":

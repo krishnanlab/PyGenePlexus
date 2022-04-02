@@ -11,6 +11,7 @@ from . import _geneplexus
 from ._config import config
 from ._config import logger
 from .download import download_select_data
+from .util import check_param
 from .util import normexpand
 
 
@@ -70,6 +71,37 @@ class GenePlexus:
         else:
             self._file_loc = normexpand(file_loc)
         logger.info(f"Data direcory set to {self._file_loc}")
+
+    @property
+    def net_type(self) -> config.NET_TYPE:
+        """Network to use."""
+        return self._net_type
+
+    @net_type.setter
+    def net_type(self, net_type: config.NET_TYPE):
+        # TODO: custom network?
+        check_param("network", net_type, config.ALL_NETWORKS)
+        self._net_type = net_type
+
+    @property
+    def features(self) -> config.FEATURE_TYPE:
+        """Features to use."""
+        return self._features
+
+    @features.setter
+    def features(self, features: config.FEATURE_TYPE):
+        check_param("feature", features, config.ALL_FEATURES)
+        self._features = features
+
+    @property
+    def gsc(self) -> config.GSC_TYPE:
+        """Geneset collection."""
+        return self._gsc
+
+    @gsc.setter
+    def gsc(self, gsc: config.GSC_TYPE):
+        check_param("GSC", gsc, config.ALL_GSCS)
+        self._gsc = gsc
 
     def load_genes(self, input_genes: List[str]):
         """Load list of genes into the GenePlexus object.
