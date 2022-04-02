@@ -24,11 +24,13 @@ from ._config.config import FEATURE_SELECTION_TYPE
 from ._config.config import FEATURE_TYPE
 from ._config.config import GSC_SELECTION_TYPE
 from ._config.config import GSC_TYPE
+from ._config.config import LOG_LEVEL_TYPE
 from ._config.config import NET_SELECTION_TYPE
 from ._config.config import NET_TYPE
 from ._config.config import TASK_SELECTION_TYPE
 from ._config.config import TASK_TYPE
 from ._config.config import URL_DATA
+from ._config.logger_util import log_level_context
 
 thread_local = local()
 
@@ -40,6 +42,7 @@ def download_select_data(
     features: FEATURE_SELECTION_TYPE = "All",
     gscs: GSC_SELECTION_TYPE = "All",
     n_jobs: int = 10,
+    log_level: LOG_LEVEL_TYPE = "INFO",
 ):
     """Select subset of data to download.
 
@@ -71,9 +74,10 @@ def download_select_data(
         if atask == "OriginalGSCs":
             all_files_to_do.extend(get_OriginalGSCs_filenames())
 
-    files_to_download = _get_files_to_download(data_dir, list(set(all_files_to_do)))
-    logger.info(f"Total number of files to download: {len(files_to_download)}")
-    download_from_url(data_dir, files_to_download, n_jobs)
+    with log_level_context(logger, log_level):
+        files_to_download = _get_files_to_download(data_dir, list(set(all_files_to_do)))
+        logger.info(f"Total number of files to download: {len(files_to_download)}")
+        download_from_url(data_dir, files_to_download, n_jobs)
 
 
 def _get_session() -> Session:

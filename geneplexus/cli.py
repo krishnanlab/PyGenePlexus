@@ -1,19 +1,17 @@
 """Command line interface for the GenePlexus pipeline."""
 import argparse
 import logging
-import os
 import os.path as osp
 import pathlib
+import shutil
 import tarfile
-from typing import Tuple
 
 import pandas as pd
 
 from . import config
-from ._config import logger
-from .download import download_select_data
 from .geneplexus import GenePlexus
 from .util import format_choices
+from .util import normexpand
 from .util import read_gene_list
 
 
@@ -80,9 +78,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "-dd",
         "--data_dir",
-        default="data/",
+        default=None,
         metavar="",
-        help="Directory in which the data are stored.",
+        help="Directory in which the data are stored, if set to None, then use "
+        "the default data directory ~/.data/geneplexus",
     )
 
     parser.add_argument(
@@ -91,13 +90,6 @@ def parse_args() -> argparse.Namespace:
         default="result/",
         metavar="",
         help="Output directory with respect to the repo root directory.",
-    )
-
-    parser.add_argument(
-        "-z",
-        "--zip_output",
-        action="store_true",
-        help="If set, then compress the output directory into a Tar Gz file.",
     )
 
     parser.add_argument(
@@ -115,17 +107,20 @@ def parse_args() -> argparse.Namespace:
         help="Suppress log messages (same as setting lov_level to CRITICAL).",
     )
 
+    parser.add_argument(
+        "-z",
+        "--zip-output",
+        action="store_true",
+        help="If set, then compress the output directory into a Tar Gz file.",
+    )
+
+    parser.add_argument(
+        "--clear-data",
+        action="store_true",
+        help="Clear data directory and exit.",
+    )
+
     return parser.parse_args()
-
-
-def preprocess(args: argparse.Namespace) -> Tuple[str, str]:
-    """Set up data and result directories and download data if necessary."""
-    datadir = osp.normpath(osp.expanduser(args.data_dir))
-    outdir = osp.normpath(osp.expanduser(args.output_dir))
-    os.makedirs(datadir, exist_ok=True)
-    os.makedirs(outdir, exist_ok=True)
-    download_select_data(datadir, "All", args.network, args.feature, ["GO", "DisGeNet"])
-    return datadir, outdir
 
 
 def run_pipeline(gp: GenePlexus, num_nodes: int):
@@ -160,17 +155,46 @@ def save_results(gp, outdir, zip_output):
             tar.add(pathlib.Path(outdir), arcname=file_name)
 
 
+def clear_data(args):
+    """Clear data path.
+
+    If data_dir is default, then remove directly. Otherwise, prompt for
+    acknowledgement.
+
+    """
+    if args.clear_data:
+        if args.data_dir is None:
+            shutil.rmtree(GenePlexus(log_level="CRITICAL").file_loc)
+        else:
+            data_dir = normexpand(args.data_dir)
+            if input("Remove directory {data_dir}? [y/n]") == "y":
+                shutil.rmtree(data_dir)
+        exit()
+
+
 def main():
     """Command line interface."""
     args = parse_args()
-    logger.setLevel(logging.getLevelName("CRITICAL" if args.quiet else args.log_level))
-    datadir, outdir = preprocess(args)
+    log_level = logging.getLevelName("CRITICAL" if args.quiet else args.log_level)
 
-    gp = GenePlexus(datadir, args.network, args.feature, args.gsc)
+    clear_data(args)
+
+    # Create geneplexus object and auto download data files
+    gp = GenePlexus(
+        args.data_dir,
+        args.network,
+        args.feature,
+        args.gsc,
+        auto_download=True,
+        log_level=log_level,
+    )
+
+    # Load input gene list
     gp.load_genes(read_gene_list(args.input_file, args.gene_list_delimiter))
 
+    # Run pipeline and save results
     run_pipeline(gp, args.input_file)
-    save_results(gp, outdir, args.zip_output)
+    save_results(gp, normexpand(args.output_dir), args.zip_output)
 
 
 if __name__ == "__main__":

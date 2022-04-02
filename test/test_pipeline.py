@@ -51,7 +51,7 @@ def test_download_exist(caplog):
 class TestGenePlexusPipeline(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.gp = geneplexus.GenePlexus(None, "BioGRID", "Embedding", "GO")
+        cls.gp = geneplexus.GenePlexus(pytest.DATADIR, "BioGRID", "Embedding", "GO")
 
     @pytest.mark.order(0)
     def test_filenames(self):
@@ -61,7 +61,6 @@ class TestGenePlexusPipeline(unittest.TestCase):
 
     @pytest.mark.order(1)
     def test_init_geneplexus(self):
-        self.gp.file_loc = pytest.DATADIR
         input_path = osp.join(pytest.HOMEDIR, "example", "input_genes.txt")
         input_genes = geneplexus.util.read_gene_list(input_path)
         self.gp.load_genes(input_genes)
