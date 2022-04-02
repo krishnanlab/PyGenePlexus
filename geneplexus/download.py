@@ -83,23 +83,28 @@ def download_select_data(
 def _get_session() -> Session:
     if not hasattr(thread_local, "session"):
         thread_local.session = requests.Session()
+        logger.debug(f"Acquired thread local session {thread_local.session!r}")
     return thread_local.session
 
 
 def _download_file(file: str, data_dir: str):
     session = _get_session()
     url = urljoin(URL_DATA, f"{file}.zip")
+    logger.debug(f"Thread started: {url=}, {session=}")
     while True:
         with session.get(url) as r:
             if r.ok:
+                logger.debug(f"Response ok ({r!r}): {url=}")
                 ZipFile(io.BytesIO(r.content)).extractall(data_dir)
                 break
             elif r.status_code == 429:  # Retry later
                 t = r.headers["Retry-after"]
                 logger.warning(f"Too many requests, waiting for {t} sec")
                 time.sleep(int(t))
+                continue
             else:
                 raise requests.exceptions.RequestException(r, url)
+        logger.critical("Session context closed, this should never happen!")
     logger.info(f"Downloaded {file}")
 
 
