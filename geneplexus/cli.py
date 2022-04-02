@@ -1,18 +1,14 @@
 """Command line interface for the GenePlexus pipeline."""
 import argparse
 import logging
-import os
 import os.path as osp
 import pathlib
 import shutil
 import tarfile
-from typing import Tuple
 
 import pandas as pd
 
 from . import config
-from ._config import logger
-from .download import download_select_data
 from .geneplexus import GenePlexus
 from .util import format_choices
 from .util import normexpand

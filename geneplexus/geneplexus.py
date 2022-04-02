@@ -39,7 +39,7 @@ class GenePlexus:
 
         """
         logger.setLevel(logging.getLevelName(log_level))
-        self.file_loc = file_loc
+        self.file_loc = file_loc  # type: ignore
         self.net_type = net_type
         self.features = features
         self.gsc = gsc
@@ -56,6 +56,11 @@ class GenePlexus:
 
     @property
     def file_loc(self) -> str:
+        """File location.
+
+        Use default data location ~/.data/geneplexus if not set.
+
+        """
         return self._file_loc
 
     @file_loc.setter
