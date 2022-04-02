@@ -4,7 +4,6 @@ import logging
 import os.path as osp
 import pathlib
 import shutil
-import tarfile
 
 import pandas as pd
 
