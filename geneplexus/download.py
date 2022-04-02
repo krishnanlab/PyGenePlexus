@@ -75,6 +75,11 @@ def download_select_data(
             all_files_to_do.extend(get_OriginalGSCs_filenames())
 
     with log_level_context(logger, log_level):
+        if features != "Embedding":
+            logger.warn(
+                f"Downloading data type {features!r} may take a while (~10min "
+                "to an hour depending on the downloadspeed)",
+            )
         files_to_download = _get_files_to_download(data_dir, list(set(all_files_to_do)))
         logger.info(f"Total number of files to download: {len(files_to_download)}")
         download_from_url(data_dir, files_to_download, n_jobs)
