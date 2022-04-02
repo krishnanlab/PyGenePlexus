@@ -1,3 +1,6 @@
+ci:
+    skip: [check-added-large-files]
+
 repos:
 -   repo: https://github.com/asottile/reorder_python_imports
     rev: v2.6.0
