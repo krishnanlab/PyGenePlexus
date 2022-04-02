@@ -33,6 +33,13 @@ List of data options
         * [GO]_
         * [DisGeNet]_
 
+.. warning::
+
+   :term:`Influence` (followed by :term:`Adjacency`) data takes a long time to
+   download, from **~10 minutes** up to **an hour** dependeing on the download
+   speed. :term:`Embedding` feature data takes least amount of time to download
+   (within **a minute**).
+
 Run the PyGenePlexus pipeline
 -----------------------------
 
