@@ -112,7 +112,7 @@ def parse_args() -> argparse.Namespace:
         "-z",
         "--zip-output",
         action="store_true",
-        help="If set, then compress the output directory into a Tar Gz file.",
+        help="If set, then compress the output directory into a Zip file.",
     )
 
     parser.add_argument(
