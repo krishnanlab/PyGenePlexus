@@ -13,6 +13,7 @@ from .geneplexus import GenePlexus
 from .util import format_choices
 from .util import normexpand
 from .util import read_gene_list
+from .util import timeout
 
 
 def parse_args() -> argparse.Namespace:
@@ -141,10 +142,11 @@ def run_pipeline(gp: GenePlexus, num_nodes: int):
     gp.alter_validation_df()
 
 
+@timeout(300, "Waited too long for overwriting acknowledgement.")
 def _ack_overwrite(outpath: str, overwrite: bool) -> bool:
     if osp.isfile(outpath):
         if overwrite:
-            logger.warning(f"Overwritting file {outpath}")
+            logger.warning(f"Overwriting file {outpath}")
         else:
             while True:
                 ans = input(
@@ -152,7 +154,7 @@ def _ack_overwrite(outpath: str, overwrite: bool) -> bool:
                     "--overwrite cli option to overwrite without prompt) [y/n]",
                 )
                 if ans == "y":
-                    logger.info(f"Overwritting file {outpath}")
+                    logger.info(f"Overwriting file {outpath}")
                     break
                 elif ans == "n":
                     logger.info(f"Refected file overwriting {outpath}.")
