@@ -98,6 +98,19 @@ class GenePlexus:
             )
         self._features = features
 
+    @property
+    def gsc(self) -> config.GSC_TYPE:
+        """Geneset collection."""
+        return self._gsc
+
+    @gsc.setter
+    def gsc(self, gsc: config.GSC_TYPE):
+        if gsc not in config.ALL_GSCS:
+            raise ValueError(
+                f"Unexpected GSC {gsc!r}, available choices are: {config.ALL_GSCS}",
+            )
+        self._gsc = gsc
+
     def load_genes(self, input_genes: List[str]):
         """Load list of genes into the GenePlexus object.
 
