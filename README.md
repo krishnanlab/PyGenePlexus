@@ -35,8 +35,6 @@ geneplexus --input_file example/input_genes.txt --output_dir result/ --data_dir 
 Full CLI options (check out with ``geneplexus --help``)
 
 ```txt
-usage: geneplexus [-h] -i  [-d] [-n] [-f] [-g] [-s] [-dd] [-od] [-l] [-q] [-z] [--clear-data]
-
 Run the GenePlexus pipline on a input gene list.
 
 optional arguments:
@@ -64,6 +62,9 @@ optional arguments:
   -z, --zip-output      If set, then compress the output directory into a Zip file. (default:
                         False)
   --clear-data          Clear data directory and exit. (default: False)
+  --overwrite           Overwrite existing results under the specified result output directory
+                        when set. Otherwise, prompt for overwriting acknowledgement when the
+                        result file already exist. (default: False)
 ```
 
 # Dev
