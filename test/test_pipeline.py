@@ -36,6 +36,7 @@ FILENAMES = [
 ]
 
 
+@pytest.mark.usefixtures("data")
 def test_download_exist(caplog):
     geneplexus.download.download_select_data(
         pytest.DATADIR,
@@ -47,6 +48,7 @@ def test_download_exist(caplog):
     assert "File exists, skipping download:" in caplog.text
 
 
+@pytest.mark.skip
 @pytest.mark.usefixtures("data")
 class TestGenePlexusPipeline(unittest.TestCase):
     @classmethod
@@ -190,6 +192,25 @@ class TestGenePlexusPipeline(unittest.TestCase):
             df_convert_out_subset.values.tolist(),
             df_convert_out_subset_expected.values.tolist(),
         )
+
+
+NET_TEST_PAIRS = [
+    ("BioGRID", True),
+    ("STRING", True),
+    ("STRING-EXP", True),
+    ("GIANT-TN", True),
+    ("GiANT-TN", False),
+    ("TRiNG", False),
+]
+
+
+@pytest.mark.parametrize("net_type,net_correct", NET_TEST_PAIRS)
+def test_geneplexus_param(net_type, net_correct):
+    if net_correct:
+        geneplexus.GenePlexus(net_type=net_type)
+    else:
+        with pytest.raises(ValueError):
+            geneplexus.GenePlexus(net_type=net_type)
 
 
 if __name__ == "__main__":

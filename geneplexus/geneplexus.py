@@ -71,6 +71,20 @@ class GenePlexus:
             self._file_loc = normexpand(file_loc)
         logger.info(f"Data direcory set to {self._file_loc}")
 
+    @property
+    def net_type(self) -> config.NET_TYPE:
+        """Network to use."""
+        return self._net_type
+
+    @net_type.setter
+    def net_type(self, net_type: config.NET_TYPE):
+        if net_type not in config.ALL_NETWORKS:
+            # TODO: custom network?
+            raise ValueError(
+                f"Unexpected network {net_type!r}, available choise are: {config.ALL_NETWORKS}",
+            )
+        self._net_type = net_type
+
     def load_genes(self, input_genes: List[str]):
         """Load list of genes into the GenePlexus object.
 
