@@ -141,18 +141,7 @@ def run_pipeline(gp: GenePlexus, num_nodes: int):
     gp.alter_validation_df()
 
 
-def df_to_tsv(df: pd.DataFrame, root: str, name: str, overwrite: bool):
-    """Save a dataframe as a tsv file.
-
-    Args:
-        df: DataFrame to be saved.
-        root: Output directory,
-        name: Name of the file to be saved.
-        overwrite: If set to True, overwrite file even if it already exists.
-            Otherwise, prompt for overwriting acknowledgement.
-
-    """
-    outpath = osp.join(root, name)
+def _ack_overwrite(outpath: str, overwrite: bool) -> bool:
     if osp.isfile(outpath):
         if overwrite:
             logger.warning(f"Overwritting file {outpath}")
@@ -167,10 +156,26 @@ def df_to_tsv(df: pd.DataFrame, root: str, name: str, overwrite: bool):
                     break
                 elif ans == "n":
                     logger.info(f"Refected file overwriting {outpath}.")
-                    return
+                    return False
                 else:
                     print("Please answer 'y' or 'n'.")
-    df.to_csv(outpath, sep="\t", index=False)
+    return True
+
+
+def df_to_tsv(df: pd.DataFrame, root: str, name: str, overwrite: bool):
+    """Save a dataframe as a tsv file.
+
+    Args:
+        df: DataFrame to be saved.
+        root: Output directory,
+        name: Name of the file to be saved.
+        overwrite: If set to True, overwrite file even if it already exists.
+            Otherwise, prompt for overwriting acknowledgement.
+
+    """
+    outpath = osp.join(root, name)
+    if _ack_overwrite(outpath, overwrite):
+        df.to_csv(outpath, sep="\t", index=False)
 
 
 def save_results(gp, outdir, overwrite, zip_output):
@@ -185,11 +190,13 @@ def save_results(gp, outdir, overwrite, zip_output):
 
     # Optionally zip the result directory
     if zip_output:
-        logger.info("Zipping output files")
-        outpath = pathlib.Path(outdir)
-        shutil.make_archive(outdir, "zip", outpath.parent, outpath.name)
-        shutil.rmtree(outdir)
-        logger.info(f"Done! Results saved to {outdir}.zip")
+        zip_outpath = f"{outdir}.zip"
+        if _ack_overwrite(zip_outpath, overwrite):
+            logger.info("Zipping output files")
+            outpath = pathlib.Path(outdir)
+            shutil.make_archive(outdir, "zip", outpath.parent, outpath.name)
+            shutil.rmtree(outdir)
+            logger.info(f"Done! Results saved to {zip_outpath}")
     else:
         logger.info(f"Done! Results saved to {outdir}")
 
