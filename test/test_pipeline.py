@@ -48,7 +48,6 @@ def test_download_exist(caplog):
     assert "File exists, skipping download:" in caplog.text
 
 
-@pytest.mark.skip
 @pytest.mark.usefixtures("data")
 class TestGenePlexusPipeline(unittest.TestCase):
     @classmethod
