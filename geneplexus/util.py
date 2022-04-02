@@ -1,7 +1,9 @@
 """Utilities including file and path handling."""
+import functools
 import json
 import os
 import os.path as osp
+from threading import Thread
 from typing import Any
 from typing import Dict
 from typing import Generator
@@ -12,6 +14,42 @@ from typing import Optional
 import numpy as np
 
 from . import config
+
+
+def timeout(timeout: int, msg: str = ""):
+    """Timeout decorator using thread join timeout.
+
+    Args:
+        timeout: Max function execution time in seconds.
+
+    """
+
+    def decorate(func, /):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            res = [TimeoutError(f"({timeout=}) {msg}")]
+
+            def wraped_func():
+                try:
+                    res[0] = func(*args, **kwargs)
+                except Exception as e:
+                    res[0] = e
+
+            t = Thread(target=wraped_func)
+            t.daemon = True
+            t.start()
+            t.join(timeout)
+
+            ret = res[0]
+            if isinstance(ret, BaseException):
+                print("")
+                raise ret
+
+            return ret
+
+        return wrapper
+
+    return decorate
 
 
 def check_param(name, value, expected, /):
