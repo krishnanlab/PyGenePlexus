@@ -1,11 +1,17 @@
 """GenePlexus API."""
+import logging
 from typing import Any
 from typing import Dict
 from typing import List
 from typing import Optional
 
+import pystow
+
 from . import _geneplexus
 from ._config import config
+from ._config import logger
+from .download import download_select_data
+from .util import normexpand
 
 
 class GenePlexus:
@@ -13,25 +19,57 @@ class GenePlexus:
 
     def __init__(
         self,
-        file_loc: str,
+        file_loc: Optional[str] = None,
         net_type: config.NET_TYPE = "BioGRID",
         features: config.FEATURE_TYPE = "Embedding",
         gsc: config.GSC_TYPE = "GO",
+        auto_download: bool = False,
+        log_level: config.LOG_LEVEL_TYPE = "WARNING",
     ):
         """Initialize the GenePlexus object.
 
         Args:
-            file_loc: Location of data files.
+            file_loc: Location of data files, if not specified, set to default
+                ~/.data/geneplexus
             net_type: Type of network to use.
             features: Type of features of the network to use.
-            gsc: Type of gene set collection to use for generating
-                negatives.
+            gsc: Type of gene set collection to use for generating negatives.
+            auto_download: Automatically download necessary files if set.
+            log_level: Logging level.
 
         """
-        self.file_loc = file_loc
+        logger.setLevel(logging.getLevelName(log_level))
+        self.file_loc = file_loc  # type: ignore
         self.net_type = net_type
         self.features = features
         self.gsc = gsc
+
+        if auto_download:
+            download_select_data(
+                self.file_loc,
+                "All",
+                self.net_type,
+                self.features,
+                ["GO", "DisGeNet"],
+                log_level=log_level,
+            )
+
+    @property
+    def file_loc(self) -> str:
+        """File location.
+
+        Use default data location ~/.data/geneplexus if not set.
+
+        """
+        return self._file_loc
+
+    @file_loc.setter
+    def file_loc(self, file_loc: Optional[str]):
+        if file_loc is None:
+            self._file_loc = pystow.join("geneplexus")
+        else:
+            self._file_loc = normexpand(file_loc)
+        logger.info(f"Data direcory set to {self._file_loc}")
 
     def load_genes(self, input_genes: List[str]):
         """Load list of genes into the GenePlexus object.

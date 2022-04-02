@@ -35,7 +35,7 @@ geneplexus --input_file example/input_genes.txt --output_dir result/ --data_dir 
 Full CLI options (check out with ``geneplexus --help``)
 
 ```txt
-usage: geneplexus [-h] -i  [-d] [-n] [-f] [-g] [-s] [-dd] [-od] [-z] [-l] [-q]
+usage: geneplexus [-h] -i  [-d] [-n] [-f] [-g] [-s] [-dd] [-od] [-l] [-q] [-z] [--clear-data]
 
 Run the GenePlexus pipline on a input gene list.
 
@@ -53,15 +53,17 @@ optional arguments:
                         The choices are: {GO, DisGeNet} (default: GO)
   -s , --small_edgelist_num_nodes
                         Number of nodes in the small edgelist. (default: 50)
-  -dd , --data_dir      Directory in which the data are stored. (default: data/)
+  -dd , --data_dir      Directory in which the data are stored, if set to None, then use the
+                        default data directory ~/.data/geneplexus (default: None)
   -od , --output_dir    Output directory with respect to the repo root directory. (default:
                         result/)
-  -z, --zip_output      If set, then compress the output directory into a Tar Gz file. (default:
-                        False)
   -l , --log_level      Logging level. The choices are: {CRITICAL, ERROR, WARNING, INFO, DEBUG}
                         (default: INFO)
   -q, --quiet           Suppress log messages (same as setting lov_level to CRITICAL). (default:
                         False)
+  -z, --zip-output      If set, then compress the output directory into a Tar Gz file. (default:
+                        False)
+  --clear-data          Clear data directory and exit. (default: False)
 ```
 
 # Dev

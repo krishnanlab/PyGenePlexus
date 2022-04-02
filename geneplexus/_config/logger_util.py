@@ -1,5 +1,6 @@
 """Logger utilities."""
 import logging
+from contextlib import contextmanager
 from typing import Optional
 
 from .config import LOG_LEVEL_TYPE
@@ -23,6 +24,17 @@ def make_logger(
     logger_name = "geneplexus" if name is None else f"geneplexus.{name}"
     logger = logging.getLogger(logger_name)
     logger.addHandler(stream_handler)
-    logger.setLevel(getattr(logging, log_level))
+    logger.setLevel(logging.getLevelName(log_level))
 
     return logger
+
+
+@contextmanager
+def log_level_context(logger: logging.Logger, log_level: LOG_LEVEL_TYPE):
+    """Temporarily set a log level."""
+    prev_log_level = logger.level
+    logger.setLevel(logging.getLevelName(log_level))
+    try:
+        yield
+    finally:
+        logger.setLevel(prev_log_level)
