@@ -75,7 +75,7 @@ def download_select_data(
             all_files_to_do.extend(get_OriginalGSCs_filenames())
 
     with log_level_context(logger, log_level):
-        if features != "Embedding":
+        if features != ["Embedding"]:
             logger.warn(
                 f"Downloading data type {features!r} may take a while (~10min "
                 "to an hour depending on the downloadspeed)",
@@ -123,7 +123,7 @@ def _get_files_to_download(
         path = osp.join(data_dir, file)
         if osp.exists(path):
             if not silent:
-                logger.info(f"File exists, skipping download: {path}")
+                logger.debug(f"File exists, skipping download: {path}")
         else:
             files_to_download.append(file)
     return files_to_download
