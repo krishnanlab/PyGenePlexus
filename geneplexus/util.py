@@ -24,7 +24,7 @@ def check_param(name, value, expected, /):
 
 def normexpand(path: str, create: bool = True) -> str:
     """Normalize then expand path and optionally create dir."""
-    new_path = osp.normpath(osp.expanduser(path))
+    new_path = osp.abspath(osp.normpath(osp.expanduser(path)))
     if create:
         os.makedirs(new_path, exist_ok=True)
     return new_path
