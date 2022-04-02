@@ -4,11 +4,11 @@ import logging
 import os.path as osp
 import pathlib
 import shutil
-import tarfile
 
 import pandas as pd
 
 from . import config
+from ._config import logger
 from .geneplexus import GenePlexus
 from .util import format_choices
 from .util import normexpand
@@ -111,7 +111,7 @@ def parse_args() -> argparse.Namespace:
         "-z",
         "--zip-output",
         action="store_true",
-        help="If set, then compress the output directory into a Tar Gz file.",
+        help="If set, then compress the output directory into a Zip file.",
     )
 
     parser.add_argument(
@@ -150,9 +150,13 @@ def save_results(gp, outdir, zip_output):
 
     # Optionally zip the result directory
     if zip_output:
-        file_name = pathlib.Path(outdir).name
-        with tarfile.open(f"{file_name}.tar.gz", "w:gz") as tar:
-            tar.add(pathlib.Path(outdir), arcname=file_name)
+        logger.info("Zipping output files")
+        outpath = pathlib.Path(outdir)
+        shutil.make_archive(outdir, "zip", outpath.parent, outpath.name)
+        shutil.rmtree(outdir)
+        logger.info(f"Done! Results saved to {outdir}.zip")
+    else:
+        logger.info(f"Done! Results saved to {outdir}")
 
 
 def clear_data(args):
