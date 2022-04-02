@@ -9,6 +9,7 @@ import tarfile
 import pandas as pd
 
 from . import config
+from ._config import logger
 from .geneplexus import GenePlexus
 from .util import format_choices
 from .util import normexpand
@@ -150,9 +151,13 @@ def save_results(gp, outdir, zip_output):
 
     # Optionally zip the result directory
     if zip_output:
-        file_name = pathlib.Path(outdir).name
-        with tarfile.open(f"{file_name}.tar.gz", "w:gz") as tar:
-            tar.add(pathlib.Path(outdir), arcname=file_name)
+        logger.info("Zipping output files")
+        outpath = pathlib.Path(outdir)
+        shutil.make_archive(outdir, "zip", outpath.parent, outpath.name)
+        shutil.rmtree(outdir)
+        logger.info(f"Done! Results saved to {outdir}.zip")
+    else:
+        logger.info(f"Done! Results saved to {outdir}")
 
 
 def clear_data(args):
