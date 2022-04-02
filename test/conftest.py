@@ -17,4 +17,5 @@ def data(request):
         "BioGRID",
         "Embedding",
         ["GO", "DisGeNet"],
+        log_level="DEBUG",
     )
