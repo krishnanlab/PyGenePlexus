@@ -21,6 +21,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Run the GenePlexus pipline on a input gene list.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+        usage=argparse.SUPPRESS,
     )
 
     parser.add_argument(
