@@ -11,6 +11,7 @@ from . import _geneplexus
 from ._config import config
 from ._config import logger
 from .download import download_select_data
+from .util import check_param
 from .util import normexpand
 
 
@@ -78,11 +79,8 @@ class GenePlexus:
 
     @net_type.setter
     def net_type(self, net_type: config.NET_TYPE):
-        if net_type not in config.ALL_NETWORKS:
-            # TODO: custom network?
-            raise ValueError(
-                f"Unexpected network {net_type!r}, available choices are: {config.ALL_NETWORKS}",
-            )
+        # TODO: custom network?
+        check_param("network", net_type, config.ALL_NETWORKS)
         self._net_type = net_type
 
     @property
@@ -92,10 +90,7 @@ class GenePlexus:
 
     @features.setter
     def features(self, features: config.FEATURE_TYPE):
-        if features not in config.ALL_FEATURES:
-            raise ValueError(
-                f"Unexpected feature {features!r}, available choices are: {config.ALL_FEATURES}",
-            )
+        check_param("feature", features, config.ALL_FEATURES)
         self._features = features
 
     @property
@@ -105,10 +100,7 @@ class GenePlexus:
 
     @gsc.setter
     def gsc(self, gsc: config.GSC_TYPE):
-        if gsc not in config.ALL_GSCS:
-            raise ValueError(
-                f"Unexpected GSC {gsc!r}, available choices are: {config.ALL_GSCS}",
-            )
+        check_param("GSC", gsc, config.ALL_GSCS)
         self._gsc = gsc
 
     def load_genes(self, input_genes: List[str]):

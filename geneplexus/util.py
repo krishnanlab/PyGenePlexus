@@ -14,6 +14,14 @@ import numpy as np
 from . import config
 
 
+def check_param(name, value, expected, /):
+    """Check parameter specified and raise ValueError for unexpected value."""
+    if value not in expected:
+        raise ValueError(
+            f"Unexpected {name} {value!r}, available choices are {expected}",
+        )
+
+
 def normexpand(path: str, create: bool = True) -> str:
     """Normalize then expand path and optionally create dir."""
     new_path = osp.normpath(osp.expanduser(path))
