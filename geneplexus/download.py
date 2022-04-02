@@ -83,6 +83,7 @@ def download_select_data(
 def _get_session() -> Session:
     if not hasattr(thread_local, "session"):
         thread_local.session = requests.Session()
+        logger.debug(f"Acquired thread local session {thread_local.session!r}")
     return thread_local.session
 
 
