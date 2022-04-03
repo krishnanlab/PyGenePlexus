@@ -14,7 +14,6 @@ from .geneplexus import GenePlexus
 from .util import format_choices
 from .util import normexpand
 from .util import read_gene_list
-from .util import timeout
 
 
 def parse_args() -> argparse.Namespace:
@@ -142,28 +141,6 @@ def run_pipeline(gp: GenePlexus, num_nodes: int):
     gp.make_sim_dfs()
     gp.make_small_edgelist(num_nodes=num_nodes)
     gp.alter_validation_df()
-
-
-@timeout(300, "Waited too long for overwriting acknowledgement.")
-def _ack_overwrite(outpath: str, overwrite: bool) -> bool:
-    if osp.isfile(outpath):
-        if overwrite:
-            logger.warning(f"Overwriting file {outpath}")
-        else:
-            while True:
-                ans = input(
-                    f"File exists {outpath}, overwrite anyway? (specify the "
-                    "--overwrite cli option to overwrite without prompt) [y/n]",
-                )
-                if ans == "y":
-                    logger.info(f"Overwriting file {outpath}")
-                    break
-                elif ans == "n":
-                    logger.info(f"Refected file overwriting {outpath}.")
-                    return False
-                else:
-                    print("Please answer 'y' or 'n'.")
-    return True
 
 
 def df_to_tsv(df: pd.DataFrame, root: str, name: str):
