@@ -10,7 +10,7 @@ import numpy as np
 import pytest
 from parameterized import parameterized
 
-import geneplexus.custom
+import geneplexus
 
 
 TESTDIR = osp.join(pathlib.Path(__file__).absolute().parent)
@@ -75,6 +75,9 @@ class TestCustom(unittest.TestCase):
         )
         outpath = osp.join(pytest.DATADIR, "Data_Adjacency_custom.npy")
         self.assertEqual(np.load(outpath).tolist(), adjmat)
+
+        # TODO: Move this to a test func
+        geneplexus.GenePlexus(pytest.DATADIR, "custom", "Adjacency")
 
     def test_subset_gsc_to_network(self):
         geneplexus.custom.subset_gsc_to_network(

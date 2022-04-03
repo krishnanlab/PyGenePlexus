@@ -1,5 +1,6 @@
 """GenePlexus API."""
 import logging
+import os
 import os.path as osp
 from typing import Any
 from typing import Dict
@@ -104,8 +105,8 @@ class GenePlexus:
 
     @net_type.setter
     def net_type(self, net_type: config.NET_TYPE):
-        # TODO: custom network?
-        check_param("network", net_type, config.ALL_NETWORKS)
+        if f"NodeOrder_{net_type}.txt" not in os.listdir(self.file_loc):
+            check_param("network", net_type, config.ALL_NETWORKS)
         self._net_type = net_type
 
     @property

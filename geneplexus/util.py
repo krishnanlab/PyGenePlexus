@@ -52,7 +52,7 @@ def timeout(timeout: int, msg: str = ""):
     return decorate
 
 
-def check_param(name, value, expected, /):
+def check_param(name: str, value: Any, expected: List[Any], /):
     """Check parameter specified and raise ValueError for unexpected value."""
     if value not in expected:
         raise ValueError(
