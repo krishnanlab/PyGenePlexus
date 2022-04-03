@@ -5,6 +5,7 @@ import pathlib
 import time
 
 import numpy as np
+import pystow
 
 import geneplexus
 
@@ -14,7 +15,7 @@ input_genes = geneplexus.util.read_gene_list("example/input_genes.txt")
 
 # Set up directories
 homedir = pathlib.Path(__file__).absolute().parent
-datadir = osp.join(homedir, "data")
+datadir = pystow.join("geneplexus")
 outdir = osp.join(homedir, "test", "expected_result")
 os.makedirs(datadir, exist_ok=True)
 os.makedirs(outdir, exist_ok=True)
@@ -25,11 +26,12 @@ geneplexus.download.download_select_data(
     tasks="All",
     networks="BioGRID",
     features="Embedding",
-    GSCs=["GO", "DisGeNet"],
+    gscs=["GO", "DisGeNet"],
 )
 
 myclass = geneplexus.GenePlexus(datadir, "BioGRID", "Embedding", "GO")
 myclass.load_genes(input_genes)
+myclass.dump_config(outdir)
 
 myclass.convert_to_Entrez()
 myclass.df_convert_out.to_csv(osp.join(outdir, "df_convert_out.tsv"), sep="\t", index=False)
