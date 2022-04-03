@@ -102,7 +102,7 @@ class GenePlexus:
     @property
     def net_type(self) -> config.NET_TYPE:
         """Network to use."""
-        return self._net_type
+        return self._net_type  # type: ignore
 
     @net_type.setter
     def net_type(self, net_type: config.NET_TYPE):
