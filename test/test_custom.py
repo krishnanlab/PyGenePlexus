@@ -11,6 +11,7 @@ import pytest
 from parameterized import parameterized
 
 import geneplexus
+from geneplexus.exception import CustomNetworkError
 
 
 TESTDIR = osp.join(pathlib.Path(__file__).absolute().parent)
@@ -128,7 +129,22 @@ class TestCustomGenePlexus(unittest.TestCase):
         shutil.rmtree(cls.tmpdir)
 
     def test_custom_geneplexus_init(self):
-        geneplexus.GenePlexus(self.tmpdir, "custom", "Adjacency")
+        geneplexus.GenePlexus(self.tmpdir, "custom", "Adjacency", "GO")
+
+    def test_custom_geneplexus_init_fail(self):
+        with self.assertRaises(ValueError):
+            geneplexus.GenePlexus(self.tmpdir, "custom2")
+
+    @parameterized.expand(
+        [
+            ("Influence", "GO"),
+            ("Influence", "DisGeNet"),
+            ("Adjacency", "DisGeNet"),
+        ],
+    )
+    def test_custom_geneplexus_init_fail_custom(self, features, gsc):
+        with self.assertRaises(CustomNetworkError):
+            geneplexus.GenePlexus(self.tmpdir, "custom", features, gsc)
 
 
 if __name__ == "__main__":
