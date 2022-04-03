@@ -1,6 +1,5 @@
 """Command line interface for the GenePlexus pipeline."""
 import argparse
-import logging
 import os
 import os.path as osp
 import pathlib
