@@ -1,5 +1,6 @@
 """GenePlexus API."""
 import logging
+import os
 import os.path as osp
 from typing import Any
 from typing import Dict
@@ -13,6 +14,7 @@ from . import _geneplexus
 from ._config import config
 from ._config import logger
 from .download import download_select_data
+from .exception import CustomNetworkError
 from .util import check_param
 from .util import normexpand
 
@@ -43,9 +45,9 @@ class GenePlexus:
         """
         logger.setLevel(logging.getLevelName(log_level))
         self.file_loc = file_loc  # type: ignore
-        self.net_type = net_type
         self.features = features
         self.gsc = gsc
+        self.net_type = net_type
         self.log_level = log_level
         self.auto_download = auto_download
         self.input_genes: List[str] = []
@@ -104,8 +106,30 @@ class GenePlexus:
 
     @net_type.setter
     def net_type(self, net_type: config.NET_TYPE):
-        # TODO: custom network?
-        check_param("network", net_type, config.ALL_NETWORKS)
+        try:
+            check_param("network", net_type, config.ALL_NETWORKS)
+        except ValueError as e:
+            # Check for custom network first
+            data_files = os.listdir(self.file_loc)
+            if f"NodeOrder_{net_type}.txt" in data_files:
+                # Require feature file, gsc file, and gsc universe file
+                features_fname = f"Data_{self.features}_{net_type}.npy"
+                gsc_fname = f"GSC_{self.gsc}_{net_type}_GoodSets.json"
+                universe_fname = f"GSC_{self.gsc}_{net_type}_universe.txt"
+                if features_fname not in data_files:
+                    raise CustomNetworkError(
+                        f"Missing custom network feature data file {features_fname}, "
+                        "set up using geneplexus.custom.edgelist_loc first.",
+                    )
+                elif gsc_fname not in data_files or universe_fname not in data_files:
+                    raise CustomNetworkError(
+                        f"Missing custom network GSC data files {gsc_fname} and/or {universe_fname}, "
+                        "set up using geneplexus.custom.subset_gsc_to_network first.",
+                    )
+                else:
+                    logger.info(f"Detected custom network {net_type!r}")
+            else:
+                raise e
         self._net_type = net_type
 
     @property
