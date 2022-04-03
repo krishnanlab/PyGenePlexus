@@ -160,6 +160,8 @@ def save_results(gp, outdir, overwrite, zip_output):
     zip_outpath = _suffix_fn(f"{outdir}.zip")
     outdir = _suffix_dir(outdir)
 
+    gp.dump_config(outdir)
+
     df_to_tsv(gp.df_convert_out, outdir, "df_convert_out.tsv")
     df_to_tsv(gp.df_probs, outdir, "df_probs.tsv")
     df_to_tsv(gp.df_sim_GO, outdir, "df_sim_GO.tsv")
@@ -235,6 +237,8 @@ def main():
 
     # Load input gene list
     gp.load_genes(read_gene_list(args.input_file, args.gene_list_delimiter))
+
+    # Save config
 
     # Run pipeline and save results
     run_pipeline(gp, args.input_file)
