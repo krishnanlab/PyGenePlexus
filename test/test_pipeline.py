@@ -44,6 +44,7 @@ def test_download_exist(caplog):
         "BioGRID",
         "Embedding",
         ["GO", "DisGeNet"],
+        log_level="DEBUG",
     )
     assert "File exists, skipping download:" in caplog.text
 

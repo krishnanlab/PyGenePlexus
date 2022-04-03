@@ -1,11 +1,13 @@
 """GenePlexus API."""
 import logging
+import os.path as osp
 from typing import Any
 from typing import Dict
 from typing import List
 from typing import Optional
 
 import pystow
+import yaml
 
 from . import _geneplexus
 from ._config import config
@@ -44,8 +46,11 @@ class GenePlexus:
         self.net_type = net_type
         self.features = features
         self.gsc = gsc
+        self.log_level = log_level
+        self.auto_download = auto_download
+        self.input_genes = []
 
-        if auto_download:
+        if self.auto_download:
             download_select_data(
                 self.file_loc,
                 "All",
@@ -54,6 +59,26 @@ class GenePlexus:
                 ["GO", "DisGeNet"],
                 log_level=log_level,
             )
+
+    @property
+    def _params(self) -> List[str]:
+        return [
+            "file_loc",
+            "net_type",
+            "features",
+            "gsc",
+            "auto_download",
+            "log_level",
+            "input_genes",
+        ]
+
+    def dump_config(self, outdir: str):
+        """Save parameters configuration to a config file."""
+        params_dict = {i: getattr(self, i) for i in self._params}
+        path = osp.join(outdir, "config.yaml")
+        with open(path, "w") as f:
+            yaml.dump(params_dict, f)
+            logger.info(f"Config saved to {path}")
 
     @property
     def file_loc(self) -> str:
@@ -67,7 +92,7 @@ class GenePlexus:
     @file_loc.setter
     def file_loc(self, file_loc: Optional[str]):
         if file_loc is None:
-            self._file_loc = pystow.join("geneplexus")
+            self._file_loc = str(pystow.join("geneplexus"))
         else:
             self._file_loc = normexpand(file_loc)
         logger.info(f"Data direcory set to {self._file_loc}")
