@@ -48,7 +48,7 @@ class GenePlexus:
         self.gsc = gsc
         self.log_level = log_level
         self.auto_download = auto_download
-        self.input_genes = []
+        self.input_genes: List[str] = []
 
         if self.auto_download:
             download_select_data(
