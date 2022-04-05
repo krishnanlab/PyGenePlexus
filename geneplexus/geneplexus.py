@@ -230,7 +230,14 @@ class GenePlexus:
         )
         return self.pos_genes_in_net, self.negative_genes, self.net_genes
 
-    def fit_and_predict(self, logreg_kwargs: Optional[Dict[str, Any]] = None):
+    def fit_and_predict(
+        self,
+        logreg_kwargs: Optional[Dict[str, Any]] = None,
+        min_num_pos: int = 15,
+        num_folds: int = 3,
+        null_val: float = -10,
+        random_state: Optional[int] = 0,
+    ):
         """Fit a model and predict gene scores.
 
         Args:
@@ -238,6 +245,13 @@ class GenePlexus:
                 :class:`~sklearn.linear_model.LogisticRegression`). If not set,
                 then use the default logistic regression settings (l2 penalty,
                 10,000 max iterations, lbfgs solver).
+            min_num_pos: Minimum number of positives required for performing
+                cross validation evaluation.
+            num_folds: Number of cross validation folds.
+            null_val: Null values to fill if cross validation was not able to
+                be performed.
+            random_state: Random state for reproducible shuffling stratified
+                cross validation. Set to None for random.
 
         :attr:`GenePlexus.mdl_weights` (array of float)
             Trained model parameters.
@@ -264,6 +278,10 @@ class GenePlexus:
             self.negative_genes,
             self.net_genes,
             logreg_kwargs=logreg_kwargs,
+            min_num_pos=min_num_pos,
+            num_folds=num_folds,
+            null_val=null_val,
+            random_state=random_state,
         )
         self.df_probs = _geneplexus._make_prob_df(
             self.file_loc,
