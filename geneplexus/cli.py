@@ -5,6 +5,7 @@ import os.path as osp
 import pathlib
 import shutil
 
+import numpy as np
 import pandas as pd
 
 from . import config
@@ -153,6 +154,7 @@ def save_results(gp, outdir, zip_output):
 
     gp.dump_config(outdir)
 
+    np.savetxt(osp.join(outdir, "cross_validation.txt"), gp.avgps, fmt="%.18f")
     df_to_tsv(gp.df_convert_out, outdir, "df_convert_out.tsv")
     df_to_tsv(gp.df_probs, outdir, "df_probs.tsv")
     df_to_tsv(gp.df_sim_GO, outdir, "df_sim_GO.tsv")
