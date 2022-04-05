@@ -101,6 +101,10 @@ def _run_SL(
     negative_genes,
     net_genes,
     logreg_kwargs: Optional[Dict[str, Any]] = None,
+    min_num_pos: int = 15,
+    num_folds: int = 3,
+    null_val: float = -10,
+    random_state: Optional[int] = 0,
 ):
     if logreg_kwargs is None:
         logreg_kwargs = DEFAULT_LOGREG_KWARGS
@@ -120,15 +124,16 @@ def _run_SL(
     mdl_weights = np.squeeze(clf.coef_)
     probs = clf.predict_proba(data)[:, 1]
 
-    if len(pos_genes_in_net) < 15:
+    if len(pos_genes_in_net) < min_num_pos:
         logger.warning(
-            "Not enough genes supplied for cross validation ({len(pos_genes_in_net)}), skipping cross validation.",
+            "Insufficient number of positive genes for cross validation: "
+            f"{len(pos_genes_in_net)} ({min_num_pos} needed). Skipping cross "
+            f"validation and fill with null values {null_val}",
         )
-        avgps = [-10, -10, -10]
+        avgps = [null_val] * num_folds
     else:
         avgps = []
-        n_folds = 3
-        skf = StratifiedKFold(n_splits=n_folds, shuffle=True, random_state=None)
+        skf = StratifiedKFold(n_splits=num_folds, shuffle=True, random_state=random_state)
         for trn_inds, tst_inds in skf.split(Xdata, ydata):
             clf_cv = LogisticRegression(**logreg_kwargs)
             clf_cv.fit(Xdata[trn_inds], ydata[trn_inds])
