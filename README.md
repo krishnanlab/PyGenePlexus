@@ -62,6 +62,7 @@ optional arguments:
   -z, --zip-output      If set, then compress the output directory into a Zip file. (default:
                         False)
   --clear-data          Clear data directory and exit. (default: False)
+  --overwrite           Overwrite existing result directory if set. (default: False)
 ```
 
 # Dev
