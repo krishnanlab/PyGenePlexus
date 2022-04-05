@@ -71,8 +71,7 @@ class TestGenePlexusPipeline(unittest.TestCase):
 
     @pytest.mark.order(1)
     def test_init_geneplexus(self):
-        input_path = osp.join(pytest.HOMEDIR, "example", "input_genes.txt")
-        input_genes = geneplexus.util.read_gene_list(input_path)
+        input_genes = geneplexus.util.read_gene_list(pytest.GENELIST_PATH)
         self.gp.load_genes(input_genes)
         self.assertEqual(self.gp.input_genes, input_genes)
 
