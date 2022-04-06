@@ -14,6 +14,8 @@ import numpy as np
 
 os.environ["COLUMNS"] = "100"  # for CLI help page wrap line
 
+MAX_RETRY = 10  # maximum number of retries for downloading
+
 URL_DATA = "https://zenodo.org/record/6383205/files/"
 CONFIG_PATH = pathlib.Path(__file__).parent.absolute()
 DATA_FILENAMES_PATH = osp.join(CONFIG_PATH, "data_filenames.txt")

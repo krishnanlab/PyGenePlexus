@@ -1,39 +1,13 @@
 import os.path as osp
+import shutil
+import tempfile
 import unittest
 
 import pandas as pd
 import pytest
+import yaml
 
 import geneplexus
-
-
-FILENAMES = [
-    "CorrectionMatrix_DisGeNet_DisGeNet_BioGRID_Embedding.npy",
-    "CorrectionMatrix_DisGeNet_GO_BioGRID_Embedding.npy",
-    "CorrectionMatrix_GO_DisGeNet_BioGRID_Embedding.npy",
-    "CorrectionMatrix_GO_GO_BioGRID_Embedding.npy",
-    "CorrectionMatrixOrder_DisGeNet_BioGRID.txt",
-    "CorrectionMatrixOrder_GO_BioGRID.txt",
-    "Data_Embedding_BioGRID.npy",
-    "Edgelist_BioGRID.edg",
-    "GSC_DisGeNet_BioGRID_GoodSets.json",
-    "GSC_DisGeNet_BioGRID_universe.txt",
-    "GSC_GO_BioGRID_GoodSets.json",
-    "GSC_GO_BioGRID_universe.txt",
-    "IDconversion_Homo-sapiens_ENSG-to-Entrez.json",
-    "IDconversion_Homo-sapiens_ENSP-to-Entrez.json",
-    "IDconversion_Homo-sapiens_ENST-to-Entrez.json",
-    "IDconversion_Homo-sapiens_Entrez-to-ENSG.json",
-    "IDconversion_Homo-sapiens_Entrez-to-Name.json",
-    "IDconversion_Homo-sapiens_Entrez-to-Symbol.json",
-    "IDconversion_Homo-sapiens_Symbol-to-Entrez.json",
-    "NodeOrder_BioGRID.txt",
-    "NodeOrder_GIANT-TN.txt",
-    "NodeOrder_STRING-EXP.txt",
-    "NodeOrder_STRING.txt",
-    "PreTrainedWeights_DisGeNet_BioGRID_Embedding.json",
-    "PreTrainedWeights_GO_BioGRID_Embedding.json",
-]
 
 
 @pytest.mark.usefixtures("data")
@@ -54,19 +28,34 @@ class TestGenePlexusPipeline(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.gp = geneplexus.GenePlexus(pytest.DATADIR, "BioGRID", "Embedding", "GO")
+        cls.tmpdir = tempfile.mkdtemp()
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.tmpdir)
 
     @pytest.mark.order(0)
     def test_filenames(self):
-        for filename in FILENAMES:
+        for filename in pytest.FILENAMES:
             with self.subTest(filename=filename):
                 self.assertTrue(osp.isfile(osp.join(pytest.DATADIR, filename)))
 
     @pytest.mark.order(1)
     def test_init_geneplexus(self):
-        input_path = osp.join(pytest.HOMEDIR, "example", "input_genes.txt")
-        input_genes = geneplexus.util.read_gene_list(input_path)
+        input_genes = geneplexus.util.read_gene_list(pytest.GENELIST_PATH)
         self.gp.load_genes(input_genes)
         self.assertEqual(self.gp.input_genes, input_genes)
+
+    @pytest.mark.order(2)
+    def test_dump_config(self):
+        self.gp.dump_config(self.tmpdir)
+        with open(osp.join(pytest.ANSWERDIR, "config.yaml"), "r") as f1, open(
+            osp.join(self.tmpdir, "config.yaml"),
+            "r",
+        ) as f2:
+            cfg1, cfg2 = yaml.load(f1, yaml.Loader), yaml.load(f2, yaml.Loader)
+        for param in ["net_type", "features", "gsc", "log_level", "auto_download", "input_genes"]:
+            self.assertEqual(cfg1[param], cfg2[param])
 
     @pytest.mark.order(2)
     def test_convert_to_entrez(self):

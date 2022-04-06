@@ -10,7 +10,8 @@ import numpy as np
 import pytest
 from parameterized import parameterized
 
-import geneplexus.custom
+import geneplexus
+from geneplexus.exception import CustomNetworkError
 
 
 TESTDIR = osp.join(pathlib.Path(__file__).absolute().parent)
@@ -42,12 +43,16 @@ class TestCustom(unittest.TestCase):
     def setUpClass(cls):
         cls.tmpdir = tempfile.mkdtemp()
         cls.nodeorder_path = osp.join(pytest.DATADIR, "NodeOrder_custom.txt")
+        cls.adj_path = osp.join(pytest.DATADIR, "Data_Adjacency_custom.npy")
+        cls.gsc_path = osp.join(pytest.DATADIR, "GSC_GO_custom_GoodSets.json")
         np.savetxt(cls.nodeorder_path, NODEORDER, fmt="%s")
 
     @classmethod
     def tearDownClass(cls):
         shutil.rmtree(cls.tmpdir)
         os.remove(cls.nodeorder_path)
+        os.remove(cls.adj_path)
+        os.remove(cls.gsc_path)
 
     @parameterized.expand(
         [
@@ -57,8 +62,7 @@ class TestCustom(unittest.TestCase):
     )
     def test_edgelist_to_nodeorder(self, edgelist_loc):
         geneplexus.custom.edgelist_to_nodeorder(edgelist_loc, self.tmpdir, "custom")
-        outpath = osp.join(pytest.DATADIR, "NodeOrder_custom.txt")
-        self.assertEqual(np.loadtxt(outpath, dtype=str).tolist(), NODEORDER)
+        self.assertEqual(np.loadtxt(self.nodeorder_path, dtype=str).tolist(), NODEORDER)
 
     @parameterized.expand(
         [
@@ -73,8 +77,7 @@ class TestCustom(unittest.TestCase):
             "custom",
             "Adjacency",
         )
-        outpath = osp.join(pytest.DATADIR, "Data_Adjacency_custom.npy")
-        self.assertEqual(np.load(outpath).tolist(), adjmat)
+        self.assertEqual(np.load(self.adj_path).tolist(), adjmat)
 
     def test_subset_gsc_to_network(self):
         geneplexus.custom.subset_gsc_to_network(
@@ -83,9 +86,8 @@ class TestCustom(unittest.TestCase):
             "GO",
             min_size=6,
         )
-        outpath = osp.join(pytest.DATADIR, "GSC_GO_custom_GoodSets.json")
 
-        with open(outpath, "r") as f:
+        with open(self.gsc_path, "r") as f:
             goodsets = json.load(f)
 
         self.assertEqual(
@@ -107,6 +109,42 @@ class TestCustom(unittest.TestCase):
                 "GO:0065007",
             ],
         )
+
+
+class TestCustomGenePlexus(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.tmpdir = tempfile.mkdtemp()
+
+        cls.nodeorder_path = osp.join(cls.tmpdir, "NodeOrder_custom.txt")
+        cls.adj_path = osp.join(cls.tmpdir, "Data_Adjacency_custom.npy")
+        cls.gsc_path = osp.join(cls.tmpdir, "GSC_GO_custom_GoodSets.json")
+        cls.universe_path = osp.join(cls.tmpdir, "GSC_GO_custom_universe.txt")
+
+        for i in [cls.nodeorder_path, cls.adj_path, cls.gsc_path, cls.universe_path]:
+            pathlib.Path(i).touch()
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.tmpdir)
+
+    def test_custom_geneplexus_init(self):
+        geneplexus.GenePlexus(self.tmpdir, "custom", "Adjacency", "GO")
+
+    def test_custom_geneplexus_init_fail(self):
+        with self.assertRaises(ValueError):
+            geneplexus.GenePlexus(self.tmpdir, "custom2")
+
+    @parameterized.expand(
+        [
+            ("Influence", "GO"),
+            ("Influence", "DisGeNet"),
+            ("Adjacency", "DisGeNet"),
+        ],
+    )
+    def test_custom_geneplexus_init_fail_custom(self, features, gsc):
+        with self.assertRaises(CustomNetworkError):
+            geneplexus.GenePlexus(self.tmpdir, "custom", features, gsc)
 
 
 if __name__ == "__main__":
