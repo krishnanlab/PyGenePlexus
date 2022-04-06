@@ -12,8 +12,8 @@ def make_logger(
 ) -> logging.Logger:
     """Make a basic logger used by GenePlexus.
 
-    name (str, optional): Name of the logger.
-    log_level (LOG_LEVEL): Level of details to log
+    name: Name of the logger.
+    log_level: Level of details to log
 
     """
     formatter = logging.Formatter("%(name)s:%(funcName)s:%(levelname)s:%(message)s")
@@ -27,6 +27,21 @@ def make_logger(
     logger.setLevel(logging.getLevelName(log_level))
 
     return logger
+
+
+def attach_file_handler(
+    logger: logging.Logger,
+    log_path: str,
+    log_level: LOG_LEVEL_TYPE = "INFO",
+) -> logging.FileHandler:
+    """Attach a file handler to a logger."""
+    file_handler = logging.FileHandler(log_path)
+    file_handler.setLevel(logging.getLevelName(log_level))
+    file_handler.setFormatter(
+        logging.Formatter("%(asctime)s [%(levelname)s] %(funcName)s - %(message)s"),
+    )
+    logger.addHandler(file_handler)
+    return file_handler
 
 
 @contextmanager
