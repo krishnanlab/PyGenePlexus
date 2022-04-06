@@ -81,8 +81,9 @@ def download_select_data(
                 "to an hour depending on the downloadspeed)",
             )
         files_to_download = _get_files_to_download(data_dir, list(set(all_files_to_do)))
-        logger.info(f"Total number of files to download: {len(files_to_download)}")
-        download_from_url(data_dir, files_to_download, n_jobs)
+        if len(files_to_download) > 0:
+            logger.info(f"Total number of files to download: {len(files_to_download)}")
+            download_from_url(data_dir, files_to_download, n_jobs)
 
 
 def _get_session() -> Session:

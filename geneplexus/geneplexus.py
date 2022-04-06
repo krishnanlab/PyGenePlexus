@@ -350,7 +350,7 @@ class GenePlexus:
             self.file_loc,
             self.df_probs,
             self.net_type,
-            num_nodes=50,
+            num_nodes=num_nodes,
         )
         return self.df_edge, self.isolated_genes, self.df_edge_sym, self.isolated_genes_sym
 
