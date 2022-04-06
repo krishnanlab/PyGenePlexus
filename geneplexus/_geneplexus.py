@@ -222,7 +222,7 @@ def _make_small_edgelist(file_loc, df_probs, net_type, num_nodes=50):
     df_edge = df_edge.astype({"Node1": str, "Node2": str})
 
     # Take subgraph induced by top genes
-    top_genes = df_probs["Entrez"].to_numpy()[0:num_nodes]
+    top_genes = df_probs["Entrez"].to_numpy()[:num_nodes]
     df_edge = df_edge[(df_edge["Node1"].isin(top_genes)) & (df_edge["Node2"].isin(top_genes))]
     genes_in_edge = np.union1d(df_edge["Node1"].unique(), df_edge["Node2"].unique())
     isolated_genes = np.setdiff1d(top_genes, genes_in_edge).tolist()
