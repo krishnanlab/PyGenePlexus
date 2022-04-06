@@ -35,11 +35,10 @@ def attach_file_handler(
     log_level: LOG_LEVEL_TYPE = "INFO",
 ) -> logging.FileHandler:
     """Attach a file handler to a logger."""
+    formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s")
     file_handler = logging.FileHandler(log_path)
     file_handler.setLevel(logging.getLevelName(log_level))
-    file_handler.setFormatter(
-        logging.Formatter("%(asctime)s [%(levelname)s] %(funcName)s - %(message)s"),
-    )
+    file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
     return file_handler
 
