@@ -160,7 +160,7 @@ def run_pipeline(gp: GenePlexus, num_nodes: int, skip_mdl_sim: bool):
     if not skip_mdl_sim:
         gp.make_sim_dfs()
     else:
-        logger.info(f"Skipping model similarity computation.")
+        logger.info("Skipping model similarity computation.")
 
 
 def df_to_tsv(df: pd.DataFrame, root: str, name: str):
