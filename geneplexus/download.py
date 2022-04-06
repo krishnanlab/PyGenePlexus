@@ -25,12 +25,14 @@ from ._config.config import FEATURE_TYPE
 from ._config.config import GSC_SELECTION_TYPE
 from ._config.config import GSC_TYPE
 from ._config.config import LOG_LEVEL_TYPE
+from ._config.config import MAX_RETRY
 from ._config.config import NET_SELECTION_TYPE
 from ._config.config import NET_TYPE
 from ._config.config import TASK_SELECTION_TYPE
 from ._config.config import TASK_TYPE
 from ._config.config import URL_DATA
 from ._config.logger_util import log_level_context
+from .exception import DownloadError
 
 thread_local = local()
 
@@ -42,6 +44,7 @@ def download_select_data(
     features: FEATURE_SELECTION_TYPE = "All",
     gscs: GSC_SELECTION_TYPE = "All",
     n_jobs: int = 10,
+    retry: bool = True,
     log_level: LOG_LEVEL_TYPE = "INFO",
 ):
     """Select subset of data to download.
@@ -57,6 +60,7 @@ def download_select_data(
         gscs: Gene set collection of interest, accept multiple selection as a
             list. Do all the GSC if set to "All".
         n_jobs: Number of concurrent downloading threads.
+        retry: If set to True, then retry downloading any missing file.
 
     """
     # Similarities and NetworkGraph will assume downloaded MachineLearning
@@ -83,7 +87,7 @@ def download_select_data(
         files_to_download = _get_files_to_download(data_dir, list(set(all_files_to_do)))
         if len(files_to_download) > 0:
             logger.info(f"Total number of files to download: {len(files_to_download)}")
-            download_from_url(data_dir, files_to_download, n_jobs)
+            _download_from_url(data_dir, files_to_download, n_jobs, retry)
 
 
 def _get_session() -> Session:
@@ -97,7 +101,8 @@ def _download_file(file: str, data_dir: str):
     session = _get_session()
     url = urljoin(URL_DATA, f"{file}.zip")
     logger.debug(f"Thread started: {url=}, {session=}")
-    while True:
+    num_tries = 1
+    while num_tries <= MAX_RETRY:
         with session.get(url) as r:
             if r.ok:
                 logger.debug(f"Response ok ({r!r}): {url=}")
@@ -107,10 +112,13 @@ def _download_file(file: str, data_dir: str):
                 t = r.headers["Retry-after"]
                 logger.warning(f"Too many requests, waiting for {t} sec")
                 time.sleep(int(t))
+                num_tries += 1
                 continue
             else:
                 raise requests.exceptions.RequestException(r, url)
         logger.critical("Session context closed, this should never happen!")
+    else:
+        raise DownloadError(f"Failed to download from {url} ({MAX_RETRY=})")
     logger.info(f"Downloaded {file}")
 
 
@@ -130,11 +138,12 @@ def _get_files_to_download(
     return files_to_download
 
 
-def download_from_url(
+def _download_from_url(
     data_dir: str,
     files_to_do: List[str],
     n_jobs: int = 10,
     retry: bool = True,
+    retry_count: int = 0,
 ):
     """Download file using the base url.
 
@@ -143,6 +152,7 @@ def download_from_url(
         files_to_do: List of files to download from the the url.
         n_jobs: Number of concurrent downloading threads.
         retry: If set to True, then retry downloading any missing file.
+        retry_count: (DO NOT MODIFY) Counting the number of retries.
 
     """
     with ThreadPoolExecutor(max_workers=n_jobs) as executor:
@@ -150,11 +160,13 @@ def download_from_url(
 
     missed_files = _get_files_to_download(data_dir, files_to_do, silent=True)
     if missed_files and retry:
+        if retry_count >= MAX_RETRY:
+            raise DownloadError(f"Failed to download all required files ({MAX_RETRY=})")
         missed = "".join(f"\n\t{i}" for i in missed_files)
         logger.warning(
             f"Failed to download the following files, retrying...{missed}",
         )
-        download_from_url(data_dir, missed_files, n_jobs=n_jobs, retry=True)
+        _download_from_url(data_dir, missed_files, n_jobs, True, retry_count + 1)
 
 
 def _make_download_options_list(
