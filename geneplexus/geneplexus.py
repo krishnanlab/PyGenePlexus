@@ -153,7 +153,7 @@ class GenePlexus:
         self._gsc = gsc
 
     def load_genes(self, input_genes: List[str]):
-        """Load list of genes into the GenePlexus object.
+        """Load gene list, convert to Entrez, and set up positives/negatives.
 
         :attr:`GenePlexus.input_genes` (List[str]): Input gene list.
 
@@ -165,10 +165,20 @@ class GenePlexus:
             from a file.
 
         """
-        input_genes = [item.upper() for item in input_genes]
-        self.input_genes = input_genes
+        self._load_genes(input_genes)
+        self._convert_to_entrez()
+        self._get_pos_and_neg_genes()
 
-    def convert_to_entrez(self):
+    def _load_genes(self, input_genes: List[str]):
+        """Load gene list into the GenePlexus object.
+
+        Note:
+            Implicitely convert genes to upper case.
+
+        """
+        self.input_genes = [item.upper() for item in input_genes]
+
+    def _convert_to_entrez(self):
         """Convert the loaded genes to Entrez.
 
         :attr:`GenePlexus.df_convert_out` (DataFrame)
@@ -192,7 +202,7 @@ class GenePlexus:
         )
         return self.df_convert_out
 
-    def get_pos_and_neg_genes(self):
+    def _get_pos_and_neg_genes(self):
         """Set up positive and negative genes given the network.
 
         :attr:`GenePlexus.pos_genes_in_net` (array of str)

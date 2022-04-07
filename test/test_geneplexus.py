@@ -8,8 +8,6 @@ import geneplexus
 def gp():
     gp = geneplexus.GenePlexus(pytest.DATADIR, "BioGRID", "Embedding", "GO")
     gp.load_genes(geneplexus.util.read_gene_list(pytest.GENELIST_PATH))
-    gp.convert_to_entrez()
-    gp.get_pos_and_neg_genes()
     return gp
 
 

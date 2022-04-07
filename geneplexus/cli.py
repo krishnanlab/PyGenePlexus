@@ -157,8 +157,6 @@ def run_pipeline(gp: GenePlexus, num_nodes: int, skip_mdl_sim: bool):
             for custom networks.
 
     """
-    gp.convert_to_entrez()
-    gp.get_pos_and_neg_genes()
     gp.fit_and_predict()
     gp.make_small_edgelist(num_nodes=num_nodes)
     gp.alter_validation_df()

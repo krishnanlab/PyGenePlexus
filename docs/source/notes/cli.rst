@@ -13,7 +13,7 @@ data files and save under ``data``, and generates the following files under ``re
 
 ============================= ====================================================================
 ``df_convert_out.tsv``        Entrez gene ID conversion result table
-                              (see :meth:`geneplexus.GenePlexus.convert_to_entrez`)
+                              (see :meth:`geneplexus.GenePlexus.load_genes`)
 ``df_edge.tsv``               Edgelist (gene Entrez ID) of subgraph induced by top predicted genes
                               (see :meth:`geneplexus.GenePlexus.make_small_edgelist`)
 ``df_edge_sym.tsv``           Edgelist (gene symbol) of subgraph induced by top predicted genes
