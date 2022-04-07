@@ -64,6 +64,9 @@ files are stored under the ``data/`` directory.
 
    gp = geneplexus.GenePlexus("data", network="BioGRID", feature="Embedding", GSC="GO")
 
+   # Load input genes and set up positives/negatives for training
+   gp.load_genes(input_genes)
+
    # Train logistic regression model and get genomewide gene predictions
    mdl_weights, df_probs, avgps = gp.fit_and_predict()
 
