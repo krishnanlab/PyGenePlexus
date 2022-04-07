@@ -168,7 +168,7 @@ class GenePlexus:
         input_genes = [item.upper() for item in input_genes]
         self.input_genes = input_genes
 
-    def convert_to_Entrez(self):
+    def convert_to_entrez(self):
         """Convert the loaded genes to Entrez.
 
         :attr:`GenePlexus.df_convert_out` (DataFrame)
@@ -185,7 +185,7 @@ class GenePlexus:
             Number of input genes.
 
         """
-        self.convert_IDs, df_convert_out = _geneplexus._initial_ID_convert(self.input_genes, self.file_loc)
+        self.convert_IDs, df_convert_out = _geneplexus._initial_id_convert(self.input_genes, self.file_loc)
         self.df_convert_out, self.table_summary, self.input_count = _geneplexus._make_validation_df(
             df_convert_out,
             self.file_loc,
@@ -270,7 +270,7 @@ class GenePlexus:
             relevance of the gene to the input gene list).
 
         """
-        self.mdl_weights, self.probs, self.avgps = _geneplexus._run_SL(
+        self.mdl_weights, self.probs, self.avgps = _geneplexus._run_sl(
             self.file_loc,
             self.net_type,
             self.features,

@@ -22,7 +22,7 @@ auto_download=True)
     >>> input_genes[:7]
     ["6457", "7037", "57403", "3134", "50807", "93343", "11311"]
     >>> gp.load_genes(input_genes)
-    >>> gp.convert_to_Entrez()
+    >>> gp.convert_to_entrez()
     >>> gp.get_pos_and_neg_genes()
     >>> _, df_probs, _ gp.fit_and_predict()
     >>> df_probs.iloc[:4]

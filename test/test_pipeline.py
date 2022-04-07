@@ -59,7 +59,7 @@ class TestGenePlexusPipeline(unittest.TestCase):
 
     @pytest.mark.order(2)
     def test_convert_to_entrez(self):
-        self.gp.convert_to_Entrez()
+        self.gp.convert_to_entrez()
         df_convert_out = self.gp.df_convert_out.copy()
         columns = ["Original ID", "Entrez ID"]
         df_convert_out[columns] = df_convert_out[columns].astype(int)

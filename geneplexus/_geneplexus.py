@@ -19,7 +19,7 @@ from ._config import logger
 from ._config.config import DEFAULT_LOGREG_KWARGS
 
 
-def _initial_ID_convert(input_genes, file_loc):
+def _initial_id_convert(input_genes, file_loc):
     # load all the possible conversion dictionaries
     convert_types = ["ENSG", "Symbol", "ENSP", "ENST"]
     all_convert_dict = {}
@@ -93,7 +93,7 @@ def _get_negatives(file_loc, net_type, gsc, pos_genes_in_net):
     return negative_genes
 
 
-def _run_SL(
+def _run_sl(
     file_loc,
     net_type,
     features,

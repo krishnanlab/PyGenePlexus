@@ -38,7 +38,7 @@ myclass.load_genes(input_genes)
 
 # Convert the input genes to Entrez
 # This will return a dataframe of how the genes are in each network
-df_convert_out = myclass.convert_to_Entrez()
+df_convert_out = myclass.convert_to_entrez()
 
 # Set the params you want for the rest of the pipeline
 myclass.set_params("BioGRID", "Embedding", "GO")
