@@ -185,7 +185,7 @@ class GenePlexus:
             Number of input genes.
 
         """
-        self.convert_IDs, df_convert_out = _geneplexus._initial_id_convert(self.input_genes, self.file_loc)
+        self.convert_ids, df_convert_out = _geneplexus._initial_id_convert(self.input_genes, self.file_loc)
         self.df_convert_out, self.table_summary, self.input_count = _geneplexus._make_validation_df(
             df_convert_out,
             self.file_loc,
@@ -220,7 +220,7 @@ class GenePlexus:
         self.pos_genes_in_net, self.genes_not_in_net, self.net_genes = _geneplexus._get_genes_in_network(
             self.file_loc,
             self.net_type,
-            self.convert_IDs,
+            self.convert_ids,
         )
         self.negative_genes = _geneplexus._get_negatives(
             self.file_loc,
