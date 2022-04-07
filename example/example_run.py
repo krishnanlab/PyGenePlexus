@@ -31,7 +31,7 @@ print("Done downlaoding")
 
 # Run through the pipeline
 # First initialize the geneplexus object
-myclass = geneplexus.GenePlexus(datadir)
+myclass = geneplexus.GenePlexus(datadir, "BioGRID", "Embedding", "GO")
 
 # Load the input genes into the class
 myclass.load_genes(input_genes)
@@ -39,9 +39,6 @@ myclass.load_genes(input_genes)
 # Convert the input genes to Entrez
 # This will return a dataframe of how the genes are in each network
 df_convert_out = myclass.convert_to_entrez()
-
-# Set the params you want for the rest of the pipeline
-myclass.set_params("BioGRID", "Embedding", "GO")
 
 # This gets the postives and negatvies
 pos_genes_in_net, negative_genes, net_genes = myclass.get_pos_and_neg_genes()

@@ -192,17 +192,6 @@ class GenePlexus:
         )
         return self.df_convert_out
 
-    def set_params(
-        self,
-        net_type: config.NET_TYPE,
-        features: config.FEATURE_TYPE,
-        gsc: config.GSC_TYPE,
-    ):
-        """Set GenePlexus parameters."""
-        self.net_type = net_type
-        self.features = features
-        self.gsc = gsc
-
     def get_pos_and_neg_genes(self):
         """Set up positive and negative genes given the network.
 
