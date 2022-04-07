@@ -28,6 +28,7 @@ class GenePlexus:
         net_type: config.NET_TYPE = "BioGRID",
         features: config.FEATURE_TYPE = "Embedding",
         gsc: config.GSC_TYPE = "GO",
+        input_genes: Optional[List[str]] = None,
         auto_download: bool = False,
         log_level: config.LOG_LEVEL_TYPE = "WARNING",
     ):
@@ -35,10 +36,13 @@ class GenePlexus:
 
         Args:
             file_loc: Location of data files, if not specified, set to default
-                ~/.data/geneplexus
+                data path ``~/.data/geneplexus``
             net_type: Type of network to use.
             features: Type of features of the network to use.
             gsc: Type of gene set collection to use for generating negatives.
+            input_genes: Input gene list, can be mixed type. Can also be set
+                later if not specified at init time by simply calling
+                :meth:`load_genes` (default: :obj:`None`).
             auto_download: Automatically download necessary files if set.
             log_level: Logging level.
 
@@ -61,6 +65,9 @@ class GenePlexus:
                 ["GO", "DisGeNet"],
                 log_level=log_level,
             )
+
+        if input_genes is not None:
+            self.load_genes(input_genes)
 
     @property
     def _params(self) -> List[str]:
@@ -158,7 +165,7 @@ class GenePlexus:
         :attr:`GenePlexus.input_genes` (List[str]): Input gene list.
 
         Args:
-            input_genes: Input genes, can be mixed type.
+            input_genes: Input gene list, can be mixed type.
 
         See also:
             Use :meth:`geneplexus.util.read_gene_list` to load a gene list

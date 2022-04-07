@@ -16,12 +16,11 @@ the model coefficients. See :meth:`geneplexus.GenePlexus.make_sim_dfs`
 .. code-block::
 
     >>> from geneplexus import GenePlexus, util
-    >>> gp = GenePlexus(net_type="BioGRID", features="Embedding", gsc="GO", \
-auto_download=True)
     >>> input_genes = util.read_gene_list("example/input_genes.txt")
     >>> input_genes[:7]
     ["6457", "7037", "57403", "3134", "50807", "93343", "11311"]
-    >>> gp.load_genes(input_genes)
+    >>> gp = GenePlexus(net_type="BioGRID", features="Embedding", gsc="GO",
+    ...                 input_genes=input_genes, auto_download=True)
     >>> _, df_probs, _ gp.fit_and_predict()
     >>> df_probs.iloc[:4]
        Entrez  Symbol                                              Name\
