@@ -26,13 +26,13 @@ the model coefficients. See :meth:`geneplexus.GenePlexus.make_sim_dfs`
        Entrez  Symbol                                              Name\
   Probability Known/Novel Class-Label  Rank
     0   57154  SMURF1       SMAD specific E3 ubiquitin protein ligase 1\
-         1.0       Known           P     1
+          1.0       Known           P     1
     1    1213    CLTC                              clathrin heavy chain\
-         1.0       Known           P     2
+          1.0       Known           P     2
     2    4734   NEDD4                 NEDD4 E3 ubiquitin protein ligase\
-         1.0       Known           P     3
+          1.0       Known           P     3
     3    6714     SRC  SRC proto-oncogene, non-receptor tyrosine kinase\
-         1.0       Known           P     4
+          1.0       Known           P     4
 
 
 Currently, GenePlexus come with four networks, including [BioGRID]_ (default),
