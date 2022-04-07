@@ -53,7 +53,7 @@ Full CLI options (check out with ``geneplexus --help``)
                             result/)
       -l , --log_level      Logging level. The choices are: {CRITICAL, ERROR, WARNING, INFO, DEBUG}
                             (default: INFO)
-      -q, --quiet           Suppress log messages (same as setting lov_level to CRITICAL). (default:
+      -q, --quiet           Suppress log messages (same as setting log_level to CRITICAL). (default:
                             False)
       -z, --zip-output      If set, then compress the output directory into a Zip file. (default:
                             False)

@@ -113,7 +113,7 @@ def parse_args() -> argparse.Namespace:
         "-q",
         "--quiet",
         action="store_true",
-        help="Suppress log messages (same as setting lov_level to CRITICAL).",
+        help="Suppress log messages (same as setting log_level to CRITICAL).",
     )
 
     parser.add_argument(
