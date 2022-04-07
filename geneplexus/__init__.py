@@ -7,6 +7,11 @@ of three network derived features (:term:`adjacency`, :term:`influence`, or
 :term:`embedding`) and generate genome wide predictions about genes that are
 functionally similar to the input gene list.
 
+.. note::
+
+    A webserver for GenePlexus is also available at
+    `<https://www.geneplexus.net>`_
+
 """
 from ._config import config  # noreorder
 from . import download
