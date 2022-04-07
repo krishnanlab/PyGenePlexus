@@ -6,6 +6,8 @@
 PyGenePlexus
 ============
 
+.. automodule:: geneplexus
+
 .. toctree::
    :maxdepth: 1
    :caption: Notes
