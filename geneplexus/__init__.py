@@ -11,7 +11,7 @@ input gene list. See :meth:`geneplexus.GenePlexus.fit_and_predict`
 #. (Optional) Input gene list simiarltiy with [GO]_ or [DisGeNet]_ based on \
 the model coefficients. See :meth:`geneplexus.GenePlexus.make_sim_dfs`
 #. (Optional) A subnetwork induced by the top predicted genes. See \
-:meth:`make_small_edgelist`
+:meth:`geneplexus.GenePlexus.make_small_edgelist`
 
 .. code-block::
 
