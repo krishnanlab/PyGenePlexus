@@ -1,6 +1,8 @@
 PyGenePlexus API
 ================
 
+.. currentmodule:: geneplexus.geneplexus
+
 Download datasets
 -----------------
 
@@ -12,7 +14,7 @@ Download necessary files to directory ``data/`` for all tasks for network
 
    import geneplexus
    geneplexus.download.download_select_data("data", tasks="All", networks="BioGRID",
-                                            features="Embedding", GSCs=["GO", "DisGeNet"])
+                                            features="Embedding", gscs=["GO", "DisGeNet"])
 
    # Alternatively, to download all data at once
    geneplexus.download.download_select_data("data")
@@ -32,6 +34,17 @@ List of data options
     * GSC
         * [GO]_
         * [DisGeNet]_
+
+Auto download
+^^^^^^^^^^^^^
+
+Optionally, set to ``auto_download`` key word argument to ``True`` to automatically
+download necessary data at initialization of the :class:`GenePlexus` object.
+
+.. code-block:: python
+
+   from geneplexus import GenePlexus
+   gp = GenePlexus(net_type="BioGRID", features="Embedding", gsc="GO", auto_download=True)
 
 .. warning::
 
@@ -58,11 +71,13 @@ Alternatively, read the gene list from file
    input_genes = geneplexus.util.read_gene_list("my_gene_list.txt")
 
 Next, run the pipline via the :class:`geneplexus.GenePlexus` object. The data
-files are stored under the ``data/`` directory.
+files are stored under the ``~/.data/geneplexus`` directory by default. The
+data file location can be changed by setting the ``file_loc`` argument (see
+:meth:`geneplexus.GenePlexus.__init__`).
 
 .. code-block:: python
 
-   gp = geneplexus.GenePlexus("data", network="BioGRID", feature="Embedding", GSC="GO")
+   gp = geneplexus.GenePlexus(net_type="BioGRID", features="Embedding", gsc="GO")
 
    # Load input genes and set up positives/negatives for training
    gp.load_genes(input_genes)
