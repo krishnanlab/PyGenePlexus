@@ -1,4 +1,4 @@
-![PyPI](https://img.shields.io/pypi/v/geneplexus)
+[![PyPI](https://img.shields.io/pypi/v/geneplexus)](https://pypi.org/project/geneplexus/)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/geneplexus)
 [![Documentation Status](https://readthedocs.org/projects/pygeneplexus/badge/?version=main)](https://pygeneplexus.readthedocs.io/en/main/?badge=main)
 [![Tests](https://github.com/krishnanlab/PyGenePlexus/actions/workflows/tests.yml/badge.svg)](https://github.com/krishnanlab/PyGenePlexus/actions/workflows/tests.yml)
