@@ -1,4 +1,5 @@
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6383205.svg)](https://doi.org/10.5281/zenodo.6383205)
+![PyPI](https://img.shields.io/pypi/v/geneplexus)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/geneplexus)
 [![Documentation Status](https://readthedocs.org/projects/pygeneplexus/badge/?version=main)](https://pygeneplexus.readthedocs.io/en/main/?badge=main)
 [![Tests](https://github.com/krishnanlab/PyGenePlexus/actions/workflows/tests.yml/badge.svg)](https://github.com/krishnanlab/PyGenePlexus/actions/workflows/tests.yml)
 
@@ -9,6 +10,7 @@ A Python package of the GenePlexus analysis pipeline.
 * The [GenePlexus paper](https://academic.oup.com/bioinformatics/article/36/11/3457/5780279)
 * The [repository](https://github.com/krishnanlab/GenePlexus) for reproducing the experiments
 * The [webserver](https://www.geneplexus.net/)
+* Data [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6383205.svg)](https://doi.org/10.5281/zenodo.6383205)
 
 # Quick start
 
