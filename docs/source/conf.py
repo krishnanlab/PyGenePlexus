@@ -63,7 +63,7 @@ exclude_patterns = []
 
 # -- Napoleon settings -------------------------------------------------------
 
-napoleon_include_init_with_doc = True
+napoleon_include_init_with_doc = False
 
 
 # -- Options for HTML output -------------------------------------------------

@@ -6,34 +6,40 @@ PyGenePlexus API
 Download datasets
 -----------------
 
-Download necessary files to directory ``data/`` for all tasks for network
+Download necessary files to directory ``my_data/`` for all tasks for network
 [BioGRID]_, using :term:`Embedding` as features, and the geneset collections
 (:term:`GSC`\s) [GO]_ and [DisGeNet]_.
 
+.. warning::
+
+   **PROCEED WITH CAUTION**
+   The first example below (BioGRID network using Embedding features with GO
+   and DisGeNet GSCs) will occupy **~230MB** of space. The second example (full
+   download) will occupy **~32GB** of space.
+
 .. code-block:: python
 
-   import geneplexus
-   geneplexus.download.download_select_data("data", tasks="All", networks="BioGRID",
-                                            features="Embedding", gscs=["GO", "DisGeNet"])
-
-   # Alternatively, to download all data at once
-   geneplexus.download.download_select_data("data")
+   >>> from geneplexus.download import download_select_data
+   >>> download_select_data("my_data", tasks="All", networks="BioGRID",
+   ...                      features="Embedding", gscs=["GO", "DisGeNet"])
+   >>> download_select_data("my_data")  # alternatively, download all data at once
 
 See :meth:`geneplexus.download.download_select_data` for more information
 
-List of data options
-    * Networks
-        * [BioGRID]_
-        * [STRING]_
-        * [STRING-EXP]_
-        * [GIANT-TN]_
-    * Features
-        * :term:`Adjacency`
-        * :term:`Influence`
-        * :term:`Embedding`
-    * GSC
-        * [GO]_
-        * [DisGeNet]_
+**Data options:**
+
+======== =======================================================
+Networks [BioGRID]_, [STRING]_, [STRING-EXP]_, [GIANT-TN]_
+Features :term:`Adjacency`, :term:`Influence`, :term:`Embedding`
+GSCs     [GO]_, [DisGeNet]_
+======== =======================================================
+
+.. note::
+
+   :term:`Influence` (followed by :term:`Adjacency`) data takes a long time to
+   download, from **~10 minutes** up to **an hour** dependeing on the download
+   speed. :term:`Embedding` feature data takes least amount of time to download
+   (within **a minute**).
 
 Auto download
 ^^^^^^^^^^^^^
@@ -46,12 +52,10 @@ download necessary data at initialization of the :class:`GenePlexus` object.
    from geneplexus import GenePlexus
    gp = GenePlexus(net_type="BioGRID", features="Embedding", gsc="GO", auto_download=True)
 
-.. warning::
+.. note::
 
-   :term:`Influence` (followed by :term:`Adjacency`) data takes a long time to
-   download, from **~10 minutes** up to **an hour** dependeing on the download
-   speed. :term:`Embedding` feature data takes least amount of time to download
-   (within **a minute**).
+   The default data location is ``~/.data/geneplexus/``. You can change this by
+   setting the ``file_loc`` argument of :class:`GenePlexus`.
 
 Run the PyGenePlexus pipeline
 -----------------------------
@@ -70,10 +74,7 @@ Alternatively, read the gene list from file
    import geneplexus
    input_genes = geneplexus.util.read_gene_list("my_gene_list.txt")
 
-Next, run the pipline via the :class:`geneplexus.GenePlexus` object. The data
-files are stored under the ``~/.data/geneplexus`` directory by default. The
-data file location can be changed by setting the ``file_loc`` argument (see
-:meth:`geneplexus.GenePlexus.__init__`).
+Next, run the pipline using the :class:`GenePlexus` object.
 
 .. code-block:: python
 
@@ -87,4 +88,7 @@ data file location can be changed by setting the ``file_loc`` argument (see
 
    # Optionally, compute modle similarity against pretrained models for GO and DisGeNet
    df_sim_GO, df_sim_Dis, weights_GO, weights_Dis = gp.make_sim_dfs()
+
+   # Optionally, extract the subgraph induced by the top (50 by default) predicted genes
+   df_edge, isolated_genes, df_edge_sym, isolated_genes_sym = gp.make_small_edgelist()
 
