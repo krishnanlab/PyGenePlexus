@@ -1,17 +1,56 @@
 """A Python package for GenePlexus.
 
+.. currentmodule:: geneplexus.GenePlexus
+
 [GenePlexus]_ is a network based supervised learning method for gene
 classification. Given a list of input genes and a selection of background gene
 set collection (:term:`GSC`), it trains a logistic regression model using one
 of three network derived features (:term:`adjacency`, :term:`influence`, or
 :term:`embedding`) and generate the followings
 
-#. Genomewide prediction about genes that are **functionally similar** to the \
-input gene list. See :meth:`geneplexus.GenePlexus.fit_and_predict`
-#. (Optional) Input gene list simiarltiy with [GO]_ or [DisGeNet]_ based on \
-the model coefficients. See :meth:`geneplexus.GenePlexus.make_sim_dfs`
+#. Genome-wide prediction about genes that are **functionally similar** to the \
+input gene list. See :meth:`fit_and_predict`
+#. (Optional) Input gene list simiarltiy with :term:`GSC` based on \
+model coefficients. See :meth:`make_sim_dfs`
 #. (Optional) A subnetwork induced by the top predicted genes. See \
-:meth:`geneplexus.GenePlexus.make_small_edgelist`
+:meth:`make_small_edgelist`
+
+.. note::
+
+    A webserver for GenePlexus is also available at
+    `<https://www.geneplexus.net>`_
+
+Quick start
+-----------
+
+PyGenePlexus come with an easy to use command line interface (CLI) to run the
+full GenePlexus pipeline given an input gene list. Go get started, install via
+pip and run a quick example as follows.
+
+.. code-block:: bash
+
+    pip install geneplexus
+    geneplexus -i my_gene_list.txt --output_dir my_result
+
+Note that you need to supply the ``my_gene_list.txt`` file, which is a line
+separated gene list (can be Entrez or Symbol) text file. An example can be
+found on the `GitHub page <https://github.com/krishnanlab/PyGenePlexus>`_ under
+``example/input_genes.txt``. More info can be found in :ref:`PyGenePlexus CLI`
+
+.. warning::
+
+    All necessary files for a specific selection of parameters (network,
+    feature, and gene set collection) will be downloaded automatically and
+    saved under ``~/.data/geneplexus``. User can also specify the location of
+    data to be saved using the ``--output_dir`` argument. **The example
+    provided will download files that occupy ~230MB of space.**
+
+
+Using the API
+^^^^^^^^^^^^^
+
+A quick example of generating predictions using an input gene list. More info
+can be found in :ref:`PyGenePlexus API`
 
 .. code-block::
 
@@ -35,16 +74,14 @@ the model coefficients. See :meth:`geneplexus.GenePlexus.make_sim_dfs`
           1.0       Known           P     4
 
 
+Supported networks
+^^^^^^^^^^^^^^^^^^
+
 Currently, GenePlexus come with four networks, including [BioGRID]_ (default),
 [STRING]_, [STRING-EXP]_, and [GIANT-TN]_. Prediction using custom network can
 also be done, see :ref:`Using custom networks`. However, when using custom
 network, the model similarity (against GO and DisGeNet) analysis *cannot* be
 done due to the lack to pretrained models.
-
-.. note::
-
-    A webserver for GenePlexus is also available at
-    `<https://www.geneplexus.net>`_
 
 """
 from ._config import config  # noreorder
