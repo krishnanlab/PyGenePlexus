@@ -68,15 +68,15 @@ def download_select_data(
     all_files_to_do = []
     for atask in tasks:
         if atask == "IDconversion":
-            all_files_to_do.extend(get_IDconversion_filenames())
+            all_files_to_do.extend(get_id_conversion_filenames())
         if atask == "MachineLearning":
-            all_files_to_do.extend(get_MachineLearning_filenames(networks, features, gscs))
+            all_files_to_do.extend(get_machine_learning_filenames(networks, features, gscs))
         if atask == "Similarities":
-            all_files_to_do.extend(get_Similarities_filenames(networks, features, gscs))
+            all_files_to_do.extend(get_similarities_filenames(networks, features, gscs))
         if atask == "NetworkGraph":
-            all_files_to_do.extend(get_NetworkGraph_filenames(networks))
+            all_files_to_do.extend(get_network_filenames(networks))
         if atask == "OriginalGSCs":
-            all_files_to_do.extend(get_OriginalGSCs_filenames())
+            all_files_to_do.extend(get_original_gscs_filenames())
 
     with log_level_context(logger, log_level):
         if features != ["Embedding"]:
@@ -202,7 +202,7 @@ def make_download_options_lists(
     return tuple(map(_make_download_options_list, *zip(*args)))  # type: ignore
 
 
-def get_IDconversion_filenames() -> List[str]:
+def get_id_conversion_filenames() -> List[str]:
     """Get gene ID conversion file names."""
     files_to_do = []
     for line in util.get_all_filenames():
@@ -211,7 +211,7 @@ def get_IDconversion_filenames() -> List[str]:
     return files_to_do
 
 
-def get_MachineLearning_filenames(
+def get_machine_learning_filenames(
     networks: List[NET_TYPE],
     features: List[FEATURE_TYPE],
     gscs: List[GSC_TYPE],
@@ -238,7 +238,7 @@ def get_MachineLearning_filenames(
     return files_to_do
 
 
-def get_Similarities_filenames(
+def get_similarities_filenames(
     networks: List[NET_TYPE],
     features: List[FEATURE_TYPE],
     gscs: List[GSC_TYPE],
@@ -265,7 +265,7 @@ def get_Similarities_filenames(
     return files_to_do
 
 
-def get_NetworkGraph_filenames(networks: List[NET_TYPE]) -> List[str]:
+def get_network_filenames(networks: List[NET_TYPE]) -> List[str]:
     """Get network file names."""
     files_to_do = ["IDconversion_Homo-sapiens_Entrez-to-Symbol.json"]
     for line in util.get_all_filenames():
@@ -276,7 +276,7 @@ def get_NetworkGraph_filenames(networks: List[NET_TYPE]) -> List[str]:
     return files_to_do
 
 
-def get_OriginalGSCs_filenames() -> List[str]:
+def get_original_gscs_filenames() -> List[str]:
     """Get original GSC file names."""
     files_to_do = []
     for line in util.get_all_filenames():

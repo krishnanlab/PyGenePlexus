@@ -6,14 +6,28 @@ pipeline on a user defined geneset (a text file with gene ids seprated by line).
 
 .. code-block:: bash
 
-   geneplexus  --input_file my_gene_list.txt --output_dir result --data_dir data
+   geneplexus  --input_file my_gene_list.txt --output_dir my_result --data_dir my_data
 
 The command above read the gene list file ``my_gene_list.txt``, download necessary
-data files and save under ``data``, and generates the following files under ``result/``
+data files and save to the directory ``my_data/``. If ``--data_dir`` is not supplied,
+the data files will be saved under ``~/.data/geneplexus/`` by default. Finally, all
+output files will be saved under ``my_result/``.
+
+.. note::
+
+    If the direcory ``my_result/`` already exists, the program will try to append
+    a number, e.g., ``my_result_1/``, to prevent overwriting. If you would like
+    to overwrite, you can do so by specifying the ``--overwrite`` CLI option.
+
+The output files contain the followings.
 
 ============================= ====================================================================
+``config.yaml``               Configuration file containing the parameters of choice and the input
+                              gene list.
+``cross_validation.txt``      Cross validation evaluation of the model's ability to capture the
+                              input gene list, mesured using ``log2(auprc/prior)``
 ``df_convert_out.tsv``        Entrez gene ID conversion result table
-                              (see :meth:`geneplexus.GenePlexus.convert_to_Entrez`)
+                              (see :meth:`geneplexus.GenePlexus.load_genes`)
 ``df_edge.tsv``               Edgelist (gene Entrez ID) of subgraph induced by top predicted genes
                               (see :meth:`geneplexus.GenePlexus.make_small_edgelist`)
 ``df_edge_sym.tsv``           Edgelist (gene symbol) of subgraph induced by top predicted genes
@@ -25,6 +39,7 @@ data files and save under ``data``, and generates the following files under ``re
 ``df_sim_Dis.tsv``            Model similarity with those from the DisGeNet terms
                               (see :meth:`geneplexus.GenePlexus.make_sim_dfs`)
 ``df_convert_out_subset.tsv`` See :meth:`geneplexus.GenePlexus.alter_validation_df`
+``run.log``                   Run log file.
 ============================= ====================================================================
 
 Full CLI options (check out with ``geneplexus --help``)
@@ -53,7 +68,7 @@ Full CLI options (check out with ``geneplexus --help``)
                             result/)
       -l , --log_level      Logging level. The choices are: {CRITICAL, ERROR, WARNING, INFO, DEBUG}
                             (default: INFO)
-      -q, --quiet           Suppress log messages (same as setting lov_level to CRITICAL). (default:
+      -q, --quiet           Suppress log messages (same as setting log_level to CRITICAL). (default:
                             False)
       -z, --zip-output      If set, then compress the output directory into a Zip file. (default:
                             False)

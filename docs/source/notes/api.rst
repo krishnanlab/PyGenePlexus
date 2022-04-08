@@ -1,44 +1,61 @@
 PyGenePlexus API
 ================
 
+.. currentmodule:: geneplexus.geneplexus
+
 Download datasets
 -----------------
 
-Download necessary files to directory ``data/`` for all tasks for network
+Download necessary files to directory ``my_data/`` for all tasks for network
 [BioGRID]_, using :term:`Embedding` as features, and the geneset collections
 (:term:`GSC`\s) [GO]_ and [DisGeNet]_.
 
+.. warning::
+
+   **PROCEED WITH CAUTION**
+   The first example below (BioGRID network using Embedding features with GO
+   and DisGeNet GSCs) will occupy **~230MB** of space. The second example (full
+   download) will occupy **~32GB** of space.
+
 .. code-block:: python
 
-   import geneplexus
-   geneplexus.download.download_select_data("data", tasks="All", networks="BioGRID",
-                                            features="Embedding", GSCs=["GO", "DisGeNet"])
-
-   # Alternatively, to download all data at once
-   geneplexus.download.download_select_data("data")
+   >>> from geneplexus.download import download_select_data
+   >>> download_select_data("my_data", tasks="All", networks="BioGRID",
+   ...                      features="Embedding", gscs=["GO", "DisGeNet"])
+   >>> download_select_data("my_data")  # alternatively, download all data at once
 
 See :meth:`geneplexus.download.download_select_data` for more information
 
-List of data options
-    * Networks
-        * [BioGRID]_
-        * [STRING]_
-        * [STRING-EXP]_
-        * [GIANT-TN]_
-    * Features
-        * :term:`Adjacency`
-        * :term:`Influence`
-        * :term:`Embedding`
-    * GSC
-        * [GO]_
-        * [DisGeNet]_
+**Data options:**
 
-.. warning::
+======== =======================================================
+Networks [BioGRID]_, [STRING]_, [STRING-EXP]_, [GIANT-TN]_
+Features :term:`Adjacency`, :term:`Influence`, :term:`Embedding`
+GSCs     [GO]_, [DisGeNet]_
+======== =======================================================
+
+.. note::
 
    :term:`Influence` (followed by :term:`Adjacency`) data takes a long time to
    download, from **~10 minutes** up to **an hour** dependeing on the download
    speed. :term:`Embedding` feature data takes least amount of time to download
    (within **a minute**).
+
+Auto download
+^^^^^^^^^^^^^
+
+Optionally, set to ``auto_download`` key word argument to ``True`` to automatically
+download necessary data at initialization of the :class:`GenePlexus` object.
+
+.. code-block:: python
+
+   from geneplexus import GenePlexus
+   gp = GenePlexus(net_type="BioGRID", features="Embedding", gsc="GO", auto_download=True)
+
+.. note::
+
+   The default data location is ``~/.data/geneplexus/``. You can change this by
+   setting the ``file_loc`` argument of :class:`GenePlexus`.
 
 Run the PyGenePlexus pipeline
 -----------------------------
@@ -57,19 +74,21 @@ Alternatively, read the gene list from file
    import geneplexus
    input_genes = geneplexus.util.read_gene_list("my_gene_list.txt")
 
-Next, run the pipline via the :class:`geneplexus.GenePlexus` object. The data
-files are stored under the ``data/`` directory.
+Next, run the pipline using the :class:`GenePlexus` object.
 
 .. code-block:: python
 
-   gp = geneplexus.GenePlexus("data", network="BioGRID", feature="Embedding", GSC="GO")
+   gp = geneplexus.GenePlexus(net_type="BioGRID", features="Embedding", gsc="GO")
 
-   # Obtain positive and negative genes in the network with background GSC
-   pos_genes_in_net, negative_genes, net_genes = gp.get_pos_and_neg_genes()
+   # Load input genes and set up positives/negatives for training
+   gp.load_genes(input_genes)
 
    # Train logistic regression model and get genomewide gene predictions
    mdl_weights, df_probs, avgps = gp.fit_and_predict()
 
    # Optionally, compute modle similarity against pretrained models for GO and DisGeNet
    df_sim_GO, df_sim_Dis, weights_GO, weights_Dis = gp.make_sim_dfs()
+
+   # Optionally, extract the subgraph induced by the top (50 by default) predicted genes
+   df_edge, isolated_genes, df_edge_sym, isolated_genes_sym = gp.make_small_edgelist()
 

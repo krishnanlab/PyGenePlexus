@@ -19,7 +19,7 @@ from ._config import logger
 from ._config.config import DEFAULT_LOGREG_KWARGS
 
 
-def _initial_ID_convert(input_genes, file_loc):
+def _initial_id_convert(input_genes, file_loc):
     # load all the possible conversion dictionaries
     convert_types = ["ENSG", "Symbol", "ENSP", "ENST"]
     all_convert_dict = {}
@@ -28,18 +28,18 @@ def _initial_ID_convert(input_genes, file_loc):
         all_convert_dict[anIDtype] = convert_tmp
 
     # make some place holder arrays
-    convert_IDs = []  # This will be a flat list for Entrez IDs to use as positives
+    convert_ids = []  # This will be a flat list for Entrez IDs to use as positives
     convert_out = []  # This will be a list of lists that will be used to tell user the conversions made
     for agene in input_genes:
         try:
             agene_int = int(agene)
             convert_out.append([agene_int, agene_int])
-            convert_IDs.append(agene_int)
+            convert_ids.append(agene_int)
         except ValueError:
             converted_gene: Optional[str] = None
             for anIDtype in convert_types:
                 if agene in all_convert_dict[anIDtype]:
-                    convert_IDs.extend(all_convert_dict[anIDtype][agene])
+                    convert_ids.extend(all_convert_dict[anIDtype][agene])
                     converted_gene = ", ".join(all_convert_dict[anIDtype][agene])
                     logger.debug(f"Found mapping ({anIDtype}) {agene} -> {all_convert_dict[anIDtype][agene]}")
                     break
@@ -48,7 +48,7 @@ def _initial_ID_convert(input_genes, file_loc):
     column_names = ["Original ID", "Entrez ID"]
     df_convert_out = pd.DataFrame(convert_out, columns=column_names).astype(str)
 
-    return convert_IDs, df_convert_out
+    return convert_ids, df_convert_out
 
 
 def _make_validation_df(df_convert_out, file_loc):
@@ -69,11 +69,11 @@ def _make_validation_df(df_convert_out, file_loc):
     return df_convert_out, table_summary, input_count
 
 
-def _get_genes_in_network(file_loc, net_type, convert_IDs):
+def _get_genes_in_network(file_loc, net_type, convert_ids):
     net_genes = util.load_node_order(file_loc, net_type)
-    convert_IDs_array = np.array(convert_IDs, dtype=str)
-    pos_genes_in_net = np.intersect1d(convert_IDs_array, net_genes)
-    genes_not_in_net = np.setdiff1d(convert_IDs_array, net_genes)
+    convert_ids = np.array(convert_ids, dtype=str)
+    pos_genes_in_net = np.intersect1d(convert_ids, net_genes)
+    genes_not_in_net = np.setdiff1d(convert_ids, net_genes)
     return pos_genes_in_net, genes_not_in_net, net_genes
 
 
@@ -93,7 +93,7 @@ def _get_negatives(file_loc, net_type, gsc, pos_genes_in_net):
     return negative_genes
 
 
-def _run_SL(
+def _run_sl(
     file_loc,
     net_type,
     features,

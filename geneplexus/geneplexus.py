@@ -28,6 +28,7 @@ class GenePlexus:
         net_type: config.NET_TYPE = "BioGRID",
         features: config.FEATURE_TYPE = "Embedding",
         gsc: config.GSC_TYPE = "GO",
+        input_genes: Optional[List[str]] = None,
         auto_download: bool = False,
         log_level: config.LOG_LEVEL_TYPE = "WARNING",
     ):
@@ -35,10 +36,13 @@ class GenePlexus:
 
         Args:
             file_loc: Location of data files, if not specified, set to default
-                ~/.data/geneplexus
+                data path ``~/.data/geneplexus``
             net_type: Type of network to use.
             features: Type of features of the network to use.
             gsc: Type of gene set collection to use for generating negatives.
+            input_genes: Input gene list, can be mixed type. Can also be set
+                later if not specified at init time by simply calling
+                :meth:`load_genes` (default: :obj:`None`).
             auto_download: Automatically download necessary files if set.
             log_level: Logging level.
 
@@ -61,6 +65,9 @@ class GenePlexus:
                 ["GO", "DisGeNet"],
                 log_level=log_level,
             )
+
+        if input_genes is not None:
+            self.load_genes(input_genes)
 
     @property
     def _params(self) -> List[str]:
@@ -153,22 +160,32 @@ class GenePlexus:
         self._gsc = gsc
 
     def load_genes(self, input_genes: List[str]):
-        """Load list of genes into the GenePlexus object.
+        """Load gene list, convert to Entrez, and set up positives/negatives.
 
         :attr:`GenePlexus.input_genes` (List[str]): Input gene list.
 
         Args:
-            input_genes: Input genes, can be mixed type.
+            input_genes: Input gene list, can be mixed type.
 
         See also:
             Use :meth:`geneplexus.util.read_gene_list` to load a gene list
             from a file.
 
         """
-        input_genes = [item.upper() for item in input_genes]
-        self.input_genes = input_genes
+        self._load_genes(input_genes)
+        self._convert_to_entrez()
+        self._get_pos_and_neg_genes()
 
-    def convert_to_Entrez(self):
+    def _load_genes(self, input_genes: List[str]):
+        """Load gene list into the GenePlexus object.
+
+        Note:
+            Implicitely convert genes to upper case.
+
+        """
+        self.input_genes = [item.upper() for item in input_genes]
+
+    def _convert_to_entrez(self):
         """Convert the loaded genes to Entrez.
 
         :attr:`GenePlexus.df_convert_out` (DataFrame)
@@ -185,25 +202,14 @@ class GenePlexus:
             Number of input genes.
 
         """
-        self.convert_IDs, df_convert_out = _geneplexus._initial_ID_convert(self.input_genes, self.file_loc)
+        self.convert_ids, df_convert_out = _geneplexus._initial_id_convert(self.input_genes, self.file_loc)
         self.df_convert_out, self.table_summary, self.input_count = _geneplexus._make_validation_df(
             df_convert_out,
             self.file_loc,
         )
         return self.df_convert_out
 
-    def set_params(
-        self,
-        net_type: config.NET_TYPE,
-        features: config.FEATURE_TYPE,
-        gsc: config.GSC_TYPE,
-    ):
-        """Set GenePlexus parameters."""
-        self.net_type = net_type
-        self.features = features
-        self.gsc = gsc
-
-    def get_pos_and_neg_genes(self):
+    def _get_pos_and_neg_genes(self):
         """Set up positive and negative genes given the network.
 
         :attr:`GenePlexus.pos_genes_in_net` (array of str)
@@ -220,7 +226,7 @@ class GenePlexus:
         self.pos_genes_in_net, self.genes_not_in_net, self.net_genes = _geneplexus._get_genes_in_network(
             self.file_loc,
             self.net_type,
-            self.convert_IDs,
+            self.convert_ids,
         )
         self.negative_genes = _geneplexus._get_negatives(
             self.file_loc,
@@ -270,7 +276,7 @@ class GenePlexus:
             relevance of the gene to the input gene list).
 
         """
-        self.mdl_weights, self.probs, self.avgps = _geneplexus._run_SL(
+        self.mdl_weights, self.probs, self.avgps = _geneplexus._run_sl(
             self.file_loc,
             self.net_type,
             self.features,
