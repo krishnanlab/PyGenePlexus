@@ -33,7 +33,7 @@ See `example/example_run.py` for example usage of the API.
 ### Command-line interface
 
 ```bash
-geneplexus --input_file example/input_genes.txt --output_dir result/ --data_dir data/
+geneplexus --input_file example/input_genes.txt --output_dir example_result
 ```
 
 Full CLI options (check out with ``geneplexus --help``)
