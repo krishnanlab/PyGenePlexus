@@ -1,6 +1,9 @@
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6383205.svg)](https://doi.org/10.5281/zenodo.6383205)
-[![Documentation Status](https://readthedocs.org/projects/pygeneplexus/badge/?version=main)](https://pygeneplexus.readthedocs.io/en/main/?badge=main)
 [![Tests](https://github.com/krishnanlab/PyGenePlexus/actions/workflows/tests.yml/badge.svg)](https://github.com/krishnanlab/PyGenePlexus/actions/workflows/tests.yml)
+[![Documentation Status](https://readthedocs.org/projects/pygeneplexus/badge/?version=main)](https://pygeneplexus.readthedocs.io/en/main/?badge=main)
+[![PyPI](https://img.shields.io/pypi/v/geneplexus)](https://pypi.org/project/geneplexus/)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/geneplexus)
+[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 # PyGeneplexus
 
@@ -9,6 +12,7 @@ A Python package of the GenePlexus analysis pipeline.
 * The [GenePlexus paper](https://academic.oup.com/bioinformatics/article/36/11/3457/5780279)
 * The [repository](https://github.com/krishnanlab/GenePlexus) for reproducing the experiments
 * The [webserver](https://www.geneplexus.net/)
+* Data [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6383205.svg)](https://doi.org/10.5281/zenodo.6383205)
 
 # Quick start
 
@@ -29,7 +33,7 @@ See `example/example_run.py` for example usage of the API.
 ### Command-line interface
 
 ```bash
-geneplexus --input_file example/input_genes.txt --output_dir result/ --data_dir data/
+geneplexus --input_file example/input_genes.txt --output_dir example_result
 ```
 
 Full CLI options (check out with ``geneplexus --help``)
@@ -44,7 +48,7 @@ optional arguments:
                         Delimiter used in the gene list. Use 'newline' if the genes are separated
                         by new line, and use 'tab' if the genes are seperate by tabs. Other
                         generic separator are also supported, e.g. ', '. (default: newline)
-  -n , --network        Network to use. {format_choices(config.ALL_NETWORKS)} (default: BioGRID)
+  -n , --network        Network to use. {format_choices(config.ALL_NETWORKS)} (default: STRING)
   -f , --feature        Types of feature to use. The choices are: {Adjacency, Embedding,
                         Influence} (default: Embedding)
   -g , --gsc            Geneset collection used to generate negatives and the modelsimilarities.
@@ -57,7 +61,7 @@ optional arguments:
                         result/)
   -l , --log_level      Logging level. The choices are: {CRITICAL, ERROR, WARNING, INFO, DEBUG}
                         (default: INFO)
-  -q, --quiet           Suppress log messages (same as setting lov_level to CRITICAL). (default:
+  -q, --quiet           Suppress log messages (same as setting log_level to CRITICAL). (default:
                         False)
   -z, --zip-output      If set, then compress the output directory into a Zip file. (default:
                         False)

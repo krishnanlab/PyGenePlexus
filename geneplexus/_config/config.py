@@ -1,5 +1,4 @@
 """Global variables used by the GenePlexus library."""
-import os
 import os.path as osp
 import pathlib
 from typing import Any
@@ -11,8 +10,6 @@ from typing import Tuple
 from typing import Union
 
 import numpy as np
-
-os.environ["COLUMNS"] = "100"  # for CLI help page wrap line
 
 MAX_RETRY = 10  # maximum number of retries for downloading
 

@@ -65,7 +65,7 @@ Glossary
          \hat y = \lim_{t \to \infty} y^{(t)} = F y^{(0)}
 
    Embedding
-      Node2vec embeddings generated using [node2vec]_.
+      Network embeddings generated using [node2vec]_.
 
    GSC
       A gene set collection (GSC) is a set of gene sets, each of which defines

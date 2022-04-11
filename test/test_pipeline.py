@@ -43,7 +43,7 @@ class TestGenePlexusPipeline(unittest.TestCase):
     @pytest.mark.order(1)
     def test_init_geneplexus(self):
         input_genes = geneplexus.util.read_gene_list(pytest.GENELIST_PATH)
-        self.gp.load_genes(input_genes)
+        self.gp._load_genes(input_genes)
         self.assertEqual(self.gp.input_genes, input_genes)
 
     @pytest.mark.order(2)
@@ -59,7 +59,7 @@ class TestGenePlexusPipeline(unittest.TestCase):
 
     @pytest.mark.order(2)
     def test_convert_to_entrez(self):
-        self.gp.convert_to_Entrez()
+        self.gp._convert_to_entrez()
         df_convert_out = self.gp.df_convert_out.copy()
         columns = ["Original ID", "Entrez ID"]
         df_convert_out[columns] = df_convert_out[columns].astype(int)
@@ -73,7 +73,7 @@ class TestGenePlexusPipeline(unittest.TestCase):
 
     @pytest.mark.order(3)
     def test_get_pos_and_neg_genes(self):
-        self.gp.get_pos_and_neg_genes()
+        self.gp._get_pos_and_neg_genes()
 
     @pytest.mark.order(4)
     def test_fit_and_predict(self):
