@@ -25,7 +25,7 @@ class GenePlexus:
     def __init__(
         self,
         file_loc: Optional[str] = None,
-        net_type: config.NET_TYPE = "BioGRID",
+        net_type: config.NET_TYPE = "STRING",
         features: config.FEATURE_TYPE = "Embedding",
         gsc: config.GSC_TYPE = "GO",
         input_genes: Optional[List[str]] = None,

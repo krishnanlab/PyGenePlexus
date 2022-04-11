@@ -22,14 +22,14 @@ os.makedirs(outdir, exist_ok=True)
 geneplexus.download.download_select_data(
     datadir,
     tasks="All",
-    networks="BioGRID",
+    networks="STRING",
     features="Embedding",
     gscs=["GO", "DisGeNet"],
 )
 
 # Run through the pipeline
 # First initialize the geneplexus object
-myclass = geneplexus.GenePlexus(datadir, "BioGRID", "Embedding", "GO")
+myclass = geneplexus.GenePlexus(datadir, "STRING", "Embedding", "GO")
 
 # Load the input genes into the class and set up positives/negatives
 myclass.load_genes(input_genes)

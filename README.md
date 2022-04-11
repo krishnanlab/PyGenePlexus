@@ -48,7 +48,7 @@ optional arguments:
                         Delimiter used in the gene list. Use 'newline' if the genes are separated
                         by new line, and use 'tab' if the genes are seperate by tabs. Other
                         generic separator are also supported, e.g. ', '. (default: newline)
-  -n , --network        Network to use. {format_choices(config.ALL_NETWORKS)} (default: BioGRID)
+  -n , --network        Network to use. {format_choices(config.ALL_NETWORKS)} (default: STRING)
   -f , --feature        Types of feature to use. The choices are: {Adjacency, Embedding,
                         Influence} (default: Embedding)
   -g , --gsc            Geneset collection used to generate negatives and the modelsimilarities.
