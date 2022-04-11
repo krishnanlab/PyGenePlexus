@@ -27,19 +27,17 @@ geneplexus.download.download_select_data(
     networks="BioGRID",
     features="Embedding",
     gscs=["GO", "DisGeNet"],
+    log_level="DEBUG",
 )
 
 myclass = geneplexus.GenePlexus(datadir, "BioGRID", "Embedding", "GO")
 myclass.load_genes(input_genes)
 myclass.dump_config(outdir)
 
-myclass.convert_to_Entrez()
-myclass.df_convert_out.to_csv(osp.join(outdir, "df_convert_out.tsv"), sep="\t", index=False)
-# print(f"{myclass.df_convert_out=}")
-
-myclass.get_pos_and_neg_genes()
 myclass.fit_and_predict()
+myclass.df_convert_out.to_csv(osp.join(outdir, "df_convert_out.tsv"), sep="\t", index=False)
 myclass.df_probs.to_csv(osp.join(outdir, "df_probs.tsv"), sep="\t", index=False)
+# print(f"{myclass.df_convert_out=}")
 # print(f"{myclass.df_probs=}")
 
 myclass.make_sim_dfs()
