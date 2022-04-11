@@ -44,7 +44,7 @@ GSCs     [GO]_, [DisGeNet]_
 Auto download
 ^^^^^^^^^^^^^
 
-Optionally, set to ``auto_download`` key word argument to ``True`` to automatically
+Optionally, set the ``auto_download`` key word argument to ``True`` to automatically
 download necessary data at initialization of the :class:`GenePlexus` object.
 
 .. code-block:: python

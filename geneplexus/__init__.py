@@ -80,8 +80,8 @@ Supported networks
 Currently, GenePlexus come with four networks, including [BioGRID]_ (default),
 [STRING]_, [STRING-EXP]_, and [GIANT-TN]_. Prediction using custom network can
 also be done, see :ref:`Using custom networks`. However, when using custom
-network, the model similarity (against GO and DisGeNet) analysis *cannot* be
-done due to the lack to pretrained models.
+network, the model similarity (against [GO]_ and [DisGeNet]_)
+analysis *cannot* be done due to the lack to pretrained models.
 
 """
 from ._config import config  # noreorder
