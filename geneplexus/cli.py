@@ -52,7 +52,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "-n",
         "--network",
-        default="BioGRID",
+        default="STRING",
         metavar="",
         help="Network to use. {format_choices(config.ALL_NETWORKS)}",
     )

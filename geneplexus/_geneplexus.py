@@ -171,7 +171,7 @@ def _make_prob_df(file_loc, net_genes, probs, pos_genes_in_net, negative_genes):
         columns=["Entrez", "Symbol", "Name", "Probability", "Known/Novel", "Class-Label"],
     )
     df_probs = df_probs.astype({"Entrez": str, "Probability": float})
-    df_probs = df_probs.sort_values(by=["Probability"], ascending=False)
+    df_probs = df_probs.sort_values(by=["Probability"], ascending=False).reset_index(drop=True)
     df_probs["Rank"] = rankdata(1 / (df_probs["Probability"].to_numpy() + 1e-9), method="min")
     return df_probs
 

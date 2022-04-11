@@ -7,20 +7,20 @@ Download datasets
 -----------------
 
 Download necessary files to directory ``my_data/`` for all tasks for network
-[BioGRID]_, using :term:`Embedding` as features, and the geneset collections
+[STRING]_, using :term:`Embedding` as features, and the geneset collections
 (:term:`GSC`\s) [GO]_ and [DisGeNet]_.
 
 .. warning::
 
    **PROCEED WITH CAUTION**
-   The first example below (BioGRID network using Embedding features with GO
-   and DisGeNet GSCs) will occupy **~230MB** of space. The second example (full
+   The first example below (STRING network using Embedding features with GO and
+   DisGeNet GSCs) will occupy **~300MB** of space. The second example (full
    download) will occupy **~32GB** of space.
 
 .. code-block:: python
 
    >>> from geneplexus.download import download_select_data
-   >>> download_select_data("my_data", tasks="All", networks="BioGRID",
+   >>> download_select_data("my_data", tasks="All", networks="STRING",
    ...                      features="Embedding", gscs=["GO", "DisGeNet"])
    >>> download_select_data("my_data")  # alternatively, download all data at once
 
@@ -50,7 +50,7 @@ download necessary data at initialization of the :class:`GenePlexus` object.
 .. code-block:: python
 
    from geneplexus import GenePlexus
-   gp = GenePlexus(net_type="BioGRID", features="Embedding", gsc="GO", auto_download=True)
+   gp = GenePlexus(net_type="STRING", features="Embedding", gsc="GO", auto_download=True)
 
 .. note::
 
@@ -78,7 +78,7 @@ Next, run the pipline using the :class:`GenePlexus` object.
 
 .. code-block:: python
 
-   gp = geneplexus.GenePlexus(net_type="BioGRID", features="Embedding", gsc="GO")
+   gp = geneplexus.GenePlexus(net_type="STRING", features="Embedding", gsc="GO")
 
    # Load input genes and set up positives/negatives for training
    gp.load_genes(input_genes)

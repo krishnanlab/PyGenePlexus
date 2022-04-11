@@ -43,7 +43,7 @@ found on the `GitHub page <https://github.com/krishnanlab/PyGenePlexus>`_ under
     feature, and gene set collection) will be downloaded automatically and
     saved under ``~/.data/geneplexus``. User can also specify the location of
     data to be saved using the ``--output_dir`` argument. **The example
-    provided will download files that occupy ~230MB of space.**
+    provided will download files that occupy ~300MB of space.**
 
 
 Using the API
@@ -54,25 +54,37 @@ can be found in :ref:`PyGenePlexus API`
 
 .. code-block::
 
-    >>> from geneplexus import GenePlexus, util
-    >>> input_genes = util.read_gene_list("example/input_genes.txt")
-    >>> input_genes[:7]
-    ["6457", "7037", "57403", "3134", "50807", "93343", "11311"]
-    >>> gp = GenePlexus(net_type="BioGRID", features="Embedding", gsc="GO",
-    ...                 input_genes=input_genes, auto_download=True)
-    >>> _, df_probs, _ gp.fit_and_predict()
-    >>> df_probs.iloc[:4]
-       Entrez  Symbol                                              Name\
-  Probability Known/Novel Class-Label  Rank
-    0   57154  SMURF1       SMAD specific E3 ubiquitin protein ligase 1\
-          1.0       Known           P     1
-    1    1213    CLTC                              clathrin heavy chain\
-          1.0       Known           P     2
-    2    4734   NEDD4                 NEDD4 E3 ubiquitin protein ligase\
-          1.0       Known           P     3
-    3    6714     SRC  SRC proto-oncogene, non-receptor tyrosine kinase\
-          1.0       Known           P     4
-
+    >>> from geneplexus import GenePlexus
+    >>> input_genes = ["ARL6", "BBS1", "BBS10", "BBS12", "BBS2", "BBS4",
+    ...                "BBS5", "BBS7", "BBS9", "CCDC28B", "CEP290", "KIF7",
+    ...                "MKKS", "MKS1", "TRIM32", "TTC8", "WDPCP"]
+    >>> gp = GenePlexus(net_type="STRING", features="Embedding", gsc="DisGeNet",
+    ...                 input_genes=input_genes, auto_download=True, \
+log_level="INFO")
+    >>> df_probs = gp.fit_and_predict()[1]
+    >>> df_probs.iloc[:10]
+       Entrez  Symbol                                             Name  \
+Probability Known/Novel Class-Label  Rank
+    0    8100   IFT88                      intraflagellar transport 88     \
+0.995987       Novel           U     1
+    1     585    BBS4                          Bardet-Biedl syndrome 4     \
+0.992910       Known           P     2
+    2  261734   NPHP4                                   nephrocystin 4     \
+0.990702       Novel           U     3
+    3   91147  TMEM67                         transmembrane protein 67     \
+0.986072       Novel           U     4
+    4    9657   IQCB1                           IQ motif containing B1     \
+0.983370       Novel           U     5
+    5     582    BBS1                          Bardet-Biedl syndrome 1     \
+0.979291       Known           P     6
+    6  200894  ARL13B          ADP ribosylation factor like GTPase 13B     \
+0.977562       Novel           U     7
+    7    8481    OFD1  OFD1 centriole and centriolar satellite protein     \
+0.974285       Novel           U     8
+    8   80184  CEP290                          centrosomal protein 290     \
+0.963549       Known           P     9
+    9   54903    MKS1            MKS transition zone complex subunit 1     \
+0.960619       Known           P    10
 
 Supported networks
 ^^^^^^^^^^^^^^^^^^

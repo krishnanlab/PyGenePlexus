@@ -7,9 +7,26 @@ import numpy as np
 
 import geneplexus
 
-# The first step is for a user to load up a set of genes as a list
-# this file can be found in the repo
-input_genes = geneplexus.util.read_gene_list("input_genes.txt")
+# The first step is for a user to supply a gene list
+input_genes = [
+    "ARL6",
+    "BBS1",
+    "BBS10",
+    "BBS12",
+    "BBS2",
+    "BBS4",
+    "BBS5",
+    "BBS7",
+    "BBS9",
+    "CCDC28B",
+    "CEP290",
+    "KIF7",
+    "MKKS",
+    "MKS1",
+    "TRIM32",
+    "TTC8",
+    "WDPCP",
+]
 
 # Set up directories
 homedir = pathlib.Path(__file__).absolute().parent
@@ -19,19 +36,17 @@ os.makedirs(datadir, exist_ok=True)
 os.makedirs(outdir, exist_ok=True)
 
 # Get the data from URL
-print(f"Start downloading data and saving to: {datadir}")
 geneplexus.download.download_select_data(
     datadir,
     tasks="All",
-    networks="BioGRID",
+    networks="STRING",
     features="Embedding",
     gscs=["GO", "DisGeNet"],
 )
-print("Done downlaoding")
 
 # Run through the pipeline
 # First initialize the geneplexus object
-myclass = geneplexus.GenePlexus(datadir, "BioGRID", "Embedding", "GO")
+myclass = geneplexus.GenePlexus(datadir, "STRING", "Embedding", "DisGeNet")
 
 # Load the input genes into the class and set up positives/negatives
 myclass.load_genes(input_genes)
