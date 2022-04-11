@@ -19,7 +19,6 @@ os.makedirs(datadir, exist_ok=True)
 os.makedirs(outdir, exist_ok=True)
 
 # Get the data from URL
-print(f"Start downloading data and saving to: {datadir}")
 geneplexus.download.download_select_data(
     datadir,
     tasks="All",
@@ -27,7 +26,6 @@ geneplexus.download.download_select_data(
     features="Embedding",
     gscs=["GO", "DisGeNet"],
 )
-print("Done downlaoding")
 
 # Run through the pipeline
 # First initialize the geneplexus object
