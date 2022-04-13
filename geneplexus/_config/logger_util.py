@@ -43,6 +43,28 @@ def attach_file_handler(
     return file_handler
 
 
+def set_stream_level(logger: logging.Logger, log_level: LOG_LEVEL_TYPE):
+    """Set the levels of stream handlers of a logger."""
+    for handler in logger.handlers:
+        if type(handler) == logging.StreamHandler:
+            handler.setLevel(logging.getLevelName(log_level))
+
+
+@contextmanager
+def stream_level_context(logger: logging.Logger, log_level: LOG_LEVEL_TYPE):
+    """Temporarily set the levels of stream handlers of a logger."""
+    handler_levels = []
+    for handler in logger.handlers:
+        if type(handler) == logging.StreamHandler:
+            handler_levels.append((handler, handler.level))
+            handler.setLevel(logging.getLevelName(log_level))
+    try:
+        yield
+    finally:
+        for handler, orig_level in handler_levels:
+            handler.setLevel(orig_level)
+
+
 @contextmanager
 def log_level_context(logger: logging.Logger, log_level: LOG_LEVEL_TYPE):
     """Temporarily set a log level."""
