@@ -1,5 +1,4 @@
 """GenePlexus API."""
-import logging
 import os
 import os.path as osp
 from typing import Any
@@ -13,6 +12,7 @@ import yaml
 from . import _geneplexus
 from ._config import config
 from ._config import logger
+from ._config.logger_util import set_stream_level
 from .download import download_select_data
 from .exception import CustomNetworkError
 from .util import check_param
@@ -47,7 +47,7 @@ class GenePlexus:
             log_level: Logging level.
 
         """
-        logger.setLevel(logging.getLevelName(log_level))
+        set_stream_level(logger, log_level)
         self.file_loc = file_loc  # type: ignore
         self.features = features
         self.gsc = gsc
