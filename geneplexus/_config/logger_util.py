@@ -54,7 +54,7 @@ def file_handler_context(
     try:
         yield
     finally:
-        handler.removeHandler(file_handler)
+        logger.removeHandler(file_handler)
 
 
 def set_stream_level(logger: logging.Logger, log_level: LOG_LEVEL_TYPE):

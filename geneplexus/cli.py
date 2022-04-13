@@ -275,6 +275,7 @@ def _suffix_fn(path, idx=0, overwrite=False):
 
 @atexit.register
 def interrupted():
+    """Check if program is interrupted and print temporary log file path."""
     if osp.isfile(TMP_LOG_PATH):
         logger.critical(f"Program interrupted, temporary run log saved at {TMP_LOG_PATH}")
 
