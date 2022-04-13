@@ -1,5 +1,6 @@
 """Command line interface for the GenePlexus pipeline."""
 import argparse
+import atexit
 import os
 import os.path as osp
 import pathlib
@@ -270,6 +271,12 @@ def _suffix_fn(path, idx=0, overwrite=False):
     elif path != new_path:
         logger.warning(f"Output zip file exists {path}, redirecting to {new_path}")
     return new_path
+
+
+@atexit.register
+def interrupted():
+    if osp.isfile(TMP_LOG_PATH):
+        logger.critical(f"Program interrupted, temporary run log saved at {TMP_LOG_PATH}")
 
 
 def main():

@@ -43,6 +43,20 @@ def attach_file_handler(
     return file_handler
 
 
+@contextmanager
+def file_handler_context(
+    logger: logging.Logger,
+    log_path: str,
+    log_level: LOG_LEVEL_TYPE = "INFO",
+):
+    """Temporarily attach a file handler to a logger."""
+    file_handler = attach_file_handler(logger, log_path, log_level)
+    try:
+        yield
+    finally:
+        handler.removeHandler(file_handler)
+
+
 def set_stream_level(logger: logging.Logger, log_level: LOG_LEVEL_TYPE):
     """Set the levels of stream handlers of a logger."""
     for handler in logger.handlers:

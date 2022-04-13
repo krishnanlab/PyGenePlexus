@@ -31,7 +31,7 @@ from ._config.config import NET_TYPE
 from ._config.config import TASK_SELECTION_TYPE
 from ._config.config import TASK_TYPE
 from ._config.config import URL_DATA
-from ._config.logger_util import attach_file_handler
+from ._config.logger_util import file_handler_context
 from ._config.logger_util import stream_level_context
 from .exception import DownloadError
 
@@ -87,13 +87,12 @@ def download_select_data(
             )
         files_to_download = _get_files_to_download(data_dir, list(set(all_files_to_do)))
         if len(files_to_download) > 0:
-            log_path = osp.join(data_dir, "run.log")
-            file_handler = attach_file_handler(logger, log_path, "DEBUG")
+            log_path = osp.join(data_dir, "download.log")
             logger.info(f"Total number of files to download: {len(files_to_download)}")
             logger.info(f"Start downloading data and saving to: {data_dir}")
-            _download_from_url(data_dir, files_to_download, n_jobs, retry)
+            with file_handler_context(logger, log_path, "DEBUG"):
+                _download_from_url(data_dir, files_to_download, n_jobs, retry)
             logger.info("Download completed.")
-            logger.removeHandler(file_handler)
 
 
 def _get_session() -> Session:
