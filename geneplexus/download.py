@@ -31,7 +31,8 @@ from ._config.config import NET_TYPE
 from ._config.config import TASK_SELECTION_TYPE
 from ._config.config import TASK_TYPE
 from ._config.config import URL_DATA
-from ._config.logger_util import log_level_context
+from ._config.logger_util import attach_file_handler
+from ._config.logger_util import stream_level_context
 from .exception import DownloadError
 
 thread_local = local()
@@ -78,7 +79,7 @@ def download_select_data(
         if atask == "OriginalGSCs":
             all_files_to_do.extend(get_original_gscs_filenames())
 
-    with log_level_context(logger, log_level):
+    with stream_level_context(logger, log_level):
         if features != ["Embedding"]:
             logger.warn(
                 f"Downloading data type {features!r} may take a while (~10min "

@@ -19,12 +19,12 @@ def make_logger(
     formatter = logging.Formatter("%(name)s:%(funcName)s:%(levelname)s:%(message)s")
     stream_handler = logging.StreamHandler()
     stream_handler.setFormatter(formatter)
-    stream_handler.setLevel(logging.DEBUG)
+    stream_handler.setLevel(logging.getLevelName(log_level))
 
     logger_name = "geneplexus" if name is None else f"geneplexus.{name}"
     logger = logging.getLogger(logger_name)
     logger.addHandler(stream_handler)
-    logger.setLevel(logging.getLevelName(log_level))
+    logger.setLevel("DEBUG")
 
     return logger
 
