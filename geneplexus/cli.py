@@ -20,7 +20,7 @@ from .util import read_gene_list
 
 os.environ["COLUMNS"] = "100"  # for CLI help page wrap line
 
-TMP_LOG_PATH = tempfile.mktemp(suffix="_run.log")
+TMP_LOG_PATH = tempfile.mkstemp(suffix="_run.log")[1]
 FILE_HANDLER = attach_file_handler(logger, log_path=TMP_LOG_PATH)
 
 
