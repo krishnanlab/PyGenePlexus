@@ -12,6 +12,7 @@ A Python package of the GenePlexus analysis pipeline.
 * The [GenePlexus paper](https://academic.oup.com/bioinformatics/article/36/11/3457/5780279)
 * The [repository](https://github.com/krishnanlab/GenePlexus) for reproducing the experiments
 * The [webserver](https://www.geneplexus.net/)
+* [Documentation](https://pygeneplexus.readthedocs.io)
 * Data [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6383205.svg)](https://doi.org/10.5281/zenodo.6383205)
 
 # Quick start
