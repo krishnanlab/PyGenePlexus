@@ -1,3 +1,4 @@
+import numpy as np
 import pytest
 
 import geneplexus
@@ -15,7 +16,13 @@ def gp():
 @pytest.mark.parametrize("num_folds", [2, 3, 5])
 @pytest.mark.parametrize("min_num_pos,cross_validate", [(100, True), (100, False), (200, True)])
 @pytest.mark.usefixtures("data")
-def test_run_sl(gp, caplog, min_num_pos, num_folds, null_val, cross_validate):
+def test_run_sl(gp, caplog, mocker, min_num_pos, num_folds, null_val, cross_validate):
+    # Use random 5 dimensional vectors as features to speed up test
+    mocker.patch(
+        "geneplexus.util.load_gene_features",
+        lambda x, y, z: np.random.random((30000, 5)),
+    )
+
     gp.fit_and_predict(
         min_num_pos=min_num_pos,
         num_folds=num_folds,
