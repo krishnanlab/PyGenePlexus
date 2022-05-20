@@ -68,6 +68,9 @@ optional arguments:
                         False)
   --clear-data          Clear data directory and exit. (default: False)
   --overwrite           Overwrite existing result directory if set. (default: False)
+  --skip-mdl-sim        Skip model similarity computation. This computation is not yet available
+                        when using custom networks due to the lack of pretrained models for
+                        comparison. (default: False)
 ```
 
 # Dev
