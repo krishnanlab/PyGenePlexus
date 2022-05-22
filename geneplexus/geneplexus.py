@@ -261,7 +261,8 @@ class GenePlexus:
                 cross validation. Set to None for random.
             cross_validate: Whether or not to perform cross validation to
                 evaluate the prediction performance on the gene set. If set to
-                ``False``, then return null_val as cv scores.
+                ``False``, then skip cross validation and return null_val as cv
+                scores.
 
         :attr:`GenePlexus.mdl_weights` (array of float)
             Trained model parameters.
