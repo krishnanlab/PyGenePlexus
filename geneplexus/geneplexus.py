@@ -243,6 +243,7 @@ class GenePlexus:
         num_folds: int = 3,
         null_val: float = -10,
         random_state: Optional[int] = 0,
+        cross_validate: bool = True,
     ):
         """Fit a model and predict gene scores.
 
@@ -258,6 +259,10 @@ class GenePlexus:
                 be performed.
             random_state: Random state for reproducible shuffling stratified
                 cross validation. Set to None for random.
+            cross_validate: Whether or not to perform cross validation to
+                evaluate the prediction performance on the gene set. If set to
+                ``False``, then skip cross validation and return null_val as cv
+                scores.
 
         :attr:`GenePlexus.mdl_weights` (array of float)
             Trained model parameters.
@@ -288,6 +293,7 @@ class GenePlexus:
             num_folds=num_folds,
             null_val=null_val,
             random_state=random_state,
+            cross_validate=cross_validate,
         )
         self.df_probs = _geneplexus._make_prob_df(
             self.file_loc,
