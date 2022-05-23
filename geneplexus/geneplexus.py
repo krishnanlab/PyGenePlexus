@@ -143,17 +143,30 @@ class GenePlexus:
     @property
     def gsc(self) -> config.GSC_TYPE:
         """Geneset collection."""
-        return self._gsc
+        return self._standard_gsc or self._custom_gsc
 
     @gsc.setter
     def gsc(self, gsc: config.GSC_TYPE):
-        check_param("GSC", gsc, config.ALL_GSCS)
-        self._gsc = gsc
+        self._standard_gsc = self._custom_gsc = None
+        try:
+            check_param("GSC", gsc, config.ALL_GSCS)
+            self._standard_gsc = gsc
+            logger.debug(f"Set {self._standard_gsc=!r}")
+        except ValueError as e:
+            self._custom_gsc = gsc
+            logger.debug(f"Set {self._custom_gsc=!r}")
+
+            data_files = os.listdir(self.file_loc)
+            orig_gsc_fn = f"GSCOriginal_{gsc}.json"
+            if orig_gsc_fn not in data_files:
+                logger.error(f"Missing file {orig_gsc_fn} for custom GSC {gsc}")
+                raise e
 
     def check_custom(self):
         if not self._custom_net_type:
             return
 
+        # TODO: check custom gsc
         # Require feature file, gsc file, and gsc universe file
         data_files = os.listdir(self.file_loc)
         features_fname = f"Data_{self.features}_{self.net_type}.npy"

@@ -122,6 +122,8 @@ class TestCustomGenePlexus(unittest.TestCase):
             "GSC_GO_customnet_GoodSets.json",
             "GSC_GO_customnet_universe.txt",
             "GSCOriginal_customgsc.json",
+            "GSC_customgsc_customnet_GoodSets.json",
+            "GSC_customgsc_customnet_universe.txt",
         ]
 
         for fn in fn_list:
@@ -133,6 +135,9 @@ class TestCustomGenePlexus(unittest.TestCase):
 
     def test_custom_geneplexus_init_customnet(self):
         geneplexus.GenePlexus(self.tmpdir, "customnet", "Adjacency", "GO")
+
+    def test_custom_geneplexus_init_customgsc(self):
+        geneplexus.GenePlexus(self.tmpdir, "customnet", "Adjacency", "customgsc")
 
     def test_custom_geneplexus_init_fail(self):
         with self.assertRaises(ValueError):
