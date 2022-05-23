@@ -139,15 +139,22 @@ class TestCustomGenePlexus(unittest.TestCase):
     def test_custom_geneplexus_init_customgsc(self):
         geneplexus.GenePlexus(self.tmpdir, "customnet", "Adjacency", "customgsc")
 
-    @parameterized.expand(
-        [
-            ("customnet2", "customgsc"),  # unknown net_type customnet2
-            ("customnet", "customgsc2"),  # unknown gsc customgsc2
-        ],
-    )
-    def test_custom_geneplexus_init_fail(self, net_type, gsc):
-        with self.assertRaises(ValueError):
-            geneplexus.GenePlexus(self.tmpdir, net_type=net_type, gsc=gsc)
+    def test_custom_geneplexus_init_fail_net(self):
+        with self.assertRaises(ValueError) as e:
+            geneplexus.GenePlexus(self.tmpdir, net_type="customnet2")
+        self.assertEqual(
+            str(e.exception),
+            "Unexpected network 'customnet2', available choices are "
+            "['BioGRID', 'GIANT-TN', 'STRING', 'STRING-EXP', 'customnet']",
+        )
+
+    def test_custom_geneplexus_init_fail_gsc(self):
+        with self.assertRaises(ValueError) as e:
+            geneplexus.GenePlexus(self.tmpdir, gsc="customgsc2")
+        self.assertEqual(
+            str(e.exception),
+            "Unexpected GSC 'customgsc2', available choices are ['DisGeNet', 'GO', 'customgsc']",
+        )
 
     @parameterized.expand(
         [

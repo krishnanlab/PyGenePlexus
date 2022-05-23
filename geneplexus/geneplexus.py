@@ -10,13 +10,12 @@ import pystow
 import yaml
 
 from . import _geneplexus
+from . import util
 from ._config import config
 from ._config import logger
 from ._config.logger_util import set_stream_level
 from .download import download_select_data
 from .exception import CustomDataError
-from .util import check_param
-from .util import normexpand
 
 
 class GenePlexus:
@@ -105,7 +104,7 @@ class GenePlexus:
         if file_loc is None:
             self._file_loc = str(pystow.join("geneplexus"))
         else:
-            self._file_loc = normexpand(file_loc)
+            self._file_loc = util.normexpand(file_loc)
         logger.info(f"Data direcory set to {self._file_loc}")
 
     @property
@@ -116,8 +115,9 @@ class GenePlexus:
     @net_type.setter
     def net_type(self, net_type: config.NET_TYPE):
         self._standard_net_type = self._custom_net_type = None
+        util.check_param("network", net_type, util.get_all_net_types(self.file_loc))
         try:
-            check_param("network", net_type, config.ALL_NETWORKS)
+            util.check_param("network", net_type, config.ALL_NETWORKS)
             self._standard_net_type = net_type
             logger.debug(f"Set {self._standard_net_type=!r}")
         except ValueError as e:
@@ -139,7 +139,7 @@ class GenePlexus:
 
     @features.setter
     def features(self, features: config.FEATURE_TYPE):
-        check_param("feature", features, config.ALL_FEATURES)
+        util.check_param("feature", features, config.ALL_FEATURES)
         self._features = features
 
     @property
@@ -150,8 +150,9 @@ class GenePlexus:
     @gsc.setter
     def gsc(self, gsc: config.GSC_TYPE):
         self._standard_gsc = self._custom_gsc = None
+        util.check_param("GSC", gsc, util.get_all_gscs(self.file_loc))
         try:
-            check_param("GSC", gsc, config.ALL_GSCS)
+            util.check_param("GSC", gsc, config.ALL_GSCS)
             self._standard_gsc = gsc
             logger.debug(f"Set {self._standard_gsc=!r}")
         except ValueError as e:
