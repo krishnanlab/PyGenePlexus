@@ -156,6 +156,14 @@ class GenePlexus:
         self._gsc = gsc
 
     def check_custom(self):
+        """Check custom network and gsc options.
+
+        The following files are required:
+        * ``Data_{features}_{net_type}.npy``
+        * ``GSC_{gsc}_{net_type}_GoodSets.json``
+        * ``GSC_{gsc}_{net_type}_universetxt``
+
+        """
         if self._net_type in config.ALL_NETWORKS and self._gsc in config.ALL_GSCS:
             logger.debug("Skipping custom data checks, using standard data.")
             return
