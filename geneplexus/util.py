@@ -46,11 +46,7 @@ def get_all_net_types(file_loc: Optional[str]) -> List[str]:
     all_net_types = set(config.ALL_NETWORKS)
     if file_loc:
         all_net_types.update(
-            [
-                i.split("NodeOrder_")[1].split(".txt")[0]
-                for i in os.listdir(file_loc)
-                if i.startswith("NodeOrder_")
-            ],
+            [i.split("NodeOrder_")[1].split(".txt")[0] for i in os.listdir(file_loc) if i.startswith("NodeOrder_")],
         )
     return sorted(all_net_types)
 
