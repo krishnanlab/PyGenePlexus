@@ -110,27 +110,21 @@ class GenePlexus:
     @property
     def net_type(self) -> config.NET_TYPE:
         """Network to use."""
-        return self._standard_net_type or self._custom_net_type  # type: ignore
+        return self._net_type  # type: ignore
 
     @net_type.setter
     def net_type(self, net_type: config.NET_TYPE):
         self._standard_net_type = self._custom_net_type = None
         util.check_param("network", net_type, util.get_all_net_types(self.file_loc))
-        try:
-            util.check_param("network", net_type, config.ALL_NETWORKS)
-            self._standard_net_type = net_type
-            logger.debug(f"Set {self._standard_net_type=!r}")
-        except ValueError as e:
-            self._custom_net_type = net_type
-            logger.debug(f"Set {self._custom_net_type=!r}")
-
+        if net_type not in config.ALL_NETWORKS:
             data_files = os.listdir(self.file_loc)
             node_order_fn = f"NodeOrder_{net_type}.txt"
             if node_order_fn not in data_files:
-                logger.error(f"Missing file {node_order_fn} for custom network {net_type}")
-                raise e
+                raise ValueError(f"Missing file {node_order_fn} for custom network {net_type}")
 
             logger.info(f"Using custom network {net_type!r}")
+
+        self._net_type = net_type
 
     @property
     def features(self) -> config.FEATURE_TYPE:
@@ -145,30 +139,24 @@ class GenePlexus:
     @property
     def gsc(self) -> config.GSC_TYPE:
         """Geneset collection."""
-        return self._standard_gsc or self._custom_gsc
+        return self._gsc
 
     @gsc.setter
     def gsc(self, gsc: config.GSC_TYPE):
         self._standard_gsc = self._custom_gsc = None
         util.check_param("GSC", gsc, util.get_all_gscs(self.file_loc))
-        try:
-            util.check_param("GSC", gsc, config.ALL_GSCS)
-            self._standard_gsc = gsc
-            logger.debug(f"Set {self._standard_gsc=!r}")
-        except ValueError as e:
-            self._custom_gsc = gsc
-            logger.debug(f"Set {self._custom_gsc=!r}")
-
+        if gsc not in config.ALL_GSCS:
             data_files = os.listdir(self.file_loc)
             orig_gsc_fn = f"GSCOriginal_{gsc}.json"
             if orig_gsc_fn not in data_files:
-                logger.error(f"Missing file {orig_gsc_fn} for custom GSC {gsc}")
-                raise e
+                raise ValueError(f"Missing file {orig_gsc_fn} for custom GSC {gsc}")
 
             logger.info(f"Using custom GSC {gsc!r}")
 
+        self._gsc = gsc
+
     def check_custom(self):
-        if not self._custom_net_type and not self._custom_gsc:
+        if self._net_type in config.ALL_NETWORKS and self._gsc in config.ALL_GSCS:
             logger.debug("Skipping custom data checks, using standard data.")
             return
 
