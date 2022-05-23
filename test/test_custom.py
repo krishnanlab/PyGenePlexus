@@ -139,18 +139,24 @@ class TestCustomGenePlexus(unittest.TestCase):
     def test_custom_geneplexus_init_customgsc(self):
         geneplexus.GenePlexus(self.tmpdir, "customnet", "Adjacency", "customgsc")
 
-    def test_custom_geneplexus_init_fail(self):
+    @parameterized.expand(
+        [
+            ("customnet2", "customgsc"),  # unknown net_type customnet2
+            ("customnet", "customgsc2"),  # unknown gsc customgsc2
+        ],
+    )
+    def test_custom_geneplexus_init_fail(self, net_type, gsc):
         with self.assertRaises(ValueError):
-            geneplexus.GenePlexus(self.tmpdir, "customnet2")
+            geneplexus.GenePlexus(self.tmpdir, net_type=net_type, gsc=gsc)
 
     @parameterized.expand(
         [
-            ("Influence", "GO"),
-            ("Influence", "DisGeNet"),
-            ("Adjacency", "DisGeNet"),
+            ("Influence", "GO"),  # Influence feature not set
+            ("Influence", "DisGeNet"),  # unknown gsc DisGeNet and above
+            ("Adjacency", "DisGeNet"),  # unknown gsc DisGeNet
         ],
     )
-    def test_custom_geneplexus_init_fail_customnet(self, features, gsc):
+    def test_custom_geneplexus_init_fail_custom(self, features, gsc):
         with self.assertRaises(CustomDataError):
             geneplexus.GenePlexus(self.tmpdir, "customnet", features, gsc)
 

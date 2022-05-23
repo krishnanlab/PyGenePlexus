@@ -130,6 +130,8 @@ class GenePlexus:
                 logger.error(f"Missing file {node_order_fn} for custom network {net_type}")
                 raise e
 
+            logger.info(f"Using custom network {net_type!r}")
+
     @property
     def features(self) -> config.FEATURE_TYPE:
         """Features to use."""
@@ -162,11 +164,13 @@ class GenePlexus:
                 logger.error(f"Missing file {orig_gsc_fn} for custom GSC {gsc}")
                 raise e
 
+            logger.info(f"Using custom GSC {gsc!r}")
+
     def check_custom(self):
-        if not self._custom_net_type:
+        if not self._custom_net_type and not self._custom_gsc:
+            logger.debug("Skipping custom data checks, using standard data.")
             return
 
-        # TODO: check custom gsc
         # Require feature file, gsc file, and gsc universe file
         data_files = os.listdir(self.file_loc)
         features_fname = f"Data_{self.features}_{self.net_type}.npy"
@@ -179,11 +183,9 @@ class GenePlexus:
             )
         elif gsc_fname not in data_files or universe_fname not in data_files:
             raise CustomDataError(
-                f"Missing custom network GSC data files {gsc_fname} and/or {universe_fname}, "
+                f"Missing custom GSC data files {gsc_fname} and/or {universe_fname}, "
                 "set up using geneplexus.custom.subset_gsc_to_network first.",
             )
-        else:
-            logger.info(f"Using custom network {self.net_type!r}")
 
     def load_genes(self, input_genes: List[str]):
         """Load gene list, convert to Entrez, and set up positives/negatives.
