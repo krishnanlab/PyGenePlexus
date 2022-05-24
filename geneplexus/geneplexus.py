@@ -10,13 +10,12 @@ import pystow
 import yaml
 
 from . import _geneplexus
+from . import util
 from ._config import config
 from ._config import logger
 from ._config.logger_util import set_stream_level
 from .download import download_select_data
-from .exception import CustomNetworkError
-from .util import check_param
-from .util import normexpand
+from .exception import CustomDataError
 
 
 class GenePlexus:
@@ -55,6 +54,8 @@ class GenePlexus:
         self.log_level = log_level
         self.auto_download = auto_download
         self.input_genes: List[str] = []
+
+        self.check_custom()
 
         if self.auto_download:
             download_select_data(
@@ -103,7 +104,7 @@ class GenePlexus:
         if file_loc is None:
             self._file_loc = str(pystow.join("geneplexus"))
         else:
-            self._file_loc = normexpand(file_loc)
+            self._file_loc = util.normexpand(file_loc)
         logger.info(f"Data direcory set to {self._file_loc}")
 
     @property
@@ -113,30 +114,16 @@ class GenePlexus:
 
     @net_type.setter
     def net_type(self, net_type: config.NET_TYPE):
-        try:
-            check_param("network", net_type, config.ALL_NETWORKS)
-        except ValueError as e:
-            # Check for custom network first
+        self._standard_net_type = self._custom_net_type = None
+        util.check_param("network", net_type, util.get_all_net_types(self.file_loc))
+        if net_type not in config.ALL_NETWORKS:
             data_files = os.listdir(self.file_loc)
-            if f"NodeOrder_{net_type}.txt" in data_files:
-                # Require feature file, gsc file, and gsc universe file
-                features_fname = f"Data_{self.features}_{net_type}.npy"
-                gsc_fname = f"GSC_{self.gsc}_{net_type}_GoodSets.json"
-                universe_fname = f"GSC_{self.gsc}_{net_type}_universe.txt"
-                if features_fname not in data_files:
-                    raise CustomNetworkError(
-                        f"Missing custom network feature data file {features_fname}, "
-                        "set up using geneplexus.custom.edgelist_loc first.",
-                    )
-                elif gsc_fname not in data_files or universe_fname not in data_files:
-                    raise CustomNetworkError(
-                        f"Missing custom network GSC data files {gsc_fname} and/or {universe_fname}, "
-                        "set up using geneplexus.custom.subset_gsc_to_network first.",
-                    )
-                else:
-                    logger.info(f"Detected custom network {net_type!r}")
-            else:
-                raise e
+            node_order_fn = f"NodeOrder_{net_type}.txt"
+            if node_order_fn not in data_files:
+                raise ValueError(f"Missing file {node_order_fn} for custom network {net_type}")
+
+            logger.info(f"Using custom network {net_type!r}")
+
         self._net_type = net_type
 
     @property
@@ -146,7 +133,7 @@ class GenePlexus:
 
     @features.setter
     def features(self, features: config.FEATURE_TYPE):
-        check_param("feature", features, config.ALL_FEATURES)
+        util.check_param("feature", features, config.ALL_FEATURES)
         self._features = features
 
     @property
@@ -156,8 +143,46 @@ class GenePlexus:
 
     @gsc.setter
     def gsc(self, gsc: config.GSC_TYPE):
-        check_param("GSC", gsc, config.ALL_GSCS)
+        self._standard_gsc = self._custom_gsc = None
+        util.check_param("GSC", gsc, util.get_all_gscs(self.file_loc))
+        if gsc not in config.ALL_GSCS:
+            data_files = os.listdir(self.file_loc)
+            orig_gsc_fn = f"GSCOriginal_{gsc}.json"
+            if orig_gsc_fn not in data_files:
+                raise ValueError(f"Missing file {orig_gsc_fn} for custom GSC {gsc}")
+
+            logger.info(f"Using custom GSC {gsc!r}")
+
         self._gsc = gsc
+
+    def check_custom(self):
+        """Check custom network and gsc options.
+
+        The following files are required:
+        * ``Data_{features}_{net_type}.npy``
+        * ``GSC_{gsc}_{net_type}_GoodSets.json``
+        * ``GSC_{gsc}_{net_type}_universetxt``
+
+        """
+        if self._net_type in config.ALL_NETWORKS and self._gsc in config.ALL_GSCS:
+            logger.debug("Skipping custom data checks, using standard data.")
+            return
+
+        # Require feature file, gsc file, and gsc universe file
+        data_files = os.listdir(self.file_loc)
+        features_fname = f"Data_{self.features}_{self.net_type}.npy"
+        gsc_fname = f"GSC_{self.gsc}_{self.net_type}_GoodSets.json"
+        universe_fname = f"GSC_{self.gsc}_{self.net_type}_universe.txt"
+        if features_fname not in data_files:
+            raise CustomDataError(
+                f"Missing custom network feature data file {features_fname}, "
+                "set up using geneplexus.custom.edgelist_loc first.",
+            )
+        elif gsc_fname not in data_files or universe_fname not in data_files:
+            raise CustomDataError(
+                f"Missing custom GSC data files {gsc_fname} and/or {universe_fname}, "
+                "set up using geneplexus.custom.subset_gsc_to_network first.",
+            )
 
     def load_genes(self, input_genes: List[str]):
         """Load gene list, convert to Entrez, and set up positives/negatives.

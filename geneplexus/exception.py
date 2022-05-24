@@ -1,8 +1,8 @@
 """GenePlexus exceptions."""
 
 
-class CustomNetworkError(Exception):
-    """Raised when custom network data files not set up correctly."""
+class CustomDataError(Exception):
+    """Raised when custom network or gsc data files not set up correctly."""
 
 
 class DownloadError(Exception):
