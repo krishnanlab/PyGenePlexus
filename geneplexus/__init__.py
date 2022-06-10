@@ -26,12 +26,16 @@ provided by returning their network connectivity. \
 
     **Links to other GenePlexus products**
 
-    `GenePlexus Web Server <https://www.geneplexus.net>`_
+    * `GenePlexus Web Server <https://www.geneplexus.net>`_
+    * `GenePlexus Web Server Paper <https://academic.oup.com/nar/advance-article/doi/10.1093/nar/gkac335/6586869?login=true>`_
+    * `GenePlexus Benchmarking Paper <https://academic.oup.com/bioinformatics/article/36/11/3457/5780279>`_
+    * `PyGenePlexus PyPi Package <https://pypi.org/project/geneplexus/>`_
+    * `PyGenePlexus GitHub Repo <https://github.com/krishnanlab/PyGenePlexus>`_
 
 Quick start
 -----------
 
-PyGenePlexus come with an easy to use command line interface (CLI) to run the
+PyGenePlexus comes with an easy to use command line interface (CLI) to run the
 full GenePlexus pipeline given an input gene list. Go get started, install via
 pip and run a quick example as follows.
 
@@ -41,9 +45,9 @@ pip and run a quick example as follows.
     geneplexus -i my_gene_list.txt --output_dir my_result
 
 Note that you need to supply the ``my_gene_list.txt`` file, which is a line
-separated gene list (can be Entrez or Symbol) text file. An example can be
-found on the `GitHub page <https://github.com/krishnanlab/PyGenePlexus>`_ under
-``example/input_genes.txt``. More info can be found in :ref:`PyGenePlexus CLI`
+separated gene list text file  (NCBI Entrez IDs, Symbol or Ensembl IDs are accepted).
+An example can be found on the `GitHub page <https://github.com/krishnanlab/PyGenePlexus>`_
+under ``example/input_genes.txt``. More info can be found in :ref:`PyGenePlexus CLI`.
 
 .. warning::
 
@@ -58,7 +62,7 @@ Using the API
 ^^^^^^^^^^^^^
 
 A quick example of generating predictions using an input gene list. More info
-can be found in :ref:`PyGenePlexus API`
+can be found in :ref:`PyGenePlexus API`.
 
 .. code-block::
 
@@ -97,10 +101,10 @@ Probability Known/Novel Class-Label  Rank
 Supported networks
 ^^^^^^^^^^^^^^^^^^
 
-Currently, GenePlexus come with four networks, including [BioGRID]_ (default),
-[STRING]_, [STRING-EXP]_, and [GIANT-TN]_. Prediction using custom network can
-also be done, see :ref:`Using custom networks`. However, when using custom
-network, the model similarity (against [GO]_ and [DisGeNet]_)
+Currently, GenePlexus come with four networks, including [BioGRID]_,
+[STRING]_ (default), [STRING-EXP]_, and [GIANT-TN]_. Prediction using a
+custom network can also be done, see :ref:`Using custom networks`.
+However, when using a custom network, the model similarity
 analysis *cannot* be done due to the lack to pretrained models.
 
 """
