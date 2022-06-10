@@ -29,6 +29,7 @@ provided by returning their network connectivity. \
     * `GenePlexus Web Server <https://www.geneplexus.net>`_
     * `GenePlexus Web Server Paper <https://academic.oup.com/nar/advance-article/doi/10.1093/nar/gkac335/6586869?login=true>`_
     * `GenePlexus Benchmarking Paper <https://academic.oup.com/bioinformatics/article/36/11/3457/5780279>`_
+    * `GenePlexus Benchmarking Paper Repo <https://github.com/krishnanlab/GenePlexus>`_
     * `PyGenePlexus PyPi Package <https://pypi.org/project/geneplexus/>`_
     * `PyGenePlexus GitHub Repo <https://github.com/krishnanlab/PyGenePlexus>`_
 
