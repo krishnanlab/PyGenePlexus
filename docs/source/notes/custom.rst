@@ -32,7 +32,7 @@ set up the working files by
 
    from geneplexus import custom
 
-   custom.edgelist_to_node("path/to/net.edg", "path/to/data",
+   custom.edgelist_to_nodeorder("path/to/net.edg", "path/to/data",
                            "your_net_name")
 
    # Create adjacency feature representation
@@ -44,7 +44,7 @@ set up the working files by
                              "your_net_name", "Influence", beta=0.85)
 
    # Set up GO GSC with a minimum gene set size of five
-   custom.subset_GSC_to_network("path/to/data", "your_net_name", "GO",
+   custom.subset_gsc_to_network("path/to/data", "your_net_name", "GO",
                                 min_size=5)
 
 .. Note::

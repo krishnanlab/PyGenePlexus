@@ -1,24 +1,32 @@
-"""A Python package for GenePlexus.
+"""Welcome to PyGenePlexus! PyGenePlexus is a python package version
+for running the [GenePlexus]_ model
 
 .. currentmodule:: geneplexus.GenePlexus
 
-[GenePlexus]_ is a network based supervised learning method for gene
-classification. Given a list of input genes and a selection of background gene
-set collection (:term:`GSC`), it trains a logistic regression model using one
-of three network derived features (:term:`adjacency`, :term:`influence`, or
-:term:`embedding`) and generate the followings
+PyGenePlexus enables researchers to predict novel genes similar to their
+genes of interest based on their patterns of connectivity in genome-scale
+molecular interaction networks.
 
-#. Genome-wide prediction about genes that are **functionally similar** to the \
-input gene list. See :meth:`fit_and_predict`
-#. (Optional) Input gene list simiarltiy with :term:`GSC` based on \
-model coefficients. See :meth:`make_sim_dfs`
-#. (Optional) A subnetwork induced by the top predicted genes. See \
+Given a list of input genes and a geneset collection (:term:`GSC`) to help
+select negative examples, the package trains a logistic regression model
+using one of three network derived features (:term:`adjacency`, :term:`influence`, or
+:term:`embedding`) and generates the following outputs
+
+#. Genome-wide prediction of how **functionally similar** a gene is \
+to the input gene list. See :meth:`fit_and_predict`
+#. (Optional) Interpretability of the model is provided by \
+comparing the model trained on the user gene set to \
+models pretrained on 1000's of known gene sets from [GO]_ bioloigcal \
+proceses and [DisGeNet]_ diseases. See :meth:`make_sim_dfs`
+#. (Optional) Interpretability of the top predicted genes is \
+provided by returning their network connectivity. \
 :meth:`make_small_edgelist`
 
 .. note::
 
-    A webserver for GenePlexus is also available at
-    `<https://www.geneplexus.net>`_
+    **Links to other GenePlexus products**
+
+    `GenePlexus Web Server <https://www.geneplexus.net>`_
 
 Quick start
 -----------

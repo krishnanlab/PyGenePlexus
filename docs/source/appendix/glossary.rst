@@ -15,7 +15,7 @@ Glossary
          gene1  gene2   <weight>
 
    Adjacency
-      Adjacency matrix representation of a network. Let :math:`G = (V, E, s)`
+      Adjacency matrix representation of a network. Let :math:`G = (V, E, w)`
       be a connected weighted undirected graph with node index set :math:`V`,
       edge set :math:`E`, and an edge weight mapping :math:`w`. The adjacency
       matrix is

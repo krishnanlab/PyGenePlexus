@@ -14,7 +14,8 @@ def edgelist_to_nodeorder(
     sep: str = "\t",
     skiplines: int = 0,
 ):
-    """Convert :term:`edgelist` to node order.
+    """Convert :term:`edgelist` to node order file which is used
+    to map gene IDs to rows in the data repsentation matrix.
 
     Args:
         edgelist_loc: Location of the edgelist
@@ -46,7 +47,11 @@ def edgelist_to_matrix(
     sep: str = "\t",
     skiplines: int = 0,
 ):
-    """Convert :term:`edgelist` to adjacency matrix.
+    """Convert :term:`edgelist` to an adjacency matrix or influence matrix.
+
+    Note:
+        The NodeOrder file needs to be a single column text file. If not
+        supplying custom GSC, the file needs to be in Entrez ID space.
 
     Args:
         edgelist_loc: Location of the edgelist
@@ -105,14 +110,11 @@ def subset_gsc_to_network(
     max_size: int = 200,
     min_size: int = 10,
 ):
-    """Subset :term:`GSC` using network genes.
+    """Subset :term:`GSC` to only include genes in the network.
 
     Note:
         Use the :meth:`geneplexus.download.download_select_data` function to
         get the preprocessed GO and DisGeNet files first.
-
-        The NodeOrder file needs to be a single column text file. If not
-        supplying custom GSC, the file needs to be in Entrez ID space.
 
     Args:
         data_dir: The directory to save the file

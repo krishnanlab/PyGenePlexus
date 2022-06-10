@@ -4,10 +4,8 @@ LICENSE
 Copyright (c) 2022 Krishnan Laboratory at Michigan State University
 
 The software is released under the
-`Creative Commons License: Attribution-NonCommercial-ShareAlike 4.0 International <https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode>`_.
-This license is chosen as it is the most stringent license used by any network
-or geneset collection whose data is used (see :ref:`References`) by this
-software.
+`Creative Commons License: Attribution 4.0 International
+<https://creativecommons.org/licenses/by/4.0/legalcode>`_.
 
 License information for data used
 ---------------------------------
