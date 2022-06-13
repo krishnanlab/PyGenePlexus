@@ -7,6 +7,13 @@ PyGenePlexus enables researchers to predict novel genes similar to their
 genes of interest based on their patterns of connectivity in genome-scale
 molecular interaction networks.
 
+.. figure:: mainfigure.png
+  :scale: 30 %
+  :align: center
+  :alt: My Text
+
+  Probably put Figure from the paper here?
+
 Given a list of input genes and a geneset collection (:term:`GSC`) to help
 select negative examples, the package trains a logistic regression model
 using one of three network derived features (:term:`adjacency`, :term:`influence`, or

@@ -10,13 +10,35 @@ PyGenePlexus
 
 .. toctree::
    :maxdepth: 1
-   :caption: Notes
+   :caption: Using PyGenePlexus
 
    notes/installation
    notes/cli
    notes/api
    notes/custom
 
+.. toctree::
+   :maxdepth: 1
+   :caption: Medthods and Data
+
+   methodsanddata/networks
+   methodsanddata/representations
+   methodsanddata/gscs
+   methodsanddata/posandneg
+   methodsanddata/mlmodel
+   methodsanddata/similarities
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Illustrative Example
+
+   example/example
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Guidelines for Selecting Parameters
+
+   guidelines/guidelines
 
 .. toctree::
    :maxdepth: 1
