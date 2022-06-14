@@ -330,7 +330,9 @@ class GenePlexus:
         return self.mdl_weights, self.df_probs, self.avgps
 
     def make_sim_dfs(self):
-        """Compute similarities bewteen the model trained on the input
+        """Compute similarities bewteen the input genes and GO or DisGeNet.
+
+        The similarities are compuared based on the model trained on the input
         gene set and models pre-trained on known GO and DisGeNet gene sets.
 
         :attr:`GenePlexus.df_sim_GO` (DataFrame)

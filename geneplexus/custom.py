@@ -14,8 +14,10 @@ def edgelist_to_nodeorder(
     sep: str = "\t",
     skiplines: int = 0,
 ):
-    """Convert :term:`edgelist` to node order file which is used
-    to map gene IDs to rows in the data repsentation matrix.
+    """Convert :term:`edgelist` to node order.
+
+    The node order (NodeOrder) file is used to map gene IDs to rows in the data
+    repsentation matrix.
 
     Args:
         edgelist_loc: Location of the edgelist
