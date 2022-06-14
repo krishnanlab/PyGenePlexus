@@ -5,7 +5,7 @@ PyGenePlexus uses two different gene set collections and the properties of these
 
 Each collection was also further processed separately for each network by first finding the intersection between the genes in a given network and the genes annotated to a term in the gene set collection. If the length of this intersection was between 10 and 200 the gene set was retained. After having gone through every term in the collection, we additionally keep track of all genes that are annotated to at least one term in this subset version of the gene set collection. This set of total genes is used when determining which genes to use as negative examples in the machine learning model.
 
-.. figure:: gscs.png
+.. figure:: ../../figures/gscs.png
   :scale: 50 %
   :align: center
   :alt: My Text

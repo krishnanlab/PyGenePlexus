@@ -11,7 +11,7 @@ Guidelines for Selecting Parameters
 
 #. The next step is to choose the background used to determine the genes used as negative examples in the machine learning model. If your gene set corresponds to a biological process or pathway, choose GO. Instead, if it corresponds more closely to a disease or a complex phenotype, then choose DisGeNet.
 
-.. figure:: guidelines.png
+.. figure:: ../../figures/guidelines.png
   :scale: 25 %
   :align: center
   :alt: My Text
