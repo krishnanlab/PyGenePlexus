@@ -1,7 +1,7 @@
 Copyright (c) 2022 Krishnan Laboratory at Michigan State University
 
 The software is released under the
-[Creative Commons License: Attribution 4.0 International](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
+[Creative Commons License: Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/legalcode).
 
 ## License information for data used
 
