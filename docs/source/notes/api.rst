@@ -6,9 +6,11 @@ PyGenePlexus API
 Download datasets
 -----------------
 
-Download necessary files to directory ``my_data/`` for all tasks for network
-[STRING]_, using :term:`Embedding` as features, and the geneset collections
-(:term:`GSC`\s) [GO]_ and [DisGeNet]_.
+Manual download
+^^^^^^^^^^^^^^^
+
+The examples below show downloading the data to ``my_data/`` for 1) all tasks for network
+[STRING]_, using :term:`Embedding` as features, and the geneset collections (:term:`GSC`\s) [GO]_ and [DisGeNet]_ and 2) the full data.
 
 .. warning::
 
@@ -36,9 +38,9 @@ GSCs     [GO]_, [DisGeNet]_
 
 .. note::
 
-   :term:`Influence` (followed by :term:`Adjacency`) data takes a long time to
+   The :term:`Influence` and :term:`Adjacency` data representations take the longest time to
    download, from **~10 minutes** up to **an hour** dependeing on the download
-   speed. :term:`Embedding` feature data takes least amount of time to download
+   speed. The :term:`Embedding` data representation takes the least amount of time to download
    (within **a minute**).
 
 Auto download
@@ -60,8 +62,8 @@ download necessary data at initialization of the :class:`GenePlexus` object.
 Run the PyGenePlexus pipeline
 -----------------------------
 
-First, specify the input genes (can have mixed gene ID types, e.g., Entrez
-gene ID, gene Symbol)
+First, specify the input genes (can have mixed gene ID types, i.e. have any combination of Entrez
+IDs, Gene Symbols, or Ensembl IDs).
 
 .. code-block:: python
 
@@ -83,10 +85,10 @@ Next, run the pipline using the :class:`GenePlexus` object.
    # Load input genes and set up positives/negatives for training
    gp.load_genes(input_genes)
 
-   # Train logistic regression model and get genomewide gene predictions
+   # Train logistic regression model and get genome-wide gene predictions
    mdl_weights, df_probs, avgps = gp.fit_and_predict()
 
-   # Optionally, compute modle similarity against pretrained models for GO and DisGeNet
+   # Optionally, compute model similarity to models pretrained on GO and DisGeNet gene sets
    df_sim_GO, df_sim_Dis, weights_GO, weights_Dis = gp.make_sim_dfs()
 
    # Optionally, extract the subgraph induced by the top (50 by default) predicted genes

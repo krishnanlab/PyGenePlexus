@@ -21,3 +21,10 @@ References
    * Greene, C., Krishnan, A., Wong, A. *et al.* (2015) `Understanding multicellular function and disease with human tissue-specific networks <https://doi.org/10.1038/ng.3259>`_. *Nat Genet* 47, 569–576
 .. [node2vec]
    * Grover, A., Leskovec, J. (2016) `Node2vec: Scalable Feature Learning for Networks <https://doi.org/10.1145/2939672.2939754>`_. *KDD '16* 855–864
+.. [Huang]
+   * Huang, J.K. *et al.* (2018) `Systematic Evaluation of Molecular Networks for Discovery of Disease Genes <https://doi.org/10.1016/j.cels.2018.03.001>`_. *Cell Systems* 6 484–495
+.. [MyGeneInfo]
+   * Wu C, MacLeod I, Su AI* (2013) `BioGPS and MyGene.info: organizing online, gene-centric information <https://doi.org/10.1093/nar/gks1114>`_. *Nucl. Acids Res.* 43, D561-D565
+   * Xin J, et al.* (2016) `High-performance web services for querying gene and variant annotation <https://doi.org/10.1186/s13059-016-0953-9>`_. Genome Biology, 17, 1-7
+.. [DiseaseOntology]
+   * Schriml, L.M. et al.* (2019) `Human Disease Ontology 2018 update: classification, content and workflow expansion <https://doi.org/10.1093/nar/gky1032>`_. *Nucl. Acids Res.* 47 D955-D962

@@ -205,7 +205,7 @@ class GenePlexus:
         """Load gene list into the GenePlexus object.
 
         Note:
-            Implicitely convert genes to upper case.
+            Implicitely converts genes to upper case.
 
         """
         self.input_genes = [item.upper() for item in input_genes]
@@ -292,7 +292,7 @@ class GenePlexus:
         :attr:`GenePlexus.mdl_weights` (array of float)
             Trained model parameters.
         :attr:`GenePlexus.probs` (array of float)
-            Genome wide gene prediction scores. A high value indicates the
+            Genome-wide gene prediction scores. A high value indicates the
             relevance of the gene to the input gene list.
         :attr:`GenePlexus.avgps` (array of float)
             Cross validation results. Performance is measured using
@@ -332,16 +332,21 @@ class GenePlexus:
     def make_sim_dfs(self):
         """Compute similarities bewteen the input genes and GO or DisGeNet.
 
+        The similarities are compuared based on the model trained on the input
+        gene set and models pre-trained on known GO and DisGeNet gene sets.
+
         :attr:`GenePlexus.df_sim_GO` (DataFrame)
             A table with 4 columns: **ID** (the GO term ID), **Name** (name of
-            the GO temr), **Similarity** (similarity between the input gene
-            list and a GO term), **Rank** (rank of GO term similarity with the
-            input gene list).
+            the GO term), **Similarity** (similarity between the input model
+            and a model trained on the GO term gene set), **Rank** (rank of
+            similarity between the input model and a model trained on the GO
+            term gene set).
         :attr:`GenePlexus.df_sim_Dis` (DataFrame)
             A table with 4 columns: **ID** (the DO term ID), **Name** (name of
-            the DO temr), **Similarity** (similarity between the input gene
-            list and a DO term), **Rank** (rank of DO term similarity with the
-            input gene list).
+            the DO term), **Similarity** (similarity between the input model
+            and a model trained on the DO term gene set), **Rank** (rank of
+            similarity between the input model and a model trained on the DO
+            term gene set).
         :attr:`GenePlexus.weights_GO`
             Dictionary of pretrained model weights for GO. A key is a GO term,
             and the value is a dictionary with three keys: **Name** (name of
@@ -370,13 +375,13 @@ class GenePlexus:
             Table of edge list corresponding to the subgraph induced by the top
             predicted genes (in Entrez gene ID).
         :attr:`GenePlexus.isolated_genes` (List[str])
-            List of top predicted genes (in Entrez gene ID) are are isolated
+            List of top predicted genes (in Entrez gene ID) that are isolated
             from other top predicted genes in the network.
         :attr:`GenePlexus.df_edge_sym` (DataFrame)
             Table of edge list corresponding to the subgraph induced by the top
             predicted genes (in gene symbol).
         :attr:`GenePlexus.isolated_genes_sym` (List[str])
-            List of top predicted genes (in gene symbol) are are isolated from
+            List of top predicted genes (in gene symbol) that are isolated from
             other top predicted genes in the network.
 
         Args:
