@@ -24,18 +24,21 @@ toes (Table 3).
   :align: center
   :alt: My Text
 
-  Table 1: The caption for the probs figure
+  Table 1: Genome-wide predicted probabilities about genes associated with the
+  Bardet-Biedl syndrome.
 
 .. figure:: ../../figures/doid.png
   :scale: 65 %
   :align: center
   :alt: My Text
 
-  Table 2: The caption for the DOID figure
+  Table 2: Top diseases related to the Bardet-Biedl syndrome according to the
+  model similarity analysis.
 
 .. figure:: ../../figures/GO.png
   :scale: 90 %
   :align: center
   :alt: My Text
 
-  Table 3: The caption for the GO figure
+  Table 3: Top gene ontology terms related to the Bardet-Biedl syndrome
+  according to the model similarity analysis.
