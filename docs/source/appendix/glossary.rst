@@ -29,7 +29,7 @@ Glossary
 
    RWR
       Random walk with restart (RWR) is the process of iteratively walking on
-      the graph :math:`G` with some propability :math:`\beta \in (0, 1)` to
+      the graph :math:`G` with some propability :math:`\alpha \in (0, 1)` to
       restart, i.e., teleporting back to the starting node.
 
       More specifically, let :math:`P = A D^{-1}` be the random walk matrix
@@ -44,7 +44,7 @@ Glossary
 
       .. math::
 
-         y^{(t+1)} = \beta y^{(0)} + (1 - \beta) \text{PROP}(G, y^{(t)})
+         y^{(t+1)} = \alpha y^{(0)} + (1 - \alpha) \text{PROP}(G, y^{(t)})
 
       And the RWR distribution is taken as
       :math:`\hat y = \lim_{t \to \infty} y^{(t)}`
@@ -55,7 +55,7 @@ Glossary
 
       .. math::
 
-         F = \beta (I - (1 - \beta)P)^{-1}
+         F = \alpha (I - (1 - \alpha)P)^{-1}
 
       Then, given any initial heat distribution :math:`y^{(0)}`, the solution
       to the RWR is

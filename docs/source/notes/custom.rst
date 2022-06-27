@@ -41,7 +41,7 @@ set up the working files by
 
    # Create influence feature representation
    custom.edgelist_to_matrix("path/to/net.edg", "path/to/data",
-                             "your_net_name", "Influence", beta=0.85)
+                             "your_net_name", "Influence", alpha=0.85)
 
    # Set up GO GSC with a minimum gene set size of five
    custom.subset_gsc_to_network("path/to/data", "your_net_name", "GO",
