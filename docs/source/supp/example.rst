@@ -20,21 +20,21 @@ Bardet-Biedl syndrome 1 such as blindness, obesity and having extra fingers or
 toes (Table 3).
 
 .. figure:: ../../figures/probs.png
-  :scale: 50 %
+  :scale: 75 %
   :align: center
   :alt: My Text
 
   Table 1: The caption for the probs figure
 
 .. figure:: ../../figures/doid.png
-  :scale: 50 %
+  :scale: 65 %
   :align: center
   :alt: My Text
 
   Table 2: The caption for the DOID figure
 
 .. figure:: ../../figures/GO.png
-  :scale: 50 %
+  :scale: 90 %
   :align: center
   :alt: My Text
 

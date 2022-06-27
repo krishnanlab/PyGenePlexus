@@ -111,7 +111,7 @@ genes to use as negative examples in the machine learning model.
 
 .. figure:: ../../figures/gscs.png
   :scale: 50 %
-  :align: center
+  :align: left
   :alt: My Text
 
   Table S2. Information on the gene set collections. The last four columns
