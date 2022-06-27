@@ -45,7 +45,7 @@ def edgelist_to_matrix(
     data_dir: str,
     net_name: str,
     features: str,
-    beta: float = 0.85,
+    alpha: float = 0.85,
     sep: str = "\t",
     skiplines: int = 0,
 ):
@@ -60,13 +60,13 @@ def edgelist_to_matrix(
         data_dir: The directory to save the file
         net_name: The name of the network
         features: Features for the networks (Adjacency or Influence, All)
-        beta: Restart parameter.
+        alpha: Restart parameter.
         sep: The separation used in the edgelist file (default tab)
         skiplines: The number of lines to skip for header
 
     """
-    if beta < 0 or beta > 1:
-        raise ValueError(f"Restart parameter (beta) must be between 0 and 1, got {beta!r}")
+    if alpha < 0 or alpha > 1:
+        raise ValueError(f"Restart parameter (alpha) must be between 0 and 1, got {alpha!r}")
 
     # Load in the NodeOrder file and make node index map
     nodeorder_loc = osp.join(data_dir, f"NodeOrder_{net_name}.txt")
@@ -95,7 +95,7 @@ def edgelist_to_matrix(
         logger.info("Making the influence matrix")
         adj_mat_norm = adj_mat / adj_mat.sum(axis=0)
         id_mat = np.identity(len(nodelist))
-        F_mat = beta * np.linalg.inv(id_mat - (1 - beta) * adj_mat_norm)
+        F_mat = alpha * np.linalg.inv(id_mat - (1 - alpha) * adj_mat_norm)
 
     # Save the data
     logger.info("Saving the data")

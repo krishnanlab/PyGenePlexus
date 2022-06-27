@@ -85,28 +85,28 @@ can be found in :ref:`PyGenePlexus API`.
 log_level="INFO")
     >>> df_probs = gp.fit_and_predict()[1]
     >>> df_probs.iloc[:10]
-       Entrez  Symbol                                             Name  \
+        Entrez  Symbol                                             Name  \
 Probability Known/Novel Class-Label  Rank
-    0    8100   IFT88                      intraflagellar transport 88     \
-0.995987       Novel           U     1
-    1     585    BBS4                          Bardet-Biedl syndrome 4     \
-0.992910       Known           P     2
-    2  261734   NPHP4                                   nephrocystin 4     \
-0.990702       Novel           U     3
-    3   91147  TMEM67                         transmembrane protein 67     \
+    0     8100   IFT88                      intraflagellar transport 88     \
+0.995984       Novel           U     1
+    1      585    BBS4                          Bardet-Biedl syndrome 4     \
+0.992909       Known           P     2
+    2   261734   NPHP4                                   nephrocystin 4     \
+0.990705       Novel           U     3
+    3    91147  TMEM67                         transmembrane protein 67     \
 0.986072       Novel           U     4
-    4    9657   IQCB1                           IQ motif containing B1     \
-0.983370       Novel           U     5
-    5     582    BBS1                          Bardet-Biedl syndrome 1     \
-0.979291       Known           P     6
-    6  200894  ARL13B          ADP ribosylation factor like GTPase 13B     \
-0.977562       Novel           U     7
-    7    8481    OFD1  OFD1 centriole and centriolar satellite protein     \
-0.974285       Novel           U     8
-    8   80184  CEP290                          centrosomal protein 290     \
-0.963549       Known           P     9
-    9   54903    MKS1            MKS transition zone complex subunit 1     \
-0.960619       Known           P    10
+    4     9657   IQCB1                           IQ motif containing B1     \
+0.983366       Novel           U     5
+    5      582    BBS1                          Bardet-Biedl syndrome 1     \
+0.979287       Known           P     6
+    6   200894  ARL13B          ADP ribosylation factor like GTPase 13B     \
+0.977565       Novel           U     7
+    7     8481    OFD1  OFD1 centriole and centriolar satellite protein     \
+0.974288       Novel           U     8
+    8    80184  CEP290                          centrosomal protein 290     \
+0.963544       Known           P     9
+    9    54903    MKS1            MKS transition zone complex subunit 1     \
+0.960611       Known           P    10
 
 Supported networks
 ^^^^^^^^^^^^^^^^^^

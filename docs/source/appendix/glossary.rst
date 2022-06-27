@@ -29,22 +29,22 @@ Glossary
 
    RWR
       Random walk with restart (RWR) is the process of iteratively walking on
-      the graph :math:`G` with some propability :math:`\beta \in (0, 1)` to
+      the graph :math:`G` with some propability :math:`\alpha \in (0, 1)` to
       restart, i.e., teleporting back to the starting node.
 
-      More specifically, let :math:`P = A D^{-1}` be the random walk matrix
+      More specifically, let :math:`W_D = A D^{-1}` be the random walk matrix
       (column normalized), where :math:`D` is a diagonal matrix of node
       degrees: :math:`D_{i,i} = \text{deg}(i) = \sum_{j \in V} A_{i,j}`.
       Furthermore, let :math:`y \in \mathbb{R}^{|V|}` be a probability
       distribution of initial "heat" in each node. Then, the one hop random
-      walk (or propagation) is :math:`\text{PROP}(G, y) = P y`.
+      walk (or propagation) is :math:`\text{PROP}(G, y) = W_D y`.
 
       Finally, we can iteratively compute the random walk (or heat)
       distribution :math:`y^{(t+1)}` at :math:`t+1` step as
 
       .. math::
 
-         y^{(t+1)} = \beta y^{(0)} + (1 - \beta) \text{PROP}(G, y^{(t)})
+         y^{(t+1)} = \alpha y^{(0)} + (1 - \alpha) \text{PROP}(G, y^{(t)})
 
       And the RWR distribution is taken as
       :math:`\hat y = \lim_{t \to \infty} y^{(t)}`
@@ -55,7 +55,7 @@ Glossary
 
       .. math::
 
-         F = \beta (I - (1 - \beta)P)^{-1}
+         F = \alpha (I - (1 - \alpha)W_D)^{-1}
 
       Then, given any initial heat distribution :math:`y^{(0)}`, the solution
       to the RWR is
