@@ -1,13 +1,32 @@
+Methods
+=======
+
+ML Model
+--------
+
+In GenePlexus, the supervised machine learning model uses the connections of a
+user chosen genome-scale molecular network as feature vectors. As described
+above, these feature vectors can be one of three representations; Adjacency,
+Influence and Embedding. PyGenePlexus uses logistic regression with
+l2-regularization as the supervised learning algorithm and is implemented using
+the python package
+`scikit-learn <https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html>`_.
+After training a model using the labeled genes, the trained model is used to
+classify all the genes in the chosen network, returning a prediction
+probability for these genes that is bounded between 0 and 1. The regularization
+parameter is set to 1.0 ny default but can be changed by the user.
+
 Calulating Model Similarities
-=============================
+-----------------------------
+
 A unique feature of PyGenePlexus is proving some interpretation of the machine
 learning model trained on the user supplied gene set. This is done by comparing
 the weights of that trained model to the weights from thousands of other models
 pretrained on known gene sets of biological processes from [GO]_ and diseases
 from [DisGeNet]_.
 
-Section 6.1: Pre-training models
---------------------------------
+Pre-training models
++++++++++++++++++++
 The first step in this process is to train models for each known gene set. For
 each gene set in either GO or DisGenet collection a model is trained for every
 combination of network (BioGRID, STRING, STRING-EXP, GIANT-TN), feature type
@@ -33,8 +52,8 @@ selection method and target table. We note that this requires training over
 >10,000 machine learning models where a model can have up to 25,689 weights and
 use thousands of training examples.
 
-Section 6.2: Getting similarities to user trained model
--------------------------------------------------------
+Getting similarities to user trained model
+++++++++++++++++++++++++++++++++++++++++++
 After the user submits a job, a custom machine learning model is trained. Once
 trained, the GenePlexus web-server computes the cosine similarity of the
 weights from the user model to the weights of each term in the target table,
@@ -43,8 +62,8 @@ and :math:`w_{U}` are the weights of the user model. This vector :math:`q` is
 then appended as the last row of the corresponding correction matrix,
 :math:`C_{N+1,j}=q_{j}`. This is done separately for each target table.
 
-Section 6.3: Background correction
-----------------------------------
+Background correction
++++++++++++++++++++++
 The background correction is done in two parts. First, a z-score is calculated
 across all scores for the user genes, which is given by,
 

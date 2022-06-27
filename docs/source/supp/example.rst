@@ -1,5 +1,5 @@
-Illustrative Example
-====================
+Case study
+==========
 
 An example of biological insights achievable from PyGenePlexus can be
 illustrated by looking at genes associated with Bardet-Biedl syndrome 1 in the
