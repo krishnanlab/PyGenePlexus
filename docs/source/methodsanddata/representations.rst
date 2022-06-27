@@ -4,9 +4,9 @@ Network Representations
 We utilize three distinct representations of molecular networks: the adjacency matrix, an influence matrix, and low-dimensional node embeddings. Let :math:`G = (V,E,W)` denote an undirected molecular network, where :math:`V` is the set of vertices (genes), :math:`E` is the set of edges (associations between genes), and :math:`W` is the set of edge weights (the strengths of the associations). :math:`G` can be represented as a weighted adjacency matrix :math:`A_{i,j}=W_{i,j}`, where :math:`A{\in}R^{V{\times}V}`. :math:`G` can also be represented as an influence matrix, :math:`F{\in}R^{V{\times}V}`, which can capture both local and global structure of the network. :math:`F` was obtained using a random walk with restart transformation kernel,
 
 .. math::
-   F=\alpha[I-(1-\alpha)W_{D}]^{-1}
+   F = \alpha [I - (1 - \alpha) W_D]^{-1}
 
-where, :math:`\alpha` is the restart parameter, :math:`I` is the identity matrix, and :math:`W_{D}` is the degree weighted adjacency matrix given by :math:`W_{D}=AD^{-1}`, where :math:`D{\in}R^{V{\times}V}` is a diagonal matrix of node degrees. A restart parameter of 0.85 was used for every network.
+where, :math:`\alpha` is the restart parameter, :math:`I` is the identity matrix, and :math:`W_D` is the degree weighted adjacency matrix given by :math:`W_D = A D^{-1}`, where :math:`D{\in}R^{V{\times}V}` is a diagonal matrix of node degrees. A restart parameter of 0.85 was used for every network.
 
 :math:`G` can also be transformed into a low-dimensional representation through the process of node embedding. In this study we used the [node2vec]_ algorithm, which borrows ideas from the word2vec algorithm from natural language processing. The objective of *node2vec* is to find a low-dimensional representation of the adjacency matrix, :math:`E{\in}R^{V{\times}d}`, where :math:`d{\ll}V`. This is done by optimizing the following log-probability objective function:
 
