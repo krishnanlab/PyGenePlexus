@@ -11,7 +11,7 @@ where, :math:`\alpha` is the restart parameter, :math:`I` is the identity matrix
 :math:`G` can also be transformed into a low-dimensional representation through the process of node embedding. In this study we used the [node2vec]_ algorithm, which borrows ideas from the word2vec algorithm from natural language processing. The objective of *node2vec* is to find a low-dimensional representation of the adjacency matrix, :math:`E{\in}R^{V{\times}d}`, where :math:`d{\ll}V`. This is done by optimizing the following log-probability objective function:
 
 .. math::
-   E=\sum_{u{\in}V}{log(Pr(N_{s}(u)|e(u)))}
+   E = \arg\min_E \sum_{u{\in}V}{log(Pr(N_{s}(u)|e(u)))}
 
 where :math:`N_{s}(u)` is the network neighborhood of node :math:`u` generated through a sampling strategy :math:`S`, and :math:`e(u){\in}R^{d}` is the feature vector of node :math:`u`. In *node2vec*, the sampling strategy is based on random walks that are controlled using two parameters :math:`p` and :math:`q`, in which a high value of :math:`q` keeps the walk local (a breadth-first search), and a high value of :math:`p` encourages outward exploration (a depth-first search). The values of :math:`p` and :math:`q`  were both set to 0.1 for every network.
 
