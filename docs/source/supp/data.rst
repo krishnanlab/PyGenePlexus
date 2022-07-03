@@ -72,7 +72,7 @@ where :math:`d \ll |V|`. This is done by optimizing the following
 log-probability objective function:
 
 .. math::
-   E = \arg\min_E \sum_{u \in |V|}{log(Pr(N_{s}(u)|e(u)))}
+   E = \arg\max_E \sum_{u \in |V|}{log(Pr(N_{s}(u)|e(u)))}
 
 where :math:`N_{s}(u)` is the network neighborhood of node :math:`u` generated
 through a sampling strategy :math:`S`, and :math:`e(u) \in R^{d}` is the
