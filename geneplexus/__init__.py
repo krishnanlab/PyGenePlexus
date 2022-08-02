@@ -7,11 +7,11 @@ genes of interest based on their patterns of connectivity in genome-scale
 molecular interaction networks.
 
 .. figure:: ../figures/mainfigure.png
-  :scale: 30 %
+  :scale: 20 %
   :align: center
   :alt: My Text
 
-  Probably put Figure from the paper here?
+  Overview of PyGenePlexus
 
 Given a list of input genes and a geneset collection (:term:`GSC`) to help
 select negative examples, the package trains a logistic regression model
@@ -40,6 +40,8 @@ returning their network connectivity. :meth:`make_small_edgelist`
 <https://github.com/krishnanlab/GenePlexus>`_
     * `PyGenePlexus PyPi Package <https://pypi.org/project/geneplexus/>`_
     * `PyGenePlexus GitHub Repo <https://github.com/krishnanlab/PyGenePlexus>`_
+    * `PyGenePlexus Paper \
+<https://www.biorxiv.org/content/10.1101/2022.07.02.498552v1.abstract>`_
 
 Quick start
 -----------
