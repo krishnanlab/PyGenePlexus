@@ -1,7 +1,7 @@
 sphinx==5.1.1
 sphinx_rtd_theme==1.0.0
 sphinxcontrib-napoleon==0.7
-sphinx-autodoc-typehints==1.18.3
+sphinx-autodoc-typehints==1.19.2
 sphinx-copybutton==0.5.0
 pillow>=6.2.0
 numpy
