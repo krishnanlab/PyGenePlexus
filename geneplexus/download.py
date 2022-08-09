@@ -186,8 +186,10 @@ def _make_download_options_list(
 
     for i in opts:
         if i not in check_list:
-            raise ValueError(f"Unexpected {name}: {opts!r}")
-
+            raise ValueError(
+                f"Unexpected {name}: {opts!r} when downloading\n"
+                + "If using custom networks/GSCs turn auto_download off",
+            )
     return opts
 
 
