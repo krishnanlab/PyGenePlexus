@@ -56,7 +56,7 @@ def _make_validation_df(df_convert_out, file_loc):
     input_count = df_convert_out.shape[0]
     converted_genes = df_convert_out["Entrez ID"].to_numpy()
 
-    for anet in config.ALL_NETWORKS:
+    for anet in util.get_all_net_types(file_loc):
         net_genes = util.load_node_order(file_loc, anet)
         df_tmp = df_convert_out[df_convert_out["Entrez ID"].isin(net_genes)]
         pos_genes_in_net = np.intersect1d(converted_genes, net_genes)
