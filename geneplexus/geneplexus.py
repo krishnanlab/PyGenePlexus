@@ -1,6 +1,7 @@
 """GenePlexus API."""
 import os
 import os.path as osp
+import warnings
 from typing import Any
 from typing import Dict
 from typing import List
@@ -47,6 +48,7 @@ class GenePlexus:
 
         """
         set_stream_level(logger, log_level)
+        self._is_custom: bool = False
         self.file_loc = file_loc  # type: ignore
         self.features = features
         self.gsc = gsc
@@ -57,7 +59,12 @@ class GenePlexus:
 
         self.check_custom()
 
-        if self.auto_download:
+        if self.auto_download and self._is_custom:
+            warnings.warn(
+                f"Skipping auto download for custom network {self.net_type}. "
+                "Unset auto_download option to suppress this message.",
+            )
+        elif self.auto_download:
             download_select_data(
                 self.file_loc,
                 "All",
@@ -114,7 +121,6 @@ class GenePlexus:
 
     @net_type.setter
     def net_type(self, net_type: config.NET_TYPE):
-        self._standard_net_type = self._custom_net_type = None
         util.check_param("network", net_type, util.get_all_net_types(self.file_loc))
         if net_type not in config.ALL_NETWORKS:
             data_files = os.listdir(self.file_loc)
@@ -122,6 +128,7 @@ class GenePlexus:
             if node_order_fn not in data_files:
                 raise ValueError(f"Missing file {node_order_fn} for custom network {net_type}")
 
+            self._is_custom = True
             logger.info(f"Using custom network {net_type!r}")
 
         self._net_type = net_type
