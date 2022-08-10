@@ -67,7 +67,7 @@ class TestGenePlexusPipeline(unittest.TestCase):
         path = osp.join(pytest.ANSWERDIR, "df_convert_out.tsv")
         df_convert_out_expected = pd.read_csv(path, sep="\t")
         self.assertEqual(
-            df_convert_out.values.tolist(),
+            df_convert_out[df_convert_out_expected.columns].values.tolist(),
             df_convert_out_expected.values.tolist(),
         )
 
