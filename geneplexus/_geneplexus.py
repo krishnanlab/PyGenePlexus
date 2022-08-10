@@ -13,7 +13,6 @@ from sklearn.metrics import average_precision_score
 from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import StandardScaler
 
-from . import config
 from . import util
 from ._config import logger
 from ._config.config import DEFAULT_LOGREG_KWARGS
