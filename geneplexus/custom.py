@@ -126,7 +126,7 @@ def subset_gsc_to_network(
         max_size: Minimum geneset size.
 
     """
-    logger.info("Subsetting the GSC (this make take a few minutes)")
+    logger.info("Subsetting the GSC (this may take a few minutes)")
     # load in the NodeOrder file
     nodeorder_loc = osp.join(data_dir, f"NodeOrder_{net_name}.txt")
     nodelist = np.loadtxt(nodeorder_loc, dtype=str)
