@@ -86,6 +86,8 @@ def _download_file(file: str, data_dir: str, data_loc: str):
         myurl = "https://zenodo.org/record/6383205/files/"
     elif data_loc == "Azure":
         myurl = "https://pygeneplexusstacct.blob.core.windows.net/geneplexusblobzip/"
+    elif data_loc == "Wasabi":
+        myurl = "http://s3.us-east-2.wasabisys.com/geneplexus/v0.1dev/PyGenePlexusDataZip/"
     url = urljoin(myurl, f"{file}.zip")
     while True:
         with session.get(url) as r:
