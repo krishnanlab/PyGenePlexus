@@ -30,6 +30,7 @@ from ._config.config import NET_SELECTION_TYPE
 from ._config.config import NET_TYPE
 from ._config.config import TASK_SELECTION_TYPE
 from ._config.config import TASK_TYPE
+from ._config.config import URL_DICT
 from ._config.logger_util import file_handler_context
 from ._config.logger_util import stream_level_context
 from .exception import DownloadError
@@ -105,14 +106,7 @@ def _get_session() -> Session:
 def _download_file(file: str, data_dir: str, data_loc: str):
     session = _get_session()
 
-    # FIX: move url options to config
-    if data_loc == "Zenodo":
-        base_url = "https://zenodo.org/record/6383205/files/"
-    elif data_loc == "Azure":
-        base_url = "https://pygeneplexusstacct.blob.core.windows.net/geneplexusblobzip/"
-    elif data_loc == "Wasabi":
-        base_url = "http://s3.us-east-2.wasabisys.com/geneplexus/v0.1dev/PyGenePlexusDataZip/"
-    url = urljoin(base_url, f"{file}.zip")
+    url = urljoin(URL_DICT[data_loc], f"{file}.zip")
     logger.debug(f"Thread started: {url=}, {session=}")
 
     num_tries = 0

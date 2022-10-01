@@ -4,7 +4,7 @@ import pytest
 
 from geneplexus import download
 from geneplexus._config import logger
-from geneplexus._config.config import URL_DATA
+from geneplexus._config.config import URL_DICT
 from geneplexus._config.logger_util import log_level_context
 from geneplexus.exception import DownloadError
 
@@ -12,7 +12,7 @@ from geneplexus.exception import DownloadError
 @pytest.mark.usefixtures("data")
 def test_retries(requests_mock, tmpdir):
     for filename in pytest.FILENAMES:
-        requests_mock.get(urljoin(URL_DATA, f"{filename}.zip"), status_code=429)
+        requests_mock.get(urljoin(URL_DICT["Zenodo"], f"{filename}.zip"), status_code=429)
 
     with log_level_context(logger, "CRITICAL"):
         with pytest.raises(DownloadError) as excinfo:
