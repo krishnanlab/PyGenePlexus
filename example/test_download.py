@@ -54,7 +54,7 @@ if amount == "full":
         tasks="All",
         networks="All",
         features="All",
-        GSCs="All",
+        gscs="All",
         data_loc=data_loc,
     )
 
@@ -65,7 +65,7 @@ elif amount == "subset":
         tasks="All",
         networks="BioGRID",
         features="Embedding",
-        GSCs="GO",
+        gscs="GO",
         data_loc=data_loc,
     )
 
