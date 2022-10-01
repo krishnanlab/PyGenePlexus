@@ -1,41 +1,16 @@
 import os.path as osp
+import shutil
+import tempfile
 import unittest
 
 import pandas as pd
 import pytest
+import yaml
 
 import geneplexus
 
 
-FILENAMES = [
-    "CorrectionMatrix_DisGeNet_DisGeNet_BioGRID_Embedding.npy",
-    "CorrectionMatrix_DisGeNet_GO_BioGRID_Embedding.npy",
-    "CorrectionMatrix_GO_DisGeNet_BioGRID_Embedding.npy",
-    "CorrectionMatrix_GO_GO_BioGRID_Embedding.npy",
-    "CorrectionMatrixOrder_DisGeNet_BioGRID.txt",
-    "CorrectionMatrixOrder_GO_BioGRID.txt",
-    "Data_Embedding_BioGRID.npy",
-    "Edgelist_BioGRID.edg",
-    "GSC_DisGeNet_BioGRID_GoodSets.json",
-    "GSC_DisGeNet_BioGRID_universe.txt",
-    "GSC_GO_BioGRID_GoodSets.json",
-    "GSC_GO_BioGRID_universe.txt",
-    "IDconversion_Homo-sapiens_ENSG-to-Entrez.json",
-    "IDconversion_Homo-sapiens_ENSP-to-Entrez.json",
-    "IDconversion_Homo-sapiens_ENST-to-Entrez.json",
-    "IDconversion_Homo-sapiens_Entrez-to-ENSG.json",
-    "IDconversion_Homo-sapiens_Entrez-to-Name.json",
-    "IDconversion_Homo-sapiens_Entrez-to-Symbol.json",
-    "IDconversion_Homo-sapiens_Symbol-to-Entrez.json",
-    "NodeOrder_BioGRID.txt",
-    "NodeOrder_GIANT-TN.txt",
-    "NodeOrder_STRING-EXP.txt",
-    "NodeOrder_STRING.txt",
-    "PreTrainedWeights_DisGeNet_BioGRID_Embedding.json",
-    "PreTrainedWeights_GO_BioGRID_Embedding.json",
-]
-
-
+@pytest.mark.usefixtures("data")
 def test_download_exist(caplog):
     geneplexus.download.download_select_data(
         pytest.DATADIR,
@@ -43,6 +18,7 @@ def test_download_exist(caplog):
         "BioGRID",
         "Embedding",
         ["GO", "DisGeNet"],
+        log_level="DEBUG",
     )
     assert "File exists, skipping download:" in caplog.text
 
@@ -51,24 +27,39 @@ def test_download_exist(caplog):
 class TestGenePlexusPipeline(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.gp = geneplexus.GenePlexus(None, "BioGRID", "Embedding", "GO")
+        cls.gp = geneplexus.GenePlexus(pytest.DATADIR, "BioGRID", "Embedding", "GO")
+        cls.tmpdir = tempfile.mkdtemp()
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.tmpdir)
 
     @pytest.mark.order(0)
     def test_filenames(self):
-        for filename in FILENAMES:
-            self.assertTrue(osp.isfile(osp.join(pytest.DATADIR, filename)))
+        for filename in pytest.FILENAMES:
+            with self.subTest(filename=filename):
+                self.assertTrue(osp.isfile(osp.join(pytest.DATADIR, filename)))
 
     @pytest.mark.order(1)
     def test_init_geneplexus(self):
-        self.gp.file_loc = pytest.DATADIR
-        input_path = osp.join(pytest.HOMEDIR, "example", "input_genes.txt")
-        input_genes = geneplexus.util.read_gene_list(input_path)
-        self.gp.load_genes(input_genes)
+        input_genes = geneplexus.util.read_gene_list(pytest.GENELIST_PATH)
+        self.gp._load_genes(input_genes)
         self.assertEqual(self.gp.input_genes, input_genes)
 
     @pytest.mark.order(2)
+    def test_dump_config(self):
+        self.gp.dump_config(self.tmpdir)
+        with open(osp.join(pytest.ANSWERDIR, "config.yaml"), "r") as f1, open(
+            osp.join(self.tmpdir, "config.yaml"),
+            "r",
+        ) as f2:
+            cfg1, cfg2 = yaml.load(f1, yaml.Loader), yaml.load(f2, yaml.Loader)
+        for param in ["net_type", "features", "gsc", "log_level", "auto_download", "input_genes"]:
+            self.assertEqual(cfg1[param], cfg2[param])
+
+    @pytest.mark.order(2)
     def test_convert_to_entrez(self):
-        self.gp.convert_to_Entrez()
+        self.gp._convert_to_entrez()
         df_convert_out = self.gp.df_convert_out.copy()
         columns = ["Original ID", "Entrez ID"]
         df_convert_out[columns] = df_convert_out[columns].astype(int)
@@ -76,13 +67,13 @@ class TestGenePlexusPipeline(unittest.TestCase):
         path = osp.join(pytest.ANSWERDIR, "df_convert_out.tsv")
         df_convert_out_expected = pd.read_csv(path, sep="\t")
         self.assertEqual(
-            df_convert_out.values.tolist(),
+            df_convert_out[df_convert_out_expected.columns].values.tolist(),
             df_convert_out_expected.values.tolist(),
         )
 
     @pytest.mark.order(3)
     def test_get_pos_and_neg_genes(self):
-        self.gp.get_pos_and_neg_genes()
+        self.gp._get_pos_and_neg_genes()
 
     @pytest.mark.order(4)
     def test_fit_and_predict(self):
@@ -190,6 +181,47 @@ class TestGenePlexusPipeline(unittest.TestCase):
             df_convert_out_subset.values.tolist(),
             df_convert_out_subset_expected.values.tolist(),
         )
+
+
+NET_TEST_PAIRS = [
+    ("BioGRID", True),
+    ("STRING", True),
+    ("STRING-EXP", True),
+    ("GIANT-TN", True),
+    ("GiANT-TN", False),
+    ("TRiNG", False),
+]
+FEATURE_TEST_PAIRS = [
+    ("Adjacency", True),
+    ("Embedding", True),
+    ("Influence", True),
+    ("adjd", False),
+    ("randomStufF", False),
+]
+GSC_TEST_PAIRS = [
+    ("GO", True),
+    ("DisGeNet", True),
+    ("gO", False),
+    ("CrAzyStuff", False),
+]
+
+
+@pytest.mark.parametrize("gsc,gsc_correct", GSC_TEST_PAIRS)
+@pytest.mark.parametrize("features,features_correct", FEATURE_TEST_PAIRS)
+@pytest.mark.parametrize("net_type,net_correct", NET_TEST_PAIRS)
+def test_geneplexus_param(
+    net_type,
+    net_correct,
+    features,
+    features_correct,
+    gsc,
+    gsc_correct,
+):
+    if net_correct and features_correct and gsc_correct:
+        geneplexus.GenePlexus(net_type=net_type, features=features, gsc=gsc)
+    else:
+        with pytest.raises(ValueError):
+            geneplexus.GenePlexus(net_type=net_type, features=features, gsc=gsc)
 
 
 if __name__ == "__main__":

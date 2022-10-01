@@ -1,14 +1,19 @@
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6383205.svg)](https://doi.org/10.5281/zenodo.6383205)
-[![Documentation Status](https://readthedocs.org/projects/pygeneplexus/badge/?version=main)](https://pygeneplexus.readthedocs.io/en/main/?badge=main)
 [![Tests](https://github.com/krishnanlab/PyGenePlexus/actions/workflows/tests.yml/badge.svg)](https://github.com/krishnanlab/PyGenePlexus/actions/workflows/tests.yml)
+[![Documentation Status](https://readthedocs.org/projects/pygeneplexus/badge/?version=main)](https://pygeneplexus.readthedocs.io/en/main/?badge=main)
+[![PyPI](https://img.shields.io/pypi/v/geneplexus)](https://pypi.org/project/geneplexus/)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/geneplexus)
+[![License: CC BY 4.0](https://img.shields.io/badge/License-CC_BY_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-# GeneplexusPublic
+# PyGeneplexus
 
 A Python package of the GenePlexus analysis pipeline.
 
 * The [GenePlexus paper](https://academic.oup.com/bioinformatics/article/36/11/3457/5780279)
 * The [repository](https://github.com/krishnanlab/GenePlexus) for reproducing the experiments
 * The [webserver](https://www.geneplexus.net/)
+* [Documentation](https://pygeneplexus.readthedocs.io)
+* Data [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6383205.svg)](https://doi.org/10.5281/zenodo.6383205)
 
 # Quick start
 
@@ -17,7 +22,7 @@ A Python package of the GenePlexus analysis pipeline.
 Install the ``GenePlexus`` package via ``pip``.
 
 ```bash
-pip install .
+pip install geneplexus
 ```
 
 ## Run GenePlexus pipline
@@ -29,40 +34,43 @@ See `example/example_run.py` for example usage of the API.
 ### Command-line interface
 
 ```bash
-geneplexus --input_file example/input_genes.txt --output_dir result/ --daat_dir data/
+geneplexus --input_file example/input_genes.txt --output_dir example_result
 ```
 
-Full options (check out with ``geneplexus --help``)
+Full CLI options (check out with ``geneplexus --help``)
 
 ```txt
 Run the GenePlexus pipline on a input gene list.
 
 optional arguments:
   -h, --help            show this help message and exit
-  --input_file INPUT_FILE
-                        Input gene list (.txt) file (one gene per line).
-                        (default: None)
-  --gene_list_delimiter GENE_LIST_DELIMITER
-                        Delimiter used in the gene list. Use 'newline' if the
-                        genes are separated by new line, and use 'tab' if the
-                        genes are seperate by tabs. Other generic separator are
-                        also supported, e.g. ', '. (default: , )
-  --network {BioGRID,STRING,STRING-EXP,GIANT-TN}
-                        Network to use for generating features.
-                        (default: BioGRID)
-  --feature {Adjacency,Embedding,Influence}
-                        Types of feature to use. (default: Embedding)
-  --GSC {GO,DisGeNet}   Geneset collection used to generate negatives and the
-                        model similarities. (default: GO)
-  --small_edgelist_num_nodes SMALL_EDGELIST_NUM_NODES
+  -i , --input_file     Input gene list (.txt) file (one gene per line). (default: None)
+  -d , --gene_list_delimiter
+                        Delimiter used in the gene list. Use 'newline' if the genes are separated
+                        by new line, and use 'tab' if the genes are seperate by tabs. Other
+                        generic separator are also supported, e.g. ', '. (default: newline)
+  -n , --network        Network to use. {format_choices(config.ALL_NETWORKS)} (default: STRING)
+  -f , --feature        Types of feature to use. The choices are: {Adjacency, Embedding,
+                        Influence} (default: Embedding)
+  -g , --gsc            Geneset collection used to generate negatives and the modelsimilarities.
+                        The choices are: {GO, DisGeNet} (default: GO)
+  -s , --small_edgelist_num_nodes
                         Number of nodes in the small edgelist. (default: 50)
-  --data_dir DATA_DIR   Directory in which the data are stored.
-                        (default: data/)
-  --output_dir OUTPUT_DIR
-                        Output directory with respect to the repo root
-                        directory. (default: result/)
-  --zip_output          If set, then compress the output directory into a Tar
-                        Gz file. (default: False)
+  -dd , --data_dir      Directory in which the data are stored, if set to None, then use the
+                        default data directory ~/.data/geneplexus (default: None)
+  -od , --output_dir    Output directory with respect to the repo root directory. (default:
+                        result/)
+  -l , --log_level      Logging level. The choices are: {CRITICAL, ERROR, WARNING, INFO, DEBUG}
+                        (default: INFO)
+  -q, --quiet           Suppress log messages (same as setting log_level to CRITICAL). (default:
+                        False)
+  -z, --zip-output      If set, then compress the output directory into a Zip file. (default:
+                        False)
+  --clear-data          Clear data directory and exit. (default: False)
+  --overwrite           Overwrite existing result directory if set. (default: False)
+  --skip-mdl-sim        Skip model similarity computation. This computation is not yet available
+                        when using custom networks due to the lack of pretrained models for
+                        comparison. (default: False)
 ```
 
 # Dev

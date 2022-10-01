@@ -13,13 +13,12 @@ from sklearn.metrics import average_precision_score
 from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import StandardScaler
 
-from . import config
 from . import util
 from ._config import logger
 from ._config.config import DEFAULT_LOGREG_KWARGS
 
 
-def _initial_ID_convert(input_genes, file_loc):
+def _initial_id_convert(input_genes, file_loc):
     # load all the possible conversion dictionaries
     convert_types = ["ENSG", "Symbol", "ENSP", "ENST"]
     all_convert_dict = {}
@@ -28,18 +27,18 @@ def _initial_ID_convert(input_genes, file_loc):
         all_convert_dict[anIDtype] = convert_tmp
 
     # make some place holder arrays
-    convert_IDs = []  # This will be a flat list for Entrez IDs to use as positives
+    convert_ids = []  # This will be a flat list for Entrez IDs to use as positives
     convert_out = []  # This will be a list of lists that will be used to tell user the conversions made
     for agene in input_genes:
         try:
             agene_int = int(agene)
             convert_out.append([agene_int, agene_int])
-            convert_IDs.append(agene_int)
+            convert_ids.append(agene_int)
         except ValueError:
             converted_gene: Optional[str] = None
             for anIDtype in convert_types:
                 if agene in all_convert_dict[anIDtype]:
-                    convert_IDs.extend(all_convert_dict[anIDtype][agene])
+                    convert_ids.extend(all_convert_dict[anIDtype][agene])
                     converted_gene = ", ".join(all_convert_dict[anIDtype][agene])
                     logger.debug(f"Found mapping ({anIDtype}) {agene} -> {all_convert_dict[anIDtype][agene]}")
                     break
@@ -48,7 +47,7 @@ def _initial_ID_convert(input_genes, file_loc):
     column_names = ["Original ID", "Entrez ID"]
     df_convert_out = pd.DataFrame(convert_out, columns=column_names).astype(str)
 
-    return convert_IDs, df_convert_out
+    return convert_ids, df_convert_out
 
 
 def _make_validation_df(df_convert_out, file_loc):
@@ -56,7 +55,7 @@ def _make_validation_df(df_convert_out, file_loc):
     input_count = df_convert_out.shape[0]
     converted_genes = df_convert_out["Entrez ID"].to_numpy()
 
-    for anet in config.ALL_NETWORKS:
+    for anet in util.get_all_net_types(file_loc):
         net_genes = util.load_node_order(file_loc, anet)
         df_tmp = df_convert_out[df_convert_out["Entrez ID"].isin(net_genes)]
         pos_genes_in_net = np.intersect1d(converted_genes, net_genes)
@@ -69,17 +68,17 @@ def _make_validation_df(df_convert_out, file_loc):
     return df_convert_out, table_summary, input_count
 
 
-def _get_genes_in_network(file_loc, net_type, convert_IDs):
+def _get_genes_in_network(file_loc, net_type, convert_ids):
     net_genes = util.load_node_order(file_loc, net_type)
-    convert_IDs_array = np.array(convert_IDs, dtype=str)
-    pos_genes_in_net = np.intersect1d(convert_IDs_array, net_genes)
-    genes_not_in_net = np.setdiff1d(convert_IDs_array, net_genes)
+    convert_ids = np.array(convert_ids, dtype=str)
+    pos_genes_in_net = np.intersect1d(convert_ids, net_genes)
+    genes_not_in_net = np.setdiff1d(convert_ids, net_genes)
     return pos_genes_in_net, genes_not_in_net, net_genes
 
 
-def _get_negatives(file_loc, net_type, GSC, pos_genes_in_net):
-    uni_genes = util.load_genes_universe(file_loc, GSC, net_type)
-    good_sets = util.load_gsc(file_loc, GSC, net_type)
+def _get_negatives(file_loc, net_type, gsc, pos_genes_in_net):
+    uni_genes = util.load_genes_universe(file_loc, gsc, net_type)
+    good_sets = util.load_gsc(file_loc, gsc, net_type)
     M = len(uni_genes)
     N = len(pos_genes_in_net)
     genes_to_remove = pos_genes_in_net
@@ -93,7 +92,7 @@ def _get_negatives(file_loc, net_type, GSC, pos_genes_in_net):
     return negative_genes
 
 
-def _run_SL(
+def _run_sl(
     file_loc,
     net_type,
     features,
@@ -101,6 +100,11 @@ def _run_SL(
     negative_genes,
     net_genes,
     logreg_kwargs: Optional[Dict[str, Any]] = None,
+    min_num_pos: int = 15,
+    num_folds: int = 3,
+    null_val: float = -10,
+    random_state: Optional[int] = 0,
+    cross_validate: bool = True,
 ):
     if logreg_kwargs is None:
         logreg_kwargs = DEFAULT_LOGREG_KWARGS
@@ -120,15 +124,19 @@ def _run_SL(
     mdl_weights = np.squeeze(clf.coef_)
     probs = clf.predict_proba(data)[:, 1]
 
-    if len(pos_genes_in_net) < 15:
+    avgps = [null_val] * num_folds
+    if not cross_validate:
+        logger.info("Skipping cross validation.")
+    elif len(pos_genes_in_net) < min_num_pos:
         logger.warning(
-            "Not enough genes supplied for cross validation ({len(pos_genes_in_net)}), skipping cross validation.",
+            "Insufficient number of positive genes for cross validation: "
+            f"{len(pos_genes_in_net)} ({min_num_pos} needed). Skipping cross "
+            f"validation and fill with null values {null_val}",
         )
-        avgps = [-10, -10, -10]
     else:
+        logger.info("Performing cross validation.")
         avgps = []
-        n_folds = 3
-        skf = StratifiedKFold(n_splits=n_folds, shuffle=True, random_state=None)
+        skf = StratifiedKFold(n_splits=num_folds, shuffle=True, random_state=random_state)
         for trn_inds, tst_inds in skf.split(Xdata, ydata):
             clf_cv = LogisticRegression(**logreg_kwargs)
             clf_cv.fit(Xdata[trn_inds], ydata[trn_inds])
@@ -166,12 +174,12 @@ def _make_prob_df(file_loc, net_genes, probs, pos_genes_in_net, negative_genes):
         columns=["Entrez", "Symbol", "Name", "Probability", "Known/Novel", "Class-Label"],
     )
     df_probs = df_probs.astype({"Entrez": str, "Probability": float})
-    df_probs = df_probs.sort_values(by=["Probability"], ascending=False)
+    df_probs = df_probs.sort_values(by=["Probability"], ascending=False).reset_index(drop=True)
     df_probs["Rank"] = rankdata(1 / (df_probs["Probability"].to_numpy() + 1e-9), method="min")
     return df_probs
 
 
-def _make_sim_dfs(file_loc, mdl_weights, GSC, net_type, features):
+def _make_sim_dfs(file_loc, mdl_weights, gsc, net_type, features):
     dfs_out = []
     for target_set in ["GO", "DisGeNet"]:
         weights_dict = util.load_pretrained_weights(file_loc, target_set, net_type, features)
@@ -180,7 +188,7 @@ def _make_sim_dfs(file_loc, mdl_weights, GSC, net_type, features):
         if target_set == "DisGeNet":
             weights_dict_Dis = weights_dict
         order = util.load_correction_order(file_loc, target_set, net_type)
-        cor_mat = util.load_correction_mat(file_loc, GSC, target_set, net_type, features)
+        cor_mat = util.load_correction_mat(file_loc, gsc, target_set, net_type, features)
         add_row = np.zeros((1, len(order)))
         for idx, aset in enumerate(order):
             cos_sim = 1 - cosine(weights_dict[aset]["Weights"], mdl_weights)
@@ -189,7 +197,7 @@ def _make_sim_dfs(file_loc, mdl_weights, GSC, net_type, features):
         last_row = cor_mat[-1, :]
         zq = np.maximum(0, (last_row - np.mean(last_row)) / np.std(last_row))
         zs = np.maximum(0, (last_row - np.mean(cor_mat, axis=0)) / np.std(cor_mat, axis=0))
-        z = np.sqrt(zq ** 2 + zs ** 2)
+        z = np.sqrt(zq**2 + zs**2)
         results_tmp = []
         for idx2, termID_tmp in enumerate(order):
             ID_tmp = termID_tmp
@@ -217,7 +225,7 @@ def _make_small_edgelist(file_loc, df_probs, net_type, num_nodes=50):
     df_edge = df_edge.astype({"Node1": str, "Node2": str})
 
     # Take subgraph induced by top genes
-    top_genes = df_probs["Entrez"].to_numpy()[0:num_nodes]
+    top_genes = df_probs["Entrez"].to_numpy()[:num_nodes]
     df_edge = df_edge[(df_edge["Node1"].isin(top_genes)) & (df_edge["Node2"].isin(top_genes))]
     genes_in_edge = np.union1d(df_edge["Node1"].unique(), df_edge["Node2"].unique())
     isolated_genes = np.setdiff1d(top_genes, genes_in_edge).tolist()

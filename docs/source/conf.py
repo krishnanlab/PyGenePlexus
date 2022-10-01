@@ -18,11 +18,11 @@ sys.path.insert(0, os.path.abspath('../..'))
 # -- Project information -----------------------------------------------------
 
 project = 'PyGenePlexus'
-copyright = '2022, Remy Liu and Christopher A. Mancuso'
+copyright = '2022, Krishnan Laboratory at Michigan State University'
 author = 'Remy Liu and Christopher A. Mancuso'
 
 # The full version, including alpha/beta/rc tags
-release = '0.0.0'
+release = '1.0.0'
 
 
 # -- General configuration ---------------------------------------------------
@@ -38,6 +38,8 @@ extensions = [
     'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
     'sphinxcontrib.napoleon',
+    'sphinx_copybutton',
+    'sphinx.ext.autosectionlabel',
 ]
 
 intersphinx_mapping = {
@@ -61,7 +63,7 @@ exclude_patterns = []
 
 # -- Napoleon settings -------------------------------------------------------
 
-napoleon_include_init_with_doc = True
+napoleon_include_init_with_doc = False
 
 
 # -- Options for HTML output -------------------------------------------------

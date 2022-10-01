@@ -11,9 +11,13 @@ from typing import Union
 
 import numpy as np
 
+MAX_RETRY = 10  # maximum number of retries for downloading
+
 URL_DATA = "https://zenodo.org/record/6383205/files/"
 CONFIG_PATH = pathlib.Path(__file__).parent.absolute()
 DATA_FILENAMES_PATH = osp.join(CONFIG_PATH, "data_filenames.txt")
+
+LOG_LEVELS = ["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"]
 
 ALL_TASKS = ["IDconversion", "MachineLearning", "Similarities", "NetworkGraph", "OriginalGSCs"]
 ALL_NETWORKS = ["BioGRID", "STRING", "STRING-EXP", "GIANT-TN"]
@@ -46,10 +50,10 @@ NET_TYPE = Literal["BioGRID", "STRING", "STRING-EXP", "GIANT-TN"]
 FEATURE_TYPE = Literal["Adjacency", "Embedding", "Influence"]
 GSC_TYPE = Literal["GO", "DisGeNet"]
 
-TASK_SELECTION_TYPE = Union[Literal["All"], List[TASK_TYPE]]
-NET_SELECTION_TYPE = Union[Literal["All"], List[NET_TYPE]]
-FEATURE_SELECTION_TYPE = Union[Literal["All"], List[FEATURE_TYPE]]
-GSC_SELECTION_TYPE = Union[Literal["All"], List[GSC_TYPE]]
+TASK_SELECTION_TYPE = Union[Literal["All"], TASK_TYPE, List[TASK_TYPE]]
+NET_SELECTION_TYPE = Union[Literal["All"], NET_TYPE, List[NET_TYPE]]
+FEATURE_SELECTION_TYPE = Union[Literal["All"], FEATURE_TYPE, List[FEATURE_TYPE]]
+GSC_SELECTION_TYPE = Union[Literal["All"], GSC_TYPE, List[GSC_TYPE]]
 
 ID_CONVERSION_MAP_TYPE = Dict[str, List[str]]
 GSC_DATA_TYPE = Dict[str, Dict[Literal["Name", "Genes"], Union[str, np.ndarray]]]

@@ -1,6 +1,9 @@
 """Utilities including file and path handling."""
+import functools
 import json
+import os
 import os.path as osp
+from threading import Thread
 from typing import Any
 from typing import Dict
 from typing import Generator
@@ -11,6 +14,98 @@ from typing import Optional
 import numpy as np
 
 from . import config
+
+
+def get_all_gscs(file_loc: Optional[str]) -> List[str]:
+    """Return list of GSCs found in the data directory.
+
+    Note:
+        Only the full GSC is checked (starts with ``GSCOriginal``), but not the
+        network specific ones (goodsets and universe).
+
+    """
+    all_gscs = set(config.ALL_GSCS)
+    if file_loc:
+        all_gscs.update(
+            [
+                i.split("GSCOriginal_")[1].split(".json")[0]
+                for i in os.listdir(file_loc)
+                if i.startswith("GSCOriginal_")
+            ],
+        )
+    return sorted(all_gscs)
+
+
+def get_all_net_types(file_loc: Optional[str]) -> List[str]:
+    """Return list of networks found in the data directory.
+
+    Note:
+        Only the node ordering files are checked (starts with ``NodeOrder``).
+
+    """
+    all_net_types = set(config.ALL_NETWORKS)
+    if file_loc:
+        all_net_types.update(
+            [i.split("NodeOrder_")[1].split(".txt")[0] for i in os.listdir(file_loc) if i.startswith("NodeOrder_")],
+        )
+    return sorted(all_net_types)
+
+
+def timeout(timeout: int, msg: str = ""):
+    """Timeout decorator using thread join timeout.
+
+    Args:
+        timeout: Max function execution time in seconds.
+
+    """
+
+    def decorate(func, /):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            res = [TimeoutError(f"({timeout=}) {msg}")]
+
+            def wraped_func():
+                try:
+                    res[0] = func(*args, **kwargs)
+                except Exception as e:
+                    res[0] = e
+
+            t = Thread(target=wraped_func)
+            t.daemon = True
+            t.start()
+            t.join(timeout)
+
+            ret = res[0]
+            if isinstance(ret, BaseException):
+                print("")
+                raise ret
+
+            return ret
+
+        return wrapper
+
+    return decorate
+
+
+def check_param(name: str, value: Any, expected: List[Any], /):
+    """Check parameter specified and raise ValueError for unexpected value."""
+    if value not in expected:
+        raise ValueError(
+            f"Unexpected {name} {value!r}, available choices are {expected}",
+        )
+
+
+def normexpand(path: str, create: bool = True) -> str:
+    """Normalize then expand path and optionally create dir."""
+    new_path = osp.abspath(osp.normpath(osp.expanduser(path)))
+    if create:
+        os.makedirs(new_path, exist_ok=True)
+    return new_path
+
+
+def format_choices(choices: List[str]) -> str:
+    """Convert list of str to choices format."""
+    return f"The choices are: {{{', '.join(choices)}}}"
 
 
 def mapgene(gene: str, entrez_to_other: Dict[str, List[str]]) -> str:
@@ -59,13 +154,13 @@ def check_file(path: str):
 
 def read_gene_list(
     path: str,
-    sep: Optional[str] = ", ",
+    sep: Optional[str] = "newline",
 ) -> List[str]:
     """Read gene list from flie.
 
     Args:
         path: Path to the input gene list file.
-        sep: Seperator between genes (default: ", ").
+        sep: Seperator between genes (default: "newline").
 
     """
     if sep == "newline":
@@ -117,7 +212,7 @@ def load_geneid_conversion(
 
 def load_gsc(
     file_loc: str,
-    GSC: config.GSC_TYPE,
+    gsc: config.GSC_TYPE,
     net_type: config.NET_TYPE,
 ) -> config.GSC_DATA_TYPE:
     """Load gene set collection dictionary.
@@ -128,7 +223,7 @@ def load_gsc(
         net_type: Network used.
 
     """
-    file_name = f"GSC_{GSC}_{net_type}_GoodSets.json"
+    file_name = f"GSC_{gsc}_{net_type}_GoodSets.json"
     return _load_json_file(file_loc, file_name)
 
 
@@ -189,18 +284,18 @@ def load_node_order(file_loc: str, net_type: config.NET_TYPE) -> np.ndarray:
 
 def load_genes_universe(
     file_loc: str,
-    GSC: config.GSC_TYPE,
+    gsc: config.GSC_TYPE,
     net_type: config.NET_TYPE,
 ) -> np.ndarray:
     """Load gene universe a given network and GSC.
 
     Args:
         file_loc: Location of data files.
-        GSC: Gene set collection.
+        gsc: Gene set collection.
         net_type: Network used.
 
     """
-    file_name = f"GSC_{GSC}_{net_type}_universe.txt"
+    file_name = f"GSC_{gsc}_{net_type}_universe.txt"
     return _load_np_file(file_loc, file_name, load_method="txt")
 
 
@@ -240,7 +335,7 @@ def load_correction_order(
 
 def load_correction_mat(
     file_loc: str,
-    GSC: config.GSC_TYPE,
+    gsc: config.GSC_TYPE,
     target_set: config.GSC_TYPE,
     net_type: config.NET_TYPE,
     features: config.FEATURE_TYPE,
@@ -249,11 +344,11 @@ def load_correction_mat(
 
     Args:
         file_loc: Location of data files.
-        GSC: Gene set collection.
+        gsc: Gene set collection.
         target_set: Target gene set collection.
         net_type: Network used.
         features: Type of features used.
 
     """
-    file_name = f"CorrectionMatrix_{GSC}_{target_set}_{net_type}_{features}.npy"
+    file_name = f"CorrectionMatrix_{gsc}_{target_set}_{net_type}_{features}.npy"
     return _load_np_file(file_loc, file_name, load_method="npy")

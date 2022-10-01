@@ -24,10 +24,16 @@ from ._config.config import FEATURE_SELECTION_TYPE
 from ._config.config import FEATURE_TYPE
 from ._config.config import GSC_SELECTION_TYPE
 from ._config.config import GSC_TYPE
+from ._config.config import LOG_LEVEL_TYPE
+from ._config.config import MAX_RETRY
 from ._config.config import NET_SELECTION_TYPE
 from ._config.config import NET_TYPE
 from ._config.config import TASK_SELECTION_TYPE
 from ._config.config import TASK_TYPE
+from ._config.config import URL_DATA
+from ._config.logger_util import file_handler_context
+from ._config.logger_util import stream_level_context
+from .exception import DownloadError
 
 thread_local = local()
 
@@ -37,9 +43,11 @@ def download_select_data(
     tasks: TASK_SELECTION_TYPE = "All",
     networks: NET_SELECTION_TYPE = "All",
     features: FEATURE_SELECTION_TYPE = "All",
-    GSCs: GSC_SELECTION_TYPE = "All",
+    gscs: GSC_SELECTION_TYPE = "All",
     data_loc: str = "Azure",
     n_jobs: int = 10,
+    retry: bool = True,
+    log_level: LOG_LEVEL_TYPE = "INFO",
 ):
     """Select subset of data to download.
 
@@ -51,82 +59,130 @@ def download_select_data(
             all the networks if set to "All".
         features: Network features of interest, accept multiple selection as a
             list. Do all the features if set to "All".
-        GSCs: Gene set collection of interest, accept multiple selection as a
+        gscs: Gene set collection of interest, accept multiple selection as a
             list. Do all the GSC if set to "All".
         n_jobs: Number of concurrent downloading threads.
+        retry: If set to True, then retry downloading any missing file.
 
     """
     # Similarities and NetworkGraph will assume downloaded MachineLearning
-    tasks, networks, features, GSCs = make_download_options_lists(tasks, networks, features, GSCs)
+    tasks, networks, features, gscs = make_download_options_lists(tasks, networks, features, gscs)
     all_files_to_do = []
     for atask in tasks:
         if atask == "IDconversion":
-            all_files_to_do.extend(get_IDconversion_filenames())
+            all_files_to_do.extend(get_id_conversion_filenames())
         if atask == "MachineLearning":
-            all_files_to_do.extend(get_MachineLearning_filenames(networks, features, GSCs))
+            all_files_to_do.extend(get_machine_learning_filenames(networks, features, gscs))
         if atask == "Similarities":
-            all_files_to_do.extend(get_Similarities_filenames(networks, features, GSCs))
+            all_files_to_do.extend(get_similarities_filenames(networks, features, gscs))
         if atask == "NetworkGraph":
-            all_files_to_do.extend(get_NetworkGraph_filenames(networks))
+            all_files_to_do.extend(get_network_filenames(networks))
         if atask == "OriginalGSCs":
-            all_files_to_do.extend(get_OriginalGSCs_filenames())
+            all_files_to_do.extend(get_original_gscs_filenames())
 
-    all_files_to_do = list(set(all_files_to_do))
-    download_from_url(data_dir, all_files_to_do,data_loc,n_jobs)
+    with stream_level_context(logger, log_level):
+        if features != ["Embedding"]:
+            logger.warn(
+                f"Downloading data type {features!r} may take a while (~10min "
+                "to an hour depending on the downloadspeed)",
+            )
+        files_to_download = _get_files_to_download(data_dir, list(set(all_files_to_do)))
+        if len(files_to_download) > 0:
+            log_path = osp.join(data_dir, "download.log")
+            logger.info(f"Total number of files to download: {len(files_to_download)}")
+            logger.info(f"Start downloading data and saving to: {data_dir}")
+            with file_handler_context(logger, log_path, "DEBUG"):
+                _download_from_url(data_dir, files_to_download, n_jobs, retry)
+            logger.info("Download completed.")
+
 
 def _get_session() -> Session:
     if not hasattr(thread_local, "session"):
         thread_local.session = requests.Session()
+        logger.debug(f"Acquired thread local session {thread_local.session!r}")
     return thread_local.session
 
 
 def _download_file(file: str, data_dir: str, data_loc: str):
     session = _get_session()
+
+    # FIX: move url options to config
     if data_loc == "Zenodo":
-        myurl = "https://zenodo.org/record/6383205/files/"
+        base_url = "https://zenodo.org/record/6383205/files/"
     elif data_loc == "Azure":
-        myurl = "https://pygeneplexusstacct.blob.core.windows.net/geneplexusblobzip/"
+        base_url = "https://pygeneplexusstacct.blob.core.windows.net/geneplexusblobzip/"
     elif data_loc == "Wasabi":
-        myurl = "http://s3.us-east-2.wasabisys.com/geneplexus/v0.1dev/PyGenePlexusDataZip/"
-    url = urljoin(myurl, f"{file}.zip")
-    while True:
+        base_url = "http://s3.us-east-2.wasabisys.com/geneplexus/v0.1dev/PyGenePlexusDataZip/"
+    url = urljoin(base_url, f"{file}.zip")
+    logger.debug(f"Thread started: {url=}, {session=}")
+    num_tries = 1
+    while num_tries <= MAX_RETRY:
         with session.get(url) as r:
             if r.ok:
+                logger.debug(f"Response ok ({r!r}): {url=}")
                 ZipFile(io.BytesIO(r.content)).extractall(data_dir)
                 break
             elif r.status_code == 429:  # Retry later
                 t = r.headers["Retry-after"]
                 logger.warning(f"Too many requests, waiting for {t} sec")
                 time.sleep(int(t))
+                num_tries += 1
+                continue
             else:
                 raise requests.exceptions.RequestException(r, url)
+        logger.critical("Session context closed, this should never happen!")
+    else:
+        raise DownloadError(f"Failed to download from {url} ({MAX_RETRY=})")
     logger.info(f"Downloaded {file}")
 
 
-def _get_files_to_download(data_dir: str, files: List[str]) -> List[str]:
+def _get_files_to_download(
+    data_dir: str,
+    files: List[str],
+    silent: bool = False,
+) -> List[str]:
     files_to_download = []
     for file in files:
         path = osp.join(data_dir, file)
         if osp.exists(path):
-            logger.info(f"File exists, skipping download: {path}")
+            if not silent:
+                logger.debug(f"File exists, skipping download: {path}")
         else:
             files_to_download.append(file)
     return files_to_download
 
 
-def download_from_url(data_dir: str, files_to_do: List[str], data_loc: str, n_jobs: int = 10):
+def _download_from_url(
+    data_dir: str,
+    files_to_do: List[str],
+    data_loc: str,
+    n_jobs: int = 10,
+    retry: bool = True,
+    retry_count: int = 0,
+):
     """Download file using the base url.
 
     Args:
         data_dir: Location of data files.
         files_to_do: List of files to download from the the url.
         n_jobs: Number of concurrent downloading threads.
+        retry: If set to True, then retry downloading any missing file.
+        retry_count: (DO NOT MODIFY) Counting the number of retries.
 
     """
-    files_to_download = _get_files_to_download(data_dir, files_to_do)
-    logger.info(f"Total number of files to download: {len(files_to_download)}")
     with ThreadPoolExecutor(max_workers=n_jobs) as executor:
         executor.map(_download_file, files_to_download, repeat(data_dir), repeat(data_loc))
+
+    missed_files = _get_files_to_download(data_dir, files_to_do, silent=True)
+    if missed_files and retry:
+        if retry_count >= MAX_RETRY:
+            raise DownloadError(f"Failed to download all required files ({MAX_RETRY=})")
+        missed = "".join(f"\n\t{i}" for i in missed_files)
+        logger.warning(
+            f"Failed to download the following files, retrying...{missed}",
+        )
+        _download_from_url(data_dir, missed_files, n_jobs, True, retry_count + 1)
+>>>>>>> main
 
 
 def _make_download_options_list(
@@ -150,19 +206,19 @@ def make_download_options_lists(
     tasks: TASK_SELECTION_TYPE,
     networks: NET_SELECTION_TYPE,
     features: FEATURE_SELECTION_TYPE,
-    GSCs: GSC_SELECTION_TYPE,
+    gscs: GSC_SELECTION_TYPE,
 ) -> Tuple[List[TASK_TYPE], List[NET_TYPE], List[FEATURE_TYPE], List[GSC_TYPE]]:
     """Compile a list of files to download based on the selections."""
     args = (
         ("tasks", tasks, ALL_TASKS),
         ("network", networks, ALL_NETWORKS),
         ("feature", features, ALL_FEATURES),
-        ("GSC", GSCs, ALL_GSCS),
+        ("gsc", gscs, ALL_GSCS),
     )
     return tuple(map(_make_download_options_list, *zip(*args)))  # type: ignore
 
 
-def get_IDconversion_filenames() -> List[str]:
+def get_id_conversion_filenames() -> List[str]:
     """Get gene ID conversion file names."""
     files_to_do = []
     for line in util.get_all_filenames():
@@ -171,10 +227,10 @@ def get_IDconversion_filenames() -> List[str]:
     return files_to_do
 
 
-def get_MachineLearning_filenames(
+def get_machine_learning_filenames(
     networks: List[NET_TYPE],
     features: List[FEATURE_TYPE],
-    GSCs: List[GSC_TYPE],
+    gscs: List[GSC_TYPE],
 ) -> List[str]:
     """Get dataset file names."""
     files_to_do = []
@@ -185,8 +241,8 @@ def get_MachineLearning_filenames(
                 files_to_do.append(line)
         if ("universe.txt" in line) or ("GoodSets.json" in line):
             net_tmp = line.split("_")[2]
-            GSC_tmp = line.split("_")[1]
-            if (net_tmp in networks) and (GSC_tmp in GSCs):
+            gsc_tmp = line.split("_")[1]
+            if (net_tmp in networks) and (gsc_tmp in gscs):
                 files_to_do.append(line)
         if "Data_" in line:
             feature_tmp = line.split("_")[1]
@@ -198,10 +254,10 @@ def get_MachineLearning_filenames(
     return files_to_do
 
 
-def get_Similarities_filenames(
+def get_similarities_filenames(
     networks: List[NET_TYPE],
     features: List[FEATURE_TYPE],
-    GSCs: List[GSC_TYPE],
+    gscs: List[GSC_TYPE],
 ) -> List[str]:
     """Get pretrained model similarity file names."""
     files_to_do = []
@@ -209,13 +265,13 @@ def get_Similarities_filenames(
         if "CorrectionMatrix_" in line:
             feature_tmp = osp.splitext(line.split("_")[-1])[0]
             net_tmp = line.split("_")[3]
-            GSC_tmp = line.split("_")[1]
-            if (net_tmp in networks) and (feature_tmp in features) and (GSC_tmp in GSCs):
+            gsc_tmp = line.split("_")[1]
+            if (net_tmp in networks) and (feature_tmp in features) and (gsc_tmp in gscs):
                 files_to_do.append(line)
         if "CorrectionMatrixOrder" in line:
-            GSC_tmp = line.split("_")[1]
+            gsc_tmp = line.split("_")[1]
             net_tmp = osp.splitext(line.split("_")[2])[0]
-            if (net_tmp in networks) and (GSC_tmp in GSCs):
+            if (net_tmp in networks) and (gsc_tmp in gscs):
                 files_to_do.append(line)
         if "PreTrainedWeights" in line:
             net_tmp = line.split("_")[2]
@@ -225,7 +281,7 @@ def get_Similarities_filenames(
     return files_to_do
 
 
-def get_NetworkGraph_filenames(networks: List[NET_TYPE]) -> List[str]:
+def get_network_filenames(networks: List[NET_TYPE]) -> List[str]:
     """Get network file names."""
     files_to_do = ["IDconversion_Homo-sapiens_Entrez-to-Symbol.json"]
     for line in util.get_all_filenames():
@@ -236,7 +292,7 @@ def get_NetworkGraph_filenames(networks: List[NET_TYPE]) -> List[str]:
     return files_to_do
 
 
-def get_OriginalGSCs_filenames() -> List[str]:
+def get_original_gscs_filenames() -> List[str]:
     """Get original GSC file names."""
     files_to_do = []
     for line in util.get_all_filenames():

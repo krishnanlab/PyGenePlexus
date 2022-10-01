@@ -1,57 +1,4 @@
-"""Helper functions for setting up custom networks and GSCs.
-
-PyGenePlexus provides helper functions for setting up the necessary files in
-order to run the pipeline using a custom network. The required files are:
-
-``NodeOrder_{your_net_name}.txt`` Network node ordering
-    A text file with a single column containing all genes present in the
-    network. The ordering of nodes in this file serves as the index map for the
-    adjacency matrix.
-``Data_{feature_type}_{your_net_name}.npy`` Network feature data
-    The feature representing your network. Currently supported are
-    :term:`Adjacency` and :term:`Influence`.
-``GSC_{gsc_type}_{your_net_name}_GoodSets.json`` Filtered GSC for the network
-    A subsetted :term:`GSC` where only the genes present in the network are
-    considered. After the intersection, any gene set with size larger than
-    ``max_size`` or smaller than ``min_size`` is discarded.
-``GSC_{gsc_type}_{your_net_name}_universe.txt`` Common genes in GSC and the\
-    network
-    All the genes that are present both in the network and in the :term:`GSC`.
-
-Example:
-    Suppose you have an :term:`edgelist` file located at ``path/to/net.edg``
-    that represents your network (named ``your_net_name``) of interest. And
-    your working data files are located at ``path/to/data/``. You need to first
-    set up the working files by
-
-    .. code-block:: python
-
-        from geneplexus import custom
-        from geneplexus import GenePlexus
-
-        custom.edgelist_to_node("path/to/net.edg", "path/to/data",
-                                "your_net_name")
-
-        # Set up adjacency feature
-        custom.edgelist_to_matrix("path/to/net.edg", "path/to/data",
-                                  "your_net_name", "Adjacency")
-
-        # Alternatively, set up influence feature
-        custom.edgelist_to_matrix("path/to/net.edg", "path/to/data",
-                                  "your_net_name", "Influence", beta=0.85)
-
-        # Set up GO GSC with a minimum gene set size of five
-        custom.subset_GSC_to_network("path/to/data", "your_net_name", "GO",
-                                     min_size=5)
-
-        # Finally, run the GenePlexus pipeline using your network
-        gp = GenePlexus("path/to/data/", "your_net_name", "Adjacency", "GO")
-        ...
-
-Note:
-    The custom network setup above only needs obe done once.
-
-"""
+"""Helper functions for setting up custom networks and GSCs."""
 import json
 import os.path as osp
 
@@ -68,6 +15,9 @@ def edgelist_to_nodeorder(
     skiplines: int = 0,
 ):
     """Convert :term:`edgelist` to node order.
+
+    The node order (NodeOrder) file is used to map gene IDs to rows in the data
+    repsentation matrix.
 
     Args:
         edgelist_loc: Location of the edgelist
@@ -95,24 +45,28 @@ def edgelist_to_matrix(
     data_dir: str,
     net_name: str,
     features: str,
-    beta: float = 0.85,
+    alpha: float = 0.85,
     sep: str = "\t",
     skiplines: int = 0,
 ):
-    """Convert :term:`edgelist` to adjacency matrix.
+    """Convert :term:`edgelist` to an adjacency matrix or influence matrix.
+
+    Note:
+        The NodeOrder file needs to be a single column text file. If not
+        supplying custom GSC, the file needs to be in Entrez ID space.
 
     Args:
         edgelist_loc: Location of the edgelist
         data_dir: The directory to save the file
         net_name: The name of the network
         features: Features for the networks (Adjacency or Influence, All)
-        beta: Restart parameter.
+        alpha: Restart parameter.
         sep: The separation used in the edgelist file (default tab)
         skiplines: The number of lines to skip for header
 
     """
-    if beta < 0 or beta > 1:
-        raise ValueError(f"Restart parameter (beta) must be between 0 and 1, got {beta!r}")
+    if alpha < 0 or alpha > 1:
+        raise ValueError(f"Restart parameter (alpha) must be between 0 and 1, got {alpha!r}")
 
     # Load in the NodeOrder file and make node index map
     nodeorder_loc = osp.join(data_dir, f"NodeOrder_{net_name}.txt")
@@ -141,7 +95,7 @@ def edgelist_to_matrix(
         logger.info("Making the influence matrix")
         adj_mat_norm = adj_mat / adj_mat.sum(axis=0)
         id_mat = np.identity(len(nodelist))
-        F_mat = beta * np.linalg.inv(id_mat - (1 - beta) * adj_mat_norm)
+        F_mat = alpha * np.linalg.inv(id_mat - (1 - alpha) * adj_mat_norm)
 
     # Save the data
     logger.info("Saving the data")
@@ -151,26 +105,23 @@ def edgelist_to_matrix(
         np.save(osp.join(data_dir, f"Data_Influence_{net_name}.npy"), F_mat)
 
 
-def subset_GSC_to_network(
+def subset_gsc_to_network(
     data_dir: str,
     net_name: str,
-    GSC_name: str,
+    gsc_name: str,
     max_size: int = 200,
     min_size: int = 10,
 ):
-    """Subset :term:`GSC` using network genes.
+    """Subset :term:`GSC` to only include genes in the network.
 
     Note:
         Use the :meth:`geneplexus.download.download_select_data` function to
         get the preprocessed GO and DisGeNet files first.
 
-        The NodeOrder file needs to be a single column text file. If not
-        supplying custom GSC, the file needs to be in Entrez ID space.
-
     Args:
         data_dir: The directory to save the file
         net_name: The name of the network
-        GSC_name: The name of the GSC
+        gsc_name: The name of the GSC
         max_size: Maximum geneset size.
         max_size: Minimum geneset size.
 
@@ -180,18 +131,18 @@ def subset_GSC_to_network(
     nodeorder_loc = osp.join(data_dir, f"NodeOrder_{net_name}.txt")
     nodelist = np.loadtxt(nodeorder_loc, dtype=str)
     # load the orginal GSC
-    with open(osp.join(data_dir, f"GSCOriginal_{GSC_name}.json"), "r") as handle:
-        GSCorg = json.load(handle)
+    with open(osp.join(data_dir, f"GSCOriginal_{gsc_name}.json"), "r") as handle:
+        gsc_orig = json.load(handle)
     # subset GSc based on network
     universe_genes = np.array([])
-    GSCsubset = {}
-    for akey in GSCorg:
-        org_genes = GSCorg[akey]["Genes"]
+    gsc_subset = {}
+    for akey in gsc_orig:
+        org_genes = gsc_orig[akey]["Genes"]
         genes_tmp = np.intersect1d(nodelist, org_genes)
         if (len(genes_tmp) <= max_size) and (len(genes_tmp) >= min_size):
-            GSCsubset[akey] = {"Name": GSCorg[akey]["Name"], "Genes": genes_tmp.tolist()}
+            gsc_subset[akey] = {"Name": gsc_orig[akey]["Name"], "Genes": genes_tmp.tolist()}
             universe_genes = np.union1d(universe_genes, genes_tmp)
     logger.info("Saving the data")
-    with open(osp.join(data_dir, f"GSC_{GSC_name}_{net_name}_GoodSets.json"), "w") as f:
-        json.dump(GSCsubset, f, ensure_ascii=False, indent=4)
-    np.savetxt(osp.join(data_dir, f"GSC_{GSC_name}_{net_name}_universe.txt"), universe_genes, fmt="%s")
+    with open(osp.join(data_dir, f"GSC_{gsc_name}_{net_name}_GoodSets.json"), "w") as f:
+        json.dump(gsc_subset, f, ensure_ascii=False, indent=4)
+    np.savetxt(osp.join(data_dir, f"GSC_{gsc_name}_{net_name}_universe.txt"), universe_genes, fmt="%s")
