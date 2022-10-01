@@ -30,7 +30,6 @@ from ._config.config import NET_SELECTION_TYPE
 from ._config.config import NET_TYPE
 from ._config.config import TASK_SELECTION_TYPE
 from ._config.config import TASK_TYPE
-from ._config.config import URL_DATA
 from ._config.logger_util import file_handler_context
 from ._config.logger_util import stream_level_context
 from .exception import DownloadError
@@ -44,7 +43,7 @@ def download_select_data(
     networks: NET_SELECTION_TYPE = "All",
     features: FEATURE_SELECTION_TYPE = "All",
     gscs: GSC_SELECTION_TYPE = "All",
-    data_loc: str = "Azure",
+    data_loc: str = "Zenodo",
     n_jobs: int = 10,
     retry: bool = True,
     log_level: LOG_LEVEL_TYPE = "INFO",
@@ -92,7 +91,7 @@ def download_select_data(
             logger.info(f"Total number of files to download: {len(files_to_download)}")
             logger.info(f"Start downloading data and saving to: {data_dir}")
             with file_handler_context(logger, log_path, "DEBUG"):
-                _download_from_url(data_dir, files_to_download, n_jobs, retry)
+                _download_from_url(data_dir, files_to_download, data_loc, n_jobs, retry)
             logger.info("Download completed.")
 
 
@@ -171,18 +170,17 @@ def _download_from_url(
 
     """
     with ThreadPoolExecutor(max_workers=n_jobs) as executor:
-        executor.map(_download_file, files_to_download, repeat(data_dir), repeat(data_loc))
+        executor.map(_download_file, files_to_do, repeat(data_dir), repeat(data_loc))
 
-    missed_files = _get_files_to_download(data_dir, files_to_do, silent=True)
-    if missed_files and retry:
+    missed = _get_files_to_download(data_dir, files_to_do, silent=True)
+    if missed and retry:
         if retry_count >= MAX_RETRY:
             raise DownloadError(f"Failed to download all required files ({MAX_RETRY=})")
-        missed = "".join(f"\n\t{i}" for i in missed_files)
+        missed_str = "".join(f"\n\t{i}" for i in missed)
         logger.warning(
-            f"Failed to download the following files, retrying...{missed}",
+            f"Failed to download the following files, retrying...{missed_str}",
         )
-        _download_from_url(data_dir, missed_files, n_jobs, True, retry_count + 1)
->>>>>>> main
+        _download_from_url(data_dir, missed, data_loc, n_jobs, True, retry_count + 1)
 
 
 def _make_download_options_list(
