@@ -4,4 +4,4 @@ pytest-cov==3.0.0
 pytest-order==1.0.1
 parameterized==0.8.1
 requests-mock==1.9.3
-pytest-mock==3.8.2
+pytest-mock==3.9.0
