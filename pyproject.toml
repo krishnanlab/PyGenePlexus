@@ -9,3 +9,6 @@ follow_imports = "skip"
 [tool.pytest.ini_options]
 minversion = "6.0"
 addopts = "-x --cov=geneplexus"
+testpaths = [
+    "test",
+]
