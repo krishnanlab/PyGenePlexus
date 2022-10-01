@@ -1,5 +1,3 @@
-import shutil
-import tempfile
 from urllib.parse import urljoin
 
 import pytest
@@ -18,5 +16,5 @@ def test_retries(requests_mock, tmpdir):
 
     with log_level_context(logger, "CRITICAL"):
         with pytest.raises(DownloadError) as excinfo:
-            download._download_from_url(tmpdir, pytest.FILENAMES)
+            download._download_from_url(tmpdir, pytest.FILENAMES, "Zenodo")
     assert str(excinfo.value) == "Failed to download all required files (MAX_RETRY=10)"

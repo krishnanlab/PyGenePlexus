@@ -114,8 +114,10 @@ def _download_file(file: str, data_dir: str, data_loc: str):
         base_url = "http://s3.us-east-2.wasabisys.com/geneplexus/v0.1dev/PyGenePlexusDataZip/"
     url = urljoin(base_url, f"{file}.zip")
     logger.debug(f"Thread started: {url=}, {session=}")
-    num_tries = 1
+
+    num_tries = 0
     while num_tries <= MAX_RETRY:
+        num_tries += 1
         with session.get(url) as r:
             if r.ok:
                 logger.debug(f"Response ok ({r!r}): {url=}")
@@ -125,7 +127,6 @@ def _download_file(file: str, data_dir: str, data_loc: str):
                 t = r.headers["Retry-after"]
                 logger.warning(f"Too many requests, waiting for {t} sec")
                 time.sleep(int(t))
-                num_tries += 1
                 continue
             else:
                 raise requests.exceptions.RequestException(r, url)
