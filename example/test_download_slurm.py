@@ -28,7 +28,7 @@ for idx, ajob in enumerate(jobs_final):
     mylist.append("#SBATCH --nodes=1")
     mylist.append("#SBATCH --cpus-per-task=1")
     mylist.append("#SBATCH --mem=50G")
-    mylist.append("#SBATCH --job-name=%s-%s-%s" % (ajob[0], ajob[1], ajob[2]))
+    mylist.append("#SBATCH --job-name={}-{}-{}".format(ajob[0], ajob[1], ajob[2]))
     mylist.append("#SBATCH --account=mancuso")
     mylist.append("#SBATCH --output=%sslurm-%%x-%%j.out" % slurm_dir)
     mylist.append("cd")
@@ -42,11 +42,11 @@ for idx, ajob in enumerate(jobs_final):
     mylist.append("which python")
     mylist.append(f"python test_download.py -data_loc {ajob[0]} -amount {ajob[1]} -dirname {ajob[2]}")
 
-    with open(slurm_dir + "%s-%s-%s.sb" % (ajob[0], ajob[1], ajob[2]), "w") as thefile:
+    with open(slurm_dir + "{}-{}-{}.sb".format(ajob[0], ajob[1], ajob[2]), "w") as thefile:
         for item in mylist:
             thefile.write("%s\n" % item)
 
-    os.system("sbatch " + slurm_dir + "%s-%s-%s.sb" % (ajob[0], ajob[1], ajob[2]))
+    os.system("sbatch " + slurm_dir + "{}-{}-{}.sb".format(ajob[0], ajob[1], ajob[2]))
 
     p1 = Popen(["squeue", "-u", "mancus16"], stdout=PIPE)
     p2 = Popen(["wc", "-l"], stdin=p1.stdout, stdout=PIPE)
