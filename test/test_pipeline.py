@@ -49,9 +49,8 @@ class TestGenePlexusPipeline(unittest.TestCase):
     @pytest.mark.order(2)
     def test_dump_config(self):
         self.gp.dump_config(self.tmpdir)
-        with open(osp.join(pytest.ANSWERDIR, "config.yaml"), "r") as f1, open(
+        with open(osp.join(pytest.ANSWERDIR, "config.yaml")) as f1, open(
             osp.join(self.tmpdir, "config.yaml"),
-            "r",
         ) as f2:
             cfg1, cfg2 = yaml.load(f1, yaml.Loader), yaml.load(f2, yaml.Loader)
         for param in ["net_type", "features", "gsc", "log_level", "auto_download", "input_genes"]:

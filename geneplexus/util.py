@@ -133,7 +133,7 @@ def mapgene(gene: str, entrez_to_other: Dict[str, List[str]]) -> str:
 
 def get_all_filenames() -> Generator[str, None, None]:
     """Iterate over filenames."""
-    with open(config.DATA_FILENAMES_PATH, "r") as f:
+    with open(config.DATA_FILENAMES_PATH) as f:
         for line in f:
             yield line.strip()
 
@@ -167,7 +167,7 @@ def read_gene_list(
         sep = None
     elif sep == "tab":
         sep = "\t"
-    return [gene.strip("'") for gene in open(path, "r").read().split(sep)]
+    return [gene.strip("'") for gene in open(path).read().split(sep)]
 
 
 def _load_json_file(file_loc: str, file_name: str) -> Dict[str, Any]:
