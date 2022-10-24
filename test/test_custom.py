@@ -87,7 +87,7 @@ class TestCustom(unittest.TestCase):
             min_size=6,
         )
 
-        with open(self.gsc_path, "r") as f:
+        with open(self.gsc_path) as f:
             goodsets = json.load(f)
 
         self.assertEqual(

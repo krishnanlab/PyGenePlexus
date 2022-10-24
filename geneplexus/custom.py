@@ -28,7 +28,7 @@ def edgelist_to_nodeorder(
 
     """
     logger.info("Making the NodeOrder File")
-    with open(edgelist_loc, "r") as f:
+    with open(edgelist_loc) as f:
         nodeset = set()
         for idx, line in enumerate(f):
             if idx - skiplines < 0:
@@ -76,7 +76,7 @@ def edgelist_to_matrix(
     # Make adjacency matrix
     logger.info("Making the adjacency matrix")
     adj_mat = np.zeros((len(nodelist), len(nodelist)), dtype=float)
-    with open(edgelist_loc, "r") as f:
+    with open(edgelist_loc) as f:
         for idx, line in enumerate(f):
             if idx - skiplines < 0:
                 continue
@@ -131,7 +131,7 @@ def subset_gsc_to_network(
     nodeorder_loc = osp.join(data_dir, f"NodeOrder_{net_name}.txt")
     nodelist = np.loadtxt(nodeorder_loc, dtype=str)
     # load the orginal GSC
-    with open(osp.join(data_dir, f"GSCOriginal_{gsc_name}.json"), "r") as handle:
+    with open(osp.join(data_dir, f"GSCOriginal_{gsc_name}.json")) as handle:
         gsc_orig = json.load(handle)
     # subset GSc based on network
     universe_genes = np.array([])
