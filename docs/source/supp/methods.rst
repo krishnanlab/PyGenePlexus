@@ -16,8 +16,8 @@ classify all the genes in the chosen network, returning a prediction
 probability for these genes that is bounded between 0 and 1. The regularization
 parameter is set to 1.0 ny default but can be changed by the user.
 
-Calulating Model Similarities
------------------------------
+Calculating Model Similarities
+------------------------------
 
 A unique feature of PyGenePlexus is proving some interpretation of the machine
 learning model trained on the user supplied gene set. This is done by comparing

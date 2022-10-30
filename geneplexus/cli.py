@@ -55,7 +55,7 @@ def parse_args() -> argparse.Namespace:
         "--network",
         default="STRING",
         metavar="",
-        help="Network to use. {format_choices(config.ALL_NETWORKS)}",
+        help=f"Network to use. {format_choices(config.ALL_NETWORKS)}",
     )
 
     parser.add_argument(
