@@ -20,7 +20,7 @@ from .util import read_gene_list
 
 os.environ["COLUMNS"] = "100"  # for CLI help page wrap line
 
-TMP_LOG_PATH = tempfile.mkstemp(suffix="_run.log")[1]
+TMP_LOG_FP, TMP_LOG_PATH = tempfile.mkstemp(suffix="_run.log")
 FILE_HANDLER = attach_file_handler(logger, log_path=TMP_LOG_PATH)
 
 
@@ -206,8 +206,11 @@ def save_results(gp, outdir, zip_output, overwrite, skip_mdl_sim):
 
     # Dump config, close file handler and move run log to result directory
     gp.dump_config(outdir)
-    shutil.move(TMP_LOG_PATH, osp.join(outdir, "run.log"))
     logger.removeHandler(FILE_HANDLER)
+    FILE_HANDLER.flush()
+    FILE_HANDLER.close()
+    os.close(TMP_LOG_FP)  # https://stackoverflow.com/a/60357401
+    shutil.move(TMP_LOG_PATH, osp.join(outdir, "run.log"))
 
     # Optionally zip the result directory
     if zip_output:
