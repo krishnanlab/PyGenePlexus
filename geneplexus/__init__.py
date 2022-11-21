@@ -20,6 +20,12 @@ using one of three network derived features (:term:`adjacency`,
 
 #. Genome-wide prediction of how **functionally similar** a gene is  to the \
 input gene list. See :meth:`fit_and_predict`
+#. Evaluation of the model is provided by performing k-fold cross validation. \
+The default is 3-fold cross validation when a minimum of 15 input genes \
+are supplied. These parameters can be changed when accessing \
+the Python class. PyGenePlexus does not enforce a minimum or maximum number \
+of genes, and we note evaluations of the model were carried out for gene sets \
+ranging between 5 and 500 genes.
 #. (Optional) Interpretability of the model is provided by comparing the \
 model trained on the user gene set to models pretrained on 1000's of known \
 gene sets from [GO]_ bioloigcal proceses and [DisGeNet]_ diseases. See \
