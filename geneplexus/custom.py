@@ -123,7 +123,7 @@ def subset_gsc_to_network(
         net_name: The name of the network
         gsc_name: The name of the GSC
         max_size: Maximum geneset size.
-        max_size: Minimum geneset size.
+        min_size: Minimum geneset size.
 
     """
     logger.info("Subsetting the GSC (this may take a few minutes)")
