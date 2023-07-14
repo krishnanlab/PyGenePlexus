@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-# PyGeneplexus [![DOI](https://zenodo.org/badge/423591778.svg)](https://zenodo.org/badge/latestdoi/423591778)
+# PyGenePlexus [![DOI](https://zenodo.org/badge/423591778.svg)](https://zenodo.org/badge/latestdoi/423591778)
 
 A Python package of the GenePlexus analysis pipeline.
 
