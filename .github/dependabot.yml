@@ -11,3 +11,7 @@ updates:
       interval: "daily"
     ignore:
       - dependency-name: "sphinx"
+      - dependency-name: "sphinx_rtd_theme"
+      - dependency-name: "sphinxcontrib-napoleon"
+      - dependency-name: "sphinx-copybutton"
+      - dependency-name: "sphinx-autodoc-typehints"
