@@ -63,6 +63,8 @@ class GenePlexus:
             warnings.warn(
                 f"Skipping auto download for custom network {self.net_type}. "
                 "Unset auto_download option to suppress this message.",
+                UserWarning,
+                stacklevel=2,
             )
         elif self.auto_download:
             download_select_data(
