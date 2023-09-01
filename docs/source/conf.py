@@ -37,7 +37,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
-    'sphinxcontrib.napoleon',
+    'sphinx.ext.napoleon',
     'sphinx_copybutton',
     'sphinx.ext.autosectionlabel',
 ]
