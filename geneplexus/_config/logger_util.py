@@ -60,7 +60,7 @@ def file_handler_context(
 def set_stream_level(logger: logging.Logger, log_level: LOG_LEVEL_TYPE):
     """Set the levels of stream handlers of a logger."""
     for handler in logger.handlers:
-        if type(handler) == logging.StreamHandler:
+        if isinstance(handler, logging.StreamHandler):
             handler.setLevel(logging.getLevelName(log_level))
 
 
@@ -69,7 +69,7 @@ def stream_level_context(logger: logging.Logger, log_level: LOG_LEVEL_TYPE):
     """Temporarily set the levels of stream handlers of a logger."""
     handler_levels = []
     for handler in logger.handlers:
-        if type(handler) == logging.StreamHandler:
+        if isinstance(handler, logging.StreamHandler):
             handler_levels.append((handler, handler.level))
             handler.setLevel(logging.getLevelName(log_level))
     try:
