@@ -4,8 +4,7 @@ sphinx:
    configuration: docs/source/conf.py
    fail_on_warning: true
 python:
-   version: 3.8
-   system_packages: true
+   version: "3.8"
    install:
       - requirements: docs/requirements.txt
       - method: pip

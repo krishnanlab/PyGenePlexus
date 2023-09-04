@@ -15,6 +15,7 @@ PyGenePlexus
    notes/installation
    notes/cli
    notes/api
+   notes/r
    notes/custom
 
 .. toctree::
