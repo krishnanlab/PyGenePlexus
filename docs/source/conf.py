@@ -22,7 +22,7 @@ copyright = '2022, Krishnan Laboratory at Michigan State University'
 author = 'Remy Liu and Christopher A. Mancuso'
 
 # The full version, including alpha/beta/rc tags
-release = '1.0.1'
+release = '2.0.0-dev'
 
 
 # -- General configuration ---------------------------------------------------
