@@ -194,7 +194,7 @@ class GenePlexus:
             )
 
     def load_genes(self, input_genes: List[str]):
-        """Load gene list, convert to Entrez, and set up positives/negatives.
+        """Load gene list and convert to Entrez.
 
         :attr:`GenePlexus.input_genes` (List[str]): Input gene list.
 
@@ -208,7 +208,6 @@ class GenePlexus:
         """
         self._load_genes(input_genes)
         self._convert_to_entrez()
-        self._get_pos_and_neg_genes()
 
     def _load_genes(self, input_genes: List[str]):
         """Load gene list into the GenePlexus object.
@@ -242,33 +241,6 @@ class GenePlexus:
             self.file_loc,
         )
         return self.df_convert_out
-
-    def _get_pos_and_neg_genes(self):
-        """Set up positive and negative genes given the network.
-
-        :attr:`GenePlexus.pos_genes_in_net` (array of str)
-            Array of input gene Entrez IDs that are present in the network.
-        :attr:`GenePlexus.genes_not_in_net` (array of str)
-            Array of input gene Entrez IDs that are absent in the network.
-        :attr:`GenePlexus.net_genes` (array of str)
-            Array of network gene Entrez IDs.
-        :attr:`GenePlexus.negative_genes` (array of str)
-            Array of negative gene Entrez IDs derived using the input genes and
-            the background gene set collection (GSC).
-
-        """
-        self.pos_genes_in_net, self.genes_not_in_net, self.net_genes = _geneplexus._get_genes_in_network(
-            self.file_loc,
-            self.net_type,
-            self.convert_ids,
-        )
-        self.negative_genes = _geneplexus._get_negatives(
-            self.file_loc,
-            self.net_type,
-            self.gsc,
-            self.pos_genes_in_net,
-        )
-        return self.pos_genes_in_net, self.negative_genes, self.net_genes
 
     def fit_and_predict(
         self,
@@ -315,6 +287,7 @@ class GenePlexus:
             relevance of the gene to the input gene list).
 
         """
+        self._get_pos_and_neg_genes()
         self.mdl_weights, self.probs, self.avgps = _geneplexus._run_sl(
             self.file_loc,
             self.net_type,
@@ -338,6 +311,33 @@ class GenePlexus:
         )
         return self.mdl_weights, self.df_probs, self.avgps
 
+    def _get_pos_and_neg_genes(self):
+        """Set up positive and negative genes given the network.
+
+        :attr:`GenePlexus.pos_genes_in_net` (array of str)
+            Array of input gene Entrez IDs that are present in the network.
+        :attr:`GenePlexus.genes_not_in_net` (array of str)
+            Array of input gene Entrez IDs that are absent in the network.
+        :attr:`GenePlexus.net_genes` (array of str)
+            Array of network gene Entrez IDs.
+        :attr:`GenePlexus.negative_genes` (array of str)
+            Array of negative gene Entrez IDs derived using the input genes and
+            the background gene set collection (GSC).
+
+        """
+        self.pos_genes_in_net, self.genes_not_in_net, self.net_genes = _geneplexus._get_genes_in_network(
+            self.file_loc,
+            self.net_type,
+            self.convert_ids,
+        )
+        self.negative_genes = _geneplexus._get_negatives(
+            self.file_loc,
+            self.net_type,
+            self.gsc,
+            self.pos_genes_in_net,
+        )
+        return self.pos_genes_in_net, self.negative_genes, self.net_genes
+    
     def make_sim_dfs(self):
         """Compute similarities bewteen the input genes and GO or DisGeNet.
 
