@@ -356,7 +356,7 @@ class GenePlexus:
             self.pos_genes_in_net,
         )
         return self.pos_genes_in_net, self.negative_genes, self.net_genes
-    
+
     def make_sim_dfs(self):
         """Compute similarities bewteen the input genes and GO or DisGeNet.
 

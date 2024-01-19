@@ -149,7 +149,7 @@ def _run_sl(
             avgps.append(log2_prior)
         logger.info(f"{avgps=}")
         logger.info(f"{np.median(avgps)=:.2f}")
-        logger.info(f"{np.mean(avgps)=:.2f}")        
+        logger.info(f"{np.mean(avgps)=:.2f}")
     # do predictions in the target species
     data = util.load_gene_features(file_loc, sp_tst, features, net_type)
     probs = clf.predict_proba(data)[:, 1]

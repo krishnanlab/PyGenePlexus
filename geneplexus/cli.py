@@ -74,7 +74,7 @@ def parse_args() -> argparse.Namespace:
         metavar="",
         help="Species of training data {format_choices(config.ALL_SPECIES}",
     )
-    
+
     parser.add_argument(
         "-s2",
         "--sp_tst",
