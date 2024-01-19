@@ -27,6 +27,8 @@ class GenePlexus:
         file_loc: Optional[str] = None,
         net_type: config.NET_TYPE = "STRING",
         features: config.FEATURE_TYPE = "Embedding",
+        sp_trn: config.SPECIES_TYPE = "Human",
+        sp_tst: config.SPECIES_TYPE = "Human",
         gsc: config.GSC_TYPE = "GO",
         input_genes: Optional[List[str]] = None,
         auto_download: bool = False,
@@ -39,6 +41,8 @@ class GenePlexus:
                 data path ``~/.data/geneplexus``
             net_type: Type of network to use.
             features: Type of features of the network to use.
+            sp_trn: The species of the training data
+            sp_tst: The species of the testing data
             gsc: Type of gene set collection to use for generating negatives.
             input_genes: Input gene list, can be mixed type. Can also be set
                 later if not specified at init time by simply calling
@@ -51,6 +55,8 @@ class GenePlexus:
         self._is_custom: bool = False
         self.file_loc = file_loc  # type: ignore
         self.features = features
+        self.sp_trn = sp_trn
+        self.sp_tst = sp_tst
         self.gsc = gsc
         self.net_type = net_type
         self.log_level = log_level
@@ -85,6 +91,8 @@ class GenePlexus:
             "file_loc",
             "net_type",
             "features",
+            "sp_trn",
+            "sp_tst",
             "gsc",
             "auto_download",
             "log_level",
@@ -235,10 +243,15 @@ class GenePlexus:
             Number of input genes.
 
         """
-        self.convert_ids, df_convert_out = _geneplexus._initial_id_convert(self.input_genes, self.file_loc)
+        self.convert_ids, df_convert_out = _geneplexus._initial_id_convert(
+            self.input_genes,
+            self.file_loc,
+            self.sp_trn,
+        )
         self.df_convert_out, self.table_summary, self.input_count = _geneplexus._make_validation_df(
             df_convert_out,
             self.file_loc,
+            self.sp_trn,
         )
         return self.df_convert_out
 
@@ -290,6 +303,8 @@ class GenePlexus:
         self._get_pos_and_neg_genes()
         self.mdl_weights, self.probs, self.avgps = _geneplexus._run_sl(
             self.file_loc,
+            self.sp_trn,
+            self.sp_tst,
             self.net_type,
             self.features,
             self.pos_genes_in_net,
@@ -304,7 +319,9 @@ class GenePlexus:
         )
         self.df_probs = _geneplexus._make_prob_df(
             self.file_loc,
-            self.net_genes,
+            self.sp_trn,
+            self.sp_tst,
+            self.net_type,
             self.probs,
             self.pos_genes_in_net,
             self.negative_genes,
@@ -327,11 +344,13 @@ class GenePlexus:
         """
         self.pos_genes_in_net, self.genes_not_in_net, self.net_genes = _geneplexus._get_genes_in_network(
             self.file_loc,
+            self.sp_trn,
             self.net_type,
             self.convert_ids,
         )
         self.negative_genes = _geneplexus._get_negatives(
             self.file_loc,
+            self.sp_trn,
             self.net_type,
             self.gsc,
             self.pos_genes_in_net,
@@ -371,6 +390,7 @@ class GenePlexus:
         self.df_sim_GO, self.df_sim_Dis, self.weights_GO, self.weights_Dis = _geneplexus._make_sim_dfs(
             self.file_loc,
             self.mdl_weights,
+            self.sp_tst,
             self.gsc,
             self.net_type,
             self.features,
@@ -400,6 +420,7 @@ class GenePlexus:
         self.df_edge, self.isolated_genes, self.df_edge_sym, self.isolated_genes_sym = _geneplexus._make_small_edgelist(
             self.file_loc,
             self.df_probs,
+            self.sp_tst,
             self.net_type,
             num_nodes=num_nodes,
         )
