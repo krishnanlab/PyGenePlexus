@@ -68,6 +68,22 @@ def parse_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
+        "-s1",
+        "--sp_trn",
+        default="Human",
+        metavar="",
+        help="Species of training data {format_choices(config.ALL_SPECIES}",
+    )
+
+    parser.add_argument(
+        "-s2",
+        "--sp_tst",
+        default="Human",
+        metavar="",
+        help="Species of test data {format_choices(config.ALL_SPECIES}",
+    )
+
+    parser.add_argument(
         "-g",
         "--gsc",
         default="GO",
@@ -295,6 +311,8 @@ def main():
         args.data_dir,
         args.network,
         args.feature,
+        args.sp_trn,
+        args.sp_tst,
         args.gsc,
         auto_download=True,
         log_level=log_level,

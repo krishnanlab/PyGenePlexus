@@ -27,6 +27,7 @@ ALL_TASKS = ["IDconversion", "MachineLearning", "Similarities", "NetworkGraph", 
 ALL_NETWORKS = ["BioGRID", "STRING", "STRING-EXP", "GIANT-TN"]
 ALL_FEATURES = ["Adjacency", "Embedding", "Influence"]
 ALL_GSCS = ["GO", "DisGeNet"]
+ALL_SPECIES = ["Human", "Mouse", "Fly", "Worm", "Fish", "Yeast"]
 
 DEFAULT_LOGREG_KWARGS: Dict[str, Any] = {
     "max_iter": 10000,
@@ -53,11 +54,13 @@ TASK_TYPE = Literal["IDconversion", "MachineLearning", "Similarities", "NetworkG
 NET_TYPE = Literal["BioGRID", "STRING", "STRING-EXP", "GIANT-TN"]
 FEATURE_TYPE = Literal["Adjacency", "Embedding", "Influence"]
 GSC_TYPE = Literal["GO", "DisGeNet"]
+SPECIES_TYPE = Literal["Human", "Mouse", "Fly", "Worm", "Fish", "Yeast"]
 
 TASK_SELECTION_TYPE = Union[Literal["All"], TASK_TYPE, List[TASK_TYPE]]
 NET_SELECTION_TYPE = Union[Literal["All"], NET_TYPE, List[NET_TYPE]]
 FEATURE_SELECTION_TYPE = Union[Literal["All"], FEATURE_TYPE, List[FEATURE_TYPE]]
 GSC_SELECTION_TYPE = Union[Literal["All"], GSC_TYPE, List[GSC_TYPE]]
+SPECIES_SELECTION_TYPE = Union[Literal["All"], SPECIES_TYPE, List[SPECIES_TYPE]]
 
 ID_CONVERSION_MAP_TYPE = Dict[str, List[str]]
 GSC_DATA_TYPE = Dict[str, Dict[Literal["Name", "Genes"], Union[str, np.ndarray]]]
@@ -71,6 +74,7 @@ __all__ = [
     "ALL_NETWORKS",
     "ALL_FEATURES",
     "ALL_GSCS",
+    "ALL_SPECIES",
     "LOG_LEVEL_TYPE",
     "ID_SRC_TYPE",
     "ID_DST_TYPE",
@@ -79,10 +83,12 @@ __all__ = [
     "NET_TYPE",
     "FEATURE_TYPE",
     "GSC_TYPE",
+    "SPECIES_TYPE",
     "TASK_SELECTION_TYPE",
     "NET_SELECTION_TYPE",
     "FEATURE_SELECTION_TYPE",
     "GSC_SELECTION_TYPE",
+    "SPECIES_SELECTION_TYPE",
     "ID_CONVERSION_MAP_TYPE",
     "GSC_DATA_TYPE",
     "PRETRAINED_DATA_TYPE",

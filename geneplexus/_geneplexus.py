@@ -18,12 +18,12 @@ from ._config import logger
 from ._config.config import DEFAULT_LOGREG_KWARGS
 
 
-def _initial_id_convert(input_genes, file_loc):
+def _initial_id_convert(input_genes, file_loc, species):
     # load all the possible conversion dictionaries
     convert_types = ["ENSG", "Symbol", "ENSP", "ENST"]
     all_convert_dict = {}
     for anIDtype in convert_types:
-        convert_tmp = util.load_geneid_conversion(file_loc, anIDtype, "Entrez", upper=True)
+        convert_tmp = util.load_geneid_conversion(file_loc, species, anIDtype, "Entrez", upper=True)
         all_convert_dict[anIDtype] = convert_tmp
 
     # make some place holder arrays
@@ -50,13 +50,13 @@ def _initial_id_convert(input_genes, file_loc):
     return convert_ids, df_convert_out
 
 
-def _make_validation_df(df_convert_out, file_loc):
+def _make_validation_df(df_convert_out, file_loc, species):
     table_summary = []
     input_count = df_convert_out.shape[0]
     converted_genes = df_convert_out["Entrez ID"].to_numpy()
 
     for anet in util.get_all_net_types(file_loc):
-        net_genes = util.load_node_order(file_loc, anet)
+        net_genes = util.load_node_order(file_loc, species, anet)
         df_tmp = df_convert_out[df_convert_out["Entrez ID"].isin(net_genes)]
         pos_genes_in_net = np.intersect1d(converted_genes, net_genes)
         table_row = {"Network": anet, "NetworkGenes": len(net_genes), "PositiveGenes": len(pos_genes_in_net)}
@@ -68,17 +68,17 @@ def _make_validation_df(df_convert_out, file_loc):
     return df_convert_out, table_summary, input_count
 
 
-def _get_genes_in_network(file_loc, net_type, convert_ids):
-    net_genes = util.load_node_order(file_loc, net_type)
+def _get_genes_in_network(file_loc, species, net_type, convert_ids):
+    net_genes = util.load_node_order(file_loc, species, net_type)
     convert_ids = np.array(convert_ids, dtype=str)
     pos_genes_in_net = np.intersect1d(convert_ids, net_genes)
     genes_not_in_net = np.setdiff1d(convert_ids, net_genes)
     return pos_genes_in_net, genes_not_in_net, net_genes
 
 
-def _get_negatives(file_loc, net_type, gsc, pos_genes_in_net):
-    uni_genes = util.load_genes_universe(file_loc, gsc, net_type)
-    good_sets = util.load_gsc(file_loc, gsc, net_type)
+def _get_negatives(file_loc, species, net_type, gsc, pos_genes_in_net):
+    uni_genes = util.load_genes_universe(file_loc, species, gsc, net_type)
+    good_sets = util.load_gsc(file_loc, species, gsc, net_type)
     M = len(uni_genes)
     N = len(pos_genes_in_net)
     genes_to_remove = pos_genes_in_net
@@ -94,6 +94,8 @@ def _get_negatives(file_loc, net_type, gsc, pos_genes_in_net):
 
 def _run_sl(
     file_loc,
+    sp_trn,
+    sp_tst,
     net_type,
     features,
     pos_genes_in_net,
@@ -111,10 +113,10 @@ def _run_sl(
         logger.info(f"Using default logistic regression settings: {logreg_kwargs}")
     else:
         logger.info(f"Using custom logistic regression settings: {logreg_kwargs}")
-
+    # train the model
     pos_inds = [np.where(net_genes == agene)[0][0] for agene in pos_genes_in_net]
     neg_inds = [np.where(net_genes == agene)[0][0] for agene in negative_genes]
-    data = util.load_gene_features(file_loc, features, net_type)
+    data = util.load_gene_features(file_loc, sp_trn, features, net_type)
     std_scale = StandardScaler().fit(data)
     data = std_scale.transform(data)
     Xdata = data[pos_inds + neg_inds, :]
@@ -122,8 +124,7 @@ def _run_sl(
     clf = LogisticRegression(**logreg_kwargs)
     clf.fit(Xdata, ydata)
     mdl_weights = np.squeeze(clf.coef_)
-    probs = clf.predict_proba(data)[:, 1]
-
+    # validate the model
     avgps = [null_val] * num_folds
     if not cross_validate:
         logger.info("Skipping cross validation.")
@@ -149,46 +150,55 @@ def _run_sl(
         logger.info(f"{avgps=}")
         logger.info(f"{np.median(avgps)=:.2f}")
         logger.info(f"{np.mean(avgps)=:.2f}")
+    # do predictions in the target species
+    data = util.load_gene_features(file_loc, sp_tst, features, net_type)
+    probs = clf.predict_proba(data)[:, 1]
     return mdl_weights, probs, avgps
 
 
-def _make_prob_df(file_loc, net_genes, probs, pos_genes_in_net, negative_genes):
-    Entrez_to_Symbol = util.load_geneid_conversion(file_loc, "Entrez", "Symbol")
-    Entrez_to_Name = util.load_geneid_conversion(file_loc, "Entrez", "Name")
+def _make_prob_df(file_loc, sp_trn, sp_tst, net_type, probs, pos_genes_in_net, negative_genes):
+    Entrez_to_Symbol = util.load_geneid_conversion(file_loc, sp_tst, "Entrez", "Symbol")
+    Entrez_to_Name = util.load_geneid_conversion(file_loc, sp_tst, "Entrez", "Name")
+    net_genes = util.load_node_order(file_loc, sp_tst, net_type)
     prob_results = []
     for idx in range(len(net_genes)):
-        if net_genes[idx] in pos_genes_in_net:
-            class_label = "P"
-            novel_label = "Known"
-        elif net_genes[idx] in negative_genes:
-            class_label = "N"
-            novel_label = "Novel"
-        else:
-            class_label = "U"
-            novel_label = "Novel"
+        if sp_trn == sp_tst:
+            if net_genes[idx] in pos_genes_in_net:
+                class_label = "P"
+                novel_label = "Known"
+            elif net_genes[idx] in negative_genes:
+                class_label = "N"
+                novel_label = "Novel"
+            else:
+                class_label = "U"
+                novel_label = "Novel"
         syms_tmp = util.mapgene(net_genes[idx], Entrez_to_Symbol)
         name_tmp = util.mapgene(net_genes[idx], Entrez_to_Name)
-        prob_results.append([net_genes[idx], syms_tmp, name_tmp, probs[idx], novel_label, class_label])
-    df_probs = pd.DataFrame(
-        prob_results,
-        columns=["Entrez", "Symbol", "Name", "Probability", "Known/Novel", "Class-Label"],
-    )
+        if sp_trn == sp_tst:
+            prob_results.append([net_genes[idx], syms_tmp, name_tmp, probs[idx], novel_label, class_label])
+        else:
+            prob_results.append([net_genes[idx], syms_tmp, name_tmp, probs[idx]])
+    if sp_trn == sp_tst:
+        df_col_names = ["Entrez", "Symbol", "Name", "Probability", "Known/Novel", "Class-Label"]
+    else:
+        df_col_names = ["Entrez", "Symbol", "Name", "Probability"]
+    df_probs = pd.DataFrame(prob_results, columns=df_col_names)
     df_probs = df_probs.astype({"Entrez": str, "Probability": float})
     df_probs = df_probs.sort_values(by=["Probability"], ascending=False).reset_index(drop=True)
     df_probs["Rank"] = rankdata(1 / (df_probs["Probability"].to_numpy() + 1e-9), method="min")
     return df_probs
 
 
-def _make_sim_dfs(file_loc, mdl_weights, gsc, net_type, features):
+def _make_sim_dfs(file_loc, mdl_weights, species, gsc, net_type, features):
     dfs_out = []
     for target_set in ["GO", "DisGeNet"]:
-        weights_dict = util.load_pretrained_weights(file_loc, target_set, net_type, features)
+        weights_dict = util.load_pretrained_weights(file_loc, species, target_set, net_type, features)
         if target_set == "GO":
             weights_dict_GO = weights_dict
         if target_set == "DisGeNet":
             weights_dict_Dis = weights_dict
-        order = util.load_correction_order(file_loc, target_set, net_type)
-        cor_mat = util.load_correction_mat(file_loc, gsc, target_set, net_type, features)
+        order = util.load_correction_order(file_loc, species, target_set, net_type)
+        cor_mat = util.load_correction_mat(file_loc, species, gsc, target_set, net_type, features)
         add_row = np.zeros((1, len(order)))
         for idx, aset in enumerate(order):
             cos_sim = 1 - cosine(weights_dict[aset]["Weights"], mdl_weights)
@@ -213,29 +223,26 @@ def _make_sim_dfs(file_loc, mdl_weights, gsc, net_type, features):
     return dfs_out[0], dfs_out[1], weights_dict_GO, weights_dict_Dis
 
 
-def _make_small_edgelist(file_loc, df_probs, net_type, num_nodes=50):
+def _make_small_edgelist(file_loc, df_probs, species, net_type, num_nodes=50):
     # This will set the max number of genes to look at to a given number
     # Load network as edge list dataframe
-    filepath = osp.join(file_loc, f"Edgelist_{net_type}.edg")
+    filepath = osp.join(file_loc, f"Edgelist__{species}__{net_type}.edg")
     if net_type == "BioGRID":
         df_edge = pd.read_csv(filepath, sep="\t", header=None, names=["Node1", "Node2"])
         df_edge["Weight"] = 1
     else:
         df_edge = pd.read_csv(filepath, sep="\t", header=None, names=["Node1", "Node2", "Weight"])
     df_edge = df_edge.astype({"Node1": str, "Node2": str})
-
     # Take subgraph induced by top genes
     top_genes = df_probs["Entrez"].to_numpy()[:num_nodes]
     df_edge = df_edge[(df_edge["Node1"].isin(top_genes)) & (df_edge["Node2"].isin(top_genes))]
     genes_in_edge = np.union1d(df_edge["Node1"].unique(), df_edge["Node2"].unique())
     isolated_genes = np.setdiff1d(top_genes, genes_in_edge).tolist()
-
     # Convert to gene symbol
-    Entrez_to_Symbol = util.load_geneid_conversion(file_loc, "Entrez", "Symbol")
+    Entrez_to_Symbol = util.load_geneid_conversion(file_loc, species, "Entrez", "Symbol")
     replace_dict = {gene: util.mapgene(gene, Entrez_to_Symbol) for gene in genes_in_edge}
     isolated_genes_sym = [util.mapgene(gene, Entrez_to_Symbol) for gene in isolated_genes]
     df_edge_sym = df_edge.replace(to_replace=replace_dict)
-
     return df_edge, isolated_genes, df_edge_sym, isolated_genes_sym
 
 

@@ -27,6 +27,8 @@ class GenePlexus:
         file_loc: Optional[str] = None,
         net_type: config.NET_TYPE = "STRING",
         features: config.FEATURE_TYPE = "Embedding",
+        sp_trn: config.SPECIES_TYPE = "Human",
+        sp_tst: config.SPECIES_TYPE = "Human",
         gsc: config.GSC_TYPE = "GO",
         input_genes: Optional[List[str]] = None,
         auto_download: bool = False,
@@ -39,6 +41,8 @@ class GenePlexus:
                 data path ``~/.data/geneplexus``
             net_type: Type of network to use.
             features: Type of features of the network to use.
+            sp_trn: The species of the training data
+            sp_tst: The species of the testing data
             gsc: Type of gene set collection to use for generating negatives.
             input_genes: Input gene list, can be mixed type. Can also be set
                 later if not specified at init time by simply calling
@@ -51,6 +55,8 @@ class GenePlexus:
         self._is_custom: bool = False
         self.file_loc = file_loc  # type: ignore
         self.features = features
+        self.sp_trn = sp_trn
+        self.sp_tst = sp_tst
         self.gsc = gsc
         self.net_type = net_type
         self.log_level = log_level
@@ -85,6 +91,8 @@ class GenePlexus:
             "file_loc",
             "net_type",
             "features",
+            "sp_trn",
+            "sp_tst",
             "gsc",
             "auto_download",
             "log_level",
@@ -194,7 +202,7 @@ class GenePlexus:
             )
 
     def load_genes(self, input_genes: List[str]):
-        """Load gene list, convert to Entrez, and set up positives/negatives.
+        """Load gene list and convert to Entrez.
 
         :attr:`GenePlexus.input_genes` (List[str]): Input gene list.
 
@@ -208,7 +216,6 @@ class GenePlexus:
         """
         self._load_genes(input_genes)
         self._convert_to_entrez()
-        self._get_pos_and_neg_genes()
 
     def _load_genes(self, input_genes: List[str]):
         """Load gene list into the GenePlexus object.
@@ -236,39 +243,17 @@ class GenePlexus:
             Number of input genes.
 
         """
-        self.convert_ids, df_convert_out = _geneplexus._initial_id_convert(self.input_genes, self.file_loc)
+        self.convert_ids, df_convert_out = _geneplexus._initial_id_convert(
+            self.input_genes,
+            self.file_loc,
+            self.sp_trn,
+        )
         self.df_convert_out, self.table_summary, self.input_count = _geneplexus._make_validation_df(
             df_convert_out,
             self.file_loc,
+            self.sp_trn,
         )
         return self.df_convert_out
-
-    def _get_pos_and_neg_genes(self):
-        """Set up positive and negative genes given the network.
-
-        :attr:`GenePlexus.pos_genes_in_net` (array of str)
-            Array of input gene Entrez IDs that are present in the network.
-        :attr:`GenePlexus.genes_not_in_net` (array of str)
-            Array of input gene Entrez IDs that are absent in the network.
-        :attr:`GenePlexus.net_genes` (array of str)
-            Array of network gene Entrez IDs.
-        :attr:`GenePlexus.negative_genes` (array of str)
-            Array of negative gene Entrez IDs derived using the input genes and
-            the background gene set collection (GSC).
-
-        """
-        self.pos_genes_in_net, self.genes_not_in_net, self.net_genes = _geneplexus._get_genes_in_network(
-            self.file_loc,
-            self.net_type,
-            self.convert_ids,
-        )
-        self.negative_genes = _geneplexus._get_negatives(
-            self.file_loc,
-            self.net_type,
-            self.gsc,
-            self.pos_genes_in_net,
-        )
-        return self.pos_genes_in_net, self.negative_genes, self.net_genes
 
     def fit_and_predict(
         self,
@@ -315,8 +300,11 @@ class GenePlexus:
             relevance of the gene to the input gene list).
 
         """
+        self._get_pos_and_neg_genes()
         self.mdl_weights, self.probs, self.avgps = _geneplexus._run_sl(
             self.file_loc,
+            self.sp_trn,
+            self.sp_tst,
             self.net_type,
             self.features,
             self.pos_genes_in_net,
@@ -331,12 +319,43 @@ class GenePlexus:
         )
         self.df_probs = _geneplexus._make_prob_df(
             self.file_loc,
-            self.net_genes,
+            self.sp_trn,
+            self.sp_tst,
+            self.net_type,
             self.probs,
             self.pos_genes_in_net,
             self.negative_genes,
         )
         return self.mdl_weights, self.df_probs, self.avgps
+
+    def _get_pos_and_neg_genes(self):
+        """Set up positive and negative genes given the network.
+
+        :attr:`GenePlexus.pos_genes_in_net` (array of str)
+            Array of input gene Entrez IDs that are present in the network.
+        :attr:`GenePlexus.genes_not_in_net` (array of str)
+            Array of input gene Entrez IDs that are absent in the network.
+        :attr:`GenePlexus.net_genes` (array of str)
+            Array of network gene Entrez IDs.
+        :attr:`GenePlexus.negative_genes` (array of str)
+            Array of negative gene Entrez IDs derived using the input genes and
+            the background gene set collection (GSC).
+
+        """
+        self.pos_genes_in_net, self.genes_not_in_net, self.net_genes = _geneplexus._get_genes_in_network(
+            self.file_loc,
+            self.sp_trn,
+            self.net_type,
+            self.convert_ids,
+        )
+        self.negative_genes = _geneplexus._get_negatives(
+            self.file_loc,
+            self.sp_trn,
+            self.net_type,
+            self.gsc,
+            self.pos_genes_in_net,
+        )
+        return self.pos_genes_in_net, self.negative_genes, self.net_genes
 
     def make_sim_dfs(self):
         """Compute similarities bewteen the input genes and GO or DisGeNet.
@@ -371,6 +390,7 @@ class GenePlexus:
         self.df_sim_GO, self.df_sim_Dis, self.weights_GO, self.weights_Dis = _geneplexus._make_sim_dfs(
             self.file_loc,
             self.mdl_weights,
+            self.sp_tst,
             self.gsc,
             self.net_type,
             self.features,
@@ -400,6 +420,7 @@ class GenePlexus:
         self.df_edge, self.isolated_genes, self.df_edge_sym, self.isolated_genes_sym = _geneplexus._make_small_edgelist(
             self.file_loc,
             self.df_probs,
+            self.sp_tst,
             self.net_type,
             num_nodes=num_nodes,
         )

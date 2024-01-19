@@ -46,7 +46,7 @@ def get_all_net_types(file_loc: Optional[str]) -> List[str]:
     all_net_types = set(config.ALL_NETWORKS)
     if file_loc:
         all_net_types.update(
-            [i.split("NodeOrder_")[1].split(".txt")[0] for i in os.listdir(file_loc) if i.startswith("NodeOrder_")],
+            [i.split("__")[2].split(".txt")[0] for i in os.listdir(file_loc) if i.startswith("NodeOrder_")],
         )
     return sorted(all_net_types)
 
@@ -179,12 +179,13 @@ def _load_json_file(file_loc: str, file_name: str) -> Dict[str, Any]:
 
     """
     file_path = osp.join(file_loc, file_name)
-    check_file(file_path)
+    # check_file(file_path)
     return json.load(open(file_path, "rb"))
 
 
 def load_geneid_conversion(
     file_loc: str,
+    species: config.SPECIES_TYPE,
     src_id_type: config.ID_SRC_TYPE,
     dst_id_type: config.ID_DST_TYPE,
     upper: bool = False,
@@ -193,6 +194,7 @@ def load_geneid_conversion(
 
     Args:
         file_loc: Directory containig the ID conversion file.
+        species: The species of the ID conversion file.
         src_id_type: Souce gene ID type.
         dst_id_type: Destination gene ID type.
         upper: If set to True, then convert all keys to upper case.
@@ -201,7 +203,7 @@ def load_geneid_conversion(
     if (src_id_type, dst_id_type) not in config.VALID_ID_CONVERSION:
         raise ValueError(f"Invalid ID conversion from {src_id_type} to {dst_id_type}")
 
-    file_name = f"IDconversion_Homo-sapiens_{src_id_type}-to-{dst_id_type}.json"
+    file_name = f"IDconversion__{species}__{src_id_type}-to-{dst_id_type}.json"
     conversion_map = _load_json_file(file_loc, file_name)
 
     if upper:
@@ -212,6 +214,7 @@ def load_geneid_conversion(
 
 def load_gsc(
     file_loc: str,
+    species: config.SPECIES_TYPE,
     gsc: config.GSC_TYPE,
     net_type: config.NET_TYPE,
 ) -> config.GSC_DATA_TYPE:
@@ -219,16 +222,18 @@ def load_gsc(
 
     Args:
         file_loc: Location of data files.
+        species: The species of the gene set collection.
         target_set: Target gene set collection.
         net_type: Network used.
 
     """
-    file_name = f"GSC_{gsc}_{net_type}_GoodSets.json"
+    file_name = f"GSC__{species}__{gsc}__{net_type}__GoodSets.json"
     return _load_json_file(file_loc, file_name)
 
 
 def load_pretrained_weights(
     file_loc: str,
+    species: config.SPECIES_TYPE,
     target_set: config.GSC_TYPE,
     net_type: config.NET_TYPE,
     features: config.FEATURE_TYPE,
@@ -237,12 +242,13 @@ def load_pretrained_weights(
 
     Args:
         file_loc: Location of data files.
+        species: The species of the gene set collection.
         target_set: Target gene set collection.
         net_type: Network used.
         features: Type of features used.
 
     """
-    file_name = f"PreTrainedWeights_{target_set}_{net_type}_{features}.json"
+    file_name = f"PreTrainedWeights__{species}__{target_set}__{net_type}__{features}.json"
     return _load_json_file(file_loc, file_name)
 
 
@@ -260,7 +266,7 @@ def _load_np_file(
 
     """
     file_path = osp.join(file_loc, file_name)
-    check_file(file_path)
+    # check_file(file_path)
 
     if load_method == "npy":
         return np.load(file_path)
@@ -270,20 +276,26 @@ def _load_np_file(
         raise ValueError(f"Unknwon load method: {load_method!r}")
 
 
-def load_node_order(file_loc: str, net_type: config.NET_TYPE) -> np.ndarray:
+def load_node_order(
+    file_loc: str,
+    species: config.SPECIES_TYPE,
+    net_type: config.NET_TYPE,
+) -> np.ndarray:
     """Load network genes.
 
     Args:
         file_loc: Location of data files.
+        species: The species of files.
         net_type: Network used.
 
     """
-    file_name = f"NodeOrder_{net_type}.txt"
+    file_name = f"NodeOrder__{species}__{net_type}.txt"
     return _load_np_file(file_loc, file_name, load_method="txt")
 
 
 def load_genes_universe(
     file_loc: str,
+    species: config.SPECIES_TYPE,
     gsc: config.GSC_TYPE,
     net_type: config.NET_TYPE,
 ) -> np.ndarray:
@@ -291,16 +303,18 @@ def load_genes_universe(
 
     Args:
         file_loc: Location of data files.
+        species: The species of files.
         gsc: Gene set collection.
         net_type: Network used.
 
     """
-    file_name = f"GSC_{gsc}_{net_type}_universe.txt"
+    file_name = f"GSC__{species}__{gsc}__{net_type}__universe.txt"
     return _load_np_file(file_loc, file_name, load_method="txt")
 
 
 def load_gene_features(
     file_loc: str,
+    species: config.SPECIES_TYPE,
     features: config.FEATURE_TYPE,
     net_type: config.NET_TYPE,
 ) -> np.ndarray:
@@ -308,16 +322,18 @@ def load_gene_features(
 
     Args:
         file_loc: Location of data files.
-        net_type: Network used.
+        species: The species of files.
         features: Type of features used.
+        net_type: Network used.
 
     """
-    file_name = f"Data_{features}_{net_type}.npy"
+    file_name = f"Data__{species}__{features}__{net_type}.npy"
     return _load_np_file(file_loc, file_name, load_method="npy")
 
 
 def load_correction_order(
     file_loc: str,
+    species: config.SPECIES_TYPE,
     target_set: config.GSC_TYPE,
     net_type: config.NET_TYPE,
 ) -> np.ndarray:
@@ -325,16 +341,18 @@ def load_correction_order(
 
     Args:
         file_loc: Location of data files.
+        species: The species of files.
         target_set: Target gene set collection.
         net_type: Network used.
 
     """
-    file_name = f"CorrectionMatrixOrder_{target_set}_{net_type}.txt"
+    file_name = f"CorrectionMatrixOrder__{species}__{target_set}__{net_type}.txt"
     return _load_np_file(file_loc, file_name, load_method="txt")
 
 
 def load_correction_mat(
     file_loc: str,
+    species: config.SPECIES_TYPE,
     gsc: config.GSC_TYPE,
     target_set: config.GSC_TYPE,
     net_type: config.NET_TYPE,
@@ -344,11 +362,12 @@ def load_correction_mat(
 
     Args:
         file_loc: Location of data files.
+        species: The species of files.
         gsc: Gene set collection.
         target_set: Target gene set collection.
         net_type: Network used.
         features: Type of features used.
 
     """
-    file_name = f"CorrectionMatrix_{gsc}_{target_set}_{net_type}_{features}.npy"
+    file_name = f"CorrectionMatrix__{species}__{gsc}__{target_set}__{net_type}__{features}.npy"
     return _load_np_file(file_loc, file_name, load_method="npy")
