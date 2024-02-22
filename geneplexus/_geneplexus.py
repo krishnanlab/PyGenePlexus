@@ -8,6 +8,7 @@ import pandas as pd
 from scipy.spatial.distance import cosine
 from scipy.stats import hypergeom
 from scipy.stats import rankdata
+from scipy.stats import zscore
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import average_precision_score
 from sklearn.model_selection import StratifiedKFold
@@ -190,37 +191,26 @@ def _make_prob_df(file_loc, sp_trn, sp_tst, net_type, probs, pos_genes_in_net, n
 
 
 def _make_sim_dfs(file_loc, mdl_weights, species, gsc, net_type, features):
-    dfs_out = []
-    for target_set in ["GO", "DisGeNet"]:
-        weights_dict = util.load_pretrained_weights(file_loc, species, target_set, net_type, features)
-        if target_set == "GO":
-            weights_dict_GO = weights_dict
-        if target_set == "DisGeNet":
-            weights_dict_Dis = weights_dict
-        order = util.load_correction_order(file_loc, species, target_set, net_type)
-        cor_mat = util.load_correction_mat(file_loc, species, gsc, target_set, net_type, features)
-        add_row = np.zeros((1, len(order)))
-        for idx, aset in enumerate(order):
-            cos_sim = 1 - cosine(weights_dict[aset]["Weights"], mdl_weights)
-            add_row[0, idx] = cos_sim
-        cor_mat = np.concatenate((cor_mat, add_row), axis=0)
-        last_row = cor_mat[-1, :]
-        zq = np.maximum(0, (last_row - np.mean(last_row)) / np.std(last_row))
-        zs = np.maximum(0, (last_row - np.mean(cor_mat, axis=0)) / np.std(cor_mat, axis=0))
-        z = np.sqrt(zq**2 + zs**2)
-        results_tmp = []
-        for idx2, termID_tmp in enumerate(order):
-            ID_tmp = termID_tmp
-            Name_tmp = weights_dict[termID_tmp]["Name"]
-            z_tmp = z[idx2]
-            results_tmp.append([ID_tmp, Name_tmp, z_tmp])
-        df_tmp = pd.DataFrame(results_tmp, columns=["ID", "Name", "Similarity"]).sort_values(
-            by=["Similarity"],
-            ascending=False,
-        )
-        df_tmp["Rank"] = rankdata(1 / (df_tmp["Similarity"].to_numpy() + 1e-9), method="min")
-        dfs_out.append(df_tmp)
-    return dfs_out[0], dfs_out[1], weights_dict_GO, weights_dict_Dis
+    weights_dict = util.load_pretrained_weights(file_loc, species, gsc, net_type, features)
+    order = util.load_correction_order(file_loc, species, gsc, net_type)
+    mdl_sims = []
+    for idx, aset in enumerate(order):
+        cos_sim = 1 - cosine(weights_dict[aset]["Weights"], mdl_weights)
+        mdl_sims.append(cos_sim)
+    mdl_sims = np.array(mdl_sims)
+    z = zscore(mdl_sims)
+    results_tmp = []
+    for idx2, termID_tmp in enumerate(order):
+        ID_tmp = termID_tmp
+        Name_tmp = weights_dict[termID_tmp]["Name"]
+        z_tmp = z[idx2]
+        results_tmp.append([ID_tmp, Name_tmp, z_tmp])
+    df_sim = pd.DataFrame(results_tmp, columns=["ID", "Name", "Similarity"]).sort_values(
+        by=["Similarity"],
+        ascending=False,
+    )
+    df_sim["Rank"] = rankdata(-1 * (df_sim["Similarity"].to_numpy() + 1e-9), method="min")
+    return df_sim, weights_dict
 
 
 def _make_small_edgelist(file_loc, df_probs, species, net_type, num_nodes=50):
