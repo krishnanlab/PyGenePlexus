@@ -234,7 +234,7 @@ def load_gsc(
 def load_pretrained_weights(
     file_loc: str,
     species: config.SPECIES_TYPE,
-    target_set: config.GSC_TYPE,
+    gsc: config.GSC_TYPE,
     net_type: config.NET_TYPE,
     features: config.FEATURE_TYPE,
 ) -> config.PRETRAINED_DATA_TYPE:
@@ -243,12 +243,12 @@ def load_pretrained_weights(
     Args:
         file_loc: Location of data files.
         species: The species of the gene set collection.
-        target_set: Target gene set collection.
+        gsc: The gene set collection.
         net_type: Network used.
         features: Type of features used.
 
     """
-    file_name = f"PreTrainedWeights__{species}__{target_set}__{net_type}__{features}.json"
+    file_name = f"PreTrainedWeights__{species}__{gsc}__{net_type}__{features}.json"
     return _load_json_file(file_loc, file_name)
 
 
@@ -334,7 +334,7 @@ def load_gene_features(
 def load_correction_order(
     file_loc: str,
     species: config.SPECIES_TYPE,
-    target_set: config.GSC_TYPE,
+    gsc: config.GSC_TYPE,
     net_type: config.NET_TYPE,
 ) -> np.ndarray:
     """Load correction matrix order.
@@ -342,11 +342,11 @@ def load_correction_order(
     Args:
         file_loc: Location of data files.
         species: The species of files.
-        target_set: Target gene set collection.
+        gsc: The gene set collection.
         net_type: Network used.
 
     """
-    file_name = f"CorrectionMatrixOrder__{species}__{target_set}__{net_type}.txt"
+    file_name = f"CorrectionMatrixOrder__{species}__{gsc}__{net_type}.txt"
     return _load_np_file(file_loc, file_name, load_method="txt")
 
 

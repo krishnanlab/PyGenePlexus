@@ -387,7 +387,7 @@ class GenePlexus:
             **PosGenes** (positive genes for this DO term).
 
         """
-        self.df_sim_GO, self.df_sim_Dis, self.weights_GO, self.weights_Dis = _geneplexus._make_sim_dfs(
+        self.df_sim, self.weights_dict = _geneplexus._make_sim_dfs(
             self.file_loc,
             self.mdl_weights,
             self.sp_tst,
@@ -395,7 +395,7 @@ class GenePlexus:
             self.net_type,
             self.features,
         )
-        return self.df_sim_GO, self.df_sim_Dis, self.weights_GO, self.weights_Dis
+        return self.df_sim, self.weights_dict
 
     def make_small_edgelist(self, num_nodes: int = 50):
         """Make a subgraph induced by the top predicted genes.
