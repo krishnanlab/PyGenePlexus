@@ -24,9 +24,9 @@ DATA_FILENAMES_PATH = osp.join(CONFIG_PATH, "data_filenames.txt")
 LOG_LEVELS = ["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"]
 
 ALL_TASKS = ["IDconversion", "MachineLearning", "Similarities", "NetworkGraph", "OriginalGSCs"]
-ALL_NETWORKS = ["BioGRID", "STRING", "STRING-EXP", "GIANT-TN"]
-ALL_FEATURES = ["Adjacency", "Embedding", "Influence"]
-ALL_GSCS = ["GO", "DisGeNet"]
+ALL_NETWORKS = ["BioGRID", "STRING", "IMP"]
+ALL_FEATURES = ["SixSpeciesN2V"]
+ALL_GSCS = ["GO", "Monarch", "DisGeNet", "Combined"]
 ALL_SPECIES = ["Human", "Mouse", "Fly", "Worm", "Fish", "Yeast"]
 
 DEFAULT_LOGREG_KWARGS: Dict[str, Any] = {
@@ -44,16 +44,16 @@ VALID_ID_CONVERSION: Set[Tuple[ID_SRC_TYPE, ID_DST_TYPE]] = {
     ("ENSG", "Entrez"),
     ("ENSP", "Entrez"),
     ("ENST", "Entrez"),
+    ("Symbol", "Entrez"),
     ("Entrez", "ENSG"),
     ("Entrez", "Name"),
     ("Entrez", "Symbol"),
-    ("Symbol", "Entrez"),
 }
 
 TASK_TYPE = Literal["IDconversion", "MachineLearning", "Similarities", "NetworkGraph", "OriginalGSCs"]
-NET_TYPE = Literal["BioGRID", "STRING", "STRING-EXP", "GIANT-TN"]
-FEATURE_TYPE = Literal["Adjacency", "Embedding", "Influence"]
-GSC_TYPE = Literal["GO", "DisGeNet"]
+NET_TYPE = Literal["BioGRID", "STRING", "IMP"]
+FEATURE_TYPE = Literal["SixSpeciesN2V"]
+GSC_TYPE = Literal["GO", "Monarch", "DisGeNet", "Combined"]
 SPECIES_TYPE = Literal["Human", "Mouse", "Fly", "Worm", "Fish", "Yeast"]
 
 TASK_SELECTION_TYPE = Union[Literal["All"], TASK_TYPE, List[TASK_TYPE]]

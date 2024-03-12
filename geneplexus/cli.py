@@ -61,7 +61,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "-f",
         "--feature",
-        default="Embedding",
+        default="SixSpeciesN2V",
         metavar="",
         choices=config.ALL_FEATURES,
         help=f"Types of feature to use. {format_choices(config.ALL_FEATURES)}",
@@ -217,8 +217,7 @@ def save_results(gp, outdir, zip_output, overwrite, skip_mdl_sim):
     df_to_tsv(gp.df_edge_sym, outdir, "df_edge_sym.tsv")
     df_to_tsv(gp.df_convert_out_subset, outdir, "df_convert_out_subset.tsv")
     if not skip_mdl_sim:
-        df_to_tsv(gp.df_sim_GO, outdir, "df_sim_GO.tsv")
-        df_to_tsv(gp.df_sim_Dis, outdir, "df_sim_Dis.tsv")
+        df_to_tsv(gp.df_sim, outdir, "df_sim.tsv")
 
     # Dump config, close file handler and move run log to result directory
     gp.dump_config(outdir)

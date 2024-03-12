@@ -57,6 +57,8 @@ def _make_validation_df(df_convert_out, file_loc, species):
     converted_genes = df_convert_out["Entrez ID"].to_numpy()
 
     for anet in util.get_all_net_types(file_loc):
+        if (species == "Zebrafish") and (anet == "BioGRID"):
+            continue
         net_genes = util.load_node_order(file_loc, species, anet)
         df_tmp = df_convert_out[df_convert_out["Entrez ID"].isin(net_genes)]
         pos_genes_in_net = np.intersect1d(converted_genes, net_genes)
@@ -78,17 +80,18 @@ def _get_genes_in_network(file_loc, species, net_type, convert_ids):
 
 
 def _get_negatives(file_loc, species, net_type, gsc, pos_genes_in_net):
-    uni_genes = util.load_genes_universe(file_loc, species, gsc, net_type)
-    good_sets = util.load_gsc(file_loc, species, gsc, net_type)
+    gsc_full = util.load_gsc(file_loc, species, gsc, net_type)
+    uni_genes = np.array(gsc_full["Universe"])
+    gsc_terms = gsc_full["Term_Order"]
     M = len(uni_genes)
     N = len(pos_genes_in_net)
     genes_to_remove = pos_genes_in_net
-    for akey in good_sets:
-        n = len(good_sets[akey]["Genes"])
-        k = len(np.intersect1d(pos_genes_in_net, good_sets[akey]["Genes"]))
+    for akey in gsc_terms:
+        n = len(gsc_full[akey]["Genes"])
+        k = len(np.intersect1d(pos_genes_in_net, gsc_full[akey]["Genes"]))
         pval = hypergeom.sf(k - 1, M, n, N)
         if pval < 0.05:
-            genes_to_remove = np.union1d(genes_to_remove, good_sets[akey]["Genes"])
+            genes_to_remove = np.union1d(genes_to_remove, gsc_full[akey]["Genes"])
     negative_genes = np.setdiff1d(uni_genes, genes_to_remove)
     return negative_genes
 
@@ -192,15 +195,16 @@ def _make_prob_df(file_loc, sp_trn, sp_tst, net_type, probs, pos_genes_in_net, n
 
 def _make_sim_dfs(file_loc, mdl_weights, species, gsc, net_type, features):
     weights_dict = util.load_pretrained_weights(file_loc, species, gsc, net_type, features)
-    order = util.load_correction_order(file_loc, species, gsc, net_type)
+    gsc_full = util.load_gsc(file_loc, species, gsc, net_type)
+    gsc_terms = gsc_full["Term_Order"]
     mdl_sims = []
-    for idx, aset in enumerate(order):
+    for idx, aset in enumerate(gsc_terms):
         cos_sim = 1 - cosine(weights_dict[aset]["Weights"], mdl_weights)
         mdl_sims.append(cos_sim)
     mdl_sims = np.array(mdl_sims)
     z = zscore(mdl_sims)
     results_tmp = []
-    for idx2, termID_tmp in enumerate(order):
+    for idx2, termID_tmp in enumerate(gsc_terms):
         ID_tmp = termID_tmp
         Name_tmp = weights_dict[termID_tmp]["Name"]
         z_tmp = z[idx2]
@@ -217,11 +221,7 @@ def _make_small_edgelist(file_loc, df_probs, species, net_type, num_nodes=50):
     # This will set the max number of genes to look at to a given number
     # Load network as edge list dataframe
     filepath = osp.join(file_loc, f"Edgelist__{species}__{net_type}.edg")
-    if net_type == "BioGRID":
-        df_edge = pd.read_csv(filepath, sep="\t", header=None, names=["Node1", "Node2"])
-        df_edge["Weight"] = 1
-    else:
-        df_edge = pd.read_csv(filepath, sep="\t", header=None, names=["Node1", "Node2", "Weight"])
+    df_edge = pd.read_csv(filepath, sep="\t", header=None, names=["Node1", "Node2"])
     df_edge = df_edge.astype({"Node1": str, "Node2": str})
     # Take subgraph induced by top genes
     top_genes = df_probs["Entrez"].to_numpy()[:num_nodes]

@@ -18,7 +18,7 @@ parser.add_argument(
 )
 parser.add_argument(
     "-data_loc",
-    default="Azure",
+    default="Zenodo",
     type=str,
     help="Where the data is stored (Azure or Zenodo)",
 )
