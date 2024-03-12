@@ -9,7 +9,7 @@ import numpy as np
 
 tic = time.time()
 
-myloc = "Azure"
+myloc = "Zenodo"
 myamount = "full"
 num_runs = 5
 

@@ -1,6 +1,10 @@
 """GenePlexus exceptions."""
 
 
+class ZebrafishBioGRIDError(Exception):
+    """Raised when Zebrafish + BioGRID is tried."""
+
+
 class CustomDataError(Exception):
     """Raised when custom network or gsc data files not set up correctly."""
 

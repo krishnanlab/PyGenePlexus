@@ -16,7 +16,7 @@ from ._config import config
 from ._config import logger
 from ._config.logger_util import set_stream_level
 from .download import download_select_data
-from .exception import CustomDataError
+from .exception import CustomDataError, ZebrafishBioGRIDError
 
 
 class GenePlexus:
@@ -26,10 +26,11 @@ class GenePlexus:
         self,
         file_loc: Optional[str] = None,
         net_type: config.NET_TYPE = "STRING",
-        features: config.FEATURE_TYPE = "Embedding",
+        features: config.FEATURE_TYPE = "SixSpeciesN2V",
         sp_trn: config.SPECIES_TYPE = "Human",
         sp_tst: config.SPECIES_TYPE = "Human",
-        gsc: config.GSC_TYPE = "GO",
+        gsc_trn: config.GSC_TYPE = "Combined",
+        gsc_tst: config.GSC_TYPE = "Combined",
         input_genes: Optional[List[str]] = None,
         auto_download: bool = False,
         log_level: config.LOG_LEVEL_TYPE = "WARNING",
@@ -43,7 +44,9 @@ class GenePlexus:
             features: Type of features of the network to use.
             sp_trn: The species of the training data
             sp_tst: The species of the testing data
-            gsc: Type of gene set collection to use for generating negatives.
+            gsc_trn: Gene set collection used during training
+            gsc_tst: Gene set collection used when generating
+                similarity dataframe
             input_genes: Input gene list, can be mixed type. Can also be set
                 later if not specified at init time by simply calling
                 :meth:`load_genes` (default: :obj:`None`).
@@ -57,7 +60,8 @@ class GenePlexus:
         self.features = features
         self.sp_trn = sp_trn
         self.sp_tst = sp_tst
-        self.gsc = gsc
+        self.gsc_trn = gsc_trn
+        self.gsc_tst = gsc_tst
         self.net_type = net_type
         self.log_level = log_level
         self.auto_download = auto_download
@@ -84,6 +88,14 @@ class GenePlexus:
 
         if input_genes is not None:
             self.load_genes(input_genes)
+               
+        if ("Zebrafish" == (self.sp_trn or self.sp_tst)) and (self.net_type == "BioGRID"):
+            raise ZebrafishBioGRIDError(
+                f"The BioGRID network for Zebrafish is not "
+                "included due to it not having enough nodes "
+                "so this combination is not allowed.",
+            )
+            
 
     @property
     def _params(self) -> List[str]:
@@ -93,7 +105,8 @@ class GenePlexus:
             "features",
             "sp_trn",
             "sp_tst",
-            "gsc",
+            "gsc_trn",
+            "gsc_tst",
             "auto_download",
             "log_level",
             "input_genes",
@@ -154,23 +167,23 @@ class GenePlexus:
         self._features = features
 
     @property
-    def gsc(self) -> config.GSC_TYPE:
+    def gsc_trn(self) -> config.GSC_TYPE:
         """Geneset collection."""
-        return self._gsc
+        return self._gsc_trn
 
-    @gsc.setter
-    def gsc(self, gsc: config.GSC_TYPE):
+    @gsc_trn.setter
+    def gsc_trn(self, gsc_trn: config.GSC_TYPE):
         self._standard_gsc = self._custom_gsc = None
-        util.check_param("GSC", gsc, util.get_all_gscs(self.file_loc))
-        if gsc not in config.ALL_GSCS:
+        util.check_param("GSC", gsc_trn, util.get_all_gscs(self.file_loc))
+        if gsc_trn not in config.ALL_GSCS:
             data_files = os.listdir(self.file_loc)
-            orig_gsc_fn = f"GSCOriginal_{gsc}.json"
+            orig_gsc_fn = f"GSCOriginal_{gsc_trn}.json"
             if orig_gsc_fn not in data_files:
-                raise ValueError(f"Missing file {orig_gsc_fn} for custom GSC {gsc}")
+                raise ValueError(f"Missing file {orig_gsc_fn} for custom GSC {gsc_trn}")
 
             logger.info(f"Using custom GSC {gsc!r}")
 
-        self._gsc = gsc
+        self._gsc_trn = gsc_trn
 
     def check_custom(self):
         """Check custom network and gsc options.
@@ -181,7 +194,7 @@ class GenePlexus:
         * ``GSC_{gsc}_{net_type}_universetxt``
 
         """
-        if self._net_type in config.ALL_NETWORKS and self._gsc in config.ALL_GSCS:
+        if self._net_type in config.ALL_NETWORKS and self._gsc_trn in config.ALL_GSCS:
             logger.debug("Skipping custom data checks, using standard data.")
             return
 
@@ -352,7 +365,7 @@ class GenePlexus:
             self.file_loc,
             self.sp_trn,
             self.net_type,
-            self.gsc,
+            self.gsc_trn,
             self.pos_genes_in_net,
         )
         return self.pos_genes_in_net, self.negative_genes, self.net_genes
@@ -391,7 +404,7 @@ class GenePlexus:
             self.file_loc,
             self.mdl_weights,
             self.sp_tst,
-            self.gsc,
+            self.gsc_tst,
             self.net_type,
             self.features,
         )

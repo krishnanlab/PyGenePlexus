@@ -40,13 +40,22 @@ geneplexus.download.download_select_data(
     datadir,
     tasks="All",
     networks="STRING",
-    features="Embedding",
-    gscs=["GO", "DisGeNet"],
+    features="SixSpeciesN2V",
+    sp_trn = "Human",
+    sp_tst = "Mouse",
+    gsc= "GO",
 )
 
 # Run through the pipeline
 # First initialize the geneplexus object
-myclass = geneplexus.GenePlexus(datadir, "STRING", "Embedding", "DisGeNet")
+myclass = geneplexus.GenePlexus(
+    file_loc = fp_data,
+    gsc = "Combined",
+    features = "SixSpeciesN2V",
+    net_type = "STRING",
+    sp_trn = "Human",
+    sp_tst = "Mouse",
+)
 
 # Load the input genes into the class and set up positives/negatives
 myclass.load_genes(input_genes)
