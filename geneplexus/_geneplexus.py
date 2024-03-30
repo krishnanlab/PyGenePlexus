@@ -26,6 +26,17 @@ def _initial_id_convert(input_genes, file_loc, species):
     for anIDtype in convert_types:
         convert_tmp = util.load_geneid_conversion(file_loc, species, anIDtype, "Entrez", upper=True)
         all_convert_dict[anIDtype] = convert_tmp
+    # find all Entrez genes in networks and conversion files
+    all_entrez_genes = np.array([])
+    for anet in util.get_all_net_types(file_loc):
+        if (species == "Zebrafish") and (anet == "BioGRID"):
+            continue
+        entrez_genes_tmp = util.load_node_order(file_loc, species, anet)
+        all_entrez_genes = np.union1d(all_entrez_genes, entrez_genes_tmp)
+    entrez_genes_tmp = util.load_geneid_conversion(file_loc, species, "Entrez", "Symbol")
+    all_entrez_genes = np.union1d(all_entrez_genes, np.array(list(entrez_genes_tmp)))
+    entrez_genes_tmp = util.load_geneid_conversion(file_loc, species, "Entrez", "Name")
+    all_entrez_genes = np.union1d(all_entrez_genes, np.array(list(entrez_genes_tmp)))
 
     # make some place holder arrays
     convert_ids = []  # This will be a flat list for Entrez IDs to use as positives
@@ -33,8 +44,11 @@ def _initial_id_convert(input_genes, file_loc, species):
     for agene in input_genes:
         try:
             agene_int = int(agene)
-            convert_out.append([agene_int, agene_int])
-            convert_ids.append(agene_int)
+            if agene in all_entrez_genes:
+                convert_out.append([agene_int, agene_int])
+                convert_ids.append(agene_int)
+            else:
+                convert_out.append([agene_int, f"Not in Our List of {species} Entrez Genes"])               
         except ValueError:
             converted_gene: Optional[str] = None
             for anIDtype in convert_types:
