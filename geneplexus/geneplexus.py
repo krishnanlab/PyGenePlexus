@@ -16,7 +16,8 @@ from ._config import config
 from ._config import logger
 from ._config.logger_util import set_stream_level
 from .download import download_select_data
-from .exception import CustomDataError, ZebrafishBioGRIDError
+from .exception import CustomDataError
+from .exception import ZebrafishBioGRIDError
 
 
 class GenePlexus:
@@ -88,14 +89,13 @@ class GenePlexus:
 
         if input_genes is not None:
             self.load_genes(input_genes)
-               
+
         if ("Zebrafish" == (self.sp_trn or self.sp_tst)) and (self.net_type == "BioGRID"):
             raise ZebrafishBioGRIDError(
                 f"The BioGRID network for Zebrafish is not "
                 "included due to it not having enough nodes "
                 "so this combination is not allowed.",
             )
-            
 
     @property
     def _params(self) -> List[str]:
