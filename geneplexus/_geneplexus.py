@@ -48,7 +48,7 @@ def _initial_id_convert(input_genes, file_loc, species):
                 convert_out.append([agene_int, agene_int])
                 convert_ids.append(agene_int)
             else:
-                convert_out.append([agene_int, f"Not in Our List of {species} Entrez Genes"])               
+                convert_out.append([agene_int, f"Not in Our List of {species} Entrez Genes"])
         except ValueError:
             converted_gene: Optional[str] = None
             for anIDtype in convert_types:
