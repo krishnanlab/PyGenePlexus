@@ -83,7 +83,7 @@ class GenePlexus:
                 "All",
                 self.net_type,
                 self.features,
-                ["GO", "DisGeNet"],
+                ["GO", "Mondo"],
                 log_level=log_level,
             )
 
@@ -371,10 +371,10 @@ class GenePlexus:
         return self.pos_genes_in_net, self.negative_genes, self.net_genes
 
     def make_sim_dfs(self):
-        """Compute similarities bewteen the input genes and GO or DisGeNet.
+        """Compute similarities bewteen the input genes and GO or Mondo.
 
         The similarities are compuared based on the model trained on the input
-        gene set and models pre-trained on known GO and DisGeNet gene sets.
+        gene set and models pre-trained on known GO and Mondo gene sets.
 
         :attr:`GenePlexus.df_sim_GO` (DataFrame)
             A table with 4 columns: **ID** (the GO term ID), **Name** (name of
@@ -394,7 +394,7 @@ class GenePlexus:
             the GO term), **Weights** (pretrained model weights), **PosGenes**
             (positive genes for this GO term).
         :attr:`GenePlexus.weights_Dis`
-            Dictionary of pretrained model weights for DisGeNet. A key is a DO
+            Dictionary of pretrained model weights for Mondo. A key is a DO
             term, and the value is a dictionary with three keys: **Name** (name
             of the DO term), **Weights** (pretrained model weights),
             **PosGenes** (positive genes for this DO term).

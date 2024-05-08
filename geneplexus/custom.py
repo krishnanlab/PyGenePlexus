@@ -116,7 +116,7 @@ def subset_gsc_to_network(
 
     Note:
         Use the :meth:`geneplexus.download.download_select_data` function to
-        get the preprocessed GO and DisGeNet files first.
+        get the preprocessed GO and Mondo files first.
 
     Args:
         data_dir: The directory to save the file
