@@ -170,7 +170,7 @@ def run_pipeline(gp: GenePlexus, num_nodes: int, skip_mdl_sim: bool):
         num_nodes: Number of top predicted genes to include in the induced
             subgraph.
         skip_mdl_sim: Whether or not to skip the computation of model
-            similarities with GO and DisGeNet. This option is not yet available
+            similarities with GO and Mondo. This option is not yet available
             for custom networks.
 
     """
@@ -203,7 +203,7 @@ def save_results(gp, outdir, zip_output, overwrite, skip_mdl_sim):
         zip_output: Whether or not to zip the output directory into a zip file.
         overwrite: Whether or not to overwrite existing results.
         skip_mdl_sim: Whether or not to skip the computation of model
-            similarities with GO and DisGeNet. This option is not yet available
+            similarities with GO and Mondo. This option is not yet available
             for custom networks.
 
     """

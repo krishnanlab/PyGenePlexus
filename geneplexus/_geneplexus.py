@@ -7,12 +7,14 @@ import numpy as np
 import pandas as pd
 from scipy.spatial.distance import cosine
 from scipy.stats import hypergeom
+from scipy.stats import norm
 from scipy.stats import rankdata
 from scipy.stats import zscore
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import average_precision_score
 from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import StandardScaler
+from statsmodels.stats.multitest import multipletests
 
 from . import util
 from ._config import logger
@@ -193,16 +195,21 @@ def _make_prob_df(file_loc, sp_trn, sp_tst, net_type, probs, pos_genes_in_net, n
         syms_tmp = util.mapgene(net_genes[idx], Entrez_to_Symbol)
         name_tmp = util.mapgene(net_genes[idx], Entrez_to_Name)
         if sp_trn == sp_tst:
-            prob_results.append([net_genes[idx], syms_tmp, name_tmp, probs[idx], novel_label, class_label])
+            prob_results.append([net_genes[idx], syms_tmp, name_tmp, novel_label, class_label, probs[idx]])
         else:
             prob_results.append([net_genes[idx], syms_tmp, name_tmp, probs[idx]])
     if sp_trn == sp_tst:
-        df_col_names = ["Entrez", "Symbol", "Name", "Probability", "Known/Novel", "Class-Label"]
+        df_col_names = ["Entrez", "Symbol", "Name", "Known/Novel", "Class-Label", "Probability"]
     else:
         df_col_names = ["Entrez", "Symbol", "Name", "Probability"]
     df_probs = pd.DataFrame(prob_results, columns=df_col_names)
     df_probs = df_probs.astype({"Entrez": str, "Probability": float})
     df_probs = df_probs.sort_values(by=["Probability"], ascending=False).reset_index(drop=True)
+    z = zscore(df_probs["Probability"].to_numpy())
+    p = norm.sf(abs(z))
+    rejects, padjusts, b, c = multipletests(p, method="bonferroni", is_sorted=True)
+    df_probs["Z-score"] = z
+    df_probs["P-adjusted"] = padjusts
     df_probs["Rank"] = rankdata(1 / (df_probs["Probability"].to_numpy() + 1e-9), method="min")
     return df_probs
 
@@ -221,12 +228,16 @@ def _make_sim_dfs(file_loc, mdl_weights, species, gsc, net_type, features):
     for idx2, termID_tmp in enumerate(gsc_terms):
         ID_tmp = termID_tmp
         Name_tmp = weights_dict[termID_tmp]["Name"]
+        mdl_sim_tmp = mdl_sims[idx2]
         z_tmp = z[idx2]
-        results_tmp.append([ID_tmp, Name_tmp, z_tmp])
-    df_sim = pd.DataFrame(results_tmp, columns=["ID", "Name", "Similarity"]).sort_values(
+        results_tmp.append([ID_tmp, Name_tmp, mdl_sim_tmp, z_tmp])
+    df_sim = pd.DataFrame(results_tmp, columns=["ID", "Name", "Similarity", "Z-score"]).sort_values(
         by=["Similarity"],
         ascending=False,
     )
+    p = norm.sf(abs(df_sim["Z-score"].to_numpy()))
+    rejects, padjusts, b, c = multipletests(p, method="bonferroni", is_sorted=True)
+    df_sim["P-adjusted"] = padjusts
     df_sim["Rank"] = rankdata(-1 * (df_sim["Similarity"].to_numpy() + 1e-9), method="min")
     return df_sim, weights_dict
 
@@ -235,11 +246,16 @@ def _make_small_edgelist(file_loc, df_probs, species, net_type, num_nodes=50):
     # This will set the max number of genes to look at to a given number
     # Load network as edge list dataframe
     filepath = osp.join(file_loc, f"Edgelist__{species}__{net_type}.edg")
-    df_edge = pd.read_csv(filepath, sep="\t", header=None, names=["Node1", "Node2"])
+    if net_type == "BioGRID":
+        df_edge = pd.read_csv(filepath, sep="\t", header=None, names=["Node1", "Node2"])
+    else:
+        df_edge = pd.read_csv(filepath, sep="\t", header=None, names=["Node1", "Node2", "Weight"])
     df_edge = df_edge.astype({"Node1": str, "Node2": str})
     # Take subgraph induced by top genes
     top_genes = df_probs["Entrez"].to_numpy()[:num_nodes]
     df_edge = df_edge[(df_edge["Node1"].isin(top_genes)) & (df_edge["Node2"].isin(top_genes))]
+    if net_type == "BioGRID":
+        df_edge["Weight"] = [1.0] * df_edge.shape[0]
     genes_in_edge = np.union1d(df_edge["Node1"].unique(), df_edge["Node2"].unique())
     isolated_genes = np.setdiff1d(top_genes, genes_in_edge).tolist()
     # Convert to gene symbol

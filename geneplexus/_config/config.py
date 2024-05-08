@@ -26,7 +26,7 @@ LOG_LEVELS = ["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"]
 ALL_TASKS = ["IDconversion", "MachineLearning", "Similarities", "NetworkGraph", "OriginalGSCs"]
 ALL_NETWORKS = ["BioGRID", "STRING", "IMP"]
 ALL_FEATURES = ["SixSpeciesN2V"]
-ALL_GSCS = ["GO", "Monarch", "DisGeNet", "Combined"]
+ALL_GSCS = ["GO", "Monarch", "Mondo", "Combined"]
 ALL_SPECIES = ["Human", "Mouse", "Fly", "Worm", "Fish", "Yeast"]
 
 DEFAULT_LOGREG_KWARGS: Dict[str, Any] = {
@@ -53,7 +53,7 @@ VALID_ID_CONVERSION: Set[Tuple[ID_SRC_TYPE, ID_DST_TYPE]] = {
 TASK_TYPE = Literal["IDconversion", "MachineLearning", "Similarities", "NetworkGraph", "OriginalGSCs"]
 NET_TYPE = Literal["BioGRID", "STRING", "IMP"]
 FEATURE_TYPE = Literal["SixSpeciesN2V"]
-GSC_TYPE = Literal["GO", "Monarch", "DisGeNet", "Combined"]
+GSC_TYPE = Literal["GO", "Monarch", "Mondo", "Combined"]
 SPECIES_TYPE = Literal["Human", "Mouse", "Fly", "Worm", "Fish", "Yeast"]
 
 TASK_SELECTION_TYPE = Union[Literal["All"], TASK_TYPE, List[TASK_TYPE]]
