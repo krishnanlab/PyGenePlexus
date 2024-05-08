@@ -78,8 +78,10 @@ GSC__Mouse__GO__BioGRID.json
 NodeOrder__Worm__BioGRID.txt
 PreTrainedWeights__Human__Mondo__STRING__SixSpeciesN2V.json
 Edgelist__Fly__IMP.edg
+IDconversion__Human__Symbol-to-Entrez.json
 GSC__Human__Combined__BioGRID.json
 NodeOrder__Yeast__IMP.txt
+IDconversion__Mouse__Symbol-to-Entrez.json
 Data__Worm__SixSpeciesN2V__IMP.npy
 PreTrainedWeights__Human__Monarch__STRING__SixSpeciesN2V.json
 IDconversion__Yeast__Entrez-to-Symbol.json
@@ -119,6 +121,7 @@ GSC__Worm__Combined__BioGRID.json
 NodeOrder__Fly__STRING.txt
 GSC__Worm__Monarch__IMP.json
 IDconversion__Yeast__ENSG-to-Entrez.json
+IDconversion__Yeast__Symbol-to-Entrez.json
 GSC__Mouse__GO__STRING.json
 GSC__Worm__Monarch__STRING.json
 PreTrainedWeights__Human__Monarch__BioGRID__SixSpeciesN2V.json
@@ -146,6 +149,7 @@ PreTrainedWeights__Yeast__GO__IMP__SixSpeciesN2V.json
 Data__Worm__SixSpeciesN2V__BioGRID.npy
 Edgelist__Mouse__STRING.edg
 Edgelist__Mouse__BioGRID.edg
+IDconversion__Worm__Symbol-to-Entrez.json
 PreTrainedWeights__Human__GO__BioGRID__SixSpeciesN2V.json
 Data__Fly__SixSpeciesN2V__STRING.npy
 Data__Yeast__SixSpeciesN2V__STRING.npy
@@ -164,11 +168,13 @@ GSC__Worm__GO__BioGRID.json
 PreTrainedWeights__Mouse__GO__IMP__SixSpeciesN2V.json
 Edgelist__Zebrafish__STRING.edg
 Data__Human__SixSpeciesN2V__IMP.npy
+IDconversion__Zebrafish__Symbol-to-Entrez.json
 PreTrainedWeights__Worm__Combined__BioGRID__SixSpeciesN2V.json
 PreTrainedWeights__Worm__GO__STRING__SixSpeciesN2V.json
 IDconversion__Yeast__ENSP-to-Entrez.json
 IDconversion__Worm__ENSG-to-Entrez.json
 PreTrainedWeights__Mouse__Combined__BioGRID__SixSpeciesN2V.json
+IDconversion__Fly__Symbol-to-Entrez.json
 PreTrainedWeights__Human__Monarch__IMP__SixSpeciesN2V.json
 GSC__Fly__GO__BioGRID.json
 GSC__Yeast__Combined__STRING.json
