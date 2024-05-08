@@ -1,5 +1,7 @@
 """GenePlexus exceptions."""
 
+class FlyMonarchError(Exception):
+    """Raised becasue no Monarch annotations for Fly."""
 
 class ZebrafishBioGRIDError(Exception):
     """Raised when Zebrafish + BioGRID is tried."""
