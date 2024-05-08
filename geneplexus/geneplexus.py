@@ -17,8 +17,9 @@ from ._config import logger
 from ._config.logger_util import set_stream_level
 from .download import download_select_data
 from .exception import CustomDataError
-from .exception import ZebrafishBioGRIDError
 from .exception import FlyMonarchError
+from .exception import ZebrafishBioGRIDError
+
 
 class GenePlexus:
     """The GenePlexus API class."""
@@ -96,14 +97,16 @@ class GenePlexus:
                 "included due to it not having enough nodes "
                 "so this combination is not allowed.",
             )
-        
-        if ((self.sp_trn == "Fly" and self.gsc_trn == "Monarch") or \
-            (self.sp_trn == "Fly" and self.gsc_trn == "Combined") or \
-            (self.sp_tst == "Fly" and self.gsc_tst == "Monarch") or \
-            (self.sp_tst == "Fly" and self.gsc_tst == "Combined")):
+
+        if (
+            (self.sp_trn == "Fly" and self.gsc_trn == "Monarch")
+            or (self.sp_trn == "Fly" and self.gsc_trn == "Combined")
+            or (self.sp_tst == "Fly" and self.gsc_tst == "Monarch")
+            or (self.sp_tst == "Fly" and self.gsc_tst == "Combined")
+        ):
             raise FlyMonarchError(
                 f"Fly has no annotations for Monarch.",
-            )            
+            )
 
     @property
     def _params(self) -> List[str]:

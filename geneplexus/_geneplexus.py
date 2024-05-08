@@ -7,9 +7,9 @@ import numpy as np
 import pandas as pd
 from scipy.spatial.distance import cosine
 from scipy.stats import hypergeom
+from scipy.stats import norm
 from scipy.stats import rankdata
 from scipy.stats import zscore
-from scipy.stats import norm
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import average_precision_score
 from sklearn.model_selection import StratifiedKFold
@@ -207,7 +207,7 @@ def _make_prob_df(file_loc, sp_trn, sp_tst, net_type, probs, pos_genes_in_net, n
     df_probs = df_probs.sort_values(by=["Probability"], ascending=False).reset_index(drop=True)
     z = zscore(df_probs["Probability"].to_numpy())
     p = norm.sf(abs(z))
-    rejects, padjusts, b, c = multipletests(p,method="bonferroni",is_sorted=True)
+    rejects, padjusts, b, c = multipletests(p, method="bonferroni", is_sorted=True)
     df_probs["Z-score"] = z
     df_probs["P-adjusted"] = padjusts
     df_probs["Rank"] = rankdata(1 / (df_probs["Probability"].to_numpy() + 1e-9), method="min")
@@ -236,7 +236,7 @@ def _make_sim_dfs(file_loc, mdl_weights, species, gsc, net_type, features):
         ascending=False,
     )
     p = norm.sf(abs(df_sim["Z-score"].to_numpy()))
-    rejects, padjusts, b, c = multipletests(p,method="bonferroni",is_sorted=True)
+    rejects, padjusts, b, c = multipletests(p, method="bonferroni", is_sorted=True)
     df_sim["P-adjusted"] = padjusts
     df_sim["Rank"] = rankdata(-1 * (df_sim["Similarity"].to_numpy() + 1e-9), method="min")
     return df_sim, weights_dict
@@ -249,7 +249,7 @@ def _make_small_edgelist(file_loc, df_probs, species, net_type, num_nodes=50):
     if net_type == "BioGRID":
         df_edge = pd.read_csv(filepath, sep="\t", header=None, names=["Node1", "Node2"])
     else:
-        df_edge = pd.read_csv(filepath, sep="\t", header=None, names=["Node1", "Node2","Weight"])
+        df_edge = pd.read_csv(filepath, sep="\t", header=None, names=["Node1", "Node2", "Weight"])
     df_edge = df_edge.astype({"Node1": str, "Node2": str})
     # Take subgraph induced by top genes
     top_genes = df_probs["Entrez"].to_numpy()[:num_nodes]
