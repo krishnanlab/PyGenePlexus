@@ -37,8 +37,8 @@ def _initial_id_convert(input_genes, file_loc, species):
         all_entrez_genes = np.union1d(all_entrez_genes, entrez_genes_tmp)
     entrez_genes_tmp = util.load_geneid_conversion(file_loc, species, "Entrez", "Symbol")
     all_entrez_genes = np.union1d(all_entrez_genes, np.array(list(entrez_genes_tmp)))
-    entrez_genes_tmp = util.load_geneid_conversion(file_loc, species, "Entrez", "Name")
-    all_entrez_genes = np.union1d(all_entrez_genes, np.array(list(entrez_genes_tmp)))
+    entrez_to_name = util.load_geneid_conversion(file_loc, species, "Entrez", "Name")
+    all_entrez_genes = np.union1d(all_entrez_genes, np.array(list(entrez_to_name)))
 
     # make some place holder arrays
     convert_ids = []  # This will be a flat list for Entrez IDs to use as positives
@@ -47,21 +47,28 @@ def _initial_id_convert(input_genes, file_loc, species):
         try:
             agene_int = int(agene)
             if agene in all_entrez_genes:
-                convert_out.append([agene, agene])
+                agene_name = ", ".join(entrez_to_name[agene])
+                convert_out.append([agene, agene, agene_name])
                 convert_ids.append(agene)
             else:
                 convert_out.append([agene, f"Not in Our List of {species} Entrez Genes"])
         except ValueError:
             converted_gene: Optional[str] = None
+            converted_gene_name: Optional[str] = None
             for anIDtype in convert_types:
                 if agene in all_convert_dict[anIDtype]:
                     convert_ids.extend(all_convert_dict[anIDtype][agene])
                     converted_gene = ", ".join(all_convert_dict[anIDtype][agene])
+                    all_to_name = []
+                    for ent_gene in all_convert_dict[anIDtype][agene]:
+                        all_to_name = all_to_name + entrez_to_name[ent_gene]
+                    converted_gene_name = ", ".join(all_to_name)
                     logger.debug(f"Found mapping ({anIDtype}) {agene} -> {all_convert_dict[anIDtype][agene]}")
                     break
-            convert_out.append([agene, converted_gene or "Could Not be mapped to Entrez"])
+            convert_out.append([agene, converted_gene or "Could Not be mapped to Entrez" ,converted_gene_name or "Could Not be mapped to Entrez"])
 
-    column_names = ["Original ID", "Entrez ID"]
+    column_names = ["Original ID", "Entrez ID", "Gene Name"]
+    print(convert_out)
     df_convert_out = pd.DataFrame(convert_out, columns=column_names).astype(str)
 
     return convert_ids, df_convert_out
