@@ -215,6 +215,8 @@ def _make_prob_df(file_loc, sp_trn, sp_tst, net_type, probs, pos_genes_in_net, n
 
 
 def _make_sim_dfs(file_loc, mdl_weights, species, gsc, net_type, features):
+    # make task conversion
+    task_convert = {"Mondo":"Disease", "Monarch":"Phenotype", "GO":"Biological Process"}
     weights_dict = util.load_pretrained_weights(file_loc, species, gsc, net_type, features)
     gsc_full = util.load_gsc(file_loc, species, gsc, net_type)
     gsc_terms = gsc_full["Term_Order"]
@@ -226,12 +228,13 @@ def _make_sim_dfs(file_loc, mdl_weights, species, gsc, net_type, features):
     z = zscore(mdl_sims)
     results_tmp = []
     for idx2, termID_tmp in enumerate(gsc_terms):
+        Task = task_convert[gsc_full[termID_tmp]["Task"]]
         ID_tmp = termID_tmp
         Name_tmp = weights_dict[termID_tmp]["Name"]
         mdl_sim_tmp = mdl_sims[idx2]
         z_tmp = z[idx2]
-        results_tmp.append([ID_tmp, Name_tmp, mdl_sim_tmp, z_tmp])
-    df_sim = pd.DataFrame(results_tmp, columns=["ID", "Name", "Similarity", "Z-score"]).sort_values(
+        results_tmp.append([Task, ID_tmp, Name_tmp, mdl_sim_tmp, z_tmp])
+    df_sim = pd.DataFrame(results_tmp, columns=["Task", "ID", "Name", "Similarity", "Z-score"]).sort_values(
         by=["Similarity"],
         ascending=False,
     )
