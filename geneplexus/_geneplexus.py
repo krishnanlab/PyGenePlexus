@@ -101,6 +101,7 @@ def _get_negatives(file_loc, species, net_type, gsc, pos_genes_in_net):
     gsc_terms = gsc_full["Term_Order"]
     M = len(uni_genes)
     N = len(pos_genes_in_net)
+    neutral_gene_info = {}
     genes_to_remove = pos_genes_in_net
     for akey in gsc_terms:
         n = len(gsc_full[akey]["Genes"])
@@ -108,8 +109,10 @@ def _get_negatives(file_loc, species, net_type, gsc, pos_genes_in_net):
         pval = hypergeom.sf(k - 1, M, n, N)
         if pval < 0.05:
             genes_to_remove = np.union1d(genes_to_remove, gsc_full[akey]["Genes"])
+            neutral_gene_info[akey] = gsc_full[akey]
+    neutral_gene_info["All Neutrals"] = np.setdiff1d(genes_to_remove, pos_genes_in_net).tolist()
     negative_genes = np.setdiff1d(uni_genes, genes_to_remove)
-    return negative_genes
+    return negative_genes, neutral_gene_info
 
 
 def _run_sl(

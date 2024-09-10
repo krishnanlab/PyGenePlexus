@@ -372,14 +372,14 @@ class GenePlexus:
             self.net_type,
             self.convert_ids,
         )
-        self.negative_genes = _geneplexus._get_negatives(
+        self.negative_genes, self.neutral_gene_info = _geneplexus._get_negatives(
             self.file_loc,
             self.sp_trn,
             self.net_type,
             self.gsc_trn,
             self.pos_genes_in_net,
         )
-        return self.pos_genes_in_net, self.negative_genes, self.net_genes
+        return self.pos_genes_in_net, self.negative_genes, self.net_genes, self.neutral_gene_info
 
     def make_sim_dfs(self):
         """Compute similarities bewteen the input genes and GO or Mondo.
