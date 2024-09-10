@@ -284,7 +284,7 @@ class GenePlexus:
         logreg_kwargs: Optional[Dict[str, Any]] = None,
         min_num_pos: int = 15,
         num_folds: int = 3,
-        null_val: float = -10,
+        null_val: float = None,
         random_state: Optional[int] = 0,
         cross_validate: bool = True,
     ):
