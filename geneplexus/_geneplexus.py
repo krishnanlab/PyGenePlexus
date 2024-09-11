@@ -68,7 +68,6 @@ def _initial_id_convert(input_genes, file_loc, species):
             convert_out.append([agene, converted_gene or "Could Not be mapped to Entrez" ,converted_gene_name or "Could Not be mapped to Entrez"])
 
     column_names = ["Original ID", "Entrez ID", "Gene Name"]
-    print(convert_out)
     df_convert_out = pd.DataFrame(convert_out, columns=column_names).astype(str)
 
     return convert_ids, df_convert_out
@@ -102,7 +101,7 @@ def _get_genes_in_network(file_loc, species, net_type, convert_ids):
     return pos_genes_in_net, genes_not_in_net, net_genes
 
 
-def _get_negatives(file_loc, species, net_type, gsc, pos_genes_in_net):
+def _get_negatives(file_loc, species, net_type, gsc, pos_genes_in_net,user_negatives):
     gsc_full = util.load_gsc(file_loc, species, gsc, net_type)
     uni_genes = np.array(gsc_full["Universe"])
     gsc_terms = gsc_full["Term_Order"]
@@ -111,12 +110,18 @@ def _get_negatives(file_loc, species, net_type, gsc, pos_genes_in_net):
     neutral_gene_info = {}
     genes_to_remove = pos_genes_in_net
     for akey in gsc_terms:
-        n = len(gsc_full[akey]["Genes"])
-        k = len(np.intersect1d(pos_genes_in_net, gsc_full[akey]["Genes"]))
+        if user_negatives == None:
+            n_set = gsc_full[akey]["Genes"]
+        else:
+            n_set = np.setdiff1d(gsc_full[akey]["Genes"], user_negatives).tolist()
+        n = len(n_set)
+        k = len(np.intersect1d(pos_genes_in_net, n_set))
         pval = hypergeom.sf(k - 1, M, n, N)
         if pval < 0.05:
-            genes_to_remove = np.union1d(genes_to_remove, gsc_full[akey]["Genes"])
-            neutral_gene_info[akey] = gsc_full[akey]
+            genes_to_remove = np.union1d(genes_to_remove, n_set)
+            neutral_gene_info[akey] = {"Name": gsc_full[akey]["Name"],
+                                       "Task": gsc_full[akey]["Task"],
+                                       "Genes": n_set}
     neutral_gene_info["All Neutrals"] = np.setdiff1d(genes_to_remove, pos_genes_in_net).tolist()
     negative_genes = np.setdiff1d(uni_genes, genes_to_remove)
     return negative_genes, neutral_gene_info

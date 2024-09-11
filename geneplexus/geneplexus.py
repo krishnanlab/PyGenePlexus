@@ -1,6 +1,7 @@
 """GenePlexus API."""
 import os
 import os.path as osp
+import numpy as np
 import warnings
 from typing import Any
 from typing import Dict
@@ -34,6 +35,7 @@ class GenePlexus:
         gsc_trn: config.GSC_TYPE = "Combined",
         gsc_tst: config.GSC_TYPE = "Combined",
         input_genes: Optional[List[str]] = None,
+        input_negatives: Optional[List[str]] = None,
         auto_download: bool = False,
         log_level: config.LOG_LEVEL_TYPE = "WARNING",
     ):
@@ -52,6 +54,9 @@ class GenePlexus:
             input_genes: Input gene list, can be mixed type. Can also be set
                 later if not specified at init time by simply calling
                 :meth:`load_genes` (default: :obj:`None`).
+            input_negatives: Input list of negative genes, can be mixed type. 
+                Can also be set later if not specified at init time by simply calling
+                :meth:`load_negatives` (default: :obj:`None`).
             auto_download: Automatically download necessary files if set.
             log_level: Logging level.
 
@@ -68,6 +73,7 @@ class GenePlexus:
         self.log_level = log_level
         self.auto_download = auto_download
         self.input_genes: List[str] = []
+        self.input_negatives: List[str] = []
 
         self.check_custom()
 
@@ -90,6 +96,9 @@ class GenePlexus:
 
         if input_genes is not None:
             self.load_genes(input_genes)
+            
+        if input_negatives is not None:
+            self.load_genes(load_negatives)
 
         if ("Zebrafish" == (self.sp_trn or self.sp_tst)) and (self.net_type == "BioGRID"):
             raise ZebrafishBioGRIDError(
@@ -121,6 +130,7 @@ class GenePlexus:
             "auto_download",
             "log_level",
             "input_genes",
+            "input_negatives"
         ]
 
     def dump_config(self, outdir: str):
@@ -238,19 +248,44 @@ class GenePlexus:
             from a file.
 
         """
-        self._load_genes(input_genes)
-        self._convert_to_entrez()
+        self.input_genes = self._load_genes(input_genes)
+        load_genes_outputs = self._convert_to_entrez(self.input_genes)
+        self.df_convert_out = load_genes_outputs[0]
+        self.table_summary = load_genes_outputs[1]
+        self.selfinput_count = load_genes_outputs[2]
+        self.convert_ids = load_genes_outputs[3]
+        
+    def load_negatives(self, input_negatives: List[str]):
+        """Load gene list and convert to Entrez that will used as negatives.
 
-    def _load_genes(self, input_genes: List[str]):
+        :attr:`GenePlexus.input_negatives` (List[str]): Input gene list.
+
+        Args:
+            input_negstives: Negative gene list, can be mixed type.
+
+        See also:
+            Use :meth:`geneplexus.util.read_gene_list` to load a gene list
+            from a file.
+
+        """
+        self.input_negatives = self._load_genes(input_negatives)
+        load_negatives_outputs = self._convert_to_entrez(self.input_negatives)
+        self.df_convert_out_negatives = load_negatives_outputs[0]
+        self.table_summary_negatives = load_negatives_outputs[1]
+        self.selfinput_count_negatives = load_negatives_outputs[2]
+        self.convert_ids_negatives = load_negatives_outputs[3]
+
+    def _load_genes(self, genes_to_load: List[str]):
         """Load gene list into the GenePlexus object.
 
         Note:
             Implicitely converts genes to upper case.
 
         """
-        self.input_genes = [item.upper() for item in input_genes]
+        upper_genes = [item.upper() for item in genes_to_load]
+        return upper_genes
 
-    def _convert_to_entrez(self):
+    def _convert_to_entrez(self, genes_to_load: List[str]):
         """Convert the loaded genes to Entrez.
 
         :attr:`GenePlexus.df_convert_out` (DataFrame)
@@ -267,17 +302,18 @@ class GenePlexus:
             Number of input genes.
 
         """
-        self.convert_ids, df_convert_out = _geneplexus._initial_id_convert(
-            self.input_genes,
+        convert_ids, df_convert_out = _geneplexus._initial_id_convert(
+            genes_to_load,
             self.file_loc,
             self.sp_trn,
         )
-        self.df_convert_out, self.table_summary, self.input_count = _geneplexus._make_validation_df(
+        df_convert_out, table_summary, input_count = _geneplexus._make_validation_df(
             df_convert_out,
             self.file_loc,
             self.sp_trn,
         )
-        return self.df_convert_out
+        load_outputs = [df_convert_out, table_summary, input_count, convert_ids]
+        return load_outputs
 
     def fit_and_predict(
         self,
@@ -372,13 +408,21 @@ class GenePlexus:
             self.net_type,
             self.convert_ids,
         )
+        if len(self.input_negatives) > 0:
+            # remove genes from negatives if they are also positives 
+            user_negatives = np.setdiff1d(self.convert_ids_negatives,self.convert_ids).tolist()
+            print(user_negatives)
+        else:
+            user_negatives = None
         self.negative_genes, self.neutral_gene_info = _geneplexus._get_negatives(
             self.file_loc,
             self.sp_trn,
             self.net_type,
             self.gsc_trn,
             self.pos_genes_in_net,
+            user_negatives
         )
+        
         return self.pos_genes_in_net, self.negative_genes, self.net_genes, self.neutral_gene_info
 
     def make_sim_dfs(self):
