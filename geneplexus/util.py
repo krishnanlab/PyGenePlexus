@@ -229,7 +229,8 @@ def load_gsc(
     """
     file_name = f"GSC__{species}__{gsc}__{net_type}.json"
     return _load_json_file(file_loc, file_name)
-    
+
+
 def load_biomart(
     file_loc: str,
     sp_trn: config.SPECIES_TYPE,

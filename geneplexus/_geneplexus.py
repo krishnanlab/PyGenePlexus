@@ -65,7 +65,13 @@ def _initial_id_convert(input_genes, file_loc, species):
                     converted_gene_name = ", ".join(all_to_name)
                     logger.debug(f"Found mapping ({anIDtype}) {agene} -> {all_convert_dict[anIDtype][agene]}")
                     break
-            convert_out.append([agene, converted_gene or "Could Not be mapped to Entrez" ,converted_gene_name or "Could Not be mapped to Entrez"])
+            convert_out.append(
+                [
+                    agene,
+                    converted_gene or "Could Not be mapped to Entrez",
+                    converted_gene_name or "Could Not be mapped to Entrez",
+                ]
+            )
 
     column_names = ["Original ID", "Entrez ID", "Gene Name"]
     df_convert_out = pd.DataFrame(convert_out, columns=column_names).astype(str)
@@ -100,7 +106,7 @@ def _get_genes_in_network(file_loc, species, net_type, convert_ids):
     return pos_genes_in_net, genes_not_in_net, net_genes
 
 
-def _get_negatives(file_loc, species, net_type, gsc, pos_genes_in_net,user_negatives):
+def _get_negatives(file_loc, species, net_type, gsc, pos_genes_in_net, user_negatives):
     gsc_full = util.load_gsc(file_loc, species, gsc, net_type)
     uni_genes = np.array(gsc_full["Universe"])
     gsc_terms = gsc_full["Term_Order"]
@@ -118,9 +124,11 @@ def _get_negatives(file_loc, species, net_type, gsc, pos_genes_in_net,user_negat
         pval = hypergeom.sf(k - 1, M, n, N)
         if pval < 0.05:
             genes_to_remove = np.union1d(genes_to_remove, n_set)
-            neutral_gene_info[akey] = {"Name": gsc_full[akey]["Name"],
-                                       "Task": gsc_full[akey]["Task"],
-                                       "Genes": n_set}
+            neutral_gene_info[akey] = {
+                "Name": gsc_full[akey]["Name"],
+                "Task": gsc_full[akey]["Task"],
+                "Genes": n_set,
+            }
     neutral_gene_info["All Neutrals"] = np.setdiff1d(genes_to_remove, pos_genes_in_net).tolist()
     negative_genes = np.setdiff1d(uni_genes, genes_to_remove)
     return negative_genes, neutral_gene_info
@@ -230,7 +238,7 @@ def _make_prob_df(file_loc, sp_trn, sp_tst, net_type, probs, pos_genes_in_net, n
 
 def _make_sim_dfs(file_loc, mdl_weights, species, gsc, net_type, features):
     # make task conversion
-    task_convert = {"Mondo":"Disease", "Monarch":"Phenotype", "GO":"Biological Process"}
+    task_convert = {"Mondo": "Disease", "Monarch": "Phenotype", "GO": "Biological Process"}
     weights_dict = util.load_pretrained_weights(file_loc, species, gsc, net_type, features)
     gsc_full = util.load_gsc(file_loc, species, gsc, net_type)
     gsc_terms = gsc_full["Term_Order"]

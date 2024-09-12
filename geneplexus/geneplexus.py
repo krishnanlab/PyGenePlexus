@@ -1,13 +1,13 @@
 """GenePlexus API."""
 import os
 import os.path as osp
-import numpy as np
 import warnings
 from typing import Any
 from typing import Dict
 from typing import List
 from typing import Optional
 
+import numpy as np
 import pystow
 import yaml
 
@@ -54,7 +54,7 @@ class GenePlexus:
             input_genes: Input gene list, can be mixed type. Can also be set
                 later if not specified at init time by simply calling
                 :meth:`load_genes` (default: :obj:`None`).
-            input_negatives: Input list of negative genes, can be mixed type. 
+            input_negatives: Input list of negative genes, can be mixed type.
                 Can also be set later if not specified at init time by simply calling
                 :meth:`load_negatives` (default: :obj:`None`).
             auto_download: Automatically download necessary files if set.
@@ -96,7 +96,7 @@ class GenePlexus:
 
         if input_genes is not None:
             self.load_genes(input_genes)
-            
+
         if input_negatives is not None:
             self.load_genes(load_negatives)
 
@@ -130,7 +130,7 @@ class GenePlexus:
             "auto_download",
             "log_level",
             "input_genes",
-            "input_negatives"
+            "input_negatives",
         ]
 
     def dump_config(self, outdir: str):
@@ -254,7 +254,7 @@ class GenePlexus:
         self.table_summary = load_genes_outputs[1]
         self.selfinput_count = load_genes_outputs[2]
         self.convert_ids = load_genes_outputs[3]
-        
+
     def load_negatives(self, input_negatives: List[str]):
         """Load gene list and convert to Entrez that will used as negatives.
 
@@ -409,8 +409,8 @@ class GenePlexus:
             self.convert_ids,
         )
         if len(self.input_negatives) > 0:
-            # remove genes from negatives if they are also positives 
-            user_negatives = np.setdiff1d(self.convert_ids_negatives,self.convert_ids).tolist()
+            # remove genes from negatives if they are also positives
+            user_negatives = np.setdiff1d(self.convert_ids_negatives, self.convert_ids).tolist()
             print(user_negatives)
         else:
             user_negatives = None
@@ -420,9 +420,9 @@ class GenePlexus:
             self.net_type,
             self.gsc_trn,
             self.pos_genes_in_net,
-            user_negatives
+            user_negatives,
         )
-        
+
         return self.pos_genes_in_net, self.negative_genes, self.net_genes, self.neutral_gene_info
 
     def make_sim_dfs(self):
