@@ -64,6 +64,7 @@ SPECIES_SELECTION_TYPE = Union[Literal["All"], SPECIES_TYPE, List[SPECIES_TYPE]]
 
 ID_CONVERSION_MAP_TYPE = Dict[str, List[str]]
 GSC_DATA_TYPE = Dict[str, Dict[Literal["Name", "Genes"], Union[str, np.ndarray]]]
+BIOMART_DATA_TYPE = Dict[str, str]
 PRETRAINED_DATA_TYPE = Dict[str, Dict[Literal["Name", "Weights", "PosGenes"], Union[str, np.ndarray]]]
 
 __all__ = [

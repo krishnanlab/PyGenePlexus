@@ -223,11 +223,27 @@ def load_gsc(
     Args:
         file_loc: Location of data files.
         species: The species of the gene set collection.
-        target_set: Target gene set collection.
+        gsct: Target gene set collection.
         net_type: Network used.
 
     """
     file_name = f"GSC__{species}__{gsc}__{net_type}.json"
+    return _load_json_file(file_loc, file_name)
+    
+def load_biomart(
+    file_loc: str,
+    sp_trn: config.SPECIES_TYPE,
+    sp_tst: config.SPECIES_TYPE,
+) -> config.BIOMART_DATA_TYPE:
+    """Load biomart dictionary.
+
+    Args:
+        file_loc: Location of data files.
+        sp_trn: The species used for training.
+        sp_tst: The species in which the results are in.
+
+    """
+    file_name = f"BioMart__{sp_trn}__{sp_tst}.json"
     return _load_json_file(file_loc, file_name)
 
 

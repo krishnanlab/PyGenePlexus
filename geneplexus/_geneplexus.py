@@ -77,7 +77,6 @@ def _make_validation_df(df_convert_out, file_loc, species):
     table_summary = []
     input_count = df_convert_out.shape[0]
     converted_genes = df_convert_out["Entrez ID"].to_numpy()
-
     for anet in util.get_all_net_types(file_loc):
         if (species == "Zebrafish") and (anet == "BioGRID"):
             continue
@@ -195,28 +194,28 @@ def _make_prob_df(file_loc, sp_trn, sp_tst, net_type, probs, pos_genes_in_net, n
     Entrez_to_Symbol = util.load_geneid_conversion(file_loc, sp_tst, "Entrez", "Symbol")
     Entrez_to_Name = util.load_geneid_conversion(file_loc, sp_tst, "Entrez", "Name")
     net_genes = util.load_node_order(file_loc, sp_tst, net_type)
+    if sp_trn != sp_tst:
+        biomart_orthos = util.load_biomart(file_loc, sp_trn, sp_tst)
+        pos_genes_tmp = [biomart_orthos[item] for item in pos_genes_in_net if item in biomart_orthos]
+        neg_genes_tmp = [biomart_orthos[item] for item in negative_genes if item in biomart_orthos]
+    else:
+        pos_genes_tmp = pos_genes_in_net
+        neg_genes_tmp = negative_genes
     prob_results = []
     for idx in range(len(net_genes)):
-        if sp_trn == sp_tst:
-            if net_genes[idx] in pos_genes_in_net:
-                class_label = "P"
-                novel_label = "Known"
-            elif net_genes[idx] in negative_genes:
-                class_label = "N"
-                novel_label = "Novel"
-            else:
-                class_label = "U"
-                novel_label = "Novel"
+        if net_genes[idx] in pos_genes_tmp:
+            class_label = "P"
+            novel_label = "Known"
+        elif net_genes[idx] in neg_genes_tmp:
+            class_label = "N"
+            novel_label = "Novel"
+        else:
+            class_label = "U"
+            novel_label = "Novel"
         syms_tmp = util.mapgene(net_genes[idx], Entrez_to_Symbol)
         name_tmp = util.mapgene(net_genes[idx], Entrez_to_Name)
-        if sp_trn == sp_tst:
-            prob_results.append([net_genes[idx], syms_tmp, name_tmp, novel_label, class_label, probs[idx]])
-        else:
-            prob_results.append([net_genes[idx], syms_tmp, name_tmp, probs[idx]])
-    if sp_trn == sp_tst:
-        df_col_names = ["Entrez", "Symbol", "Name", "Known/Novel", "Class-Label", "Probability"]
-    else:
-        df_col_names = ["Entrez", "Symbol", "Name", "Probability"]
+        prob_results.append([net_genes[idx], syms_tmp, name_tmp, novel_label, class_label, probs[idx]])
+    df_col_names = ["Entrez", "Symbol", "Name", "Known/Novel", "Class-Label", "Probability"]
     df_probs = pd.DataFrame(prob_results, columns=df_col_names)
     df_probs = df_probs.astype({"Entrez": str, "Probability": float})
     df_probs = df_probs.sort_values(by=["Probability"], ascending=False).reset_index(drop=True)
