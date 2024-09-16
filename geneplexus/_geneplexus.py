@@ -37,8 +37,8 @@ def _initial_id_convert(input_genes, file_loc, species):
         all_entrez_genes = np.union1d(all_entrez_genes, entrez_genes_tmp)
     entrez_genes_tmp = util.load_geneid_conversion(file_loc, species, "Entrez", "Symbol")
     all_entrez_genes = np.union1d(all_entrez_genes, np.array(list(entrez_genes_tmp)))
-    entrez_genes_tmp = util.load_geneid_conversion(file_loc, species, "Entrez", "Name")
-    all_entrez_genes = np.union1d(all_entrez_genes, np.array(list(entrez_genes_tmp)))
+    entrez_to_name = util.load_geneid_conversion(file_loc, species, "Entrez", "Name")
+    all_entrez_genes = np.union1d(all_entrez_genes, np.array(list(entrez_to_name)))
 
     # make some place holder arrays
     convert_ids = []  # This will be a flat list for Entrez IDs to use as positives
@@ -47,21 +47,33 @@ def _initial_id_convert(input_genes, file_loc, species):
         try:
             agene_int = int(agene)
             if agene in all_entrez_genes:
-                convert_out.append([agene, agene])
+                agene_name = ", ".join(entrez_to_name[agene])
+                convert_out.append([agene, agene, agene_name])
                 convert_ids.append(agene)
             else:
                 convert_out.append([agene, f"Not in Our List of {species} Entrez Genes"])
         except ValueError:
             converted_gene: Optional[str] = None
+            converted_gene_name: Optional[str] = None
             for anIDtype in convert_types:
                 if agene in all_convert_dict[anIDtype]:
                     convert_ids.extend(all_convert_dict[anIDtype][agene])
                     converted_gene = ", ".join(all_convert_dict[anIDtype][agene])
+                    all_to_name = []
+                    for ent_gene in all_convert_dict[anIDtype][agene]:
+                        all_to_name = all_to_name + entrez_to_name[ent_gene]
+                    converted_gene_name = ", ".join(all_to_name)
                     logger.debug(f"Found mapping ({anIDtype}) {agene} -> {all_convert_dict[anIDtype][agene]}")
                     break
-            convert_out.append([agene, converted_gene or "Could Not be mapped to Entrez"])
+            convert_out.append(
+                [
+                    agene,
+                    converted_gene or "Could Not be mapped to Entrez",
+                    converted_gene_name or "Could Not be mapped to Entrez",
+                ]
+            )
 
-    column_names = ["Original ID", "Entrez ID"]
+    column_names = ["Original ID", "Entrez ID", "Gene Name"]
     df_convert_out = pd.DataFrame(convert_out, columns=column_names).astype(str)
 
     return convert_ids, df_convert_out
@@ -71,7 +83,6 @@ def _make_validation_df(df_convert_out, file_loc, species):
     table_summary = []
     input_count = df_convert_out.shape[0]
     converted_genes = df_convert_out["Entrez ID"].to_numpy()
-
     for anet in util.get_all_net_types(file_loc):
         if (species == "Zebrafish") and (anet == "BioGRID"):
             continue
@@ -95,21 +106,32 @@ def _get_genes_in_network(file_loc, species, net_type, convert_ids):
     return pos_genes_in_net, genes_not_in_net, net_genes
 
 
-def _get_negatives(file_loc, species, net_type, gsc, pos_genes_in_net):
+def _get_negatives(file_loc, species, net_type, gsc, pos_genes_in_net, user_negatives):
     gsc_full = util.load_gsc(file_loc, species, gsc, net_type)
     uni_genes = np.array(gsc_full["Universe"])
     gsc_terms = gsc_full["Term_Order"]
     M = len(uni_genes)
     N = len(pos_genes_in_net)
+    neutral_gene_info = {}
     genes_to_remove = pos_genes_in_net
     for akey in gsc_terms:
-        n = len(gsc_full[akey]["Genes"])
-        k = len(np.intersect1d(pos_genes_in_net, gsc_full[akey]["Genes"]))
+        if user_negatives == None:
+            n_set = gsc_full[akey]["Genes"]
+        else:
+            n_set = np.setdiff1d(gsc_full[akey]["Genes"], user_negatives).tolist()
+        n = len(n_set)
+        k = len(np.intersect1d(pos_genes_in_net, n_set))
         pval = hypergeom.sf(k - 1, M, n, N)
         if pval < 0.05:
-            genes_to_remove = np.union1d(genes_to_remove, gsc_full[akey]["Genes"])
+            genes_to_remove = np.union1d(genes_to_remove, n_set)
+            neutral_gene_info[akey] = {
+                "Name": gsc_full[akey]["Name"],
+                "Task": gsc_full[akey]["Task"],
+                "Genes": n_set,
+            }
+    neutral_gene_info["All Neutrals"] = np.setdiff1d(genes_to_remove, pos_genes_in_net).tolist()
     negative_genes = np.setdiff1d(uni_genes, genes_to_remove)
-    return negative_genes
+    return negative_genes, neutral_gene_info
 
 
 def _run_sl(
@@ -124,7 +146,7 @@ def _run_sl(
     logreg_kwargs: Optional[Dict[str, Any]] = None,
     min_num_pos: int = 15,
     num_folds: int = 3,
-    null_val: float = -10,
+    null_val: float = None,
     random_state: Optional[int] = 0,
     cross_validate: bool = True,
 ):
@@ -180,28 +202,28 @@ def _make_prob_df(file_loc, sp_trn, sp_tst, net_type, probs, pos_genes_in_net, n
     Entrez_to_Symbol = util.load_geneid_conversion(file_loc, sp_tst, "Entrez", "Symbol")
     Entrez_to_Name = util.load_geneid_conversion(file_loc, sp_tst, "Entrez", "Name")
     net_genes = util.load_node_order(file_loc, sp_tst, net_type)
+    if sp_trn != sp_tst:
+        biomart_orthos = util.load_biomart(file_loc, sp_trn, sp_tst)
+        pos_genes_tmp = [biomart_orthos[item] for item in pos_genes_in_net if item in biomart_orthos]
+        neg_genes_tmp = [biomart_orthos[item] for item in negative_genes if item in biomart_orthos]
+    else:
+        pos_genes_tmp = pos_genes_in_net
+        neg_genes_tmp = negative_genes
     prob_results = []
     for idx in range(len(net_genes)):
-        if sp_trn == sp_tst:
-            if net_genes[idx] in pos_genes_in_net:
-                class_label = "P"
-                novel_label = "Known"
-            elif net_genes[idx] in negative_genes:
-                class_label = "N"
-                novel_label = "Novel"
-            else:
-                class_label = "U"
-                novel_label = "Novel"
+        if net_genes[idx] in pos_genes_tmp:
+            class_label = "P"
+            novel_label = "Known"
+        elif net_genes[idx] in neg_genes_tmp:
+            class_label = "N"
+            novel_label = "Novel"
+        else:
+            class_label = "U"
+            novel_label = "Novel"
         syms_tmp = util.mapgene(net_genes[idx], Entrez_to_Symbol)
         name_tmp = util.mapgene(net_genes[idx], Entrez_to_Name)
-        if sp_trn == sp_tst:
-            prob_results.append([net_genes[idx], syms_tmp, name_tmp, novel_label, class_label, probs[idx]])
-        else:
-            prob_results.append([net_genes[idx], syms_tmp, name_tmp, probs[idx]])
-    if sp_trn == sp_tst:
-        df_col_names = ["Entrez", "Symbol", "Name", "Known/Novel", "Class-Label", "Probability"]
-    else:
-        df_col_names = ["Entrez", "Symbol", "Name", "Probability"]
+        prob_results.append([net_genes[idx], syms_tmp, name_tmp, novel_label, class_label, probs[idx]])
+    df_col_names = ["Entrez", "Symbol", "Name", "Known/Novel", "Class-Label", "Probability"]
     df_probs = pd.DataFrame(prob_results, columns=df_col_names)
     df_probs = df_probs.astype({"Entrez": str, "Probability": float})
     df_probs = df_probs.sort_values(by=["Probability"], ascending=False).reset_index(drop=True)
@@ -215,6 +237,8 @@ def _make_prob_df(file_loc, sp_trn, sp_tst, net_type, probs, pos_genes_in_net, n
 
 
 def _make_sim_dfs(file_loc, mdl_weights, species, gsc, net_type, features):
+    # make task conversion
+    task_convert = {"Mondo": "Disease", "Monarch": "Phenotype", "GO": "Biological Process"}
     weights_dict = util.load_pretrained_weights(file_loc, species, gsc, net_type, features)
     gsc_full = util.load_gsc(file_loc, species, gsc, net_type)
     gsc_terms = gsc_full["Term_Order"]
@@ -226,12 +250,13 @@ def _make_sim_dfs(file_loc, mdl_weights, species, gsc, net_type, features):
     z = zscore(mdl_sims)
     results_tmp = []
     for idx2, termID_tmp in enumerate(gsc_terms):
+        Task = task_convert[gsc_full[termID_tmp]["Task"]]
         ID_tmp = termID_tmp
         Name_tmp = weights_dict[termID_tmp]["Name"]
         mdl_sim_tmp = mdl_sims[idx2]
         z_tmp = z[idx2]
-        results_tmp.append([ID_tmp, Name_tmp, mdl_sim_tmp, z_tmp])
-    df_sim = pd.DataFrame(results_tmp, columns=["ID", "Name", "Similarity", "Z-score"]).sort_values(
+        results_tmp.append([Task, ID_tmp, Name_tmp, mdl_sim_tmp, z_tmp])
+    df_sim = pd.DataFrame(results_tmp, columns=["Task", "ID", "Name", "Similarity", "Z-score"]).sort_values(
         by=["Similarity"],
         ascending=False,
     )
