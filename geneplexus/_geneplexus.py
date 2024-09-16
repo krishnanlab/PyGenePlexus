@@ -187,7 +187,7 @@ def _run_sl(
             avgp = average_precision_score(ydata[tst_inds], probs_cv)
             num_tst_pos = np.sum(ydata[tst_inds])
             prior = num_tst_pos / Xdata[tst_inds].shape[0]
-            log2_prior = np.log2(avgp / prior)
+            log2_prior = float(np.log2(avgp / prior))
             avgps.append(log2_prior)
         logger.info(f"{avgps=}")
         logger.info(f"{np.median(avgps)=:.2f}")
@@ -283,6 +283,7 @@ def _make_small_edgelist(file_loc, df_probs, species, net_type, num_nodes=50):
         df_edge["Weight"] = [1.0] * df_edge.shape[0]
     genes_in_edge = np.union1d(df_edge["Node1"].unique(), df_edge["Node2"].unique())
     isolated_genes = np.setdiff1d(top_genes, genes_in_edge).tolist()
+    isolated_genes = [str(item) for item in isolated_genes]
     # Convert to gene symbol
     Entrez_to_Symbol = util.load_geneid_conversion(file_loc, species, "Entrez", "Symbol")
     replace_dict = {gene: util.mapgene(gene, Entrez_to_Symbol) for gene in genes_in_edge}
@@ -292,7 +293,7 @@ def _make_small_edgelist(file_loc, df_probs, species, net_type, num_nodes=50):
 
 
 def _alter_validation_df(df_convert_out, table_summary, net_type):
-    df_convert_out_subset = df_convert_out[["Original ID", "Entrez ID", f"In {net_type}?"]]
+    df_convert_out_subset = df_convert_out[["Original ID", "Entrez ID", "Gene Name", f"In {net_type}?"]]
     network = next((item for item in table_summary if item["Network"] == net_type), None)
     positive_genes = network.get("PositiveGenes")
     return df_convert_out_subset, positive_genes

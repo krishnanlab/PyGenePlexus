@@ -252,7 +252,7 @@ class GenePlexus:
         load_genes_outputs = self._convert_to_entrez(self.input_genes)
         self.df_convert_out = load_genes_outputs[0]
         self.table_summary = load_genes_outputs[1]
-        self.selfinput_count = load_genes_outputs[2]
+        self.input_count = load_genes_outputs[2]
         self.convert_ids = load_genes_outputs[3]
 
     def load_negatives(self, input_negatives: List[str]):
@@ -272,7 +272,7 @@ class GenePlexus:
         load_negatives_outputs = self._convert_to_entrez(self.input_negatives)
         self.df_convert_out_negatives = load_negatives_outputs[0]
         self.table_summary_negatives = load_negatives_outputs[1]
-        self.selfinput_count_negatives = load_negatives_outputs[2]
+        self.input_count_negatives = load_negatives_outputs[2]
         self.convert_ids_negatives = load_negatives_outputs[3]
 
     def _load_genes(self, genes_to_load: List[str]):
