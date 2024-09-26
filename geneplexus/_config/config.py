@@ -14,8 +14,7 @@ import numpy as np
 MAX_RETRY = 10  # maximum number of retries for downloading
 
 URL_DICT = {
-    "Zenodo": "https://zenodo.org/record/6383205/files/",
-    "Wasabi": "http://s3.us-east-2.wasabisys.com/geneplexus/v0.1dev/PyGenePlexusDataZip/",
+    "Zenodo": "https://zenodo.org/records/13844808/files/",
 }
 
 CONFIG_PATH = pathlib.Path(__file__).parent.absolute()
