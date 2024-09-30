@@ -35,7 +35,6 @@ def download_select_data(
     data_dir: str,
     species: SPECIES_SELECTION_TYPE = "All",
     data_loc: str = "Zenodo",
-    n_jobs: int = 10,
     retry: bool = True,
     log_level: LOG_LEVEL_TYPE = "INFO",
 ):
@@ -45,25 +44,29 @@ def download_select_data(
         data_dir: Location of data files.
         species: Species of interest, accept multiple selection as a
             list. Do all the species if set to "All".
-        n_jobs: Number of concurrent downloading threads.
         retry: If set to True, then retry downloading any missing file.
 
     """
     species = _get_species_list(species)
     with stream_level_context(logger, log_level):
-        if data_loc == "Zenodo":
-            logger.warn(
-                f"Downloading data from Zenodo. This should take ~2 minutes per species"
-                "but can vary greatly depending on download speeds",
-            )
         for aspecies in species:
             if not _check_all_files(data_dir, aspecies):
+                if data_loc == "Zenodo":
+                    logger.warn(
+                        f"Downloading {aspecies} data from Zenodo. This should take ~2"
+                        "minutes per species but can vary greatly depending on download speeds",
+                    )
                 log_path = osp.join(data_dir, "download.log")
                 logger.info(f"Start downloading data for {aspecies} and saving to: {data_dir}")
                 fn_download = f"{aspecies}_data.tar.gz"
                 with file_handler_context(logger, log_path, "DEBUG"):
                     _download_and_extract(data_dir, aspecies, fn_download, data_loc, retry)
                 logger.info("Download completed.")
+            else:
+                logger.warn(
+                    f"Files already downloaded for {aspecies}",
+                )
+                
 
 
 def _get_species_list(
@@ -74,7 +77,7 @@ def _get_species_list(
             species = ALL_SPECIES
         else:
             species = [species]
-    elif  not isinstance(species, list):
+    elif not isinstance(species, list):
         raise TypeError(f"Expected str type or list of str type, got {type(species)}")
     for i in species:
         if i not in ALL_SPECIES:
