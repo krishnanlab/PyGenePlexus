@@ -87,7 +87,7 @@ class GenePlexus:
         elif self.auto_download:
             download_select_data(
                 self.file_loc,
-                list(set([self.sp_trn,self.sp_tst])),
+                list({self.sp_trn, self.sp_tst}),
                 log_level=log_level,
             )
 

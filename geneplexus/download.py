@@ -2,6 +2,7 @@
 import io
 import os
 import os.path as osp
+import tarfile
 import time
 from concurrent.futures import ThreadPoolExecutor
 from itertools import repeat
@@ -11,7 +12,6 @@ from typing import Tuple
 from typing import Union
 from urllib.parse import urljoin
 from zipfile import ZipFile
-import tarfile
 
 import requests
 from requests.sessions import Session
@@ -19,10 +19,10 @@ from requests.sessions import Session
 from . import util
 from ._config import logger
 from ._config.config import ALL_SPECIES
-from ._config.config import SPECIES_SELECTION_TYPE
-from ._config.config import SPECIES_TYPE
 from ._config.config import LOG_LEVEL_TYPE
 from ._config.config import MAX_RETRY
+from ._config.config import SPECIES_SELECTION_TYPE
+from ._config.config import SPECIES_TYPE
 from ._config.config import URL_DICT
 from ._config.logger_util import file_handler_context
 from ._config.logger_util import stream_level_context
@@ -66,7 +66,6 @@ def download_select_data(
                 logger.warn(
                     f"Files already downloaded for {aspecies}",
                 )
-                
 
 
 def _get_species_list(
@@ -83,13 +82,14 @@ def _get_species_list(
         if i not in ALL_SPECIES:
             raise ValueError(f"Unexpected species {i!r}")
     return species
-    
+
+
 def _check_all_files(
     data_dir: str,
     aspecies: str,
 ):
     fn_end = f"data_filenames_{aspecies}.txt"
-    fn_full = osp.join(data_dir,fn_end)
+    fn_full = osp.join(data_dir, fn_end)
     # check if filenames file is present
     if not osp.exists(fn_full):
         return False
@@ -102,7 +102,8 @@ def _check_all_files(
         if len(files_missing) > 0:
             return False
         else:
-            return True 
+            return True
+
 
 def _download_and_extract(data_dir, aspecies, fn_download, data_loc, retry):
     session = requests.Session()
@@ -116,9 +117,9 @@ def _download_and_extract(data_dir, aspecies, fn_download, data_loc, retry):
                 with tarfile.open(fileobj=io.BytesIO(r.content), mode="r:gz") as tf:
                     for member in tf.getmembers():
                         member.name = os.path.basename(member.name)
-                        tf.extract(member,data_dir)    
+                        tf.extract(member, data_dir)
                         logger.info(f"Downloaded {member.name}")
-                if _check_all_files(data_dir, aspecies):    
+                if _check_all_files(data_dir, aspecies):
                     break
                 else:
                     logger.warning(f"Not all files downloaded, trying again")
