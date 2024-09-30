@@ -87,10 +87,7 @@ class GenePlexus:
         elif self.auto_download:
             download_select_data(
                 self.file_loc,
-                "All",
-                self.net_type,
-                self.features,
-                ["GO", "Mondo"],
+                list({self.sp_trn, self.sp_tst}),
                 log_level=log_level,
             )
 
@@ -114,7 +111,7 @@ class GenePlexus:
             or (self.sp_tst == "Fly" and self.gsc_tst == "Combined")
         ):
             raise FlyMonarchError(
-                f"Fly has no annotations for Monarch.",
+                f"Fly has no annotations for Monarch. Use GO for GSC",
             )
 
     @property

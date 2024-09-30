@@ -70,7 +70,7 @@ def _initial_id_convert(input_genes, file_loc, species):
                     agene,
                     converted_gene or "Could Not be mapped to Entrez",
                     converted_gene_name or "Could Not be mapped to Entrez",
-                ]
+                ],
             )
 
     column_names = ["Original ID", "Entrez ID", "Gene Name"]
