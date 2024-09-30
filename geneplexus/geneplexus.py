@@ -114,7 +114,7 @@ class GenePlexus:
             or (self.sp_tst == "Fly" and self.gsc_tst == "Combined")
         ):
             raise FlyMonarchError(
-                f"Fly has no annotations for Monarch.",
+                f"Fly has no annotations for Monarch. Use GO for GSC",
             )
 
     @property
