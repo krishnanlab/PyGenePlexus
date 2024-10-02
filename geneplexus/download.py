@@ -1,6 +1,7 @@
 """Data download module."""
 import io
 import os
+import shutil
 import os.path as osp
 import tarfile
 import time
@@ -119,6 +120,10 @@ def _download_and_extract(data_dir, aspecies, fn_download, data_loc, retry):
                         member.name = os.path.basename(member.name)
                         tf.extract(member, data_dir)
                         logger.info(f"Downloaded {member.name}")
+                try:
+                    shutil.rmtree(osp.join(data_dir,f"{aspecies}_data"))
+                except FileNotFoundError:
+                    pass
                 if _check_all_files(data_dir, aspecies):
                     break
                 else:
