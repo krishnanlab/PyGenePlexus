@@ -30,7 +30,7 @@ def _initial_id_convert(input_genes, file_loc, species):
         all_convert_dict[anIDtype] = convert_tmp
     # find all Entrez genes in networks and conversion files
     all_entrez_genes = np.array([])
-    for anet in util.get_all_net_types(file_loc):
+    for anet in util.get_all_net_types(file_loc, species):
         if (species == "Zebrafish") and (anet == "BioGRID"):
             continue
         entrez_genes_tmp = util.load_node_order(file_loc, species, anet)
@@ -83,7 +83,7 @@ def _make_validation_df(df_convert_out, file_loc, species):
     table_summary = []
     input_count = df_convert_out.shape[0]
     converted_genes = df_convert_out["Entrez ID"].to_numpy()
-    for anet in util.get_all_net_types(file_loc):
+    for anet in util.get_all_net_types(file_loc, species):
         if (species == "Zebrafish") and (anet == "BioGRID"):
             continue
         net_genes = util.load_node_order(file_loc, species, anet)
@@ -250,7 +250,10 @@ def _make_sim_dfs(file_loc, mdl_weights, species, gsc, net_type, features):
     z = zscore(mdl_sims)
     results_tmp = []
     for idx2, termID_tmp in enumerate(gsc_terms):
-        Task = task_convert[gsc_full[termID_tmp]["Task"]]
+        if gsc_full[termID_tmp]["Task"] in task_convert:
+            Task = task_convert[gsc_full[termID_tmp]["Task"]]
+        else:
+            Task = gsc_full[termID_tmp]["Task"]
         ID_tmp = termID_tmp
         Name_tmp = weights_dict[termID_tmp]["Name"]
         mdl_sim_tmp = mdl_sims[idx2]

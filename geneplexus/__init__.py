@@ -128,9 +128,8 @@ analysis *cannot* be done due to the lack to pretrained models.
 from ._config import config  # noreorder
 from . import download
 from . import util
-from . import custom
 from .geneplexus import GenePlexus
 
 
 __version__ = "2.0.0-dev"
-__all__ = ["download", "GenePlexus", "util", "config", "custom"]
+__all__ = ["download", "GenePlexus", "util", "config"]
