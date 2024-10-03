@@ -250,7 +250,10 @@ def _make_sim_dfs(file_loc, mdl_weights, species, gsc, net_type, features):
     z = zscore(mdl_sims)
     results_tmp = []
     for idx2, termID_tmp in enumerate(gsc_terms):
-        Task = task_convert[gsc_full[termID_tmp]["Task"]]
+        if gsc_full[termID_tmp]["Task"] in task_convert:
+            Task = task_convert[gsc_full[termID_tmp]["Task"]]
+        else:
+            Task = gsc_full[termID_tmp]["Task"]
         ID_tmp = termID_tmp
         Name_tmp = weights_dict[termID_tmp]["Name"]
         mdl_sim_tmp = mdl_sims[idx2]
