@@ -30,7 +30,7 @@ def _initial_id_convert(input_genes, file_loc, species):
         all_convert_dict[anIDtype] = convert_tmp
     # find all Entrez genes in networks and conversion files
     all_entrez_genes = np.array([])
-    for anet in util.get_all_net_types(file_loc):
+    for anet in util.get_all_net_types(file_loc, species):
         if (species == "Zebrafish") and (anet == "BioGRID"):
             continue
         entrez_genes_tmp = util.load_node_order(file_loc, species, anet)
@@ -83,7 +83,7 @@ def _make_validation_df(df_convert_out, file_loc, species):
     table_summary = []
     input_count = df_convert_out.shape[0]
     converted_genes = df_convert_out["Entrez ID"].to_numpy()
-    for anet in util.get_all_net_types(file_loc):
+    for anet in util.get_all_net_types(file_loc, species):
         if (species == "Zebrafish") and (anet == "BioGRID"):
             continue
         net_genes = util.load_node_order(file_loc, species, anet)

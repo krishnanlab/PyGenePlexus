@@ -75,11 +75,9 @@ class GenePlexus:
         self.input_genes: List[str] = []
         self.input_negatives: List[str] = []
 
-        self.check_custom()
-
         if self.auto_download and self._is_custom:
             warnings.warn(
-                f"Skipping auto download for custom network {self.net_type}. "
+                f"\nSkipping auto download for custom files. "
                 "Unset auto_download option to suppress this message.",
                 UserWarning,
                 stacklevel=2,
@@ -131,7 +129,9 @@ class GenePlexus:
         ]
 
     def dump_config(self, outdir: str):
-        """Save parameters configuration to a config file."""
+        """Save parameters configuration to a config file
+        when running with CLI. 
+        """
         params_dict = {i: getattr(self, i) for i in self._params}
         path = osp.join(outdir, "config.yaml")
         with open(path, "w") as f:
@@ -158,17 +158,16 @@ class GenePlexus:
     @property
     def net_type(self) -> config.NET_TYPE:
         """Network to use."""
-        return self._net_type  # type: ignore
+        return self._net_type
 
     @net_type.setter
     def net_type(self, net_type: config.NET_TYPE):
-        util.check_param("network", net_type, util.get_all_net_types(self.file_loc))
         if net_type not in config.ALL_NETWORKS:
-            data_files = os.listdir(self.file_loc)
-            node_order_fn = f"NodeOrder_{net_type}.txt"
-            if node_order_fn not in data_files:
-                raise ValueError(f"Missing file {node_order_fn} for custom network {net_type}")
-
+            warnings.warn(
+                util.param_warning("network", net_type, config.ALL_NETWORKS),
+                UserWarning,
+                stacklevel=2,
+            )
             self._is_custom = True
             logger.info(f"Using custom network {net_type!r}")
 
@@ -181,8 +180,49 @@ class GenePlexus:
 
     @features.setter
     def features(self, features: config.FEATURE_TYPE):
-        util.check_param("feature", features, config.ALL_FEATURES)
+        if features not in config.ALL_FEATURES:
+            warnings.warn(
+                util.param_warning("feature", features, config.ALL_FEATURES),
+                UserWarning,
+                stacklevel=2,
+            )
+            self._is_custom = True
+            logger.info(f"Using custom feature {features!r}")
         self._features = features
+
+    @property
+    def sp_trn(self) -> config.SPECIES_TYPE:
+        """Geneset collection."""
+        return self._sp_trn
+
+    @sp_trn.setter
+    def sp_trn(self, sp_trn: config.SPECIES_TYPE):
+        if sp_trn not in config.ALL_SPECIES:
+            warnings.warn(
+                util.param_warning("species", sp_trn, config.ALL_SPECIES),
+                UserWarning,
+                stacklevel=2,
+            )
+            self._is_custom = True
+            logger.info(f"Using custom species {sp_trn!r}")
+        self._sp_trn = sp_trn
+        
+    @property
+    def sp_tst(self) -> config.SPECIES_TYPE:
+        """Geneset collection."""
+        return self._sp_tst
+
+    @sp_tst.setter
+    def sp_tst(self, sp_tst: config.SPECIES_TYPE):
+        if sp_tst not in config.ALL_SPECIES:
+            warnings.warn(
+                util.param_warning("species", sp_tst, config.ALL_SPECIES),
+                UserWarning,
+                stacklevel=2,
+            )
+            self._is_custom = True
+            logger.info(f"Using custom species {sp_tst!r}")
+        self._sp_tst = sp_tst
 
     @property
     def gsc_trn(self) -> config.GSC_TYPE:
@@ -191,46 +231,34 @@ class GenePlexus:
 
     @gsc_trn.setter
     def gsc_trn(self, gsc_trn: config.GSC_TYPE):
-        self._standard_gsc = self._custom_gsc = None
-        util.check_param("GSC", gsc_trn, util.get_all_gscs(self.file_loc))
         if gsc_trn not in config.ALL_GSCS:
-            data_files = os.listdir(self.file_loc)
-            orig_gsc_fn = f"GSCOriginal_{gsc_trn}.json"
-            if orig_gsc_fn not in data_files:
-                raise ValueError(f"Missing file {orig_gsc_fn} for custom GSC {gsc_trn}")
-
-            logger.info(f"Using custom GSC {gsc!r}")
-
+            warnings.warn(
+                util.param_warning("GSC", gsc_trn, config.ALL_GSCS),
+                UserWarning,
+                stacklevel=2,
+            )
+            self._is_custom = True
+            logger.info(f"Using custom GSC {gsc_trn!r}")
         self._gsc_trn = gsc_trn
+        
+    @property
+    def gsc_tst(self) -> config.GSC_TYPE:
+        """Geneset collection."""
+        return self._gsc_tst
 
-    def check_custom(self):
-        """Check custom network and gsc options.
-
-        The following files are required:
-        * ``Data_{features}_{net_type}.npy``
-        * ``GSC_{gsc}_{net_type}_GoodSets.json``
-        * ``GSC_{gsc}_{net_type}_universetxt``
-
-        """
-        if self._net_type in config.ALL_NETWORKS and self._gsc_trn in config.ALL_GSCS:
-            logger.debug("Skipping custom data checks, using standard data.")
-            return
-
-        # Require feature file, gsc file, and gsc universe file
-        data_files = os.listdir(self.file_loc)
-        features_fname = f"Data_{self.features}_{self.net_type}.npy"
-        gsc_fname = f"GSC_{self.gsc}_{self.net_type}_GoodSets.json"
-        universe_fname = f"GSC_{self.gsc}_{self.net_type}_universe.txt"
-        if features_fname not in data_files:
-            raise CustomDataError(
-                f"Missing custom network feature data file {features_fname}, "
-                "set up using geneplexus.custom.edgelist_loc first.",
+    @gsc_tst.setter
+    def gsc_tst(self, gsc_tst: config.GSC_TYPE):
+        if gsc_tst not in config.ALL_GSCS:
+            warnings.warn(
+                util.param_warning("GSC", gsc_tst, config.ALL_GSCS),
+                UserWarning,
+                stacklevel=2,
             )
-        elif gsc_fname not in data_files or universe_fname not in data_files:
-            raise CustomDataError(
-                f"Missing custom GSC data files {gsc_fname} and/or {universe_fname}, "
-                "set up using geneplexus.custom.subset_gsc_to_network first.",
-            )
+            self._is_custom = True
+            logger.info(f"Using custom GSC {gsc_tst!r}")
+        self._gsc_tst = gsc_tst
+
+
 
     def load_genes(self, input_genes: List[str]):
         """Load gene list and convert to Entrez.

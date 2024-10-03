@@ -16,41 +16,6 @@ import numpy as np
 from . import config
 
 
-def get_all_gscs(file_loc: Optional[str]) -> List[str]:
-    """Return list of GSCs found in the data directory.
-
-    Note:
-        Only the full GSC is checked (starts with ``GSCOriginal``), but not the
-        network specific ones (goodsets and universe).
-
-    """
-    all_gscs = set(config.ALL_GSCS)
-    if file_loc:
-        all_gscs.update(
-            [
-                i.split("GSCOriginal_")[1].split(".json")[0]
-                for i in os.listdir(file_loc)
-                if i.startswith("GSCOriginal_")
-            ],
-        )
-    return sorted(all_gscs)
-
-
-def get_all_net_types(file_loc: Optional[str]) -> List[str]:
-    """Return list of networks found in the data directory.
-
-    Note:
-        Only the node ordering files are checked (starts with ``NodeOrder``).
-
-    """
-    all_net_types = set(config.ALL_NETWORKS)
-    if file_loc:
-        all_net_types.update(
-            [i.split("__")[2].split(".txt")[0] for i in os.listdir(file_loc) if i.startswith("NodeOrder_")],
-        )
-    return sorted(all_net_types)
-
-
 def timeout(timeout: int, msg: str = ""):
     """Timeout decorator using thread join timeout.
 
@@ -85,14 +50,6 @@ def timeout(timeout: int, msg: str = ""):
         return wrapper
 
     return decorate
-
-
-def check_param(name: str, value: Any, expected: List[Any], /):
-    """Check parameter specified and raise ValueError for unexpected value."""
-    if value not in expected:
-        raise ValueError(
-            f"Unexpected {name} {value!r}, available choices are {expected}",
-        )
 
 
 def normexpand(path: str, create: bool = True) -> str:
@@ -327,3 +284,40 @@ def load_gene_features(
     """
     file_name = f"Data__{species}__{features}__{net_type}.npy"
     return _load_np_file(file_loc, file_name, load_method="npy")
+    
+def param_warning(
+    param_type: str,
+    user_param: str,
+    param_options: List[str],
+) -> str:
+    """Make custom param warning.
+
+    Args:
+        param_type: The parameter type.
+        user_param: The user supplied parameter.
+        param_options: List of options package natively supports.
+
+    """
+    return (f"\n{user_param} appears to be a custom {param_type} type. "
+           f"PyGenePlexus natively supported {param_type} options are "
+           f"{param_options}.Please make sure all custom files are named "
+           "and formatted correctly. See docs for more information"
+           "on custom files. ")
+           
+def get_all_net_types(file_loc: Optional[str], species: str) -> List[str]:
+    """Return list of networks found in the data directory.
+
+    Note:
+        Only the node ordering files are checked (starts with ``NodeOrder``).
+
+    """
+    all_net_types = set()
+    if file_loc:
+        all_net_types.update(
+            [i.split("__")[2].split(".txt")[0] for i in os.listdir(file_loc) if i.startswith(f"NodeOrder__{species}")],
+        )
+    return sorted(all_net_types)
+
+           
+           
+            
