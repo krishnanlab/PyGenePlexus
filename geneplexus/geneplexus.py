@@ -77,7 +77,7 @@ class GenePlexus:
 
         if self.auto_download and self._is_custom:
             warnings.warn(
-                f"\nSkipping auto download for custom files. " "Unset auto_download option to suppress this message.",
+                "\nSkipping auto download for custom files. Unset auto_download option to suppress this message.",
                 UserWarning,
                 stacklevel=2,
             )

@@ -303,7 +303,7 @@ def param_warning(
         f"\n{user_param} appears to be a custom {param_type} type. "
         f"PyGenePlexus natively supported {param_type} options are "
         f"{param_options}.Please make sure all custom files are named "
-        "and formatted correctly. See docs for more information"
+        "and formatted correctly. See docs for more information "
         "on custom files. "
     )
 
