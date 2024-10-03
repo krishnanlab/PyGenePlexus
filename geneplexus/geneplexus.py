@@ -77,8 +77,7 @@ class GenePlexus:
 
         if self.auto_download and self._is_custom:
             warnings.warn(
-                f"\nSkipping auto download for custom files. "
-                "Unset auto_download option to suppress this message.",
+                f"\nSkipping auto download for custom files. " "Unset auto_download option to suppress this message.",
                 UserWarning,
                 stacklevel=2,
             )
@@ -130,7 +129,7 @@ class GenePlexus:
 
     def dump_config(self, outdir: str):
         """Save parameters configuration to a config file
-        when running with CLI. 
+        when running with CLI.
         """
         params_dict = {i: getattr(self, i) for i in self._params}
         path = osp.join(outdir, "config.yaml")
@@ -206,7 +205,7 @@ class GenePlexus:
             self._is_custom = True
             logger.info(f"Using custom species {sp_trn!r}")
         self._sp_trn = sp_trn
-        
+
     @property
     def sp_tst(self) -> config.SPECIES_TYPE:
         """Geneset collection."""
@@ -240,7 +239,7 @@ class GenePlexus:
             self._is_custom = True
             logger.info(f"Using custom GSC {gsc_trn!r}")
         self._gsc_trn = gsc_trn
-        
+
     @property
     def gsc_tst(self) -> config.GSC_TYPE:
         """Geneset collection."""
@@ -257,8 +256,6 @@ class GenePlexus:
             self._is_custom = True
             logger.info(f"Using custom GSC {gsc_tst!r}")
         self._gsc_tst = gsc_tst
-
-
 
     def load_genes(self, input_genes: List[str]):
         """Load gene list and convert to Entrez.

@@ -284,7 +284,8 @@ def load_gene_features(
     """
     file_name = f"Data__{species}__{features}__{net_type}.npy"
     return _load_np_file(file_loc, file_name, load_method="npy")
-    
+
+
 def param_warning(
     param_type: str,
     user_param: str,
@@ -298,12 +299,15 @@ def param_warning(
         param_options: List of options package natively supports.
 
     """
-    return (f"\n{user_param} appears to be a custom {param_type} type. "
-           f"PyGenePlexus natively supported {param_type} options are "
-           f"{param_options}.Please make sure all custom files are named "
-           "and formatted correctly. See docs for more information"
-           "on custom files. ")
-           
+    return (
+        f"\n{user_param} appears to be a custom {param_type} type. "
+        f"PyGenePlexus natively supported {param_type} options are "
+        f"{param_options}.Please make sure all custom files are named "
+        "and formatted correctly. See docs for more information"
+        "on custom files. "
+    )
+
+
 def get_all_net_types(file_loc: Optional[str], species: str) -> List[str]:
     """Return list of networks found in the data directory.
 
@@ -317,7 +321,3 @@ def get_all_net_types(file_loc: Optional[str], species: str) -> List[str]:
             [i.split("__")[2].split(".txt")[0] for i in os.listdir(file_loc) if i.startswith(f"NodeOrder__{species}")],
         )
     return sorted(all_net_types)
-
-           
-           
-            
