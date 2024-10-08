@@ -125,6 +125,7 @@ However, when using a custom network, the model similarity
 analysis *cannot* be done due to the lack to pretrained models.
 
 """
+
 from ._config import config  # noreorder
 from . import download
 from . import util
