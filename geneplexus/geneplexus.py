@@ -92,7 +92,7 @@ class GenePlexus:
             self.load_genes(input_genes)
 
         if input_negatives is not None:
-            self.load_genes(load_negatives)
+            self.load_negatives(input_negatives)
 
         if ("Zebrafish" == (self.sp_trn or self.sp_tst)) and (self.net_type == "BioGRID"):
             raise ZebrafishBioGRIDError(
