@@ -1,9 +1,9 @@
 """Command line interface for the GenePlexus pipeline."""
 import argparse
 import atexit
+import json
 import os
 import os.path as osp
-import json
 import pathlib
 import shutil
 import tempfile
@@ -50,7 +50,7 @@ def parse_args() -> argparse.Namespace:
         "separated by new line, and use 'tab' if the genes are seperate by "
         "tabs. Other generic separator are also supported, e.g. ', '.",
     )
-    
+
     parser.add_argument(
         "-dd",
         "--data_dir",
@@ -100,13 +100,13 @@ def parse_args() -> argparse.Namespace:
         metavar="",
         help=f"Geneset collection used to generate negatives. {format_choices(config.ALL_GSCS)}",
     )
-    
+
     parser.add_argument(
         "-g2",
         "--gsc_tst",
         default="GO",
         metavar="",
-        help=f"Geneset collection used for model similarities. {format_choices(config.ALL_GSCS)}", 
+        help=f"Geneset collection used for model similarities. {format_choices(config.ALL_GSCS)}",
     )
 
     parser.add_argument(
@@ -172,7 +172,7 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Skip model similarity computation",
     )
-    
+
     parser.add_argument(
         "--skip-sm-edgelist",
         action="store_true",
@@ -248,7 +248,6 @@ def save_results(gp, outdir, zip_output, overwrite, skip_mdl_sim, skip_sm_edgeli
         np.savetxt(osp.join(outdir, "isolated_genes.txt"), gp.isolated_genes, fmt="%s")
         np.savetxt(osp.join(outdir, "isolated_genes_sym.txt"), gp.isolated_genes_sym, fmt="%s")
     df_to_tsv(gp.df_convert_out_subset, outdir, "df_convert_out_subset.tsv")
-        
 
     # Dump config, close file handler and move run log to result directory
     gp.dump_config(outdir)
@@ -342,13 +341,13 @@ def main():
 
     # Create geneplexus object and auto download data files
     gp = GenePlexus(
-        file_loc = args.data_dir,
-        net_type = args.network,
-        features = args.feature,
-        sp_trn = args.sp_trn,
-        sp_tst = args.sp_tst,
-        gsc_trn = args.gsc_trn,
-        gsc_tst = args.gsc_tst,
+        file_loc=args.data_dir,
+        net_type=args.network,
+        features=args.feature,
+        sp_trn=args.sp_trn,
+        sp_tst=args.sp_tst,
+        gsc_trn=args.gsc_trn,
+        gsc_tst=args.gsc_tst,
         auto_download=auto_download,
         log_level=log_level,
     )
@@ -360,7 +359,9 @@ def main():
 
     # Run pipeline and save results
     run_pipeline(gp, args.small_edgelist_num_nodes, args.skip_mdl_sim, args.skip_sm_edgelist)
-    save_results(gp, normexpand(args.output_dir), args.zip_output, args.overwrite, args.skip_mdl_sim, args.skip_sm_edgelist)
+    save_results(
+        gp, normexpand(args.output_dir), args.zip_output, args.overwrite, args.skip_mdl_sim, args.skip_sm_edgelist
+    )
 
 
 if __name__ == "__main__":
