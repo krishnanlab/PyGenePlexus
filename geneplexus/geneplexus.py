@@ -523,7 +523,7 @@ class GenePlexus:
             df_convert_out subset to only the network used to train the model
         :attr:`positive_genes` (List[str])
             List of genes used as positives when training the model
-        
+
 
         """
         self.df_convert_out_subset, self.positive_genes = _geneplexus._alter_validation_df(

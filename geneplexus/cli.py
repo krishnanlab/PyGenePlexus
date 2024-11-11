@@ -360,7 +360,12 @@ def main():
     # Run pipeline and save results
     run_pipeline(gp, args.small_edgelist_num_nodes, args.skip_mdl_sim, args.skip_sm_edgelist)
     save_results(
-        gp, normexpand(args.output_dir), args.zip_output, args.overwrite, args.skip_mdl_sim, args.skip_sm_edgelist
+        gp,
+        normexpand(args.output_dir),
+        args.zip_output,
+        args.overwrite,
+        args.skip_mdl_sim,
+        args.skip_sm_edgelist,
     )
 
 
