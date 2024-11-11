@@ -137,7 +137,7 @@ def _get_negatives(file_loc, species, net_type, gsc, pos_genes_in_net, user_nega
 def _run_sl(
     file_loc,
     sp_trn,
-    sp_tst,
+    sp_res,
     net_type,
     features,
     pos_genes_in_net,
@@ -193,17 +193,17 @@ def _run_sl(
         logger.info(f"{np.median(avgps)=:.2f}")
         logger.info(f"{np.mean(avgps)=:.2f}")
     # do predictions in the target species
-    data = util.load_gene_features(file_loc, sp_tst, features, net_type)
+    data = util.load_gene_features(file_loc, sp_res, features, net_type)
     probs = clf.predict_proba(data)[:, 1]
     return mdl_weights, probs, avgps
 
 
-def _make_prob_df(file_loc, sp_trn, sp_tst, net_type, probs, pos_genes_in_net, negative_genes):
-    Entrez_to_Symbol = util.load_geneid_conversion(file_loc, sp_tst, "Entrez", "Symbol")
-    Entrez_to_Name = util.load_geneid_conversion(file_loc, sp_tst, "Entrez", "Name")
-    net_genes = util.load_node_order(file_loc, sp_tst, net_type)
-    if sp_trn != sp_tst:
-        biomart_orthos = util.load_biomart(file_loc, sp_trn, sp_tst)
+def _make_prob_df(file_loc, sp_trn, sp_res, net_type, probs, pos_genes_in_net, negative_genes):
+    Entrez_to_Symbol = util.load_geneid_conversion(file_loc, sp_res, "Entrez", "Symbol")
+    Entrez_to_Name = util.load_geneid_conversion(file_loc, sp_res, "Entrez", "Name")
+    net_genes = util.load_node_order(file_loc, sp_res, net_type)
+    if sp_trn != sp_res:
+        biomart_orthos = util.load_biomart(file_loc, sp_trn, sp_res)
         pos_genes_tmp = [biomart_orthos[item] for item in pos_genes_in_net if item in biomart_orthos]
         neg_genes_tmp = [biomart_orthos[item] for item in negative_genes if item in biomart_orthos]
     else:
