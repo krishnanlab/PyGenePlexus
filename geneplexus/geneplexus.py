@@ -31,9 +31,9 @@ class GenePlexus:
         net_type: config.NET_TYPE = "STRING",
         features: config.FEATURE_TYPE = "SixSpeciesN2V",
         sp_trn: config.SPECIES_TYPE = "Human",
-        sp_tst: config.SPECIES_TYPE = "Human",
+        sp_res: config.SPECIES_TYPE = "Human",
         gsc_trn: config.GSC_TYPE = "Combined",
-        gsc_tst: config.GSC_TYPE = "Combined",
+        gsc_res: config.GSC_TYPE = "Combined",
         input_genes: Optional[List[str]] = None,
         input_negatives: Optional[List[str]] = None,
         auto_download: bool = False,
@@ -47,10 +47,10 @@ class GenePlexus:
             net_type: Type of network to use.
             features: Type of features of the network to use.
             sp_trn: The species of the training data
-            sp_tst: The species of the testing data
+            sp_res: The species of the testing data
             gsc_trn: Gene set collection used during training
-            gsc_tst: Gene set collection used when generating
-                similarity dataframe
+            gsc_res: Gene set collection used when generating
+                results
             input_genes: Input gene list, can be mixed type. Can also be set
                 later if not specified at init time by simply calling
                 :meth:`load_genes` (default: :obj:`None`).
@@ -66,9 +66,9 @@ class GenePlexus:
         self.file_loc = file_loc  # type: ignore
         self.features = features
         self.sp_trn = sp_trn
-        self.sp_tst = sp_tst
+        self.sp_res = sp_res
         self.gsc_trn = gsc_trn
-        self.gsc_tst = gsc_tst
+        self.gsc_res = gsc_res
         self.net_type = net_type
         self.log_level = log_level
         self.auto_download = auto_download
@@ -84,7 +84,7 @@ class GenePlexus:
         elif self.auto_download:
             download_select_data(
                 self.file_loc,
-                list({self.sp_trn, self.sp_tst}),
+                list({self.sp_trn, self.sp_res}),
                 log_level=log_level,
             )
 
@@ -94,7 +94,7 @@ class GenePlexus:
         if input_negatives is not None:
             self.load_negatives(input_negatives)
 
-        if ("Zebrafish" == (self.sp_trn or self.sp_tst)) and (self.net_type == "BioGRID"):
+        if ("Zebrafish" == (self.sp_trn or self.sp_res)) and (self.net_type == "BioGRID"):
             raise ZebrafishBioGRIDError(
                 f"The BioGRID network for Zebrafish is not "
                 "included due to it not having enough nodes "
@@ -104,8 +104,8 @@ class GenePlexus:
         if (
             (self.sp_trn == "Fly" and self.gsc_trn == "Monarch")
             or (self.sp_trn == "Fly" and self.gsc_trn == "Combined")
-            or (self.sp_tst == "Fly" and self.gsc_tst == "Monarch")
-            or (self.sp_tst == "Fly" and self.gsc_tst == "Combined")
+            or (self.sp_res == "Fly" and self.gsc_res == "Monarch")
+            or (self.sp_res == "Fly" and self.gsc_res == "Combined")
         ):
             raise FlyMonarchError(
                 f"Fly has no annotations for Monarch. Use GO for GSC",
@@ -118,9 +118,9 @@ class GenePlexus:
             "net_type",
             "features",
             "sp_trn",
-            "sp_tst",
+            "sp_res",
             "gsc_trn",
-            "gsc_tst",
+            "gsc_res",
             "auto_download",
             "log_level",
             "input_genes",
@@ -128,8 +128,8 @@ class GenePlexus:
         ]
 
     def dump_config(self, outdir: str):
-        """Save parameters configuration to a config file
-        when running with CLI.
+        """Save parameters configuration to a config file,
+        used with CLI.
         """
         params_dict = {i: getattr(self, i) for i in self._params}
         path = osp.join(outdir, "config.yaml")
@@ -140,9 +140,7 @@ class GenePlexus:
     @property
     def file_loc(self) -> str:
         """File location.
-
         Use default data location ~/.data/geneplexus if not set.
-
         """
         return self._file_loc
 
@@ -191,7 +189,7 @@ class GenePlexus:
 
     @property
     def sp_trn(self) -> config.SPECIES_TYPE:
-        """Geneset collection."""
+        """Training species."""
         return self._sp_trn
 
     @sp_trn.setter
@@ -207,25 +205,25 @@ class GenePlexus:
         self._sp_trn = sp_trn
 
     @property
-    def sp_tst(self) -> config.SPECIES_TYPE:
-        """Geneset collection."""
-        return self._sp_tst
+    def sp_res(self) -> config.SPECIES_TYPE:
+        """Results_species."""
+        return self._sp_res
 
-    @sp_tst.setter
-    def sp_tst(self, sp_tst: config.SPECIES_TYPE):
-        if sp_tst not in config.ALL_SPECIES:
+    @sp_res.setter
+    def sp_res(self, sp_res: config.SPECIES_TYPE):
+        if sp_res not in config.ALL_SPECIES:
             warnings.warn(
-                util.param_warning("species", sp_tst, config.ALL_SPECIES),
+                util.param_warning("species", sp_res, config.ALL_SPECIES),
                 UserWarning,
                 stacklevel=2,
             )
             self._is_custom = True
-            logger.info(f"Using custom species {sp_tst!r}")
-        self._sp_tst = sp_tst
+            logger.info(f"Using custom species {sp_res!r}")
+        self._sp_res = sp_res
 
     @property
     def gsc_trn(self) -> config.GSC_TYPE:
-        """Geneset collection."""
+        """Geneset collection used in traiining."""
         return self._gsc_trn
 
     @gsc_trn.setter
@@ -241,29 +239,44 @@ class GenePlexus:
         self._gsc_trn = gsc_trn
 
     @property
-    def gsc_tst(self) -> config.GSC_TYPE:
-        """Geneset collection."""
-        return self._gsc_tst
+    def gsc_res(self) -> config.GSC_TYPE:
+        """Geneset collection used in results."""
+        return self._gsc_res
 
-    @gsc_tst.setter
-    def gsc_tst(self, gsc_tst: config.GSC_TYPE):
-        if gsc_tst not in config.ALL_GSCS:
+    @gsc_res.setter
+    def gsc_res(self, gsc_res: config.GSC_TYPE):
+        if gsc_res not in config.ALL_GSCS:
             warnings.warn(
-                util.param_warning("GSC", gsc_tst, config.ALL_GSCS),
+                util.param_warning("GSC", gsc_res, config.ALL_GSCS),
                 UserWarning,
                 stacklevel=2,
             )
             self._is_custom = True
-            logger.info(f"Using custom GSC {gsc_tst!r}")
-        self._gsc_tst = gsc_tst
+            logger.info(f"Using custom GSC {gsc_res!r}")
+        self._gsc_res = gsc_res
 
     def load_genes(self, input_genes: List[str]):
         """Load gene list and convert to Entrez.
 
-        :attr:`GenePlexus.input_genes` (List[str]): Input gene list.
-
         Args:
             input_genes: Input gene list, can be mixed type.
+
+        :attr:`GenePlexus.input_genes` (List[str])
+            Input genes converted to uppercase
+        :attr:`GenePlexus.df_convert_out` (DataFrame)
+            A table where the first column contains the original gene IDs, the
+            second column contains the corresponding converted Entrez gene IDs.
+            The rest of the columns are indicators of whether a given gene is
+            present in any one of the networks.
+        :attr:`GenePlexus.df_convert_out` (DataFrame): Input gene list.
+        :attr:`GenePlexus.table_summary` (List[Dict[str, int]])
+            List of netowrk stats summary dictionaries. Each dictionary has
+            three keys: **Network**, **NetworkGenes**, and **PositiveGenes**
+            (the number intersection between the input genes and the network
+            genes).
+        :attr:`GenePlexus.input_count` (int)
+            Number of input genes.
+        :attr:`GenePlexus.convert_ids` (List[str]): Converted gene list.
 
         See also:
             Use :meth:`geneplexus.util.read_gene_list` to load a gene list
@@ -280,10 +293,24 @@ class GenePlexus:
     def load_negatives(self, input_negatives: List[str]):
         """Load gene list and convert to Entrez that will used as negatives.
 
-        :attr:`GenePlexus.input_negatives` (List[str]): Input gene list.
-
         Args:
-            input_negstives: Negative gene list, can be mixed type.
+            input_negatives: Input negative gene list, can be mixed type.
+
+        :attr:`GenePlexus.input_negatives` (List[str])
+            Input negatives converted to uppercase
+        :attr:`GenePlexus.df_convert_out_negatives` (DataFrame)
+            A table where the first column contains the original gene IDs, the
+            second column contains the corresponding converted Entrez gene IDs.
+            The rest of the columns are indicators of whether a given gene is
+            present in any one of the networks.
+        :attr:`GenePlexus.table_summary_negatives` (List[Dict[str, int]])
+            List of netowrk stats summary dictionaries. Each dictionary has
+            three keys: **Network**, **NetworkGenes**, and **PositiveGenes**
+            (the number intersection between the input genes and the network
+            genes).
+        :attr:`GenePlexus.input_count_negatives` (int)
+            Number of input genes.
+        :attr:`GenePlexus.convert_ids_negatives` (List[str]): Converted gene list.
 
         See also:
             Use :meth:`geneplexus.util.read_gene_list` to load a gene list
@@ -308,20 +335,8 @@ class GenePlexus:
         return upper_genes
 
     def _convert_to_entrez(self, genes_to_load: List[str]):
-        """Convert the loaded genes to Entrez.
-
-        :attr:`GenePlexus.df_convert_out` (DataFrame)
-            A table where the first column contains the original gene IDs, the
-            second column contains the corresponding converted Entrez gene IDs.
-            The rest of the columns are indicators of whether a given gene is
-            present in any one of the networks.
-        :attr:`GenePlexus.table_summary` (List[Dict[str, int]])
-            List of netowrk stats summary dictionaries. Each dictionary has
-            three keys: **Network**, **NetworkGenes**, and **PositiveGenes**
-            (the number intersection between the input genes and the network
-            genes).
-        :attr:`GenePlexus.input_count` (int)
-            Number of input genes.
+        """Convert the loaded genes to Entrez and make objects
+        showing exactly what was converted
 
         """
         convert_ids, df_convert_out = _geneplexus._initial_id_convert(
@@ -386,7 +401,7 @@ class GenePlexus:
         self.mdl_weights, self.probs, self.avgps = _geneplexus._run_sl(
             self.file_loc,
             self.sp_trn,
-            self.sp_tst,
+            self.sp_res,
             self.net_type,
             self.features,
             self.pos_genes_in_net,
@@ -402,7 +417,7 @@ class GenePlexus:
         self.df_probs = _geneplexus._make_prob_df(
             self.file_loc,
             self.sp_trn,
-            self.sp_tst,
+            self.sp_res,
             self.net_type,
             self.probs,
             self.pos_genes_in_net,
@@ -422,6 +437,9 @@ class GenePlexus:
         :attr:`GenePlexus.negative_genes` (array of str)
             Array of negative gene Entrez IDs derived using the input genes and
             the background gene set collection (GSC).
+        :attr:`GenePlexus.neutral_gene_info` (Dict of Dicts)
+            Dictionary saying which genes and from which GSC terms are set
+            as negatives.
 
         """
         self.pos_genes_in_net, self.genes_not_in_net, self.net_genes = _geneplexus._get_genes_in_network(
@@ -448,40 +466,22 @@ class GenePlexus:
         return self.pos_genes_in_net, self.negative_genes, self.net_genes, self.neutral_gene_info
 
     def make_sim_dfs(self):
-        """Compute similarities bewteen the input genes and GO or Mondo.
+        """Compute similarities bewteen the input genes and GO, Monarch and/or Mondo.
 
-        The similarities are compuared based on the model trained on the input
-        gene set and models pre-trained on known GO and Mondo gene sets.
+        The similarities are compared based on the model trained on the input
+        gene set and models pre-trained on known GO, Monarch and Mondo gene sets.
 
-        :attr:`GenePlexus.df_sim_GO` (DataFrame)
-            A table with 4 columns: **ID** (the GO term ID), **Name** (name of
-            the GO term), **Similarity** (similarity between the input model
-            and a model trained on the GO term gene set), **Rank** (rank of
-            similarity between the input model and a model trained on the GO
-            term gene set).
-        :attr:`GenePlexus.df_sim_Dis` (DataFrame)
-            A table with 4 columns: **ID** (the DO term ID), **Name** (name of
-            the DO term), **Similarity** (similarity between the input model
-            and a model trained on the DO term gene set), **Rank** (rank of
-            similarity between the input model and a model trained on the DO
-            term gene set).
-        :attr:`GenePlexus.weights_GO`
-            Dictionary of pretrained model weights for GO. A key is a GO term,
-            and the value is a dictionary with three keys: **Name** (name of
-            the GO term), **Weights** (pretrained model weights), **PosGenes**
-            (positive genes for this GO term).
-        :attr:`GenePlexus.weights_Dis`
-            Dictionary of pretrained model weights for Mondo. A key is a DO
-            term, and the value is a dictionary with three keys: **Name** (name
-            of the DO term), **Weights** (pretrained model weights),
-            **PosGenes** (positive genes for this DO term).
+        :attr:`GenePlexus.df_sim` (DataFrame)
+            A table showing how similar gsc_res is to the user model.
+        :attr:`GenePlexus.weights`
+            Dictionary of pretrained model weights for gsc_res.
 
         """
         self.df_sim, self.weights_dict = _geneplexus._make_sim_dfs(
             self.file_loc,
             self.mdl_weights,
-            self.sp_tst,
-            self.gsc_tst,
+            self.sp_res,
+            self.gsc_res,
             self.net_type,
             self.features,
         )
@@ -489,6 +489,9 @@ class GenePlexus:
 
     def make_small_edgelist(self, num_nodes: int = 50):
         """Make a subgraph induced by the top predicted genes.
+
+        Args:
+            num_nodes: Number of top genes to include.
 
         :attr:`GenePlexus.df_edge` (DataFrame)
             Table of edge list corresponding to the subgraph induced by the top
@@ -503,14 +506,11 @@ class GenePlexus:
             List of top predicted genes (in gene symbol) that are isolated from
             other top predicted genes in the network.
 
-        Args:
-            num_nodes: Number of top genes to include.
-
         """
         self.df_edge, self.isolated_genes, self.df_edge_sym, self.isolated_genes_sym = _geneplexus._make_small_edgelist(
             self.file_loc,
             self.df_probs,
-            self.sp_tst,
+            self.sp_res,
             self.net_type,
             num_nodes=num_nodes,
         )
@@ -519,8 +519,11 @@ class GenePlexus:
     def alter_validation_df(self):
         """Make table about presence of input genes in the network.
 
-        :attr:`df_convert_out_subset`
-        :attr:`positive_genes`
+        :attr:`df_convert_out_subset` (DataFrame)
+            df_convert_out subset to only the network used to train the model
+        :attr:`positive_genes` (List[str])
+            List of genes used as positives when training the model
+        
 
         """
         self.df_convert_out_subset, self.positive_genes = _geneplexus._alter_validation_df(

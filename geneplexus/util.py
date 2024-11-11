@@ -21,6 +21,7 @@ def timeout(timeout: int, msg: str = ""):
 
     Args:
         timeout: Max function execution time in seconds.
+        msg: extra text to display for error
 
     """
 
@@ -191,17 +192,17 @@ def load_gsc(
 def load_biomart(
     file_loc: str,
     sp_trn: config.SPECIES_TYPE,
-    sp_tst: config.SPECIES_TYPE,
+    sp_res: config.SPECIES_TYPE,
 ) -> config.BIOMART_DATA_TYPE:
     """Load biomart dictionary.
 
     Args:
         file_loc: Location of data files.
         sp_trn: The species used for training.
-        sp_tst: The species in which the results are in.
+        sp_res: The species in which the results are in.
 
     """
-    file_name = f"BioMart__{sp_trn}__{sp_tst}.json"
+    file_name = f"BioMart__{sp_trn}__{sp_res}.json"
     return _load_json_file(file_loc, file_name)
 
 

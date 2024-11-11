@@ -87,10 +87,10 @@ def parse_args() -> argparse.Namespace:
 
     parser.add_argument(
         "-s2",
-        "--sp_tst",
+        "--sp_res",
         default="Mouse",
         metavar="",
-        help=f"Species of test data {format_choices(config.ALL_SPECIES)}",
+        help=f"Species of results data {format_choices(config.ALL_SPECIES)}",
     )
 
     parser.add_argument(
@@ -103,7 +103,7 @@ def parse_args() -> argparse.Namespace:
 
     parser.add_argument(
         "-g2",
-        "--gsc_tst",
+        "--gsc_res",
         default="GO",
         metavar="",
         help=f"Geneset collection used for model similarities. {format_choices(config.ALL_GSCS)}",
@@ -345,9 +345,9 @@ def main():
         net_type=args.network,
         features=args.feature,
         sp_trn=args.sp_trn,
-        sp_tst=args.sp_tst,
+        sp_res=args.sp_res,
         gsc_trn=args.gsc_trn,
-        gsc_tst=args.gsc_tst,
+        gsc_res=args.gsc_res,
         auto_download=auto_download,
         log_level=log_level,
     )

@@ -45,6 +45,7 @@ def download_select_data(
         data_dir: Location of data files.
         species: Species of interest, accept multiple selection as a
             list. Do all the species if set to "All".
+        data_loc: the remote system where to look for the data
         retry: If set to True, then retry downloading any missing file.
 
     """
