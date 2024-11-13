@@ -54,7 +54,7 @@ def download_select_data(
         for aspecies in species:
             if not _check_all_files(data_dir, aspecies):
                 if data_loc == "Zenodo":
-                    logger.warn(
+                    logger.warning(
                         f"Downloading {aspecies} data from Zenodo. This should take ~2"
                         "minutes per species but can vary greatly depending on download speeds",
                     )
@@ -65,7 +65,7 @@ def download_select_data(
                     _download_and_extract(data_dir, aspecies, fn_download, data_loc, retry)
                 logger.info("Download completed.")
             else:
-                logger.warn(
+                logger.warning(
                     f"Files already downloaded for {aspecies}",
                 )
 
@@ -139,3 +139,35 @@ def _download_and_extract(data_dir, aspecies, fn_download, data_loc, retry):
         logger.critical("Session context closed, this should never happen!")
     else:
         raise DownloadError(f"Failed to download from {url} ({MAX_RETRY=})")
+
+def download_pytest_data(
+    data_dir: str,
+    data_loc: str = "Zenodo",
+    retry: bool = True,
+    log_level: LOG_LEVEL_TYPE = "INFO",
+):
+    """Download data for pytests.
+
+    Args:
+        data_dir: Location of data files.
+        data_loc: the remote system where to look for the data
+        retry: If set to True, then retry downloading any missing file.
+
+    """
+    with stream_level_context(logger, log_level):
+        if not _check_all_files(data_dir, "pytest"):
+            if data_loc == "Zenodo":
+                logger.warning(
+                    f"Downloading pytest data from Zenodo. This should take ~2"
+                    "but can vary greatly depending on download speeds",
+                )
+            log_path = osp.join(data_dir, "download.log")
+            logger.info(f"Start downloading pytest data and saving to: {data_dir}")
+            fn_download = "pytest_data.tar.gz"
+            with file_handler_context(logger, log_path, "DEBUG"):
+                _download_and_extract(data_dir, "pytest", fn_download, data_loc, retry)
+            logger.info("Download completed.")
+        else:
+            logger.warning(
+                f"Files already downloaded for pytest",
+            )
