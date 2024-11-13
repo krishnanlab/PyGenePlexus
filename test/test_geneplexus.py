@@ -7,13 +7,15 @@ import geneplexus
 # @pytest.mark.usefixtures("data")
 @pytest.fixture(scope="module")
 def gp():
-    gp = geneplexus.GenePlexus(file_loc = pytest.DATADIR,
-                               net_type = "STRING",
-                               features = "SixSpeciesN2V",
-                               sp_trn = "Human",
-                               sp_res = "Mouse",
-                               gsc_trn = "Combined",
-                               gsc_res = "Combined")
+    gp = geneplexus.GenePlexus(
+        file_loc=pytest.DATADIR,
+        net_type="STRING",
+        features="SixSpeciesN2V",
+        sp_trn="Human",
+        sp_res="Mouse",
+        gsc_trn="Combined",
+        gsc_res="Combined",
+    )
     gp.load_genes(geneplexus.util.read_gene_list(pytest.GENELIST_PATH))
     return gp
 

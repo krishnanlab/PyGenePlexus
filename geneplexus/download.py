@@ -140,6 +140,7 @@ def _download_and_extract(data_dir, aspecies, fn_download, data_loc, retry):
     else:
         raise DownloadError(f"Failed to download from {url} ({MAX_RETRY=})")
 
+
 def download_pytest_data(
     data_dir: str,
     data_loc: str = "Zenodo",

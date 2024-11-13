@@ -14,15 +14,17 @@ import geneplexus
 class TestGenePlexusPipeline(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.gp = geneplexus.GenePlexus(file_loc = pytest.DATADIR,
-                                       net_type = "STRING",
-                                       features = "SixSpeciesN2V",
-                                       sp_trn = "Human",
-                                       sp_res = "Mouse",
-                                       gsc_trn = "Combined",
-                                       gsc_res = "Combined",
-                                       auto_download = False,
-                                       log_level = "INFO")
+        cls.gp = geneplexus.GenePlexus(
+            file_loc=pytest.DATADIR,
+            net_type="STRING",
+            features="SixSpeciesN2V",
+            sp_trn="Human",
+            sp_res="Mouse",
+            gsc_trn="Combined",
+            gsc_res="Combined",
+            auto_download=False,
+            log_level="INFO",
+        )
         cls.tmpdir = tempfile.mkdtemp()
 
     @classmethod
@@ -48,8 +50,17 @@ class TestGenePlexusPipeline(unittest.TestCase):
             osp.join(self.tmpdir, "config.yaml"),
         ) as f2:
             cfg1, cfg2 = yaml.load(f1, yaml.Loader), yaml.load(f2, yaml.Loader)
-        for param in ["net_type", "features", "sp_trn", "sp_res", "gsc_trn", "gsc_res",
-                      "auto_download", "log_level", "input_genes"]:
+        for param in [
+            "net_type",
+            "features",
+            "sp_trn",
+            "sp_res",
+            "gsc_trn",
+            "gsc_res",
+            "auto_download",
+            "log_level",
+            "input_genes",
+        ]:
             self.assertEqual(cfg1[param], cfg2[param])
 
     @pytest.mark.order(2)
@@ -96,7 +107,7 @@ class TestGenePlexusPipeline(unittest.TestCase):
     def test_make_sim_df(self):
         # First check if Task and ID and Name are aligned. Then check if the computed
         # similarities are close to the expected results (up to third places)
-        df_sim_GO, weights_dict  = self.gp.make_sim_dfs()
+        df_sim_GO, weights_dict = self.gp.make_sim_dfs()
         columns = ["Task", "ID", "Name"]
 
         path = osp.join(pytest.ANSWERDIR, "df_sim.tsv")
@@ -159,6 +170,7 @@ class TestGenePlexusPipeline(unittest.TestCase):
             df_convert_out_subset.values.tolist(),
             df_convert_out_subset_expected.values.tolist(),
         )
+
 
 if __name__ == "__main__":
     unittest.main()
