@@ -116,7 +116,7 @@ class TestGenePlexusPipeline(unittest.TestCase):
             df_sim_GO.sort_values("ID")[columns].values.tolist(),
             df_sim_GO_expected.sort_values("ID")[columns].values.tolist(),
         )
-        
+
         # for sim, sim_expected in zip(
         #     df_sim_GO.sort_values("ID")["Similarity"],
         #     df_sim_GO_expected.sort_values("ID")["Similarity"],
