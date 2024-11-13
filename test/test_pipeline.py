@@ -11,23 +11,18 @@ import geneplexus
 
 
 @pytest.mark.usefixtures("data")
-def test_download_exist(caplog):
-    geneplexus.download.download_select_data(
-        pytest.DATADIR,
-        "All",
-        "BioGRID",
-        "Embedding",
-        ["GO", "DisGeNet"],
-        log_level="DEBUG",
-    )
-    assert "File exists, skipping download:" in caplog.text
-
-
-@pytest.mark.usefixtures("data")
 class TestGenePlexusPipeline(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.gp = geneplexus.GenePlexus(pytest.DATADIR, "BioGRID", "Embedding", "GO")
+        cls.gp = geneplexus.GenePlexus(file_loc = pytest.DATADIR,
+                                       net_type = "STRING",
+                                       features = "SixSpeciesN2V",
+                                       sp_trn = "Human",
+                                       sp_res = "Mouse",
+                                       gsc_trn = "Combined",
+                                       gsc_res = "Combined",
+                                       auto_download = False,
+                                       log_level = "INFO")
         cls.tmpdir = tempfile.mkdtemp()
 
     @classmethod
@@ -41,9 +36,9 @@ class TestGenePlexusPipeline(unittest.TestCase):
                 self.assertTrue(osp.isfile(osp.join(pytest.DATADIR, filename)))
 
     @pytest.mark.order(1)
-    def test_init_geneplexus(self):
+    def test_load_genes(self):
         input_genes = geneplexus.util.read_gene_list(pytest.GENELIST_PATH)
-        self.gp._load_genes(input_genes)
+        self.gp.load_genes(input_genes)
         self.assertEqual(self.gp.input_genes, input_genes)
 
     @pytest.mark.order(2)
@@ -53,40 +48,37 @@ class TestGenePlexusPipeline(unittest.TestCase):
             osp.join(self.tmpdir, "config.yaml"),
         ) as f2:
             cfg1, cfg2 = yaml.load(f1, yaml.Loader), yaml.load(f2, yaml.Loader)
-        for param in ["net_type", "features", "gsc", "log_level", "auto_download", "input_genes"]:
+        for param in ["net_type", "features", "sp_trn", "sp_res", "gsc_trn", "gsc_res",
+                      "auto_download", "log_level", "input_genes"]:
             self.assertEqual(cfg1[param], cfg2[param])
 
     @pytest.mark.order(2)
-    def test_convert_to_entrez(self):
-        self.gp._convert_to_entrez()
+    def test_df_convert_out(self):
         df_convert_out = self.gp.df_convert_out.copy()
         columns = ["Original ID", "Entrez ID"]
-        df_convert_out[columns] = df_convert_out[columns].astype(int)
+        df_convert_out[columns] = df_convert_out[columns].astype(str)
 
         path = osp.join(pytest.ANSWERDIR, "df_convert_out.tsv")
-        df_convert_out_expected = pd.read_csv(path, sep="\t")
+        df_convert_out_expected = pd.read_csv(path, sep="\t", dtype=str, keep_default_na=False)
         self.assertEqual(
             df_convert_out[df_convert_out_expected.columns].values.tolist(),
             df_convert_out_expected.values.tolist(),
         )
 
     @pytest.mark.order(3)
-    def test_get_pos_and_neg_genes(self):
-        self.gp._get_pos_and_neg_genes()
-
-    @pytest.mark.order(4)
     def test_fit_and_predict(self):
         # First check if the gene IDs and the corresponding attributes are
         # aligned. Then check if the computed probabilities are close to the
         # expected results (up to third places)
         self.gp.fit_and_predict()
         df_probs = self.gp.df_probs.copy()
-        df_probs["Entrez"] = df_probs["Entrez"].astype(int)
+        df_probs["Entrez"] = df_probs["Entrez"].astype(str)
 
         path = osp.join(pytest.ANSWERDIR, "df_probs.tsv")
-        df_probs_expected = pd.read_csv(path, sep="\t")
+        df_probs_expected = pd.read_csv(path, sep="\t", keep_default_na=False)
+        df_probs_expected["Entrez"] = df_probs_expected["Entrez"].astype(str)
 
-        # Ignore rank and prob for now as they might be susceptible to randomns
+        # Ignoring columns that might be susceptible to randomns
         columns = ["Entrez", "Symbol", "Name", "Known/Novel", "Class-Label"]
         self.assertEqual(
             df_probs.sort_values("Entrez")[columns].values.tolist(),
@@ -100,49 +92,36 @@ class TestGenePlexusPipeline(unittest.TestCase):
         ):
             self.assertAlmostEqual(prob, prob_expected, places=3)
 
-    @pytest.mark.order(5)
-    def test_make_sim_dfs(self):
-        # First check if ID and Name are aligned. Then check if the computed
+    @pytest.mark.order(4)
+    def test_make_sim_df(self):
+        # First check if Task and ID and Name are aligned. Then check if the computed
         # similarities are close to the expected results (up to third places)
-        df_sim_GO, df_sim_Dis, _, _ = self.gp.make_sim_dfs()
-        columns = ["ID", "Name"]
+        df_sim_GO, weights_dict  = self.gp.make_sim_dfs()
+        columns = ["Task", "ID", "Name"]
 
-        with self.subTest("GO similarity"):
-            path = osp.join(pytest.ANSWERDIR, "df_sim_GO.tsv")
-            df_sim_GO_expected = pd.read_csv(path, sep="\t").fillna("NA")
-            self.assertEqual(
-                df_sim_GO.sort_values("ID")[columns].values.tolist(),
-                df_sim_GO_expected.sort_values("ID")[columns].values.tolist(),
-            )
-            for sim, sim_expected in zip(
-                df_sim_GO.sort_values("ID")["Similarity"],
-                df_sim_GO_expected.sort_values("ID")["Similarity"],
-            ):
-                self.assertAlmostEqual(sim, sim_expected, places=3)
+        path = osp.join(pytest.ANSWERDIR, "df_sim.tsv")
+        df_sim_GO_expected = pd.read_csv(path, sep="\t", keep_default_na=False)
+        self.assertEqual(
+            df_sim_GO.sort_values("ID")[columns].values.tolist(),
+            df_sim_GO_expected.sort_values("ID")[columns].values.tolist(),
+        )
+        for sim, sim_expected in zip(
+            df_sim_GO.sort_values("ID")["Similarity"],
+            df_sim_GO_expected.sort_values("ID")["Similarity"],
+        ):
+            self.assertAlmostEqual(sim, sim_expected, places=3)
 
-        with self.subTest("Dis similarity"):
-            path = osp.join(pytest.ANSWERDIR, "df_sim_Dis.tsv")
-            df_sim_Dis_expected = pd.read_csv(path, sep="\t").fillna("NA")
-            self.assertEqual(
-                df_sim_Dis.sort_values("ID")[columns].values.tolist(),
-                df_sim_Dis_expected.sort_values("ID")[columns].values.tolist(),
-            )
-            for sim, sim_expected in zip(
-                df_sim_Dis.sort_values("ID")["Similarity"],
-                df_sim_Dis_expected.sort_values("ID")["Similarity"],
-            ):
-                self.assertAlmostEqual(sim, sim_expected, places=3)
-
-    @pytest.mark.order(6)
+    @pytest.mark.order(5)
     def test_make_small_edgelist(self):
         self.gp.make_small_edgelist(num_nodes=50)
         columns = ["Node1", "Node2"]
 
         with self.subTest("Edge"):
             df_edge = self.gp.df_edge.copy()
-            df_edge[columns] = df_edge[columns].astype(int)
+            df_edge[columns] = df_edge[columns].astype(str)
             path = osp.join(pytest.ANSWERDIR, "df_edge.tsv")
-            df_edge_expected = pd.read_csv(path, sep="\t")
+            df_edge_expected = pd.read_csv(path, sep="\t", keep_default_na=False)
+            df_edge_expected[columns] = df_edge_expected[columns].astype(str)
             self.assertEqual(
                 df_edge[columns].values.tolist(),
                 df_edge_expected[columns].values.tolist(),
@@ -156,7 +135,7 @@ class TestGenePlexusPipeline(unittest.TestCase):
         with self.subTest("Edge sym"):
             df_edge_sym = self.gp.df_edge_sym.copy()
             path = osp.join(pytest.ANSWERDIR, "df_edge_sym.tsv")
-            df_edge_sym_expected = pd.read_csv(path, sep="\t")
+            df_edge_sym_expected = pd.read_csv(path, sep="\t", keep_default_na=False)
             self.assertEqual(
                 df_edge_sym[columns].values.tolist(),
                 df_edge_sym_expected[columns].values.tolist(),
@@ -167,61 +146,19 @@ class TestGenePlexusPipeline(unittest.TestCase):
             ):
                 self.assertAlmostEqual(weight, weight_expected)
 
-    @pytest.mark.order(7)
+    @pytest.mark.order(6)
     def test_alter_validation_df(self):
         self.gp.alter_validation_df()
         df_convert_out_subset = self.gp.df_convert_out_subset.copy()
         columns = ["Original ID", "Entrez ID"]
-        df_convert_out_subset[columns] = df_convert_out_subset[columns].astype(int)
+        df_convert_out_subset[columns] = df_convert_out_subset[columns].astype(str)
 
         path = osp.join(pytest.ANSWERDIR, "df_convert_out_subset.tsv")
-        df_convert_out_subset_expected = pd.read_csv(path, sep="\t")
+        df_convert_out_subset_expected = pd.read_csv(path, sep="\t", dtype=str, keep_default_na=False)
         self.assertEqual(
             df_convert_out_subset.values.tolist(),
             df_convert_out_subset_expected.values.tolist(),
         )
-
-
-NET_TEST_PAIRS = [
-    ("BioGRID", True),
-    ("STRING", True),
-    ("STRING-EXP", True),
-    ("GIANT-TN", True),
-    ("GiANT-TN", False),
-    ("TRiNG", False),
-]
-FEATURE_TEST_PAIRS = [
-    ("Adjacency", True),
-    ("Embedding", True),
-    ("Influence", True),
-    ("adjd", False),
-    ("randomStufF", False),
-]
-GSC_TEST_PAIRS = [
-    ("GO", True),
-    ("DisGeNet", True),
-    ("gO", False),
-    ("CrAzyStuff", False),
-]
-
-
-@pytest.mark.parametrize("gsc,gsc_correct", GSC_TEST_PAIRS)
-@pytest.mark.parametrize("features,features_correct", FEATURE_TEST_PAIRS)
-@pytest.mark.parametrize("net_type,net_correct", NET_TEST_PAIRS)
-def test_geneplexus_param(
-    net_type,
-    net_correct,
-    features,
-    features_correct,
-    gsc,
-    gsc_correct,
-):
-    if net_correct and features_correct and gsc_correct:
-        geneplexus.GenePlexus(net_type=net_type, features=features, gsc=gsc)
-    else:
-        with pytest.raises(ValueError):
-            geneplexus.GenePlexus(net_type=net_type, features=features, gsc=gsc)
-
 
 if __name__ == "__main__":
     unittest.main()

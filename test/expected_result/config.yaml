@@ -1,7 +1,8 @@
 auto_download: false
-features: Embedding
-file_loc: /mnt/home/liurenmi/.data/geneplexus
-gsc: GO
+features: SixSpeciesN2V
+file_loc: /Users/mancchri/.data/geneplexus
+gsc_res: Combined
+gsc_trn: Combined
 input_genes:
 - '6457'
 - '7037'
@@ -186,5 +187,8 @@ input_genes:
 - '3107'
 - '2263'
 - '56288'
-log_level: WARNING
-net_type: BioGRID
+input_negatives: []
+log_level: INFO
+net_type: STRING
+sp_res: Mouse
+sp_trn: Human
