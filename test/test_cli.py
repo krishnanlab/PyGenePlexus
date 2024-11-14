@@ -10,8 +10,14 @@ class PatchGP:
     df_probs = None
     df_edge = None
     df_edge_sym = None
-    df_sim_GO = None
-    df_sim_Dis = None
+    df_sim = None
+    pos_genes_in_net = None
+    negative_genes = None
+    net_genes = None
+    neutral_gene_info = None
+    mdl_weights = None
+    isolated_genes = None
+    isolated_genes_sym = None
 
     def dump_config(self, path):
         return
@@ -26,7 +32,8 @@ def test_save_results(mocker, tmpdir):
         outdir=tmpdir,
         zip_output=False,
         overwrite=True,
-        skip_mdl_sim=True,
+        skip_mdl_sim=False,
+        skip_sm_edgelist=False,
     )
 
     assert not os.path.isfile(geneplexus.cli.TMP_LOG_PATH)
