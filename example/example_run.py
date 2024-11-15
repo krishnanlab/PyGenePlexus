@@ -38,23 +38,19 @@ os.makedirs(outdir, exist_ok=True)
 # Get the data from URL
 geneplexus.download.download_select_data(
     datadir,
-    tasks="All",
-    networks="STRING",
-    features="SixSpeciesN2V",
-    sp_trn="Human",
-    sp_tst="Mouse",
-    gsc="GO",
+    species=["Human", "Mouse"],
 )
 
 # Run through the pipeline
 # First initialize the geneplexus object
 myclass = geneplexus.GenePlexus(
-    file_loc=fp_data,
-    gsc="Combined",
-    features="SixSpeciesN2V",
+    file_loc=datadir,
     net_type="STRING",
+    features="SixSpeciesN2V",
     sp_trn="Human",
-    sp_tst="Mouse",
+    sp_res="Mouse",
+    gsc_trn="Combined",
+    gsc_res="Combined",
 )
 
 # Load the input genes into the class and set up positives/negatives
@@ -65,7 +61,7 @@ mdl_weights, df_probs, avgps = myclass.fit_and_predict()
 
 # The makes the tables that have the model weight similarity to other models
 # trained on known GO and DisGeNet sets
-df_sim_GO, df_sim_Dis, weights_GO, weights_Dis = myclass.make_sim_dfs()
+df_sim, sim_weights = myclass.make_sim_dfs()
 
 # Return an edgelist
 df_edge, isolated_genes, df_edge_sym, isolated_genes_sym = myclass.make_small_edgelist(num_nodes=50)
@@ -75,5 +71,5 @@ df_convert_out_subset, positive_genes = myclass.alter_validation_df()
 
 # Save a few things for checking
 df_probs.to_csv(osp.join(outdir, "df_probs.tsv"), sep="\t", header=True, index=False)
-df_sim_GO.to_csv(osp.join(outdir, "df_sim_GO.tsv"), sep="\t", header=True, index=False)
+df_sim.to_csv(osp.join(outdir, "df_sim_GO.tsv"), sep="\t", header=True, index=False)
 df_convert_out_subset.to_csv(osp.join(outdir, "df_convert_out_subset.tsv"), sep="\t", header=True, index=False)

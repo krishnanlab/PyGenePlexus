@@ -382,12 +382,6 @@ class GenePlexus:
 
         :attr:`GenePlexus.mdl_weights` (array of float)
             Trained model parameters.
-        :attr:`GenePlexus.probs` (array of float)
-            Genome-wide gene prediction scores. A high value indicates the
-            relevance of the gene to the input gene list.
-        :attr:`GenePlexus.avgps` (array of float)
-            Cross validation results. Performance is measured using
-            log2(auprc/prior).
         :attr:`GenePlexus.df_probs` (DataFrame)
             A table with 7 columns: **Entrez** (the gene Entrez ID), **Symbol**
             (the gene Symbol), **Name** (the gene Name), **Probability** (the
@@ -395,7 +389,12 @@ class GenePlexus:
             **Known/Novel** (whether the gene is in the input gene list),
             **Class-Label** (positive, negative, or neutral), **Rank** (rank of
             relevance of the gene to the input gene list).
-
+        :attr:`GenePlexus.avgps` (array of float)
+            Cross validation results. Performance is measured using
+            log2(auprc/prior).
+        :attr:`GenePlexus.probs` (array of float)
+            Genome-wide gene prediction scores. A high value indicates the
+            relevance of the gene to the input gene list.
         """
         self._get_pos_and_neg_genes()
         self.mdl_weights, self.probs, self.avgps = _geneplexus._run_sl(
