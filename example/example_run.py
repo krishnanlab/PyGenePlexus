@@ -38,7 +38,7 @@ os.makedirs(outdir, exist_ok=True)
 # Get the data from URL
 geneplexus.download.download_select_data(
     datadir,
-    species=["Human","Mouse"],
+    species=["Human", "Mouse"],
 )
 
 # Run through the pipeline
