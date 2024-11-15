@@ -268,7 +268,6 @@ class GenePlexus:
             second column contains the corresponding converted Entrez gene IDs.
             The rest of the columns are indicators of whether a given gene is
             present in any one of the networks.
-        :attr:`GenePlexus.df_convert_out` (DataFrame): Input gene list.
         :attr:`GenePlexus.table_summary` (List[Dict[str, int]])
             List of netowrk stats summary dictionaries. Each dictionary has
             three keys: **Network**, **NetworkGenes**, and **PositiveGenes**
