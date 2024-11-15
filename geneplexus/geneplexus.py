@@ -275,12 +275,13 @@ class GenePlexus:
             genes).
         :attr:`GenePlexus.input_count` (int)
             Number of input genes.
-        :attr:`GenePlexus.convert_ids` (List[str]): Converted gene list.
-
+        :attr:`GenePlexus.convert_ids` (List[str])
+            Converted gene list.
+    
         See also:
             Use :meth:`geneplexus.util.read_gene_list` to load a gene list
             from a file.
-
+        
         """
         self.input_genes = self._load_genes(input_genes)
         load_genes_outputs = self._convert_to_entrez(self.input_genes)
@@ -309,12 +310,13 @@ class GenePlexus:
             genes).
         :attr:`GenePlexus.input_count_negatives` (int)
             Number of input genes.
-        :attr:`GenePlexus.convert_ids_negatives` (List[str]): Converted gene list.
-
+        :attr:`GenePlexus.convert_ids_negatives` (List[str])
+            Converted gene list.
+        
         See also:
             Use :meth:`geneplexus.util.read_gene_list` to load a gene list
             from a file.
-
+        
         """
         self.input_negatives = self._load_genes(input_negatives)
         load_negatives_outputs = self._convert_to_entrez(self.input_negatives)
