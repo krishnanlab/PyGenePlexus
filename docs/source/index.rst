@@ -22,7 +22,6 @@ PyGenePlexus
    :maxdepth: 1
    :caption: Package reference
 
-   geneplexus/custom
    geneplexus/download
    geneplexus/geneplexus
    geneplexus/util
