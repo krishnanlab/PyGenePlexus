@@ -28,15 +28,6 @@ PyGenePlexus
 
 .. toctree::
    :maxdepth: 1
-   :caption: Medthods and guidelines
-
-   supp/data
-   supp/methods
-   supp/example
-   supp/guidelines
-
-.. toctree::
-   :maxdepth: 1
    :caption: Appendix
 
    appendix/license
