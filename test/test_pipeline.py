@@ -96,12 +96,12 @@ class TestGenePlexusPipeline(unittest.TestCase):
             df_probs_expected.sort_values("Entrez")[columns].values.tolist(),
         )
 
-        # # But at least the proababilities should be close
-        # for prob, prob_expected in zip(
-        #     df_probs.sort_values("Entrez")["Probability"],
-        #     df_probs_expected.sort_values("Entrez")["Probability"],
-        # ):
-        #     self.assertAlmostEqual(prob, prob_expected, places=3)
+        # But at least the proababilities should be close
+        for prob, prob_expected in zip(
+            df_probs.sort_values("Entrez")["Probability"],
+            df_probs_expected.sort_values("Entrez")["Probability"],
+        ):
+            self.assertAlmostEqual(prob, prob_expected, places=3)
 
     @pytest.mark.order(4)
     def test_make_sim_df(self):
@@ -117,46 +117,46 @@ class TestGenePlexusPipeline(unittest.TestCase):
             df_sim_GO_expected.sort_values("ID")[columns].values.tolist(),
         )
 
-        # for sim, sim_expected in zip(
-        #     df_sim_GO.sort_values("ID")["Z-score"],
-        #     df_sim_GO_expected.sort_values("ID")["Z-score"],
-        # ):
-        #     self.assertAlmostEqual(sim, sim_expected, places=3)
+        for sim, sim_expected in zip(
+            df_sim_GO.sort_values("ID")["Similarity"],
+            df_sim_GO_expected.sort_values("ID")["Similarity"],
+        ):
+            self.assertAlmostEqual(sim, sim_expected, places=3)
 
-    # @pytest.mark.order(5)
-    # def test_make_small_edgelist(self):
-    #     self.gp.make_small_edgelist(num_nodes=50)
-    #     columns = ["Node1", "Node2"]
-    #
-    #     with self.subTest("Edge"):
-    #         df_edge = self.gp.df_edge.copy()
-    #         df_edge[columns] = df_edge[columns].astype(str)
-    #         path = osp.join(pytest.ANSWERDIR, "df_edge.tsv")
-    #         df_edge_expected = pd.read_csv(path, sep="\t", keep_default_na=False)
-    #         df_edge_expected[columns] = df_edge_expected[columns].astype(str)
-    #         self.assertEqual(
-    #             df_edge[columns].values.tolist(),
-    #             df_edge_expected[columns].values.tolist(),
-    #         )
-    #         for weight, weight_expected in zip(
-    #             df_edge["Weight"],
-    #             df_edge_expected["Weight"],
-    #         ):
-    #             self.assertAlmostEqual(weight, weight_expected)
-    #
-    #     with self.subTest("Edge sym"):
-    #         df_edge_sym = self.gp.df_edge_sym.copy()
-    #         path = osp.join(pytest.ANSWERDIR, "df_edge_sym.tsv")
-    #         df_edge_sym_expected = pd.read_csv(path, sep="\t", keep_default_na=False)
-    #         self.assertEqual(
-    #             df_edge_sym[columns].values.tolist(),
-    #             df_edge_sym_expected[columns].values.tolist(),
-    #         )
-    #         for weight, weight_expected in zip(
-    #             df_edge_sym["Weight"],
-    #             df_edge_sym_expected["Weight"],
-    #         ):
-    #             self.assertAlmostEqual(weight, weight_expected)
+    @pytest.mark.order(5)
+    def test_make_small_edgelist(self):
+        self.gp.make_small_edgelist(num_nodes=50)
+        columns = ["Node1", "Node2"]
+
+        with self.subTest("Edge"):
+            df_edge = self.gp.df_edge.copy()
+            df_edge[columns] = df_edge[columns].astype(str)
+            path = osp.join(pytest.ANSWERDIR, "df_edge.tsv")
+            df_edge_expected = pd.read_csv(path, sep="\t", keep_default_na=False)
+            df_edge_expected[columns] = df_edge_expected[columns].astype(str)
+            self.assertEqual(
+                df_edge[columns].values.tolist(),
+                df_edge_expected[columns].values.tolist(),
+            )
+            for weight, weight_expected in zip(
+                df_edge["Weight"],
+                df_edge_expected["Weight"],
+            ):
+                self.assertAlmostEqual(weight, weight_expected)
+
+        with self.subTest("Edge sym"):
+            df_edge_sym = self.gp.df_edge_sym.copy()
+            path = osp.join(pytest.ANSWERDIR, "df_edge_sym.tsv")
+            df_edge_sym_expected = pd.read_csv(path, sep="\t", keep_default_na=False)
+            self.assertEqual(
+                df_edge_sym[columns].values.tolist(),
+                df_edge_sym_expected[columns].values.tolist(),
+            )
+            for weight, weight_expected in zip(
+                df_edge_sym["Weight"],
+                df_edge_sym_expected["Weight"],
+            ):
+                self.assertAlmostEqual(weight, weight_expected)
 
     @pytest.mark.order(6)
     def test_alter_validation_df(self):
