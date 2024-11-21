@@ -117,12 +117,12 @@ class TestGenePlexusPipeline(unittest.TestCase):
             df_sim_GO_expected.sort_values("ID")[columns].values.tolist(),
         )
 
-        # for sim, sim_expected in zip(
-        #     df_sim_GO.sort_values("ID")["Z-score"],
-        #     df_sim_GO_expected.sort_values("ID")["Z-score"],
-        # ):
-        #     self.assertAlmostEqual(sim, sim_expected, places=3)
-
+    #     for sim, sim_expected in zip(
+    #         df_sim_GO.sort_values("ID")["Similarity"],
+    #         df_sim_GO_expected.sort_values("ID")["Similarity"],
+    #     ):
+    #         self.assertAlmostEqual(sim, sim_expected, places=3)
+    #
     # @pytest.mark.order(5)
     # def test_make_small_edgelist(self):
     #     self.gp.make_small_edgelist(num_nodes=50)

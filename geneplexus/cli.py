@@ -73,7 +73,6 @@ def parse_args() -> argparse.Namespace:
         "--feature",
         default="SixSpeciesN2V",
         metavar="",
-        choices=config.ALL_FEATURES,
         help=f"Types of feature to use. {format_choices(config.ALL_FEATURES)}",
     )
 

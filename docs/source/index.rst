@@ -16,7 +16,7 @@ PyGenePlexus
    notes/cli
    notes/api
    notes/r
-   notes/custom
+   notes/data
 
 .. toctree::
    :maxdepth: 1
@@ -24,16 +24,6 @@ PyGenePlexus
 
    geneplexus/download
    geneplexus/geneplexus
-   geneplexus/util
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Medthods and guidelines
-
-   supp/data
-   supp/methods
-   supp/example
-   supp/guidelines
 
 .. toctree::
    :maxdepth: 1

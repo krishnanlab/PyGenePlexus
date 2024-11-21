@@ -44,19 +44,19 @@ class GenePlexus:
         Args:
             file_loc: Location of data files, if not specified, set to default
                 data path ``~/.data/geneplexus``
-            net_type: Type of network to use.
-            features: Type of features of the network to use.
+            net_type: Type of network to use
+            features: Type of features of the network to use
             sp_trn: The species of the training data
-            sp_res: The species of the testing data
+            sp_res: The species the results are in
             gsc_trn: Gene set collection used during training
             gsc_res: Gene set collection used when generating
                 results
             input_genes: Input gene list, can be mixed type. Can also be set
                 later if not specified at init time by simply calling
-                :meth:`load_genes` (default: :obj:`None`).
+                :meth:`load_genes`.
             input_negatives: Input list of negative genes, can be mixed type.
                 Can also be set later if not specified at init time by simply calling
-                :meth:`load_negatives` (default: :obj:`None`).
+                :meth:`load_negatives`.
             auto_download: Automatically download necessary files if set.
             log_level: Logging level.
 
@@ -223,7 +223,7 @@ class GenePlexus:
 
     @property
     def gsc_trn(self) -> config.GSC_TYPE:
-        """Geneset collection used in traiining."""
+        """Geneset collection used in training."""
         return self._gsc_trn
 
     @gsc_trn.setter
@@ -240,7 +240,7 @@ class GenePlexus:
 
     @property
     def gsc_res(self) -> config.GSC_TYPE:
-        """Geneset collection used in results."""
+        """Geneset collection used when generating results."""
         return self._gsc_res
 
     @gsc_res.setter
@@ -261,27 +261,49 @@ class GenePlexus:
         Args:
             input_genes: Input gene list, can be mixed type.
 
+        **The following clsss attributes are set when this function is run**
+
         :attr:`GenePlexus.input_genes` (List[str])
             Input genes converted to uppercase
         :attr:`GenePlexus.df_convert_out` (DataFrame)
-            A table where the first column contains the original gene IDs, the
-            second column contains the corresponding converted Entrez gene IDs.
-            The rest of the columns are indicators of whether a given gene is
-            present in any one of the networks.
+            A table where the following 6 columns:
+
+            .. list-table::
+
+               * - Original ID
+                 - User supplied Gene ID
+               * - Entrez ID
+                 - Entrez Gene ID
+               * - Gene Name
+                 - Name Gene ID
+               * - In BioGRID?
+                 - Y or N if the gene was found in the BioGRID network or not
+               * - In IMP?
+                 - Y or N if the gene was found in the IMP network or not
+               * - In STRING?
+                 - Y or N if the gene was found in the STRING network or not
+
         :attr:`GenePlexus.table_summary` (List[Dict[str, int]])
             List of netowrk stats summary dictionaries. Each dictionary has
-            three keys: **Network**, **NetworkGenes**, and **PositiveGenes**
-            (the number intersection between the input genes and the network
-            genes).
-        :attr:`GenePlexus.input_count` (int)
-            Number of input genes.
+            the following stucture:
+
+            ::
+
+               {
+                 "Network" : # returns name of the network
+                 "NetworkGenes"  : # returns number of genes in the network
+                 "PositiveGenes" : # returns number of input genes found in the network
+               }
+
         :attr:`GenePlexus.convert_ids` (List[str])
             Converted gene list.
-    
+        :attr:`GenePlexus.input_count` (int)
+            Number of input genes that were able to be converted.
+
         See also:
             Use :meth:`geneplexus.util.read_gene_list` to load a gene list
             from a file.
-        
+
         """
         self.input_genes = self._load_genes(input_genes)
         load_genes_outputs = self._convert_to_entrez(self.input_genes)
@@ -296,27 +318,49 @@ class GenePlexus:
         Args:
             input_negatives: Input negative gene list, can be mixed type.
 
+        **The following clsss attributes are set when this function is run**
+
         :attr:`GenePlexus.input_negatives` (List[str])
             Input negatives converted to uppercase
         :attr:`GenePlexus.df_convert_out_negatives` (DataFrame)
-            A table where the first column contains the original gene IDs, the
-            second column contains the corresponding converted Entrez gene IDs.
-            The rest of the columns are indicators of whether a given gene is
-            present in any one of the networks.
+            A table with the following 6 columns:
+
+            .. list-table::
+
+               * - Original ID
+                 - User supplied Gene ID
+               * - Entrez ID
+                 - Entrez Gene ID
+               * - Gene Name
+                 - Name Gene ID
+               * - In BioGRID?
+                 - Y or N if the gene was found in the BioGRID network or not
+               * - In IMP?
+                 - Y or N if the gene was found in the IMP network or not
+               * - In STRING?
+                 - Y or N if the gene was found in the STRING network or not
+
         :attr:`GenePlexus.table_summary_negatives` (List[Dict[str, int]])
             List of netowrk stats summary dictionaries. Each dictionary has
-            three keys: **Network**, **NetworkGenes**, and **PositiveGenes**
-            (the number intersection between the input genes and the network
-            genes).
-        :attr:`GenePlexus.input_count_negatives` (int)
-            Number of input genes.
+            the following stucture:
+
+            ::
+
+               {
+                 "Network" : # returns name of the network
+                 "NetworkGenes"  : # returns number of genes in the network
+                 "PositiveGenes" : # returns number of input genes found in the network
+               }
+
         :attr:`GenePlexus.convert_ids_negatives` (List[str])
-            Converted gene list.
-        
+            Converted negative gene list.
+        :attr:`GenePlexus.input_count_negatives` (int)
+            Number of negative genes that were able to be converted.
+
         See also:
             Use :meth:`geneplexus.util.read_gene_list` to load a gene list
             from a file.
-        
+
         """
         self.input_negatives = self._load_genes(input_negatives)
         load_negatives_outputs = self._convert_to_entrez(self.input_negatives)
@@ -381,21 +425,52 @@ class GenePlexus:
                 ``False``, then skip cross validation and return null_val as cv
                 scores.
 
-        :attr:`GenePlexus.mdl_weights` (array of float)
+        **The following clsss attributes are set when this function is run**
+
+        :attr:`GenePlexus.mdl_weights` (1D array of floats)
             Trained model parameters.
         :attr:`GenePlexus.df_probs` (DataFrame)
-            A table with 7 columns: **Entrez** (the gene Entrez ID), **Symbol**
-            (the gene Symbol), **Name** (the gene Name), **Probability** (the
-            probability of a gene being part of the input gene list),
-            **Known/Novel** (whether the gene is in the input gene list),
-            **Class-Label** (positive, negative, or neutral), **Rank** (rank of
-            relevance of the gene to the input gene list).
-        :attr:`GenePlexus.avgps` (array of float)
+            A table with the following 9 columns:
+
+            .. list-table::
+
+               * - Entrez
+                 - Entrez Gene ID
+               * - Symbol
+                 - Symbol Gene ID
+               * - Name
+                 - Name Gene ID
+               * - Known/Novel
+                 - Known is gene was in the positive set, otherwise Novel
+               * - Class-Label
+                 - P (positive in training), N (negative durinig training), U (unused during trianing)
+               * - Probability
+                 - The probabilties returned from the logisitc regression model
+               * - Z-score
+                 - The z-score of the model probabilties for all predcited genes
+               * - P-adjusted
+                 - The Bonferroni adjusted p-values from the z-scores
+               * - Rank
+                 - The rank of the gene with one being the gene with the highest predcited value
+
+
+        Note:
+            For the Known/Novel and Class-Label columns, if the training species is
+            different than the results species, this information is obtained by looking
+            at the one-to-one orthologs between the species.
+
+        Note:
+            Due to the high complexity of the embedding space, the resulting probabilities
+            are not well calibrated, however the resulting rankings are very meaningful as
+            evaluated with auPRC.
+
+        :attr:`GenePlexus.avgps` (1D array of floats)
             Cross validation results. Performance is measured using
             log2(auprc/prior).
-        :attr:`GenePlexus.probs` (array of float)
+        :attr:`GenePlexus.probs` (1D array of floats)
             Genome-wide gene prediction scores. A high value indicates the
             relevance of the gene to the input gene list.
+
         """
         self._get_pos_and_neg_genes()
         self.mdl_weights, self.probs, self.avgps = _geneplexus._run_sl(
@@ -426,20 +501,33 @@ class GenePlexus:
         return self.mdl_weights, self.df_probs, self.avgps
 
     def _get_pos_and_neg_genes(self):
-        """Set up positive and negative genes given the network.
+        """Set up positive and negative splits.
 
-        :attr:`GenePlexus.pos_genes_in_net` (array of str)
-            Array of input gene Entrez IDs that are present in the network.
-        :attr:`GenePlexus.genes_not_in_net` (array of str)
-            Array of input gene Entrez IDs that are absent in the network.
-        :attr:`GenePlexus.net_genes` (array of str)
-            Array of network gene Entrez IDs.
-        :attr:`GenePlexus.negative_genes` (array of str)
-            Array of negative gene Entrez IDs derived using the input genes and
-            the background gene set collection (GSC).
+        **The following clsss attributes are set when this function is run**
+
+        :attr:`GenePlexus.pos_genes_in_net` (1D array of str)
+            Input gene Entrez IDs that are present in the network.
+        :attr:`GenePlexus.genes_not_in_net` (1D array of str)
+            Input gene Entrez IDs that are absent in the network.
+        :attr:`GenePlexus.net_genes` (1D array of str)
+            All genes in the network.
+        :attr:`GenePlexus.negative_genes` (1D array of str)
+            Negative gene Entrez IDs derived using the input genes and
+            the background gene set collection (gp_trn).
         :attr:`GenePlexus.neutral_gene_info` (Dict of Dicts)
-            Dictionary saying which genes and from which GSC terms are set
-            as negatives.
+            Dictionary saying which genes were set to neutrals because the
+            term annotation matched closely enough to the positive training genes.
+
+            ::
+
+               {
+                 "{Term ID}" # ID of the matched term : {
+                    "Name"  : # returns string of term name
+                    "Genes" : # returns list of genes annotated to term
+                    "Task"  : # returns type of GSC the term is from
+                    }
+                 "All Neutrals" : # returns list of all genes considered neutral
+               }
 
         """
         self.pos_genes_in_net, self.genes_not_in_net, self.net_genes = _geneplexus._get_genes_in_network(
@@ -468,13 +556,43 @@ class GenePlexus:
     def make_sim_dfs(self):
         """Compute similarities bewteen the input genes and GO, Monarch and/or Mondo.
 
-        The similarities are compared based on the model trained on the input
-        gene set and models pre-trained on known GO, Monarch and Mondo gene sets.
+        **The following clsss attributes are set when this function is run**
 
         :attr:`GenePlexus.df_sim` (DataFrame)
-            A table showing how similar gsc_res is to the user model.
+            A table showing how similar the coefficients of the user trained models
+            are to the coefficients of models trained using genes annotated to gsc_res.
+            The table has the following 7 columns:
+
+            .. list-table::
+
+               * - Task
+                 - Which type of GSC the term is from
+               * - ID
+                 - Term ID
+               * - Name
+                 - Term Name
+               * - Similarity
+                 - Cosine similarity between model coefficients between the two models
+               * - Z-score
+                 - The z-score of the similarities
+               * - P-adjusted
+                 - The Bonferroni adjusted p-values from the z-scores
+               * - Rank
+                 - The rank of the term with one being the term with the highest similarity to the user model
+
         :attr:`GenePlexus.weights`
             Dictionary of pretrained model weights for gsc_res.
+
+            ::
+
+               {
+                 "{Term ID}" # ID of the GSC term : {
+                    "Name"  : # returns string of term name
+                    "PosGenes" : # returns list of genes annotated to term
+                    "Task"  : # returns type of GSC the term is from
+                    "Weights" : # return list of coefficients from models trained using genes annotated to the term
+                    }
+               }
 
         """
         self.df_sim, self.weights_dict = _geneplexus._make_sim_dfs(
@@ -492,6 +610,8 @@ class GenePlexus:
 
         Args:
             num_nodes: Number of top genes to include.
+
+        **The following clsss attributes are set when this function is run**
 
         :attr:`GenePlexus.df_edge` (DataFrame)
             Table of edge list corresponding to the subgraph induced by the top
@@ -517,10 +637,24 @@ class GenePlexus:
         return self.df_edge, self.isolated_genes, self.df_edge_sym, self.isolated_genes_sym
 
     def alter_validation_df(self):
-        """Make table about presence of input genes in the network.
+        """Make table about presence of input genes in the network used durning training.
+
+        **The following clsss attributes are set when this function is run**
 
         :attr:`df_convert_out_subset` (DataFrame)
-            df_convert_out subset to only the network used to train the model
+            A table with the following 6 columns:
+
+            .. list-table::
+
+               * - Original ID
+                 - User supplied Gene ID
+               * - Entrez ID
+                 - Entrez Gene ID
+               * - Gene Name
+                 - Name Gene ID
+               * - In {Network}?
+                 - Y or N if the gene was found in the {Network} used to train the model
+
         :attr:`positive_genes` (List[str])
             List of genes used as positives when training the model
 
