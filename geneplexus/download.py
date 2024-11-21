@@ -47,6 +47,7 @@ def download_select_data(
             list. Do all the species if set to "All".
         data_loc: the remote system where to look for the data
         retry: If set to True, then retry downloading any missing file.
+        log_level: Level to set the logger
 
     """
     species = _get_species_list(species)
@@ -55,7 +56,7 @@ def download_select_data(
             if not _check_all_files(data_dir, aspecies):
                 if data_loc == "Zenodo":
                     logger.warning(
-                        f"Downloading {aspecies} data from Zenodo. This should take ~2"
+                        f"Downloading {aspecies} data from Zenodo. This should take ~2 "
                         "minutes per species but can vary greatly depending on download speeds",
                     )
                 log_path = osp.join(data_dir, "download.log")
@@ -88,9 +89,9 @@ def _get_species_list(
 
 def _check_all_files(
     data_dir: str,
-    aspecies: str,
+    file_cat: str,
 ):
-    fn_end = f"data_filenames_{aspecies}.txt"
+    fn_end = f"data_filenames_{file_cat}.txt"
     fn_full = osp.join(data_dir, fn_end)
     # check if filenames file is present
     if not osp.exists(fn_full):
@@ -107,7 +108,7 @@ def _check_all_files(
             return True
 
 
-def _download_and_extract(data_dir, aspecies, fn_download, data_loc, retry):
+def _download_and_extract(data_dir, file_cat, fn_download, data_loc, retry):
     session = requests.Session()
     url = urljoin(URL_DICT[data_loc], fn_download)
     num_tries = 0
@@ -122,10 +123,10 @@ def _download_and_extract(data_dir, aspecies, fn_download, data_loc, retry):
                         tf.extract(member, data_dir)
                         logger.info(f"Downloaded {member.name}")
                 try:
-                    shutil.rmtree(osp.join(data_dir, f"{aspecies}_data"))
+                    shutil.rmtree(osp.join(data_dir, f"{file_cat}_data"))
                 except FileNotFoundError:
                     pass
-                if _check_all_files(data_dir, aspecies):
+                if _check_all_files(data_dir, file_cat):
                     break
                 else:
                     logger.warning(f"Not all files downloaded, trying again")
@@ -153,14 +154,15 @@ def download_pytest_data(
         data_dir: Location of data files.
         data_loc: the remote system where to look for the data
         retry: If set to True, then retry downloading any missing file.
+        log_level: Level to set the logger
 
     """
     with stream_level_context(logger, log_level):
         if not _check_all_files(data_dir, "pytest"):
             if data_loc == "Zenodo":
                 logger.warning(
-                    f"Downloading pytest data from Zenodo. This should take ~2"
-                    "but can vary greatly depending on download speeds",
+                    f"Downloading pytest data from Zenodo. This should take ~2 "
+                    "minutes but can vary greatly depending on download speeds",
                 )
             log_path = osp.join(data_dir, "download.log")
             logger.info(f"Start downloading pytest data and saving to: {data_dir}")
