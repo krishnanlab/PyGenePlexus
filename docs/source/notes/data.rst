@@ -39,7 +39,7 @@ can supply there own data by generating files in the following formats:
          "{Term ID}" # ID of the term : {
             "Name"  : # returns string of term name
             "Genes" : # returns list of genes annotated to term
-            "Task"  : # returns ype of GSC the term is from
+            "Task"  : # returns type of GSC the term is from
             }
          "Universe" : # returns list of all genes in GSC
          "Term Order" : # returns list of all term IDs in GSC
