@@ -24,7 +24,6 @@ PyGenePlexus
 
    geneplexus/download
    geneplexus/geneplexus
-   geneplexus/util
 
 .. toctree::
    :maxdepth: 1
