@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.abspath('../..'))
 # -- Project information -----------------------------------------------------
 
 project = 'PyGenePlexus'
-copyright = '2022, Krishnan Laboratory at Michigan State University'
+copyright = '2024, Krishnan Laboratory at Univeristy of Colorado Anschutz Medical Campus'
 author = 'Remy Liu and Christopher A. Mancuso'
 
 # The full version, including alpha/beta/rc tags

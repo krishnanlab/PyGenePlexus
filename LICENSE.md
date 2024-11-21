@@ -4,8 +4,8 @@ The software is released under the [BSD 3-Clause License](https://opensource.org
 
 ## License information for data used
 
-* STRING, STRING-EXP, GO and Mondo use [Creative Commons License: Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/legalcode).
-* Moarch uses [3-Clause BSD License](https://opensource.org/license/BSD-3-Clause).
+* STRING, GO and Mondo use [Creative Commons License: Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/legalcode).
+* Monarch uses [3-Clause BSD License](https://opensource.org/license/BSD-3-Clause).
 * BioGRID uses [The MIT License](https://opensource.org/licenses/MIT).
 
 The location of the license agreement of terms-of-use for each network or
@@ -17,5 +17,5 @@ adding a [Creative Commons License: Attribution 4.0 International](https://creat
 * [STRING](https://string-db.org/cgi/access.pl?footer_active_subpage=licensing)
 * [BioGRID](https://wiki.thebiogrid.org/doku.php/terms_and_conditions)
 * [GO](http://geneontology.org/docs/go-citation-policy/)
-* [Moarch](https://monarchinitiative.org/terms)
+* [Monarch](https://monarchinitiative.org/terms)
 * [Mondo](https://mondo.monarchinitiative.org/#license)
