@@ -21,7 +21,7 @@ Glossary
       A gene set collection (GSC) is a set of gene sets, each of which defines
       a set of positive genes for a specific term (i.e., a label). Currently
       supported GSCs are [GO]_, [Monarch]_ and [Mondo]_.
-	  
+
    SixSpeciesN2V
       Features where made by first constucting a six species network, connecting
       genes from the single species networks together using the [EggNOG]_ orthology
