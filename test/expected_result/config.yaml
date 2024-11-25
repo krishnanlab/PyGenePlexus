@@ -1,8 +1,8 @@
 auto_download: false
 features: SixSpeciesN2V
 file_loc: /Users/mancchri/.data/geneplexus
-gsc_res: Combined
-gsc_trn: Combined
+gsc_res: Combined - Gene Set Contexts Used [GO, Monarch]
+gsc_trn: Combined - Gene Set Contexts Used [GO, Monarch, Mondo]
 input_genes:
 - '6457'
 - '7037'
@@ -187,7 +187,7 @@ input_genes:
 - '3107'
 - '2263'
 - '56288'
-input_negatives: []
+input_negatives: null
 log_level: INFO
 net_type: STRING
 sp_res: Mouse
