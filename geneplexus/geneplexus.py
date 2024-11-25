@@ -18,6 +18,7 @@ from ._config import logger
 from ._config.logger_util import set_stream_level
 from .download import download_select_data
 from .exception import FlyMonarchError
+from .exception import MondoError
 from .exception import NoPositivesError
 from .exception import ZebrafishBioGRIDError
 
@@ -104,6 +105,11 @@ class GenePlexus:
         if (self.sp_trn == "Fly" and self.gsc_trn == "Monarch") or (self.sp_res == "Fly" and self.gsc_res == "Monarch"):
             raise FlyMonarchError(
                 f"Fly has no annotations for Monarch. Use either Combined or GO for GSC",
+            )
+            
+        if (self.sp_trn != "Human" and self.gsc_trn == "Mondo") or (self.sp_res != "Human" and self.gsc_res == "Mondo"):
+            raise MondoError(
+                f"Mondo only has annotations for Human",
             )
 
         if self.gsc_trn == "Combined":

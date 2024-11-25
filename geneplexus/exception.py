@@ -4,6 +4,10 @@
 class FlyMonarchError(Exception):
     """Raised becasue no Monarch annotations for Fly."""
 
+    
+class MondoError(Exception):
+    """Raised becasue no Mondo only has annotations for Human."""
+
 
 class ZebrafishBioGRIDError(Exception):
     """Raised becuse BioGRID doesn't have a good Zebrafish network."""
