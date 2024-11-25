@@ -17,9 +17,9 @@ from ._config import config
 from ._config import logger
 from ._config.logger_util import set_stream_level
 from .download import download_select_data
-from .exception import CustomDataError
 from .exception import FlyMonarchError
 from .exception import ZebrafishBioGRIDError
+from .exception import NoPositivesError
 
 
 class GenePlexus:
@@ -536,6 +536,11 @@ class GenePlexus:
             self.net_type,
             self.convert_ids,
         )
+        if len(self.pos_genes_in_net) == 0:
+            raise NoPositivesError(
+                f"There are no positive genes to train the model with.",
+            )
+            
         if len(self.input_negatives) > 0:
             # remove genes from negatives if they are also positives
             user_negatives = np.setdiff1d(self.convert_ids_negatives, self.convert_ids).tolist()
