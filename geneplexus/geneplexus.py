@@ -539,7 +539,6 @@ class GenePlexus:
         if len(self.input_negatives) > 0:
             # remove genes from negatives if they are also positives
             user_negatives = np.setdiff1d(self.convert_ids_negatives, self.convert_ids).tolist()
-            print(user_negatives)
         else:
             user_negatives = None
         self.negative_genes, self.neutral_gene_info = _geneplexus._get_negatives(
