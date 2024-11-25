@@ -22,7 +22,7 @@ Due to the availability of the data, the following combinations are supported:
 .. list-table:: Available Network Options
    :widths: 10 10 10 10 10 10 10
 
-   * - 
+   * -
      - Human
      - Mouse
      - Fly
@@ -30,31 +30,31 @@ Due to the availability of the data, the following combinations are supported:
      - Worm
      - Yeast
    * - STRING
-     - ✅ 
-     - ✅ 
-     - ✅ 
-     - ✅ 
-     - ✅ 
-     - ✅ 
+     - ✅
+     - ✅
+     - ✅
+     - ✅
+     - ✅
+     - ✅
    * - IMP
-     - ✅ 
-     - ✅ 
-     - ✅ 
-     - ✅ 
-     - ✅ 
-     - ✅ 
+     - ✅
+     - ✅
+     - ✅
+     - ✅
+     - ✅
+     - ✅
    * - BioGRID
-     - ✅ 
-     - ✅ 
-     - ✅ 
-     - ❌  
-     - ✅ 
-     - ✅ 
+     - ✅
+     - ✅
+     - ✅
+     - ❌
+     - ✅
+     - ✅
 
 .. list-table:: Available Gene Set Collection Options
    :widths: 10 10 10 10 10 10 10
 
-   * - 
+   * -
      - Human
      - Mouse
      - Fly
@@ -62,33 +62,33 @@ Due to the availability of the data, the following combinations are supported:
      - Worm
      - Yeast
    * - GO
-     - ✅ 
-     - ✅ 
-     - ✅ 
-     - ✅ 
-     - ✅ 
-     - ✅ 
+     - ✅
+     - ✅
+     - ✅
+     - ✅
+     - ✅
+     - ✅
    * - Monarch
-     - ✅ 
-     - ✅ 
-     - ❌ 
-     - ✅ 
-     - ✅ 
-     - ✅ 
+     - ✅
+     - ✅
+     - ❌
+     - ✅
+     - ✅
+     - ✅
    * - Mondo
-     - ✅ 
-     - ❌ 
-     - ❌ 
-     - ❌  
-     - ❌ 
-     - ❌ 
+     - ✅
+     - ❌
+     - ❌
+     - ❌
+     - ❌
+     - ❌
    * - Combined
-     - ✅ 
-     - ✅ 
-     - ❌ 
-     - ✅  
-     - ✅ 
-     - ✅ 
+     - ✅
+     - ✅
+     - ❌
+     - ✅
+     - ✅
+     - ✅
 
 .. note::
 
