@@ -106,7 +106,7 @@ class GenePlexus:
             raise FlyMonarchError(
                 f"Fly has no annotations for Monarch. Use either Combined or GO for GSC",
             )
-            
+
         if (self.sp_trn != "Human" and self.gsc_trn == "Mondo") or (self.sp_res != "Human" and self.gsc_res == "Mondo"):
             raise MondoError(
                 f"Mondo only has annotations for Human",
@@ -115,12 +115,12 @@ class GenePlexus:
         if self.gsc_trn == "Combined":
             logger.info(
                 f"For the training species, {self.sp_trn}, the GSC is set to "
-                f"Combined and here: {config.COMBINED_CONTEXTS[self.sp_trn]}"
+                f"Combined and here: {config.COMBINED_CONTEXTS[self.sp_trn]}",
             )
         if self.gsc_res == "Combined":
             logger.info(
                 f"For the results species, {self.sp_res}, the GSC is set to "
-                f"Combined and here: {config.COMBINED_CONTEXTS[self.sp_res]}"
+                f"Combined and here: {config.COMBINED_CONTEXTS[self.sp_res]}",
             )
 
         # convert combined to GO so can read correct backend data
