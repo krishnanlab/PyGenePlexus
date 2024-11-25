@@ -101,22 +101,22 @@ class GenePlexus:
                 "so this combination is not allowed.",
             )
 
-        if (
-            (self.sp_trn == "Fly" and self.gsc_trn == "Monarch")
-            or (self.sp_res == "Fly" and self.gsc_res == "Monarch")
-        ):
+        if (self.sp_trn == "Fly" and self.gsc_trn == "Monarch") or (self.sp_res == "Fly" and self.gsc_res == "Monarch"):
             raise FlyMonarchError(
                 f"Fly has no annotations for Monarch. Use either Combined or GO for GSC",
             )
-            
-        
-        if (self.gsc_trn == "Combined"):
-            logger.info(f"For the training species, {self.sp_trn}, the GSC is set to "
-                          f"Combined and here: {config.COMBINED_CONTEXTS[self.sp_trn]}")
-        if (self.gsc_res == "Combined"):
-            logger.info(f"For the results species, {self.sp_res}, the GSC is set to "
-                          f"Combined and here: {config.COMBINED_CONTEXTS[self.sp_res]}")
-        
+
+        if self.gsc_trn == "Combined":
+            logger.info(
+                f"For the training species, {self.sp_trn}, the GSC is set to "
+                f"Combined and here: {config.COMBINED_CONTEXTS[self.sp_trn]}"
+            )
+        if self.gsc_res == "Combined":
+            logger.info(
+                f"For the results species, {self.sp_res}, the GSC is set to "
+                f"Combined and here: {config.COMBINED_CONTEXTS[self.sp_res]}"
+            )
+
         # convert combined to GO so can read correct backend data
         if (self.sp_trn == "Fly") and (self.gsc_trn == "Combined"):
             self.gsc_trn = "GO"
@@ -501,7 +501,7 @@ class GenePlexus:
         if self.input_genes == None:
             raise NoPositivesError(
                 f"There are no positive genes to train the model with.",
-            ) 
+            )
         self._get_pos_and_neg_genes()
         self.mdl_weights, self.probs, self.avgps = _geneplexus._run_sl(
             self.file_loc,
