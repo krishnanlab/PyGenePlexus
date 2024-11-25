@@ -8,13 +8,13 @@ PyGenePlexus comes with pre-processed data that can be downloaded
 using :meth:`geneplexus.download.download_select_data` or directly
 from `Zenodo <https://zenodo.org/records/14149956>`_.
 
-**All data options:**
+**All options:**
 
 ======== =======================================================
 Networks [BioGRID]_, [STRING]_, [IMP]_
 Species  Human, Mouse, Zebrafish, Worm, Fly, Yeast
 Features :term:`SixSpeciesN2V`
-GSCs     [GO]_, [Monarch]_, [Mondo]_
+GSCs     [GO]_, [Monarch]_, [Mondo]_, Combined
 ======== =======================================================
 
 Due to the availability of the data, the following combinations are supported:
@@ -82,18 +82,11 @@ Due to the availability of the data, the following combinations are supported:
      - ❌
      - ❌
      - ❌
-   * - Combined
-     - ✅
-     - ✅
-     - ❌
-     - ✅
-     - ✅
-     - ✅
 
 .. note::
 
-   For a given species, if two or more gene set collections are available,
-   Combined is the union of all sets across those collections.
+   The Combined option for the GSC selection utilizes all available GSC 
+   options for a given species.
 
 Custom Data
 ------------
