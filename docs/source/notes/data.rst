@@ -85,7 +85,7 @@ Due to the availability of the data, the following combinations are supported:
 
 .. note::
 
-   The Combined option for the GSC selection utilizes all available GSC 
+   The Combined option for the GSC selection utilizes all available GSC
    options for a given species.
 
 Custom Data
