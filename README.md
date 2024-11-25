@@ -99,10 +99,21 @@ pytest test/ --cache-clear
 
 ## Building Documentation
 
-1. Install doc dependencies ``pip install -r docs/requirements.txt``
+1. Install doc dependencies
+
+```bash
+pip install -r docs/requirements.txt
+```
+
 2. Build
+
 ```bash
 cd docs
 make html
 ```
-3. Open doc ``open build/html/index.html``
+
+3. Open doc
+
+```bash
+open build/html/index.html
+```

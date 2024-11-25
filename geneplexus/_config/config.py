@@ -63,6 +63,15 @@ GSC_DATA_TYPE = Dict[str, Dict[Literal["Name", "Genes"], Union[str, np.ndarray]]
 BIOMART_DATA_TYPE = Dict[str, str]
 PRETRAINED_DATA_TYPE = Dict[str, Dict[Literal["Name", "Weights", "PosGenes"], Union[str, np.ndarray]]]
 
+COMBINED_CONTEXTS: Dict[str, Any] = {
+    "Human": "Combined - Gene Set Contexts Used [GO, Monarch, Mondo]",
+    "Mouse": "Combined - Gene Set Contexts Used [GO, Monarch]",
+    "Zebrafish": "Combined - Gene Set Contexts Used [GO, Monarch]",
+    "Worm": "Combined - Gene Set Contexts Used [GO, Monarch]",
+    "Yeast": "Combined - Gene Set Contexts Used [GO, Monarch]",
+    "Fly": "Combined - Gene Set Contexts Used [GO]",
+}
+
 __all__ = [
     "URL_DICT",
     "CONFIG_PATH",
@@ -86,4 +95,5 @@ __all__ = [
     "ID_CONVERSION_MAP_TYPE",
     "GSC_DATA_TYPE",
     "PRETRAINED_DATA_TYPE",
+    "COMBINED_CONTEXTS",
 ]

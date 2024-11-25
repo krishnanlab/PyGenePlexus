@@ -17,8 +17,9 @@ from ._config import config
 from ._config import logger
 from ._config.logger_util import set_stream_level
 from .download import download_select_data
-from .exception import CustomDataError
 from .exception import FlyMonarchError
+from .exception import MondoError
+from .exception import NoPositivesError
 from .exception import ZebrafishBioGRIDError
 
 
@@ -72,8 +73,8 @@ class GenePlexus:
         self.net_type = net_type
         self.log_level = log_level
         self.auto_download = auto_download
-        self.input_genes: List[str] = []
-        self.input_negatives: List[str] = []
+        self.input_genes: List[str] = input_genes
+        self.input_negatives: List[str] = input_negatives
 
         if self.auto_download and self._is_custom:
             warnings.warn(
@@ -101,15 +102,38 @@ class GenePlexus:
                 "so this combination is not allowed.",
             )
 
-        if (
-            (self.sp_trn == "Fly" and self.gsc_trn == "Monarch")
-            or (self.sp_trn == "Fly" and self.gsc_trn == "Combined")
-            or (self.sp_res == "Fly" and self.gsc_res == "Monarch")
-            or (self.sp_res == "Fly" and self.gsc_res == "Combined")
-        ):
+        if (self.sp_trn == "Fly" and self.gsc_trn == "Monarch") or (self.sp_res == "Fly" and self.gsc_res == "Monarch"):
             raise FlyMonarchError(
-                f"Fly has no annotations for Monarch. Use GO for GSC",
+                f"Fly has no annotations for Monarch. Use either Combined or GO for GSC",
             )
+
+        if (self.sp_trn != "Human" and self.gsc_trn == "Mondo") or (self.sp_res != "Human" and self.gsc_res == "Mondo"):
+            raise MondoError(
+                f"Mondo only has annotations for Human",
+            )
+
+        if self.gsc_trn == "Combined":
+            logger.info(
+                f"For the training species, {self.sp_trn}, the GSC is set to "
+                f"Combined and here: {config.COMBINED_CONTEXTS[self.sp_trn]}",
+            )
+        if self.gsc_res == "Combined":
+            logger.info(
+                f"For the results species, {self.sp_res}, the GSC is set to "
+                f"Combined and here: {config.COMBINED_CONTEXTS[self.sp_res]}",
+            )
+
+        # convert combined to GO so can read correct backend data
+        if (self.sp_trn == "Fly") and (self.gsc_trn == "Combined"):
+            self.gsc_trn = "GO"
+            self.gsc_trn_original = "Combined"
+        elif (self.sp_trn == "Fly") and (self.gsc_trn != "Combined"):
+            self.gsc_trn_original = self.gsc_trn
+        if (self.sp_res == "Fly") and (self.gsc_res == "Combined"):
+            self.gsc_res = "GO"
+            self.gsc_res_original = "Combined"
+        elif (self.sp_res == "Fly") and (self.gsc_res != "Combined"):
+            self.gsc_res_original = self.gsc_res
 
     @property
     def _params(self) -> List[str]:
@@ -132,6 +156,14 @@ class GenePlexus:
         used with CLI.
         """
         params_dict = {i: getattr(self, i) for i in self._params}
+        if params_dict["gsc_trn"] == "Combined":
+            params_dict["gsc_trn"] = config.COMBINED_CONTEXTS[params_dict["sp_trn"]]
+        if params_dict["gsc_res"] == "Combined":
+            params_dict["gsc_res"] = config.COMBINED_CONTEXTS[params_dict["sp_res"]]
+        if hasattr(self, "gsc_trn_original") and (self.gsc_trn_original == "Combined"):
+            params_dict["gsc_trn"] = config.COMBINED_CONTEXTS[params_dict["sp_trn"]]
+        if hasattr(self, "gsc_res_original") and (self.gsc_res_original == "Combined"):
+            params_dict["gsc_res"] = config.COMBINED_CONTEXTS[params_dict["sp_res"]]
         path = osp.join(outdir, "config.yaml")
         with open(path, "w") as f:
             yaml.dump(params_dict, f)
@@ -472,6 +504,10 @@ class GenePlexus:
             relevance of the gene to the input gene list.
 
         """
+        if self.input_genes == None:
+            raise NoPositivesError(
+                f"There are no positive genes to train the model with.",
+            )
         self._get_pos_and_neg_genes()
         self.mdl_weights, self.probs, self.avgps = _geneplexus._run_sl(
             self.file_loc,
@@ -536,12 +572,16 @@ class GenePlexus:
             self.net_type,
             self.convert_ids,
         )
-        if len(self.input_negatives) > 0:
+        if len(self.pos_genes_in_net) == 0:
+            raise NoPositivesError(
+                f"There are no positive genes to train the model with.",
+            )
+
+        if (self.input_negatives == None) or (len(self.input_negatives) == 0):
+            user_negatives = None
+        else:
             # remove genes from negatives if they are also positives
             user_negatives = np.setdiff1d(self.convert_ids_negatives, self.convert_ids).tolist()
-            print(user_negatives)
-        else:
-            user_negatives = None
         self.negative_genes, self.neutral_gene_info = _geneplexus._get_negatives(
             self.file_loc,
             self.sp_trn,

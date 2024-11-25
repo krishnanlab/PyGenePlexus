@@ -5,12 +5,16 @@ class FlyMonarchError(Exception):
     """Raised becasue no Monarch annotations for Fly."""
 
 
+class MondoError(Exception):
+    """Raised becasue no Mondo only has annotations for Human."""
+
+
 class ZebrafishBioGRIDError(Exception):
-    """Raised when Zebrafish + BioGRID is tried."""
+    """Raised becuse BioGRID doesn't have a good Zebrafish network."""
 
 
-class CustomDataError(Exception):
-    """Raised when custom network or gsc data files not set up correctly."""
+class NoPositivesError(Exception):
+    """Raised when there are no positive genes in the network."""
 
 
 class DownloadError(Exception):
