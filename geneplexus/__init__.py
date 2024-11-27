@@ -5,7 +5,7 @@
 PyGenePlexus enables researchers to predict novel genes similar to their
 genes of interest based on their patterns of connectivity in genome-scale
 molecular interaction networks, and addtionaly translate these findings
-species.
+across species.
 
 .. figure:: ../figures/mainfigure.png
   :scale: 20 %
