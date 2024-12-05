@@ -17,6 +17,33 @@ Features :term:`SixSpeciesN2V`
 GSCs     [GO]_, [Monarch]_, [Mondo]_, Combined
 ======== =======================================================
 
+**Detailed species info:**
+
+.. list-table::
+   :widths: 10 10 10
+
+   * -
+     - Specifc Name
+     - Taxon Id
+   * - Human
+     - Homo sapiens
+     - 9606
+   * - Mouse
+     - Mus musculus
+     - 10090
+   * - Fly
+     - Drosophila melanogaster
+     - 7227
+   * - Zebrafish
+     - Danio rerio
+     - 7955
+   * - Worm
+     - Caenorhabditis elegans
+     - 6239
+   * - Yeast
+     - Saccharomyces cerevisiae
+     - 4932
+
 Due to the availability of the data, the following combinations are supported:
 
 .. list-table:: Available Network Options
