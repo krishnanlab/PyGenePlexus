@@ -19,6 +19,7 @@ def gp():
     gp.load_genes(geneplexus.util.read_gene_list(pytest.GENELIST_PATH))
     return gp
 
+
 @pytest.mark.parametrize("null_val", [None, -10])
 @pytest.mark.parametrize("num_folds", [2, 3, 5])
 @pytest.mark.parametrize("min_num_pos_cv,cross_validate", [(100, True), (100, False), (200, True)])
@@ -28,7 +29,15 @@ def gp():
 )  # current example geneset has 183 genes
 # @pytest.mark.usefixtures("data")
 def test_run_sl(
-    gp, caplog, mocker, min_num_pos, min_num_pos_cv, num_folds, null_val, cross_validate, excepted_error_message
+    gp,
+    caplog,
+    mocker,
+    min_num_pos,
+    min_num_pos_cv,
+    num_folds,
+    null_val,
+    cross_validate,
+    excepted_error_message,
 ):
     # Use random 5 dimensional vectors as features to speed up test
     mocker.patch(
