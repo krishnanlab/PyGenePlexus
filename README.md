@@ -45,7 +45,7 @@ Run the GenePlexus pipline on a input gene list.
 options:
   -h, --help            show this help message and exit
   -i , --input_file     Input gene list (.txt) file. (default: None)
-  -d , --gene_list_delimiter 
+  -d , --gene_list_delimiter
                         Delimiter used in the gene list. Use 'newline' if the genes are separated
                         by new line, and use 'tab' if the genes are seperate by tabs. Other
                         generic separator are also supported, e.g. ', '. (default: newline)
@@ -62,7 +62,7 @@ options:
                         Monarch, Mondo, Combined} (default: GO)
   -g2 , --gsc_res       Geneset collection used for model similarities. The choices are: {GO,
                         Monarch, Mondo, Combined} (default: GO)
-  -s , --small_edgelist_num_nodes 
+  -s , --small_edgelist_num_nodes
                         Number of nodes in the small edgelist. (default: 50)
   -od , --output_dir    Output directory with respect to the repo root directory. (default:
                         result/)

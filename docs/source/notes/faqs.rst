@@ -8,7 +8,7 @@ Frequently Asked Questions
 
 In the supervised machine learning model, any gene from the user-supplied
 gene list that is able to be converted to an Entrez ID and is also in the network is
-considered part of the positive class. 
+considered part of the positive class.
 
 Genes in the negative class based on the chosen Geneset Context. The default Geneset
 Context is Combined, which used all avilable geneset collections.
