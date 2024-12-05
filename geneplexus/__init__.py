@@ -2,10 +2,10 @@
 
 .. currentmodule:: geneplexus.GenePlexus
 
-PyGenePlexus enables researchers to predict novel genes similar to their
-genes of interest based on their patterns of connectivity in genome-scale
-molecular interaction networks, and addtionaly translate these findings
-across species.
+PyGenePlexus enables researchers to predict genes similar to an uploaded
+geneset of interest based on patterns of connectivity in genome-scale
+molecular interaction networks, with the ability to translate these 
+findings across species.
 
 .. figure:: ../figures/mainfigure.png
   :scale: 20 %
