@@ -432,7 +432,8 @@ class GenePlexus:
     def fit_and_predict(
         self,
         logreg_kwargs: Optional[Dict[str, Any]] = None,
-        min_num_pos: int = 15,
+        min_num_pos: int = 5,
+        min_num_pos_cv: int = 15,
         num_folds: int = 3,
         null_val: float = None,
         random_state: Optional[int] = 0,
@@ -445,7 +446,9 @@ class GenePlexus:
                 :class:`~sklearn.linear_model.LogisticRegression`). If not set,
                 then use the default logistic regression settings (l2 penalty,
                 10,000 max iterations, lbfgs solver).
-            min_num_pos: Minimum number of positives required for performing
+            min_num_pos: Minimum number of positives required for the model
+                to be trained.
+            min_num_pos_cv: Minimum number of positives required for performing
                 cross validation evaluation.
             num_folds: Number of cross validation folds.
             null_val: Null values to fill if cross validation was not able to
@@ -494,7 +497,7 @@ class GenePlexus:
         Note:
             Due to the high complexity of the embedding space, the resulting probabilities
             are not well calibrated, however the resulting rankings are very meaningful as
-            evaluated with auPRC.
+            evaluated with log2(auPRC/prior).
 
         :attr:`GenePlexus.avgps` (1D array of floats)
             Cross validation results. Performance is measured using
@@ -506,9 +509,9 @@ class GenePlexus:
         """
         if self.input_genes == None:
             raise NoPositivesError(
-                f"There are no positive genes to train the model with.",
+                f"No positives genes were added, use function load_genes()",
             )
-        self._get_pos_and_neg_genes()
+        self._get_pos_and_neg_genes(min_num_pos)
         self.mdl_weights, self.probs, self.avgps = _geneplexus._run_sl(
             self.file_loc,
             self.sp_trn,
@@ -519,7 +522,7 @@ class GenePlexus:
             self.negative_genes,
             self.net_genes,
             logreg_kwargs=logreg_kwargs,
-            min_num_pos=min_num_pos,
+            min_num_pos_cv=min_num_pos_cv,
             num_folds=num_folds,
             null_val=null_val,
             random_state=random_state,
@@ -536,7 +539,7 @@ class GenePlexus:
         )
         return self.mdl_weights, self.df_probs, self.avgps
 
-    def _get_pos_and_neg_genes(self):
+    def _get_pos_and_neg_genes(self, min_num_pos):
         """Set up positive and negative splits.
 
         **The following clsss attributes are set when this function is run**
@@ -572,9 +575,10 @@ class GenePlexus:
             self.net_type,
             self.convert_ids,
         )
-        if len(self.pos_genes_in_net) == 0:
+        if len(self.pos_genes_in_net) < min_num_pos:
             raise NoPositivesError(
-                f"There are no positive genes to train the model with.",
+                f"There were not enough positive genes to train the model with. "
+                f"This limit is set to {min_num_pos} and can be changed in fit_and_predict().",
             )
 
         if (self.input_negatives == None) or (len(self.input_negatives) == 0):
