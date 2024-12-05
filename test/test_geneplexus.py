@@ -19,7 +19,6 @@ def gp():
     gp.load_genes(geneplexus.util.read_gene_list(pytest.GENELIST_PATH))
     return gp
 
-
 @pytest.mark.parametrize("null_val", [None, -10])
 @pytest.mark.parametrize("num_folds", [2, 3, 5])
 @pytest.mark.parametrize("min_num_pos_cv,cross_validate", [(100, True), (100, False), (200, True)])
