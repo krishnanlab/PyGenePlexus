@@ -17,6 +17,7 @@ PyGenePlexus
    notes/api
    notes/r
    notes/data
+   notes/faqs
 
 .. toctree::
    :maxdepth: 1
