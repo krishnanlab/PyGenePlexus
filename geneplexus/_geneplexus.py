@@ -146,7 +146,7 @@ def _run_sl(
     negative_genes,
     net_genes,
     logreg_kwargs: Optional[Dict[str, Any]] = None,
-    min_num_pos: int = 15,
+    min_num_pos_cv: int = 15,
     num_folds: int = 3,
     null_val: float = None,
     random_state: Optional[int] = 0,
@@ -172,11 +172,11 @@ def _run_sl(
     avgps = [null_val] * num_folds
     if not cross_validate:
         logger.info("Skipping cross validation.")
-    elif len(pos_genes_in_net) < min_num_pos:
+    elif len(pos_genes_in_net) < min_num_pos_cv:
         logger.warning(
             "Insufficient number of positive genes for cross validation: "
-            f"{len(pos_genes_in_net)} ({min_num_pos} needed). Skipping cross "
-            f"validation and fill with null values {null_val}",
+            f"{len(pos_genes_in_net)} ({min_num_pos_cv} needed). Skipping cross "
+            f"validation and filling values with {null_val}",
         )
     else:
         logger.info("Performing cross validation.")
