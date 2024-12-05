@@ -42,35 +42,42 @@ Full CLI options (check out with ``geneplexus --help``)
 ```txt
 Run the GenePlexus pipline on a input gene list.
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
-  -i , --input_file     Input gene list (.txt) file (one gene per line). (default: None)
+  -i , --input_file     Input gene list (.txt) file. (default: None)
   -d , --gene_list_delimiter
                         Delimiter used in the gene list. Use 'newline' if the genes are separated
                         by new line, and use 'tab' if the genes are seperate by tabs. Other
                         generic separator are also supported, e.g. ', '. (default: newline)
-  -n , --network        Network to use. {format_choices(config.ALL_NETWORKS)} (default: STRING)
-  -f , --feature        Types of feature to use. The choices are: {Adjacency, Embedding,
-                        Influence} (default: Embedding)
-  -g , --gsc            Geneset collection used to generate negatives and the modelsimilarities.
-                        The choices are: {GO, DisGeNet} (default: GO)
-  -s , --small_edgelist_num_nodes
-                        Number of nodes in the small edgelist. (default: 50)
   -dd , --data_dir      Directory in which the data are stored, if set to None, then use the
                         default data directory ~/.data/geneplexus (default: None)
+  -n , --network        Network to use. The choices are: {BioGRID, STRING, IMP} (default: STRING)
+  -f , --feature        Types of feature to use. The choices are: {SixSpeciesN2V} (default:
+                        SixSpeciesN2V)
+  -s1 , --sp_trn        Species of training data The choices are: {Human, Mouse, Fly, Worm,
+                        Zebrafish, Yeast} (default: Human)
+  -s2 , --sp_res        Species of results data The choices are: {Human, Mouse, Fly, Worm,
+                        Zebrafish, Yeast} (default: Mouse)
+  -g1 , --gsc_trn       Geneset collection used to generate negatives. The choices are: {GO,
+                        Monarch, Mondo, Combined} (default: GO)
+  -g2 , --gsc_res       Geneset collection used for model similarities. The choices are: {GO,
+                        Monarch, Mondo, Combined} (default: GO)
+  -s , --small_edgelist_num_nodes
+                        Number of nodes in the small edgelist. (default: 50)
   -od , --output_dir    Output directory with respect to the repo root directory. (default:
                         result/)
   -l , --log_level      Logging level. The choices are: {CRITICAL, ERROR, WARNING, INFO, DEBUG}
                         (default: INFO)
+  -ad, --auto_download_off
+                        Turns off autodownloader which is on by default. (default: False)
   -q, --quiet           Suppress log messages (same as setting log_level to CRITICAL). (default:
                         False)
   -z, --zip-output      If set, then compress the output directory into a Zip file. (default:
                         False)
   --clear-data          Clear data directory and exit. (default: False)
   --overwrite           Overwrite existing result directory if set. (default: False)
-  --skip-mdl-sim        Skip model similarity computation. This computation is not yet available
-                        when using custom networks due to the lack of pretrained models for
-                        comparison. (default: False)
+  --skip-mdl-sim        Skip model similarity computation (default: False)
+  --skip-sm-edgelist    Skip making small edgelist. (default: False)
 ```
 
 # Dev
