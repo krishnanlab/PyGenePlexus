@@ -57,11 +57,11 @@ If a user wishes to circumvent GenePlexus from automatically finding negative ge
 	                           sp_trn = sp_trn,
 	                           sp_res = sp_res,
 	                           log_level="INFO")
-	
+
 	gp.load_genes(input_genes)
 	gp.load_negatives(input_negatives)
 	myneg = gp.convert_ids_negatives
-	
+
 	gp.pos_genes_in_net, gp.genes_not_in_net, gp.net_genes = geneplexus._geneplexus._get_genes_in_network(
 	    gp.file_loc,
 	    gp.sp_trn,
@@ -71,7 +71,7 @@ If a user wishes to circumvent GenePlexus from automatically finding negative ge
 
 	gp.negative_genes = np.intersect1d(myneg,gp.net_genes)
 	gp.neutral_gene_info = {}
-	
+
 	gp.mdl_weights, gp.probs, gp.avgps = geneplexus._geneplexus._run_sl(
 	    gp.file_loc,
 	    gp.sp_trn,
@@ -98,9 +98,9 @@ If a user wishes to circumvent GenePlexus from automatically finding negative ge
 	    gp.pos_genes_in_net,
 	    gp.negative_genes,
 	)
-	
+
 	gp.make_sim_dfs()
-	
+
 	gp.make_small_edgelist()
 
 Why is there a minimum number of genes I need?
