@@ -113,4 +113,4 @@ How can I get results from the first version of the web server?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. _q4:
 
-A web server has been built on top of this python package. If you were utilizing the original version of the web server which gave you a link to your job results, and you would like to retrieve those results, please use the contact info at the bottom of the Krishnan Lab web site to let us know. We will help you retrieve these results. Alternatively, `v.1.0.1 <https://pygeneplexus.readthedocs.io/en/v1.0.1/>`_ of the python package can be used to reproduce those results.
+A web server has been built on top of this python package. If you were utilizing the original version of the web server which gave you a link to your job results, and you would like to retrieve those results, please use the contact info at the bottom of the `Krishnan Lab <https://www.thekrishnanlab.org>`_ web site to let us know. We will help you retrieve these results. Alternatively, `v.1.0.1 <https://pygeneplexus.readthedocs.io/en/v1.0.1/>`_ of the python package can be used to reproduce those results.
