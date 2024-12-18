@@ -22,7 +22,7 @@ copyright = '2024, Krishnan Laboratory at Univeristy of Colorado Anschutz Medica
 author = 'Remy Liu and Christopher A. Mancuso'
 
 # The full version, including alpha/beta/rc tags
-release = '2.0.0-dev'
+release = '2.0.1'
 
 
 # -- General configuration ---------------------------------------------------
