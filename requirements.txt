@@ -1,4 +1,4 @@
-numpy==1.23.5
+numpy==2.2.1
 requests==2.31.0
 scikit-learn==1.6.0
 statsmodels==0.14.4
