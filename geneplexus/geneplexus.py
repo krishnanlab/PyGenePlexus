@@ -447,8 +447,8 @@ class GenePlexus:
                 :class:`~sklearn.linear_model.LogisticRegression`). If not set,
                 then use the default logistic regression settings (l2 penalty,
                 10,000 max iterations, lbfgs solver).
-            scale: Whether to scale the data when doing model training and prediction. It is 
-                not recommended to set to ``True`` unless using custom data. 
+            scale: Whether to scale the data when doing model training and prediction. It is
+                not recommended to set to ``True`` unless using custom data.
             min_num_pos: Minimum number of positives required for the model
                 to be trained.
             min_num_pos_cv: Minimum number of positives required for performing
@@ -498,11 +498,11 @@ class GenePlexus:
             at the one-to-one orthologs between the species.
 
         Note:
-            Due to the high complexity of the embedding space, and wide variety of 
+            Due to the high complexity of the embedding space, and wide variety of
             postive and negative genes determined for each model, the resulting
-            probabilities may not be well calibrated, however the resulting rankings 
+            probabilities may not be well calibrated, however the resulting rankings
             are very meaningful as evaluated with log2(auPRC/prior).
-    
+
         Note:
             If setting scale to ``True`` then comparison of user trained model
             to the models pre-trained on known gene sets become less straightforward

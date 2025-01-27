@@ -151,7 +151,7 @@ def _run_sl(
     null_val: float = None,
     random_state: Optional[int] = 0,
     cross_validate: bool = True,
-    scale: bool = False
+    scale: bool = False,
 ):
     if logreg_kwargs is None:
         logreg_kwargs = DEFAULT_LOGREG_KWARGS
