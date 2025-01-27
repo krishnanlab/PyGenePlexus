@@ -151,6 +151,7 @@ def _run_sl(
     null_val: float = None,
     random_state: Optional[int] = 0,
     cross_validate: bool = True,
+    scale: bool = False
 ):
     if logreg_kwargs is None:
         logreg_kwargs = DEFAULT_LOGREG_KWARGS
@@ -161,8 +162,9 @@ def _run_sl(
     pos_inds = [np.where(net_genes == agene)[0][0] for agene in pos_genes_in_net]
     neg_inds = [np.where(net_genes == agene)[0][0] for agene in negative_genes]
     data = util.load_gene_features(file_loc, sp_trn, features, net_type)
-    std_scale = StandardScaler().fit(data)
-    data = std_scale.transform(data)
+    if scale:
+        std_scale = StandardScaler().fit(data)
+        data = std_scale.transform(data)
     Xdata = data[pos_inds + neg_inds, :]
     ydata = np.array([1] * len(pos_inds) + [0] * len(neg_inds))
     clf = LogisticRegression(**logreg_kwargs)
@@ -196,6 +198,8 @@ def _run_sl(
         logger.info(f"{np.mean(avgps)=:.2f}")
     # do predictions in the target species
     data = util.load_gene_features(file_loc, sp_res, features, net_type)
+    if scale:
+        data = std_scale.transform(data)
     probs = clf.predict_proba(data)[:, 1]
     return mdl_weights, probs, avgps
 
