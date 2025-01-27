@@ -96,12 +96,12 @@ class TestGenePlexusPipeline(unittest.TestCase):
             df_probs_expected.sort_values("Entrez")[columns].values.tolist(),
         )
 
-        # # But at least the proababilities should be close
-        # for prob, prob_expected in zip(
-        #     df_probs.sort_values("Entrez")["Probability"],
-        #     df_probs_expected.sort_values("Entrez")["Probability"],
-        # ):
-        #     self.assertAlmostEqual(prob, prob_expected, places=3)
+        # But at least the proababilities should be close
+        for prob, prob_expected in zip(
+            df_probs.sort_values("Entrez")["Probability"],
+            df_probs_expected.sort_values("Entrez")["Probability"],
+        ):
+            self.assertAlmostEqual(prob, prob_expected, places=3)
 
     @pytest.mark.order(4)
     def test_make_sim_df(self):
