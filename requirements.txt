@@ -1,5 +1,5 @@
 numpy==1.23.5
-requests==2.31.0
+requests==2.32.3
 scikit-learn==1.6.0
 statsmodels==0.14.4
 tqdm==4.67.1
