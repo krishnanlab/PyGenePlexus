@@ -4,4 +4,4 @@ scikit-learn==1.6.0
 statsmodels==0.14.4
 tqdm==4.67.1
 pystow==0.6.1
-pyyaml==6.0.1
+pyyaml==6.0.2
