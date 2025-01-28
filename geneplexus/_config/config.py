@@ -14,7 +14,7 @@ import numpy as np
 MAX_RETRY = 10  # maximum number of retries for downloading
 
 URL_DICT = {
-    "Zenodo": "https://zenodo.org/records/14149956/files/",
+    "Zenodo": "https://zenodo.org/records/14750555/files/",
 }
 
 CONFIG_PATH = pathlib.Path(__file__).parent.absolute()

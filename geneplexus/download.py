@@ -57,7 +57,9 @@ def download_select_data(
                 if data_loc == "Zenodo":
                     logger.warning(
                         f"Downloading {aspecies} data from Zenodo. This should take ~2 "
-                        "minutes per species but can vary greatly depending on download speeds",
+                        "minutes per species but can vary greatly depending on download speeds. "
+                        "If Zenodo download is hanging for > 5 minutes, it might be best to stop "
+                        "and restart the PyGenePlexus download function.",
                     )
                 log_path = osp.join(data_dir, "download.log")
                 logger.info(f"Start downloading data for {aspecies} and saving to: {data_dir}")
@@ -162,7 +164,9 @@ def download_pytest_data(
             if data_loc == "Zenodo":
                 logger.warning(
                     f"Downloading pytest data from Zenodo. This should take ~2 "
-                    "minutes but can vary greatly depending on download speeds",
+                    "minutes but can vary greatly depending on download speeds. "
+                    "If Zenodo download is hanging for > 5 minutes, it might be best to stop "
+                    "and restart the PyGenePlexus download function.",
                 )
             log_path = osp.join(data_dir, "download.log")
             logger.info(f"Start downloading pytest data and saving to: {data_dir}")
