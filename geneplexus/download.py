@@ -23,8 +23,6 @@ from ._config.logger_util import file_handler_context
 from ._config.logger_util import stream_level_context
 from .exception import DownloadError
 
-# from . import util
-
 
 def download_select_data(
     data_dir: str,
@@ -138,7 +136,7 @@ def _download_and_extract(data_dir, file_cat, fn_download, data_loc, num_retries
                     logger.info("An unknown error occured")
                     continue
         except:
-            print("An error occured during download (probably a connection timeout)")
+            logger.info("An error occured during download (probably a connection timeout)")
             continue
         logger.critical("Session context closed, this should never happen!")
     else:
