@@ -5,12 +5,13 @@ import os.path as osp
 import shutil
 import tarfile
 import time
-import requests
 from typing import List
 from typing import Tuple
 from typing import Union
 from urllib.parse import urljoin
-# from . import util
+
+import requests
+
 from ._config import logger
 from ._config.config import ALL_SPECIES
 from ._config.config import LOG_LEVEL_TYPE
@@ -21,6 +22,8 @@ from ._config.config import URL_DICT
 from ._config.logger_util import file_handler_context
 from ._config.logger_util import stream_level_context
 from .exception import DownloadError
+
+# from . import util
 
 
 def download_select_data(
@@ -110,7 +113,7 @@ def _download_and_extract(data_dir, file_cat, fn_download, data_loc, num_retries
         num_tries += 1
         logger.info(f"On attempt {num_tries} of downloading the file")
         try:
-            with requests.get(url, timeout = 2) as r:
+            with requests.get(url, timeout=2) as r:
                 if r.ok:
                     logger.debug(f"Response ok ({r!r}): {url=}")
                     with tarfile.open(fileobj=io.BytesIO(r.content), mode="r:gz") as tf:
