@@ -15,6 +15,7 @@ MAX_RETRY = 10  # maximum number of retries for downloading
 
 URL_DICT = {
     "Zenodo": "https://zenodo.org/records/14750555/files/",
+    "ZenodoAPI": "https://zenodo.org/api/records/14750555/files/"
 }
 
 CONFIG_PATH = pathlib.Path(__file__).parent.absolute()
