@@ -1,5 +1,5 @@
 [![Tests](https://github.com/krishnanlab/PyGenePlexus/actions/workflows/tests.yml/badge.svg)](https://github.com/krishnanlab/PyGenePlexus/actions/workflows/tests.yml)
-[![Documentation Status](https://readthedocs.org/projects/pygeneplexus/badge/?version=v2.0.2)](https://pygeneplexus.readthedocs.io/en/v2.0.2/?badge=v2.0.2)
+[![Documentation Status](https://readthedocs.org/projects/pygeneplexus/badge/?version=v2.0.3)](https://pygeneplexus.readthedocs.io/en/v2.0.3/?badge=v2.0.3)
 [![PyPI](https://img.shields.io/pypi/v/geneplexus)](https://pypi.org/project/geneplexus/)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/geneplexus)
 [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
