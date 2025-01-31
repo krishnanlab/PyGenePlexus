@@ -13,7 +13,7 @@ A Python package of the GenePlexus analysis pipeline.
 * The [GenePlexus Benchmarking Paper](https://academic.oup.com/bioinformatics/article/36/11/3457/5780279)
 * The [Webserver](https://www.geneplexus.net/)
 * The [Package Documentation](https://pygeneplexus.readthedocs.io)
-* Data [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14149956.svg)](https://doi.org/10.5281/zenodo.14149956)
+* Data [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14750555.svg)](https://doi.org/10.5281/zenodo.14750555)
 
 # Quick start
 
