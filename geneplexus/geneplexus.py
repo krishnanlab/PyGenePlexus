@@ -17,10 +17,7 @@ from ._config import config
 from ._config import logger
 from ._config.logger_util import set_stream_level
 from .download import download_select_data
-from .exception import FlyMonarchError
-from .exception import MondoError
 from .exception import NoPositivesError
-from .exception import ZebrafishBioGRIDError
 
 # class SpeciesOutput:
 #     def __init__(self):
@@ -36,9 +33,9 @@ class GenePlexus:
         net_type: config.NET_TYPE = "STRING",
         features: config.FEATURE_TYPE = "SixSpeciesN2V",
         sp_trn: config.SPECIES_TYPE = "Human",
-        sp_res: config.SPECIES_TYPE = "Human",
+        sp_res: config.SPECIES_SELECTION_TYPE = "Human",
         gsc_trn: config.GSC_TYPE = "Combined",
-        gsc_res: config.GSC_TYPE = "Combined",
+        gsc_res: config.GSC_SELECTION_TYPE = "Combined",
         input_genes: Optional[List[str]] = None,
         input_negatives: Optional[List[str]] = None,
         auto_download: bool = False,
@@ -52,10 +49,11 @@ class GenePlexus:
             net_type: Type of network to use
             features: Type of features of the network to use
             sp_trn: The species of the training data
-            sp_res: The species the results are in
+            sp_res: The species the results are in, can be a list
             gsc_trn: Gene set collection used during training
             gsc_res: Gene set collection used when generating
-                results
+                results, can be a list. If list needs to be the same
+                length as number of results species to do
             input_genes: Input gene list, can be mixed type. Can also be set
                 later if not specified at init time by simply calling
                 :meth:`load_genes`.
@@ -65,7 +63,7 @@ class GenePlexus:
             auto_download: Automatically download necessary files if set.
             log_level: Logging level.
 
-        """
+        """   
         set_stream_level(logger, log_level)
         self._is_custom: bool = False
         self.file_loc = file_loc  # type: ignore
@@ -80,6 +78,11 @@ class GenePlexus:
         self.input_genes: List[str] = input_genes
         self.input_negatives: List[str] = input_negatives
 
+        # make sp_res a list no matter what here
+        # change GSC context to a list as well?
+        # for all init_checks, do they need to be in if state if is_custom False?
+        # change init checks to to remove and not throw an error
+        # maybe better message if anything is custom, all data checks turned off? 
         # human_output = SpeciesOutput()
         # mouse_output = SpeciesOutput()
         # self.human = human_output
@@ -97,7 +100,7 @@ class GenePlexus:
         elif self.auto_download:
             download_select_data(
                 self.file_loc,
-                list({self.sp_trn, self.sp_res}),
+                [self.sp_trn] + self.sp_res,
                 log_level=log_level,
             )
 
@@ -107,45 +110,41 @@ class GenePlexus:
         if input_negatives is not None:
             self.load_negatives(input_negatives)
 
-        if ("Zebrafish" == (self.sp_trn or self.sp_res)) and (self.net_type == "BioGRID"):
-            raise ZebrafishBioGRIDError(
-                f"The BioGRID network for Zebrafish is not "
-                "included due to it not having enough nodes "
-                "so this combination is not allowed.",
+        
+        if not self._is_custom:
+            sp_res_subset, gsc_res_subset = util.data_checks(
+                self.sp_trn,
+                self.net_type,
+                self.gsc_trn,
+                self.sp_res,
+                self.gsc_res,
             )
+            self.sp_res = sp_res_subset
+            self.gsc_res = gsc_res_subset
+        
 
-        if (self.sp_trn == "Fly" and self.gsc_trn == "Monarch") or (self.sp_res == "Fly" and self.gsc_res == "Monarch"):
-            raise FlyMonarchError(
-                f"Fly has no annotations for Monarch. Use either Combined or GO for GSC",
-            )
-
-        if (self.sp_trn != "Human" and self.gsc_trn == "Mondo") or (self.sp_res != "Human" and self.gsc_res == "Mondo"):
-            raise MondoError(
-                f"Mondo only has annotations for Human",
-            )
-
-        if self.gsc_trn == "Combined":
-            logger.info(
-                f"For the training species, {self.sp_trn}, the GSC is set to "
-                f"Combined and here: {config.COMBINED_CONTEXTS[self.sp_trn]}",
-            )
-        if self.gsc_res == "Combined":
-            logger.info(
-                f"For the results species, {self.sp_res}, the GSC is set to "
-                f"Combined and here: {config.COMBINED_CONTEXTS[self.sp_res]}",
-            )
-
-        # convert combined to GO so can read correct backend data
-        if (self.sp_trn == "Fly") and (self.gsc_trn == "Combined"):
-            self.gsc_trn = "GO"
-            self.gsc_trn_original = "Combined"
-        elif (self.sp_trn == "Fly") and (self.gsc_trn != "Combined"):
-            self.gsc_trn_original = self.gsc_trn
-        if (self.sp_res == "Fly") and (self.gsc_res == "Combined"):
-            self.gsc_res = "GO"
-            self.gsc_res_original = "Combined"
-        elif (self.sp_res == "Fly") and (self.gsc_res != "Combined"):
-            self.gsc_res_original = self.gsc_res
+        # if self.gsc_trn == "Combined":
+        #     logger.info(
+        #         f"For the training species, {self.sp_trn}, the GSC is set to "
+        #         f"Combined and here: {config.COMBINED_CONTEXTS[self.sp_trn]}",
+        #     )
+        # if self.gsc_res == "Combined":
+        #     logger.info(
+        #         f"For the results species, {self.sp_res}, the GSC is set to "
+        #         f"Combined and here: {config.COMBINED_CONTEXTS[self.sp_res]}",
+        #     )
+        #
+        # # convert combined to GO so can read correct backend data
+        # if (self.sp_trn == "Fly") and (self.gsc_trn == "Combined"):
+        #     self.gsc_trn = "GO"
+        #     self.gsc_trn_original = "Combined"
+        # elif (self.sp_trn == "Fly") and (self.gsc_trn != "Combined"):
+        #     self.gsc_trn_original = self.gsc_trn
+        # if (self.sp_res == "Fly") and (self.gsc_res == "Combined"):
+        #     self.gsc_res = "GO"
+        #     self.gsc_res_original = "Combined"
+        # elif (self.sp_res == "Fly") and (self.gsc_res != "Combined"):
+        #     self.gsc_res_original = self.gsc_res
 
     @property
     def _params(self) -> List[str]:
@@ -249,20 +248,28 @@ class GenePlexus:
         self._sp_trn = sp_trn
 
     @property
-    def sp_res(self) -> config.SPECIES_TYPE:
+    def sp_res(self) -> config.SPECIES_SELECTION_TYPE:
         """Results_species."""
         return self._sp_res
 
     @sp_res.setter
-    def sp_res(self, sp_res: config.SPECIES_TYPE):
-        if sp_res not in config.ALL_SPECIES:
-            warnings.warn(
-                util.param_warning("species", sp_res, config.ALL_SPECIES),
-                UserWarning,
-                stacklevel=2,
-            )
-            self._is_custom = True
-            logger.info(f"Using custom species {sp_res!r}")
+    def sp_res(self, sp_res: config.SPECIES_SELECTION_TYPE):
+        if isinstance(sp_res, str):
+            if sp_res == "All":
+                sp_res = config.ALL_SPECIES
+            else:
+                sp_res = [sp_res]
+        elif not isinstance(sp_res, list):
+            raise TypeError(f"Expected str type or list of str type, got {type(sp_res)}")
+        for i in sp_res:
+            if i not in config.ALL_SPECIES:
+                warnings.warn(
+                    util.param_warning("species", i, config.ALL_SPECIES),
+                    UserWarning,
+                    stacklevel=2,
+                )
+                self._is_custom = True
+                logger.info(f"There is a custom species in {sp_res!r}")
         self._sp_res = sp_res
 
     @property
@@ -283,20 +290,27 @@ class GenePlexus:
         self._gsc_trn = gsc_trn
 
     @property
-    def gsc_res(self) -> config.GSC_TYPE:
+    def gsc_res(self) -> config.GSC_SELECTION_TYPE:
         """Geneset collection used when generating results."""
         return self._gsc_res
 
     @gsc_res.setter
-    def gsc_res(self, gsc_res: config.GSC_TYPE):
-        if gsc_res not in config.ALL_GSCS:
-            warnings.warn(
-                util.param_warning("GSC", gsc_res, config.ALL_GSCS),
-                UserWarning,
-                stacklevel=2,
-            )
-            self._is_custom = True
-            logger.info(f"Using custom GSC {gsc_res!r}")
+    def gsc_res(self, gsc_res: config.GSC_SELECTION_TYPE):
+        if isinstance(gsc_res, str):
+            gsc_res = [gsc_res] * len(self.sp_res)
+        elif not isinstance(gsc_res, list):
+            raise TypeError(f"Expected str type or list of str type, got {type(gsc_res)}")
+        if len(self.sp_res) != len(gsc_res):
+            raise ValueError(f"Length of sp_res list not the same as gsc_res list")
+        for i in gsc_res:
+            if i not in config.ALL_GSCS:
+                warnings.warn(
+                    util.param_warning("GSC", i, config.ALL_GSCS),
+                    UserWarning,
+                    stacklevel=2,
+                )
+                self._is_custom = True
+                logger.info(f"There is a custom GSC in {gsc_res!r}")
         self._gsc_res = gsc_res
 
     def load_genes(self, input_genes: List[str]):

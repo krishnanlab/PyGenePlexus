@@ -56,8 +56,8 @@ SPECIES_TYPE = Literal["Human", "Mouse", "Fly", "Worm", "Fish", "Yeast"]
 
 NET_SELECTION_TYPE = Union[Literal["All"], NET_TYPE, List[NET_TYPE]]
 FEATURE_SELECTION_TYPE = Union[Literal["All"], FEATURE_TYPE, List[FEATURE_TYPE]]
-GSC_SELECTION_TYPE = Union[Literal["All"], GSC_TYPE, List[GSC_TYPE]]
 SPECIES_SELECTION_TYPE = Union[Literal["All"], SPECIES_TYPE, List[SPECIES_TYPE]]
+GSC_SELECTION_TYPE = Union[GSC_TYPE, List[GSC_TYPE]] # slightly different than the others
 
 ID_CONVERSION_MAP_TYPE = Dict[str, List[str]]
 GSC_DATA_TYPE = Dict[str, Dict[Literal["Name", "Genes"], Union[str, np.ndarray]]]
