@@ -326,7 +326,8 @@ def get_all_net_types(file_loc: Optional[str], species: str) -> List[str]:
             [i.split("__")[2].split(".txt")[0] for i in os.listdir(file_loc) if i.startswith(f"NodeOrder__{species}")],
         )
     return sorted(all_net_types)
-    
+
+
 def data_checks(
     sp_trn: str,
     net_type: str,
@@ -334,9 +335,7 @@ def data_checks(
     sp_res: List[str],
     gsc_res: List[str],
 ) -> List[str]:
-    """Throw errors and remove options based on data incompatabilities
-
-    """
+    """Throw errors and remove options based on data incompatabilities"""
 
     # do check for BioGRID and Zebrafish
     if (sp_trn == "Zebrafish") and (net_type == "BioGRID"):
@@ -344,8 +343,8 @@ def data_checks(
             f"The BioGRID network for Zebrafish is not "
             "included due to it not having enough nodes "
             "so this combination is not allowed for training.",
-        )     
-    inds_to_remove = []        
+        )
+    inds_to_remove = []
     for i in range(len(sp_res)):
         if (sp_res[i] == "Zebrafish") and (net_type == "BioGRID"):
             inds_to_remove.append(i)
@@ -369,16 +368,15 @@ def data_checks(
         for ind in sorted(inds_to_remove, reverse=True):
             sp_res.pop(ind)
             gsc_res.pop(ind)
-            
+
     # do check for Fly and Monarch
-    if (sp_trn == "Fly" and gsc_trn == "Monarch"):
+    if sp_trn == "Fly" and gsc_trn == "Monarch":
         raise FlyMonarchError(
-            f"Fly has no annotations for Monarch. "
-            "Use either Combined or GO for GSC for training",
+            f"Fly has no annotations for Monarch. " "Use either Combined or GO for GSC for training",
         )
     inds_to_remove = []
     for i in range(len(sp_res)):
-        if (sp_res[i] == "Fly" and gsc_res[i] == "Monarch"):
+        if sp_res[i] == "Fly" and gsc_res[i] == "Monarch":
             inds_to_remove.append(i)
     if len(inds_to_remove) == 0:
         pass
@@ -390,35 +388,32 @@ def data_checks(
         )
     else:
         warnings.warn(
-            f"Fly has no annotations for Monarch. "
-            "Removing Fly with Monarch from sp_res and gsc_res.",
+            f"Fly has no annotations for Monarch. " "Removing Fly with Monarch from sp_res and gsc_res.",
             UserWarning,
             stacklevel=2,
         )
         for ind in sorted(inds_to_remove, reverse=True):
             sp_res.pop(ind)
             gsc_res.pop(ind)
-            
+
     # do check for not Human and Mondo
-    if (sp_trn != "Human" and gsc_trn == "Mondo"):
+    if sp_trn != "Human" and gsc_trn == "Mondo":
         raise MondoError(
             f"Mondo only has annotations for Human",
         )
     inds_to_remove = []
     for i in range(len(sp_res)):
-        if (sp_res[i] != "Human" and gsc_res[i] == "Mondo"):
+        if sp_res[i] != "Human" and gsc_res[i] == "Mondo":
             inds_to_remove.append(i)
     if len(inds_to_remove) == 0:
         pass
     elif len(inds_to_remove) == len(sp_res):
         raise MondoError(
-            f"Mondo only has annotations for Human. "
-            "All sp_res and gsc_res pairs are are NonHuman-Mondo",
+            f"Mondo only has annotations for Human. " "All sp_res and gsc_res pairs are are NonHuman-Mondo",
         )
     else:
         warnings.warn(
-            f"Mondo only has annotations for Human. "
-            "Removing NonHuman with Mondo from sp_res and gsc_res.",
+            f"Mondo only has annotations for Human. " "Removing NonHuman with Mondo from sp_res and gsc_res.",
             UserWarning,
             stacklevel=2,
         )

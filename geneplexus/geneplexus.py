@@ -63,7 +63,7 @@ class GenePlexus:
             auto_download: Automatically download necessary files if set.
             log_level: Logging level.
 
-        """   
+        """
         set_stream_level(logger, log_level)
         self._is_custom: bool = False
         self.file_loc = file_loc  # type: ignore
@@ -82,7 +82,7 @@ class GenePlexus:
         # change GSC context to a list as well?
         # for all init_checks, do they need to be in if state if is_custom False?
         # change init checks to to remove and not throw an error
-        # maybe better message if anything is custom, all data checks turned off? 
+        # maybe better message if anything is custom, all data checks turned off?
         # human_output = SpeciesOutput()
         # mouse_output = SpeciesOutput()
         # self.human = human_output
@@ -110,7 +110,6 @@ class GenePlexus:
         if input_negatives is not None:
             self.load_negatives(input_negatives)
 
-        
         if not self._is_custom:
             sp_res_subset, gsc_res_subset = util.data_checks(
                 self.sp_trn,
@@ -121,7 +120,6 @@ class GenePlexus:
             )
             self.sp_res = sp_res_subset
             self.gsc_res = gsc_res_subset
-        
 
         # if self.gsc_trn == "Combined":
         #     logger.info(
