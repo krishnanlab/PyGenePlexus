@@ -4,7 +4,8 @@ geneplexus.geneplexus
 .. autosummary::
    load_genes
    load_negatives
-   fit_and_predict
+   fit
+   predict
    make_sim_dfs
    make_small_edgelist
 .. autoclass:: geneplexus.GenePlexus

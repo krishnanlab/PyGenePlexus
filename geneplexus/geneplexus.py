@@ -452,7 +452,7 @@ class GenePlexus:
         random_state: Optional[int] = 0,
         cross_validate: bool = True,
     ):
-        """Fit a model and predict gene scores.
+        """Fit the model.
 
         Args:
             logreg_kwargs: Scikit-learn logistic regression settings (see
@@ -479,53 +479,14 @@ class GenePlexus:
 
         :attr:`GenePlexus.mdl_weights` (1D array of floats)
             Trained model parameters.
-        :attr:`GenePlexus.df_probs` (DataFrame)
-            A table with the following 9 columns:
-
-            .. list-table::
-
-               * - Entrez
-                 - Entrez Gene ID
-               * - Symbol
-                 - Symbol Gene ID
-               * - Name
-                 - Name Gene ID
-               * - Known/Novel
-                 - Known is gene was in the positive set, otherwise Novel
-               * - Class-Label
-                 - P (positive in training), N (negative durinig training), U (unused during trianing)
-               * - Probability
-                 - The probabilties returned from the logisitc regression model
-               * - Z-score
-                 - The z-score of the model probabilties for all predcited genes
-               * - P-adjusted
-                 - The Bonferroni adjusted p-values from the z-scores
-               * - Rank
-                 - The rank of the gene with one being the gene with the highest predcited value
-
-
-        Note:
-            For the Known/Novel and Class-Label columns, if the training species is
-            different than the results species, this information is obtained by looking
-            at the one-to-one orthologs between the species.
-
-        Note:
-            Due to the high complexity of the embedding space, and wide variety of
-            postive and negative genes determined for each model, the resulting
-            probabilities may not be well calibrated, however the resulting rankings
-            are very meaningful as evaluated with log2(auPRC/prior).
+        :attr:`GenePlexus.avgps` (1D array of floats)
+            Cross validation results. Performance is measured using
+            log2(auprc/prior).
 
         Note:
             If setting scale to ``True`` then comparison of user trained model
             to the models pre-trained on known gene sets become less straightforward
             as those models are trained without any scaling.
-
-        :attr:`GenePlexus.avgps` (1D array of floats)
-            Cross validation results. Performance is measured using
-            log2(auprc/prior).
-        :attr:`GenePlexus.probs` (1D array of floats)
-            Genome-wide gene prediction scores. A high value indicates the
-            relevance of the gene to the input gene list.
 
         """
         if self.input_genes == None:
@@ -610,6 +571,51 @@ class GenePlexus:
         return self.pos_genes_in_net, self.negative_genes, self.net_genes, self.neutral_gene_info
 
     def predict(self):
+        """Predict gene scores from fit model.
+
+        **The following clsss attributes are set when this function is run**
+
+        :attr:`GenePlexus.df_probs` (DataFrame)
+            A table with the following 9 columns:
+
+            .. list-table::
+
+               * - Entrez
+                 - Entrez Gene ID
+               * - Symbol
+                 - Symbol Gene ID
+               * - Name
+                 - Name Gene ID
+               * - Known/Novel
+                 - Known is gene was in the positive set, otherwise Novel
+               * - Class-Label
+                 - P (positive in training), N (negative durinig training), U (unused during trianing)
+               * - Probability
+                 - The probabilties returned from the logisitc regression model
+               * - Z-score
+                 - The z-score of the model probabilties for all predcited genes
+               * - P-adjusted
+                 - The Bonferroni adjusted p-values from the z-scores
+               * - Rank
+                 - The rank of the gene with one being the gene with the highest predcited value
+
+
+        Note:
+            For the Known/Novel and Class-Label columns, if the training species is
+            different than the results species, this information is obtained by looking
+            at the one-to-one orthologs between the species.
+
+        Note:
+            Due to the high complexity of the embedding space, and wide variety of
+            postive and negative genes determined for each model, the resulting
+            probabilities may not be well calibrated, however the resulting rankings
+            are very meaningful as evaluated with log2(auPRC/prior).
+
+        :attr:`GenePlexus.probs` (1D array of floats)
+            Genome-wide gene prediction scores. A high value indicates the
+            relevance of the gene to the input gene list.
+
+        """
         self.probs = _geneplexus._get_predictions(
             self.file_loc,
             self.sp_res,
