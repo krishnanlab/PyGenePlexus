@@ -199,7 +199,7 @@ def _run_sl(
         return mdl_weights, avgps, scale, clf, std_scale
     else:
         return mdl_weights, avgps, scale, clf, None
-        
+
 
 def _get_predictions(
     file_loc,
@@ -209,7 +209,7 @@ def _get_predictions(
     scale,
     std_scale,
     clf,
-    ):
+):
     # do predictions in the target species
     data = util.load_gene_features(file_loc, sp_res, features, net_type)
     if scale:

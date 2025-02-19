@@ -80,7 +80,6 @@ class GenePlexus:
         self.input_genes: List[str] = input_genes
         self.input_negatives: List[str] = input_negatives
 
-        
         # human_output = SpeciesOutput()
         # mouse_output = SpeciesOutput()
         # self.human = human_output
@@ -88,7 +87,7 @@ class GenePlexus:
         # self.results = {}
         # for aspecies in [self.sp_trn, self.sp_res]:
         #     self.results[aspecies] = {}
-        
+
         if self.auto_download and self._is_custom:
             warnings.warn(
                 "\nSkipping auto download for custom files. Unset auto_download option to suppress this message.",
@@ -299,7 +298,7 @@ class GenePlexus:
             self._is_custom = True
             logger.info(f"Using custom GSC {gsc_res!r}")
         self._gsc_res = gsc_res
-    
+
     def load_genes(self, input_genes: List[str]):
         """Load gene list and convert to Entrez.
 
@@ -551,7 +550,6 @@ class GenePlexus:
             scale=scale,
         )
         return self.mdl_weights, self.avgps
-        
 
     def _get_pos_and_neg_genes(self, min_num_pos):
         """Set up positive and negative splits.
@@ -631,7 +629,7 @@ class GenePlexus:
             self.negative_genes,
         )
         return self.df_probs
-    
+
     def make_sim_dfs(self):
         """Compute similarities bewteen the input genes and GO, Monarch and/or Mondo.
 
