@@ -22,6 +22,10 @@ from .exception import MondoError
 from .exception import NoPositivesError
 from .exception import ZebrafishBioGRIDError
 
+# class SpeciesOutput:
+#     def __init__(self):
+#         self.testdata = "hellotest"
+
 
 class GenePlexus:
     """The GenePlexus API class."""
@@ -76,6 +80,15 @@ class GenePlexus:
         self.input_genes: List[str] = input_genes
         self.input_negatives: List[str] = input_negatives
 
+        
+        # human_output = SpeciesOutput()
+        # mouse_output = SpeciesOutput()
+        # self.human = human_output
+        # self.mouse = mouse_output
+        # self.results = {}
+        # for aspecies in [self.sp_trn, self.sp_res]:
+        #     self.results[aspecies] = {}
+        
         if self.auto_download and self._is_custom:
             warnings.warn(
                 "\nSkipping auto download for custom files. Unset auto_download option to suppress this message.",
@@ -286,7 +299,7 @@ class GenePlexus:
             self._is_custom = True
             logger.info(f"Using custom GSC {gsc_res!r}")
         self._gsc_res = gsc_res
-
+    
     def load_genes(self, input_genes: List[str]):
         """Load gene list and convert to Entrez.
 
@@ -429,7 +442,7 @@ class GenePlexus:
         load_outputs = [df_convert_out, table_summary, input_count, convert_ids]
         return load_outputs
 
-    def fit_and_predict(
+    def fit(
         self,
         logreg_kwargs: Optional[Dict[str, Any]] = None,
         scale: bool = False,
@@ -521,10 +534,9 @@ class GenePlexus:
                 f"No positives genes were added, use function load_genes()",
             )
         self._get_pos_and_neg_genes(min_num_pos)
-        self.mdl_weights, self.probs, self.avgps = _geneplexus._run_sl(
+        self.mdl_weights, self.avgps, self.scale, self.clf, self.std_scale = _geneplexus._run_sl(
             self.file_loc,
             self.sp_trn,
-            self.sp_res,
             self.net_type,
             self.features,
             self.pos_genes_in_net,
@@ -538,16 +550,8 @@ class GenePlexus:
             cross_validate=cross_validate,
             scale=scale,
         )
-        self.df_probs = _geneplexus._make_prob_df(
-            self.file_loc,
-            self.sp_trn,
-            self.sp_res,
-            self.net_type,
-            self.probs,
-            self.pos_genes_in_net,
-            self.negative_genes,
-        )
-        return self.mdl_weights, self.df_probs, self.avgps
+        return self.mdl_weights, self.avgps
+        
 
     def _get_pos_and_neg_genes(self, min_num_pos):
         """Set up positive and negative splits.
@@ -607,6 +611,27 @@ class GenePlexus:
 
         return self.pos_genes_in_net, self.negative_genes, self.net_genes, self.neutral_gene_info
 
+    def predict(self):
+        self.probs = _geneplexus._get_predictions(
+            self.file_loc,
+            self.sp_res,
+            self.features,
+            self.net_type,
+            self.scale,
+            self.std_scale,
+            self.clf,
+        )
+        self.df_probs = _geneplexus._make_prob_df(
+            self.file_loc,
+            self.sp_trn,
+            self.sp_res,
+            self.net_type,
+            self.probs,
+            self.pos_genes_in_net,
+            self.negative_genes,
+        )
+        return self.df_probs
+    
     def make_sim_dfs(self):
         """Compute similarities bewteen the input genes and GO, Monarch and/or Mondo.
 
