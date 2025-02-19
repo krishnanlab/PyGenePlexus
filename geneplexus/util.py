@@ -372,8 +372,7 @@ def data_checks(
     # do check for Fly and Monarch
     if sp_trn == "Fly" and gsc_trn == "Monarch":
         raise FlyMonarchError(
-            f"Fly has no annotations for Monarch. "
-            "Use either Combined or GO for GSC for training",
+            f"Fly has no annotations for Monarch. " "Use either Combined or GO for GSC for training",
         )
     inds_to_remove = []
     for i in range(len(sp_res)):
@@ -389,8 +388,7 @@ def data_checks(
         )
     else:
         warnings.warn(
-            f"Fly has no annotations for Monarch. "
-            "Removing Fly with Monarch from sp_res and gsc_res.",
+            f"Fly has no annotations for Monarch. " "Removing Fly with Monarch from sp_res and gsc_res.",
             UserWarning,
             stacklevel=2,
         )
@@ -411,13 +409,11 @@ def data_checks(
         pass
     elif len(inds_to_remove) == len(sp_res):
         raise MondoError(
-            f"Mondo only has annotations for Human. "
-            "All sp_res and gsc_res pairs are are NonHuman-Mondo",
+            f"Mondo only has annotations for Human. " "All sp_res and gsc_res pairs are are NonHuman-Mondo",
         )
     else:
         warnings.warn(
-            f"Mondo only has annotations for Human. "
-            "Removing NonHuman with Mondo from sp_res and gsc_res.",
+            f"Mondo only has annotations for Human. " "Removing NonHuman with Mondo from sp_res and gsc_res.",
             UserWarning,
             stacklevel=2,
         )
