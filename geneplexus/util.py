@@ -338,7 +338,7 @@ def data_checks(
     """Throw errors and remove options based on data incompatabilities"""
 
     # do check for BioGRID and Zebrafish
-    if (sp_trn == "Zebrafish") and (net_type == "BioGRID"):
+    if sp_trn == "Zebrafish" and net_type == "BioGRID":
         raise ZebrafishBioGRIDError(
             f"The BioGRID network for Zebrafish is not "
             "included due to it not having enough nodes "
@@ -346,7 +346,7 @@ def data_checks(
         )
     inds_to_remove = []
     for i in range(len(sp_res)):
-        if (sp_res[i] == "Zebrafish") and (net_type == "BioGRID"):
+        if sp_res[i] == "Zebrafish" and net_type == "BioGRID":
             inds_to_remove.append(i)
     if len(inds_to_remove) == 0:
         pass
@@ -372,7 +372,8 @@ def data_checks(
     # do check for Fly and Monarch
     if sp_trn == "Fly" and gsc_trn == "Monarch":
         raise FlyMonarchError(
-            f"Fly has no annotations for Monarch. " "Use either Combined or GO for GSC for training",
+            f"Fly has no annotations for Monarch. "
+            "Use either Combined or GO for GSC for training",
         )
     inds_to_remove = []
     for i in range(len(sp_res)):
@@ -388,7 +389,8 @@ def data_checks(
         )
     else:
         warnings.warn(
-            f"Fly has no annotations for Monarch. " "Removing Fly with Monarch from sp_res and gsc_res.",
+            f"Fly has no annotations for Monarch. "
+            "Removing Fly with Monarch from sp_res and gsc_res.",
             UserWarning,
             stacklevel=2,
         )
@@ -409,11 +411,13 @@ def data_checks(
         pass
     elif len(inds_to_remove) == len(sp_res):
         raise MondoError(
-            f"Mondo only has annotations for Human. " "All sp_res and gsc_res pairs are are NonHuman-Mondo",
+            f"Mondo only has annotations for Human. "
+            "All sp_res and gsc_res pairs are are NonHuman-Mondo",
         )
     else:
         warnings.warn(
-            f"Mondo only has annotations for Human. " "Removing NonHuman with Mondo from sp_res and gsc_res.",
+            f"Mondo only has annotations for Human. "
+            "Removing NonHuman with Mondo from sp_res and gsc_res.",
             UserWarning,
             stacklevel=2,
         )
