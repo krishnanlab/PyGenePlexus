@@ -62,7 +62,7 @@ class GenePlexus:
                 :meth:`load_negatives`.
             auto_download: Automatically download necessary files if set.
             log_level: Logging level.
-    
+
         :attr:`GenePlexus.gsc_trn_original` str
             If internal data checks are run, this can different that gsc_trn.
         :attr:`GenePlexus.gsc_res_original` (List[str])
@@ -110,13 +110,12 @@ class GenePlexus:
         if input_negatives is not None:
             self.load_negatives(input_negatives)
 
-        
         if self._is_custom:
             warnings.warn(
                 f"is_custom is set to True either manually "
                 "or by autodection of species or GSC not "
                 "contained in the pre-processed data. All "
-                "compatability checks are being turned off."
+                "compatability checks are being turned off.",
             )
             self.gsc_trn_original = self.gsc_trn
             self.gsc_res_original = self.gsc_re
@@ -137,13 +136,13 @@ class GenePlexus:
                 self.sp_trn,
                 self.gsc_trn,
                 self.sp_res,
-                self.gsc_res
+                self.gsc_res,
             )
             self.gsc_trn_original = self.gsc_trn
             self.gsc_trn = gsc_trn_updated
             self.gsc_res_original = self.gsc_res
-            self.gsc_res = gsc_res_updated    
-            
+            self.gsc_res = gsc_res_updated
+
         # remove duplicate sp-gsc comboms if any for results
         sp_res_nodup, gsc_res_nodup, gsc_res_original_nodup = util.remove_duplicates(
             self.sp_res,
@@ -153,7 +152,6 @@ class GenePlexus:
         self.sp_res = sp_res_nodup
         self.gsc_res = gsc_res_nodup
         self.gsc_res_original = gsc_res_original_nodup
-
 
     @property
     def _params(self) -> List[str]:

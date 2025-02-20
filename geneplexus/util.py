@@ -422,7 +422,7 @@ def data_checks(
             sp_res.pop(ind)
             gsc_res.pop(ind)
     return sp_res, gsc_res
-    
+
 
 def combined_info(
     sp_trn: str,
@@ -430,7 +430,7 @@ def combined_info(
     sp_res: List[str],
     gsc_res: List[str],
 ) -> List[str]:
-    """For Combined, display contexts and change GSCs"""    
+    """For Combined, display contexts and change GSCs"""
 
     if gsc_trn == "Combined":
         logger.info(
@@ -453,7 +453,7 @@ def combined_info(
         if sp_res[i] == "Fly" and gsc_res[i] == "Combined":
             gsc_res_updated[i] = "GO"
     return gsc_trn_updated, gsc_res_updated
-    
+
 
 def remove_duplicates(
     sp_res: List[str],
@@ -461,7 +461,7 @@ def remove_duplicates(
     gsc_res_original: List[str],
 ) -> List[str]:
     """Remove duplicate species-gsc combos in results"""
-    sp_gsc_pairs = ['-'.join(str(item) for item in pair) for pair in zip(sp_res, gsc_res)]
+    sp_gsc_pairs = ["-".join(str(item) for item in pair) for pair in zip(sp_res, gsc_res)]
     inds_to_remove = []
     pair_dict = {}
     for idx, item in enumerate(sp_gsc_pairs):
@@ -476,4 +476,3 @@ def remove_duplicates(
             gsc_res.pop(i)
             gsc_res_original.pop(i)
     return sp_res, gsc_res, gsc_res_original
-    
