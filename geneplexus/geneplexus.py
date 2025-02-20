@@ -83,6 +83,7 @@ class GenePlexus:
         self.input_genes: List[str] = input_genes
         self.input_negatives: List[str] = input_negatives
 
+        # need zipped sp and gsc to iterate trhough
         # human_output = SpeciesOutput()
         # mouse_output = SpeciesOutput()
         # self.human = human_output
