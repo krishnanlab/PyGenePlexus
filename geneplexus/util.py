@@ -15,6 +15,7 @@ from typing import Optional
 import numpy as np
 
 from . import config
+from ._config import logger
 from .exception import FlyMonarchError
 from .exception import MondoError
 from .exception import ZebrafishBioGRIDError
@@ -421,3 +422,58 @@ def data_checks(
             sp_res.pop(ind)
             gsc_res.pop(ind)
     return sp_res, gsc_res
+    
+
+def combined_info(
+    sp_trn: str,
+    gsc_trn: str,
+    sp_res: List[str],
+    gsc_res: List[str],
+) -> List[str]:
+    """For Combined, display contexts and change GSCs"""    
+
+    if gsc_trn == "Combined":
+        logger.info(
+            f"For the training species {sp_trn}, the GSC is set to "
+            f"Combined and here: {config.COMBINED_CONTEXTS[sp_trn]}",
+        )
+    for i in range(len(gsc_res)):
+        if gsc_res[i] == "Combined":
+            logger.info(
+                f"For the results species {sp_res[i]}, the GSC is set to "
+                f"Combined and here: {config.COMBINED_CONTEXTS[sp_res[i]]}",
+            )
+
+    # convert combined to GO so can read correct backend data
+    gsc_trn_updated = str(gsc_trn)
+    if sp_trn == "Fly" and gsc_trn == "Combined":
+        gsc_trn_updated = "GO"
+    gsc_res_updated = gsc_res.copy()
+    for i in range(len(gsc_res)):
+        if sp_res[i] == "Fly" and gsc_res[i] == "Combined":
+            gsc_res_updated[i] = "GO"
+    return gsc_trn_updated, gsc_res_updated
+    
+
+def remove_duplicates(
+    sp_res: List[str],
+    gsc_res: List[str],
+    gsc_res_original: List[str],
+) -> List[str]:
+    """Remove duplicate species-gsc combos in results"""
+    sp_gsc_pairs = ['-'.join(str(item) for item in pair) for pair in zip(sp_res, gsc_res)]
+    inds_to_remove = []
+    pair_dict = {}
+    for idx, item in enumerate(sp_gsc_pairs):
+        if item not in pair_dict:
+            pair_dict[item] = 1
+        else:
+            inds_to_remove.append(idx)
+            pair_dict[item] = pair_dict[item] + 1
+    if len(inds_to_remove) > 0:
+        for i in sorted(inds_to_remove, reverse=True):
+            sp_res.pop(i)
+            gsc_res.pop(i)
+            gsc_res_original.pop(i)
+    return sp_res, gsc_res, gsc_res_original
+    

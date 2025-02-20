@@ -62,6 +62,11 @@ class GenePlexus:
                 :meth:`load_negatives`.
             auto_download: Automatically download necessary files if set.
             log_level: Logging level.
+    
+        :attr:`GenePlexus.gsc_trn_original` str
+            If internal data checks are run, this can different that gsc_trn.
+        :attr:`GenePlexus.gsc_res_original` (List[str])
+            If internal data checks are run, this can different that res_trn.
 
         """
         set_stream_level(logger, log_level)
@@ -78,11 +83,6 @@ class GenePlexus:
         self.input_genes: List[str] = input_genes
         self.input_negatives: List[str] = input_negatives
 
-        # make sp_res a list no matter what here
-        # change GSC context to a list as well?
-        # for all init_checks, do they need to be in if state if is_custom False?
-        # change init checks to to remove and not throw an error
-        # maybe better message if anything is custom, all data checks turned off?
         # human_output = SpeciesOutput()
         # mouse_output = SpeciesOutput()
         # self.human = human_output
@@ -110,7 +110,18 @@ class GenePlexus:
         if input_negatives is not None:
             self.load_negatives(input_negatives)
 
-        if not self._is_custom:
+        
+        if self._is_custom:
+            warnings.warn(
+                f"is_custom is set to True either manually "
+                "or by autodection of species or GSC not "
+                "contained in the pre-processed data. All "
+                "compatability checks are being turned off."
+            )
+            self.gsc_trn_original = self.gsc_trn
+            self.gsc_res_original = self.gsc_re
+        else:
+            # check option compatability for preprocessed data
             sp_res_subset, gsc_res_subset = util.data_checks(
                 self.sp_trn,
                 self.net_type,
@@ -121,28 +132,28 @@ class GenePlexus:
             self.sp_res = sp_res_subset
             self.gsc_res = gsc_res_subset
 
-        # if self.gsc_trn == "Combined":
-        #     logger.info(
-        #         f"For the training species, {self.sp_trn}, the GSC is set to "
-        #         f"Combined and here: {config.COMBINED_CONTEXTS[self.sp_trn]}",
-        #     )
-        # if self.gsc_res == "Combined":
-        #     logger.info(
-        #         f"For the results species, {self.sp_res}, the GSC is set to "
-        #         f"Combined and here: {config.COMBINED_CONTEXTS[self.sp_res]}",
-        #     )
-        #
-        # # convert combined to GO so can read correct backend data
-        # if (self.sp_trn == "Fly") and (self.gsc_trn == "Combined"):
-        #     self.gsc_trn = "GO"
-        #     self.gsc_trn_original = "Combined"
-        # elif (self.sp_trn == "Fly") and (self.gsc_trn != "Combined"):
-        #     self.gsc_trn_original = self.gsc_trn
-        # if (self.sp_res == "Fly") and (self.gsc_res == "Combined"):
-        #     self.gsc_res = "GO"
-        #     self.gsc_res_original = "Combined"
-        # elif (self.sp_res == "Fly") and (self.gsc_res != "Combined"):
-        #     self.gsc_res_original = self.gsc_res
+            # for combined, display contexts and change some GSC names
+            gsc_trn_updated, gsc_res_updated = util.combined_info(
+                self.sp_trn,
+                self.gsc_trn,
+                self.sp_res,
+                self.gsc_res
+            )
+            self.gsc_trn_original = self.gsc_trn
+            self.gsc_trn = gsc_trn_updated
+            self.gsc_res_original = self.gsc_res
+            self.gsc_res = gsc_res_updated    
+            
+        # remove duplicate sp-gsc comboms if any for results
+        sp_res_nodup, gsc_res_nodup, gsc_res_original_nodup = util.remove_duplicates(
+            self.sp_res,
+            self.gsc_res,
+            self.gsc_res_original,
+        )
+        self.sp_res = sp_res_nodup
+        self.gsc_res = gsc_res_nodup
+        self.gsc_res_original = gsc_res_original_nodup
+
 
     @property
     def _params(self) -> List[str]:
