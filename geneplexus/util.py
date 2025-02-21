@@ -447,10 +447,20 @@ def combined_info(
     # convert combined to GO so can read correct backend data
     gsc_trn_updated = str(gsc_trn)
     if sp_trn == "Fly" and gsc_trn == "Combined":
+        logger.info(
+            f"For the training species {sp_trn}, the GSC is set to "
+            f"Combined and since GO is only context the label is being "
+            f"changed to GO",
+        )
         gsc_trn_updated = "GO"
     gsc_res_updated = gsc_res.copy()
     for i in range(len(gsc_res)):
         if sp_res[i] == "Fly" and gsc_res[i] == "Combined":
+            logger.info(
+                f"For the results species {sp_res[i]}, the GSC is set to "
+                f"Combined and since GO is only context the label is being "
+                f"changed to GO",
+            )
             gsc_res_updated[i] = "GO"
     return gsc_trn_updated, gsc_res_updated
 

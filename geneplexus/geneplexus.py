@@ -19,10 +19,10 @@ from ._config.logger_util import set_stream_level
 from .download import download_select_data
 from .exception import NoPositivesError
 
-# class SpeciesOutput:
-#     def __init__(self):
-#         self.testdata = "hellotest"
-
+class SpeciesResults:
+    def __init__(self):
+        """Class to hold the result objects"""
+        pass
 
 class GenePlexus:
     """The GenePlexus API class."""
@@ -51,7 +51,7 @@ class GenePlexus:
             sp_trn: The species of the training data
             sp_res: The species the results are in, can be a list
             gsc_trn: Gene set collection used during training
-            gsc_res: Gene set collection used when generating
+            gsc_res: Gene set(s) collection used when generating
                 results, can be a list. If list needs to be the same
                 length as number of results species to do
             input_genes: Input gene list, can be mixed type. Can also be set
@@ -83,14 +83,6 @@ class GenePlexus:
         self.input_genes: List[str] = input_genes
         self.input_negatives: List[str] = input_negatives
 
-        # need zipped sp and gsc to iterate trhough
-        # human_output = SpeciesOutput()
-        # mouse_output = SpeciesOutput()
-        # self.human = human_output
-        # self.mouse = mouse_output
-        # self.results = {}
-        # for aspecies in [self.sp_trn, self.sp_res]:
-        #     self.results[aspecies] = {}
 
         if self.auto_download and self._is_custom:
             warnings.warn(
@@ -119,7 +111,7 @@ class GenePlexus:
                 "compatability checks are being turned off.",
             )
             self.gsc_trn_original = self.gsc_trn
-            self.gsc_res_original = self.gsc_re
+            self.gsc_res_original = self.gsc_res
         else:
             # check option compatability for preprocessed data
             sp_res_subset, gsc_res_subset = util.data_checks(
@@ -153,6 +145,13 @@ class GenePlexus:
         self.sp_res = sp_res_nodup
         self.gsc_res = gsc_res_nodup
         self.gsc_res_original = gsc_res_original_nodup
+        
+        # create results dictionaries
+        sp_gsc_pairs = ["-".join(str(item) for item in pair) for pair in zip(self.sp_res, self.gsc_res_original)]
+        self.results = {}
+        for apair in sp_gsc_pairs:
+            self.results[apair] = SpeciesResults()
+        
 
     @property
     def _params(self) -> List[str]:
@@ -573,7 +572,7 @@ class GenePlexus:
         if len(self.pos_genes_in_net) < min_num_pos:
             raise NoPositivesError(
                 f"There were not enough positive genes to train the model with. "
-                f"This limit is set to {min_num_pos} and can be changed in fit_and_predict().",
+                f"This limit is set to {min_num_pos} and can be changed in fit().",
             )
 
         if (self.input_negatives == None) or (len(self.input_negatives) == 0):
@@ -638,25 +637,28 @@ class GenePlexus:
             relevance of the gene to the input gene list.
 
         """
-        self.probs = _geneplexus._get_predictions(
-            self.file_loc,
-            self.sp_res,
-            self.features,
-            self.net_type,
-            self.scale,
-            self.std_scale,
-            self.clf,
-        )
-        self.df_probs = _geneplexus._make_prob_df(
-            self.file_loc,
-            self.sp_trn,
-            self.sp_res,
-            self.net_type,
-            self.probs,
-            self.pos_genes_in_net,
-            self.negative_genes,
-        )
-        return self.df_probs
+        for i in range(len(self.sp_res)):
+            probs = _geneplexus._get_predictions(
+                self.file_loc,
+                self.sp_res[i],
+                self.features,
+                self.net_type,
+                self.scale,
+                self.std_scale,
+                self.clf,
+            )
+            df_probs = _geneplexus._make_prob_df(
+                self.file_loc,
+                self.sp_trn,
+                self.sp_res[i],
+                self.net_type,
+                probs,
+                self.pos_genes_in_net,
+                self.negative_genes,
+            )
+            self.results[f"{self.sp_res[i]}-{self.gsc_res[i]}"].probs = probs
+            self.results[f"{self.sp_res[i]}-{self.gsc_res[i]}"].df_probs = df_probs
+        return self.results
 
     def make_sim_dfs(self):
         """Compute similarities bewteen the input genes and GO, Monarch and/or Mondo.
@@ -700,15 +702,18 @@ class GenePlexus:
                }
 
         """
-        self.df_sim, self.weights_dict = _geneplexus._make_sim_dfs(
-            self.file_loc,
-            self.mdl_weights,
-            self.sp_res,
-            self.gsc_res,
-            self.net_type,
-            self.features,
-        )
-        return self.df_sim, self.weights_dict
+        for i in range(len(self.sp_res)):
+            df_sim, weights_dict = _geneplexus._make_sim_dfs(
+                self.file_loc,
+                self.mdl_weights,
+                self.sp_res[i],
+                self.gsc_res[i],
+                self.net_type,
+                self.features,
+            )
+            self.results[f"{self.sp_res[i]}-{self.gsc_res[i]}"].df_sim = df_sim
+            self.results[f"{self.sp_res[i]}-{self.gsc_res[i]}"].weights_dict = weights_dict
+        return self.results
 
     def make_small_edgelist(self, num_nodes: int = 50):
         """Make a subgraph induced by the top predicted genes.
@@ -732,14 +737,19 @@ class GenePlexus:
             other top predicted genes in the network.
 
         """
-        self.df_edge, self.isolated_genes, self.df_edge_sym, self.isolated_genes_sym = _geneplexus._make_small_edgelist(
-            self.file_loc,
-            self.df_probs,
-            self.sp_res,
-            self.net_type,
-            num_nodes=num_nodes,
-        )
-        return self.df_edge, self.isolated_genes, self.df_edge_sym, self.isolated_genes_sym
+        for i in range(len(self.sp_res)):
+            df_edge, isolated_genes, df_edge_sym, isolated_genes_sym = _geneplexus._make_small_edgelist(
+                self.file_loc,
+                self.results[f"{self.sp_res[i]}-{self.gsc_res[i]}"].df_probs,
+                self.sp_res[i],
+                self.net_type,
+                num_nodes=num_nodes,
+            )
+            self.results[f"{self.sp_res[i]}-{self.gsc_res[i]}"].df_edge = df_edge
+            self.results[f"{self.sp_res[i]}-{self.gsc_res[i]}"].isolated_genes = isolated_genes
+            self.results[f"{self.sp_res[i]}-{self.gsc_res[i]}"].df_edge_sym = df_edge_sym
+            self.results[f"{self.sp_res[i]}-{self.gsc_res[i]}"].isolated_genes_sym = isolated_genes_sym
+        return self.results
 
     def alter_validation_df(self):
         """Make table about presence of input genes in the network used durning training.
