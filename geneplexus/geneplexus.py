@@ -19,10 +19,12 @@ from ._config.logger_util import set_stream_level
 from .download import download_select_data
 from .exception import NoPositivesError
 
+
 class SpeciesResults:
     def __init__(self):
         """Class to hold the result objects"""
         pass
+
 
 class GenePlexus:
     """The GenePlexus API class."""
@@ -82,7 +84,6 @@ class GenePlexus:
         self.auto_download = auto_download
         self.input_genes: List[str] = input_genes
         self.input_negatives: List[str] = input_negatives
-
 
         if self.auto_download and self._is_custom:
             warnings.warn(
@@ -145,13 +146,12 @@ class GenePlexus:
         self.sp_res = sp_res_nodup
         self.gsc_res = gsc_res_nodup
         self.gsc_res_original = gsc_res_original_nodup
-        
+
         # create results dictionaries
         sp_gsc_pairs = ["-".join(str(item) for item in pair) for pair in zip(self.sp_res, self.gsc_res_original)]
         self.results = {}
         for apair in sp_gsc_pairs:
             self.results[apair] = SpeciesResults()
-        
 
     @property
     def _params(self) -> List[str]:
