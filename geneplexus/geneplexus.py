@@ -20,7 +20,7 @@ from .download import download_select_data
 from .exception import NoPositivesError
 
 
-class SpeciesResults:
+class GPResults:
     def __init__(self):
         """Class to hold the result objects"""
         pass
@@ -151,7 +151,7 @@ class GenePlexus:
         sp_gsc_pairs = ["-".join(str(item) for item in pair) for pair in zip(self.sp_res, self.gsc_res_original)]
         self.results = {}
         for apair in sp_gsc_pairs:
-            self.results[apair] = SpeciesResults()
+            self.results[apair] = GPResults()
 
     @property
     def _params(self) -> List[str]:
