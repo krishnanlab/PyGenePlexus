@@ -3,6 +3,7 @@ import functools
 import json
 import os
 import os.path as osp
+import warnings
 from threading import Thread
 from typing import Any
 from typing import Dict
@@ -14,6 +15,10 @@ from typing import Optional
 import numpy as np
 
 from . import config
+from ._config import logger
+from .exception import FlyMonarchError
+from .exception import MondoError
+from .exception import ZebrafishBioGRIDError
 
 
 def timeout(timeout: int, msg: str = ""):
@@ -322,3 +327,162 @@ def get_all_net_types(file_loc: Optional[str], species: str) -> List[str]:
             [i.split("__")[2].split(".txt")[0] for i in os.listdir(file_loc) if i.startswith(f"NodeOrder__{species}")],
         )
     return sorted(all_net_types)
+
+
+def data_checks(
+    sp_trn: str,
+    net_type: str,
+    gsc_trn: str,
+    sp_res: List[str],
+    gsc_res: List[str],
+) -> List[str]:
+    """Throw errors and remove options based on data incompatabilities"""
+
+    # do check for BioGRID and Zebrafish
+    if sp_trn == "Zebrafish" and net_type == "BioGRID":
+        raise ZebrafishBioGRIDError(
+            f"The BioGRID network for Zebrafish is not "
+            "included due to it not having enough nodes "
+            "so this combination is not allowed for training.",
+        )
+    inds_to_remove = []
+    for i in range(len(sp_res)):
+        if sp_res[i] == "Zebrafish" and net_type == "BioGRID":
+            inds_to_remove.append(i)
+    if len(inds_to_remove) == 0:
+        pass
+    elif len(inds_to_remove) == len(sp_res):
+        raise ZebrafishBioGRIDError(
+            f"The BioGRID network for Zebrafish is not "
+            "included due to it not having enough nodes "
+            "so this combination is not allowed. "
+            "All sp_res species have this combo.",
+        )
+    else:
+        warnings.warn(
+            f"The BioGRID network for Zebrafish is not "
+            "included due to it not having enough nodes. "
+            "Removing Zebrafish from sp_res.",
+            UserWarning,
+            stacklevel=2,
+        )
+        for ind in sorted(inds_to_remove, reverse=True):
+            sp_res.pop(ind)
+            gsc_res.pop(ind)
+
+    # do check for Fly and Monarch
+    if sp_trn == "Fly" and gsc_trn == "Monarch":
+        raise FlyMonarchError(
+            f"Fly has no annotations for Monarch. Use either Combined or GO for GSC for training",
+        )
+    inds_to_remove = []
+    for i in range(len(sp_res)):
+        if sp_res[i] == "Fly" and gsc_res[i] == "Monarch":
+            inds_to_remove.append(i)
+    if len(inds_to_remove) == 0:
+        pass
+    elif len(inds_to_remove) == len(sp_res):
+        raise FlyMonarchError(
+            f"Fly has no annotations for Monarch. "
+            "Use either Combined or GO for GSC for training. "
+            "All sp_res and gsc_res pairs are are Fly-Monarch",
+        )
+    else:
+        warnings.warn(
+            f"Fly has no annotations for Monarch. Removing Fly with Monarch from sp_res and gsc_res.",
+            UserWarning,
+            stacklevel=2,
+        )
+        for ind in sorted(inds_to_remove, reverse=True):
+            sp_res.pop(ind)
+            gsc_res.pop(ind)
+
+    # do check for not Human and Mondo
+    if sp_trn != "Human" and gsc_trn == "Mondo":
+        raise MondoError(
+            f"Mondo only has annotations for Human",
+        )
+    inds_to_remove = []
+    for i in range(len(sp_res)):
+        if sp_res[i] != "Human" and gsc_res[i] == "Mondo":
+            inds_to_remove.append(i)
+    if len(inds_to_remove) == 0:
+        pass
+    elif len(inds_to_remove) == len(sp_res):
+        raise MondoError(
+            f"Mondo only has annotations for Human. All sp_res and gsc_res pairs are are NonHuman-Mondo",
+        )
+    else:
+        warnings.warn(
+            f"Mondo only has annotations for Human. Removing NonHuman with Mondo from sp_res and gsc_res.",
+            UserWarning,
+            stacklevel=2,
+        )
+        for ind in sorted(inds_to_remove, reverse=True):
+            sp_res.pop(ind)
+            gsc_res.pop(ind)
+    return sp_res, gsc_res
+
+
+def combined_info(
+    sp_trn: str,
+    gsc_trn: str,
+    sp_res: List[str],
+    gsc_res: List[str],
+) -> List[str]:
+    """For Combined, display contexts and change GSCs"""
+
+    if gsc_trn == "Combined":
+        logger.info(
+            f"For the training species {sp_trn}, the GSC is set to "
+            f"Combined and here: {config.COMBINED_CONTEXTS[sp_trn]}",
+        )
+    for i in range(len(gsc_res)):
+        if gsc_res[i] == "Combined":
+            logger.info(
+                f"For the results species {sp_res[i]}, the GSC is set to "
+                f"Combined and here: {config.COMBINED_CONTEXTS[sp_res[i]]}",
+            )
+
+    # convert combined to GO so can read correct backend data
+    gsc_trn_updated = str(gsc_trn)
+    if sp_trn == "Fly" and gsc_trn == "Combined":
+        logger.info(
+            f"For the training species {sp_trn}, the GSC is set to "
+            f"Combined and since GO is only context the label is being "
+            f"changed to GO",
+        )
+        gsc_trn_updated = "GO"
+    gsc_res_updated = gsc_res.copy()
+    for i in range(len(gsc_res)):
+        if sp_res[i] == "Fly" and gsc_res[i] == "Combined":
+            logger.info(
+                f"For the results species {sp_res[i]}, the GSC is set to "
+                f"Combined and since GO is only context the label is being "
+                f"changed to GO",
+            )
+            gsc_res_updated[i] = "GO"
+    return gsc_trn_updated, gsc_res_updated
+
+
+def remove_duplicates(
+    sp_res: List[str],
+    gsc_res: List[str],
+    gsc_res_original: List[str],
+) -> List[str]:
+    """Remove duplicate species-gsc combos in results"""
+    sp_gsc_pairs = ["-".join(str(item) for item in pair) for pair in zip(sp_res, gsc_res)]
+    inds_to_remove = []
+    pair_dict = {}
+    for idx, item in enumerate(sp_gsc_pairs):
+        if item not in pair_dict:
+            pair_dict[item] = 1
+        else:
+            inds_to_remove.append(idx)
+            pair_dict[item] = pair_dict[item] + 1
+    if len(inds_to_remove) > 0:
+        for i in sorted(inds_to_remove, reverse=True):
+            sp_res.pop(i)
+            gsc_res.pop(i)
+            gsc_res_original.pop(i)
+    return sp_res, gsc_res, gsc_res_original

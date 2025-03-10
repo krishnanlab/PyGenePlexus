@@ -139,7 +139,6 @@ def _get_negatives(file_loc, species, net_type, gsc, pos_genes_in_net, user_nega
 def _run_sl(
     file_loc,
     sp_trn,
-    sp_res,
     net_type,
     features,
     pos_genes_in_net,
@@ -196,12 +195,27 @@ def _run_sl(
         logger.info(f"{avgps=}")
         logger.info(f"{np.median(avgps)=:.2f}")
         logger.info(f"{np.mean(avgps)=:.2f}")
+    if scale:
+        return mdl_weights, avgps, scale, clf, std_scale
+    else:
+        return mdl_weights, avgps, scale, clf, None
+
+
+def _get_predictions(
+    file_loc,
+    sp_res,
+    features,
+    net_type,
+    scale,
+    std_scale,
+    clf,
+):
     # do predictions in the target species
     data = util.load_gene_features(file_loc, sp_res, features, net_type)
     if scale:
         data = std_scale.transform(data)
     probs = clf.predict_proba(data)[:, 1]
-    return mdl_weights, probs, avgps
+    return probs
 
 
 def _make_prob_df(file_loc, sp_trn, sp_res, net_type, probs, pos_genes_in_net, negative_genes):

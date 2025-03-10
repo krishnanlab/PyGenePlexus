@@ -17,10 +17,13 @@ from ._config import config
 from ._config import logger
 from ._config.logger_util import set_stream_level
 from .download import download_select_data
-from .exception import FlyMonarchError
-from .exception import MondoError
 from .exception import NoPositivesError
-from .exception import ZebrafishBioGRIDError
+
+
+class SpeciesResults:
+    def __init__(self):
+        """Class to hold the result objects"""
+        pass
 
 
 class GenePlexus:
@@ -32,9 +35,9 @@ class GenePlexus:
         net_type: config.NET_TYPE = "STRING",
         features: config.FEATURE_TYPE = "SixSpeciesN2V",
         sp_trn: config.SPECIES_TYPE = "Human",
-        sp_res: config.SPECIES_TYPE = "Human",
+        sp_res: config.SPECIES_SELECTION_TYPE = "Human",
         gsc_trn: config.GSC_TYPE = "Combined",
-        gsc_res: config.GSC_TYPE = "Combined",
+        gsc_res: config.GSC_SELECTION_TYPE = "Combined",
         input_genes: Optional[List[str]] = None,
         input_negatives: Optional[List[str]] = None,
         auto_download: bool = False,
@@ -48,10 +51,11 @@ class GenePlexus:
             net_type: Type of network to use
             features: Type of features of the network to use
             sp_trn: The species of the training data
-            sp_res: The species the results are in
+            sp_res: The species the results are in, can be a list
             gsc_trn: Gene set collection used during training
-            gsc_res: Gene set collection used when generating
-                results
+            gsc_res: Gene set(s) collection used when generating
+                results, can be a list. If list needs to be the same
+                length as number of results species to do
             input_genes: Input gene list, can be mixed type. Can also be set
                 later if not specified at init time by simply calling
                 :meth:`load_genes`.
@@ -60,6 +64,11 @@ class GenePlexus:
                 :meth:`load_negatives`.
             auto_download: Automatically download necessary files if set.
             log_level: Logging level.
+
+        :attr:`GenePlexus.gsc_trn_original` str
+            If internal data checks are run, this can different that gsc_trn.
+        :attr:`GenePlexus.gsc_res_original` (List[str])
+            If internal data checks are run, this can different that res_trn.
 
         """
         set_stream_level(logger, log_level)
@@ -85,7 +94,7 @@ class GenePlexus:
         elif self.auto_download:
             download_select_data(
                 self.file_loc,
-                list({self.sp_trn, self.sp_res}),
+                [self.sp_trn] + self.sp_res,
                 log_level=log_level,
             )
 
@@ -95,45 +104,54 @@ class GenePlexus:
         if input_negatives is not None:
             self.load_negatives(input_negatives)
 
-        if ("Zebrafish" == (self.sp_trn or self.sp_res)) and (self.net_type == "BioGRID"):
-            raise ZebrafishBioGRIDError(
-                f"The BioGRID network for Zebrafish is not "
-                "included due to it not having enough nodes "
-                "so this combination is not allowed.",
+        if self._is_custom:
+            warnings.warn(
+                f"is_custom is set to True either manually "
+                "or by autodection of species or GSC not "
+                "contained in the pre-processed data. All "
+                "compatability checks are being turned off.",
             )
-
-        if (self.sp_trn == "Fly" and self.gsc_trn == "Monarch") or (self.sp_res == "Fly" and self.gsc_res == "Monarch"):
-            raise FlyMonarchError(
-                f"Fly has no annotations for Monarch. Use either Combined or GO for GSC",
-            )
-
-        if (self.sp_trn != "Human" and self.gsc_trn == "Mondo") or (self.sp_res != "Human" and self.gsc_res == "Mondo"):
-            raise MondoError(
-                f"Mondo only has annotations for Human",
-            )
-
-        if self.gsc_trn == "Combined":
-            logger.info(
-                f"For the training species, {self.sp_trn}, the GSC is set to "
-                f"Combined and here: {config.COMBINED_CONTEXTS[self.sp_trn]}",
-            )
-        if self.gsc_res == "Combined":
-            logger.info(
-                f"For the results species, {self.sp_res}, the GSC is set to "
-                f"Combined and here: {config.COMBINED_CONTEXTS[self.sp_res]}",
-            )
-
-        # convert combined to GO so can read correct backend data
-        if (self.sp_trn == "Fly") and (self.gsc_trn == "Combined"):
-            self.gsc_trn = "GO"
-            self.gsc_trn_original = "Combined"
-        elif (self.sp_trn == "Fly") and (self.gsc_trn != "Combined"):
             self.gsc_trn_original = self.gsc_trn
-        if (self.sp_res == "Fly") and (self.gsc_res == "Combined"):
-            self.gsc_res = "GO"
-            self.gsc_res_original = "Combined"
-        elif (self.sp_res == "Fly") and (self.gsc_res != "Combined"):
             self.gsc_res_original = self.gsc_res
+        else:
+            # check option compatability for preprocessed data
+            sp_res_subset, gsc_res_subset = util.data_checks(
+                self.sp_trn,
+                self.net_type,
+                self.gsc_trn,
+                self.sp_res,
+                self.gsc_res,
+            )
+            self.sp_res = sp_res_subset
+            self.gsc_res = gsc_res_subset
+
+            # for combined, display contexts and change some GSC names
+            gsc_trn_updated, gsc_res_updated = util.combined_info(
+                self.sp_trn,
+                self.gsc_trn,
+                self.sp_res,
+                self.gsc_res,
+            )
+            self.gsc_trn_original = self.gsc_trn
+            self.gsc_trn = gsc_trn_updated
+            self.gsc_res_original = self.gsc_res
+            self.gsc_res = gsc_res_updated
+
+        # remove duplicate sp-gsc comboms if any for results
+        sp_res_nodup, gsc_res_nodup, gsc_res_original_nodup = util.remove_duplicates(
+            self.sp_res,
+            self.gsc_res,
+            self.gsc_res_original,
+        )
+        self.sp_res = sp_res_nodup
+        self.gsc_res = gsc_res_nodup
+        self.gsc_res_original = gsc_res_original_nodup
+
+        # create results dictionaries
+        sp_gsc_pairs = ["-".join(str(item) for item in pair) for pair in zip(self.sp_res, self.gsc_res_original)]
+        self.results = {}
+        for apair in sp_gsc_pairs:
+            self.results[apair] = SpeciesResults()
 
     @property
     def _params(self) -> List[str]:
@@ -237,20 +255,28 @@ class GenePlexus:
         self._sp_trn = sp_trn
 
     @property
-    def sp_res(self) -> config.SPECIES_TYPE:
+    def sp_res(self) -> config.SPECIES_SELECTION_TYPE:
         """Results_species."""
         return self._sp_res
 
     @sp_res.setter
-    def sp_res(self, sp_res: config.SPECIES_TYPE):
-        if sp_res not in config.ALL_SPECIES:
-            warnings.warn(
-                util.param_warning("species", sp_res, config.ALL_SPECIES),
-                UserWarning,
-                stacklevel=2,
-            )
-            self._is_custom = True
-            logger.info(f"Using custom species {sp_res!r}")
+    def sp_res(self, sp_res: config.SPECIES_SELECTION_TYPE):
+        if isinstance(sp_res, str):
+            if sp_res == "All":
+                sp_res = config.ALL_SPECIES
+            else:
+                sp_res = [sp_res]
+        elif not isinstance(sp_res, list):
+            raise TypeError(f"Expected str type or list of str type, got {type(sp_res)}")
+        for i in sp_res:
+            if i not in config.ALL_SPECIES:
+                warnings.warn(
+                    util.param_warning("species", i, config.ALL_SPECIES),
+                    UserWarning,
+                    stacklevel=2,
+                )
+                self._is_custom = True
+                logger.info(f"There is a custom species in {sp_res!r}")
         self._sp_res = sp_res
 
     @property
@@ -271,20 +297,27 @@ class GenePlexus:
         self._gsc_trn = gsc_trn
 
     @property
-    def gsc_res(self) -> config.GSC_TYPE:
+    def gsc_res(self) -> config.GSC_SELECTION_TYPE:
         """Geneset collection used when generating results."""
         return self._gsc_res
 
     @gsc_res.setter
-    def gsc_res(self, gsc_res: config.GSC_TYPE):
-        if gsc_res not in config.ALL_GSCS:
-            warnings.warn(
-                util.param_warning("GSC", gsc_res, config.ALL_GSCS),
-                UserWarning,
-                stacklevel=2,
-            )
-            self._is_custom = True
-            logger.info(f"Using custom GSC {gsc_res!r}")
+    def gsc_res(self, gsc_res: config.GSC_SELECTION_TYPE):
+        if isinstance(gsc_res, str):
+            gsc_res = [gsc_res] * len(self.sp_res)
+        elif not isinstance(gsc_res, list):
+            raise TypeError(f"Expected str type or list of str type, got {type(gsc_res)}")
+        if len(self.sp_res) != len(gsc_res):
+            raise ValueError(f"Length of sp_res list not the same as gsc_res list")
+        for i in gsc_res:
+            if i not in config.ALL_GSCS:
+                warnings.warn(
+                    util.param_warning("GSC", i, config.ALL_GSCS),
+                    UserWarning,
+                    stacklevel=2,
+                )
+                self._is_custom = True
+                logger.info(f"There is a custom GSC in {gsc_res!r}")
         self._gsc_res = gsc_res
 
     def load_genes(self, input_genes: List[str]):
@@ -429,7 +462,7 @@ class GenePlexus:
         load_outputs = [df_convert_out, table_summary, input_count, convert_ids]
         return load_outputs
 
-    def fit_and_predict(
+    def fit(
         self,
         logreg_kwargs: Optional[Dict[str, Any]] = None,
         scale: bool = False,
@@ -440,7 +473,7 @@ class GenePlexus:
         random_state: Optional[int] = 0,
         cross_validate: bool = True,
     ):
-        """Fit a model and predict gene scores.
+        """Fit the model.
 
         Args:
             logreg_kwargs: Scikit-learn logistic regression settings (see
@@ -467,53 +500,14 @@ class GenePlexus:
 
         :attr:`GenePlexus.mdl_weights` (1D array of floats)
             Trained model parameters.
-        :attr:`GenePlexus.df_probs` (DataFrame)
-            A table with the following 9 columns:
-
-            .. list-table::
-
-               * - Entrez
-                 - Entrez Gene ID
-               * - Symbol
-                 - Symbol Gene ID
-               * - Name
-                 - Name Gene ID
-               * - Known/Novel
-                 - Known is gene was in the positive set, otherwise Novel
-               * - Class-Label
-                 - P (positive in training), N (negative durinig training), U (unused during trianing)
-               * - Probability
-                 - The probabilties returned from the logisitc regression model
-               * - Z-score
-                 - The z-score of the model probabilties for all predcited genes
-               * - P-adjusted
-                 - The Bonferroni adjusted p-values from the z-scores
-               * - Rank
-                 - The rank of the gene with one being the gene with the highest predcited value
-
-
-        Note:
-            For the Known/Novel and Class-Label columns, if the training species is
-            different than the results species, this information is obtained by looking
-            at the one-to-one orthologs between the species.
-
-        Note:
-            Due to the high complexity of the embedding space, and wide variety of
-            postive and negative genes determined for each model, the resulting
-            probabilities may not be well calibrated, however the resulting rankings
-            are very meaningful as evaluated with log2(auPRC/prior).
+        :attr:`GenePlexus.avgps` (1D array of floats)
+            Cross validation results. Performance is measured using
+            log2(auprc/prior).
 
         Note:
             If setting scale to ``True`` then comparison of user trained model
             to the models pre-trained on known gene sets become less straightforward
             as those models are trained without any scaling.
-
-        :attr:`GenePlexus.avgps` (1D array of floats)
-            Cross validation results. Performance is measured using
-            log2(auprc/prior).
-        :attr:`GenePlexus.probs` (1D array of floats)
-            Genome-wide gene prediction scores. A high value indicates the
-            relevance of the gene to the input gene list.
 
         """
         if self.input_genes == None:
@@ -521,10 +515,9 @@ class GenePlexus:
                 f"No positives genes were added, use function load_genes()",
             )
         self._get_pos_and_neg_genes(min_num_pos)
-        self.mdl_weights, self.probs, self.avgps = _geneplexus._run_sl(
+        self.mdl_weights, self.avgps, self.scale, self.clf, self.std_scale = _geneplexus._run_sl(
             self.file_loc,
             self.sp_trn,
-            self.sp_res,
             self.net_type,
             self.features,
             self.pos_genes_in_net,
@@ -538,16 +531,7 @@ class GenePlexus:
             cross_validate=cross_validate,
             scale=scale,
         )
-        self.df_probs = _geneplexus._make_prob_df(
-            self.file_loc,
-            self.sp_trn,
-            self.sp_res,
-            self.net_type,
-            self.probs,
-            self.pos_genes_in_net,
-            self.negative_genes,
-        )
-        return self.mdl_weights, self.df_probs, self.avgps
+        return self.mdl_weights, self.avgps
 
     def _get_pos_and_neg_genes(self, min_num_pos):
         """Set up positive and negative splits.
@@ -588,7 +572,7 @@ class GenePlexus:
         if len(self.pos_genes_in_net) < min_num_pos:
             raise NoPositivesError(
                 f"There were not enough positive genes to train the model with. "
-                f"This limit is set to {min_num_pos} and can be changed in fit_and_predict().",
+                f"This limit is set to {min_num_pos} and can be changed in fit().",
             )
 
         if (self.input_negatives == None) or (len(self.input_negatives) == 0):
@@ -606,6 +590,75 @@ class GenePlexus:
         )
 
         return self.pos_genes_in_net, self.negative_genes, self.net_genes, self.neutral_gene_info
+
+    def predict(self):
+        """Predict gene scores from fit model.
+
+        **The following clsss attributes are set when this function is run**
+
+        :attr:`GenePlexus.df_probs` (DataFrame)
+            A table with the following 9 columns:
+
+            .. list-table::
+
+               * - Entrez
+                 - Entrez Gene ID
+               * - Symbol
+                 - Symbol Gene ID
+               * - Name
+                 - Name Gene ID
+               * - Known/Novel
+                 - Known is gene was in the positive set, otherwise Novel
+               * - Class-Label
+                 - P (positive in training), N (negative durinig training), U (unused during trianing)
+               * - Probability
+                 - The probabilties returned from the logisitc regression model
+               * - Z-score
+                 - The z-score of the model probabilties for all predcited genes
+               * - P-adjusted
+                 - The Bonferroni adjusted p-values from the z-scores
+               * - Rank
+                 - The rank of the gene with one being the gene with the highest predcited value
+
+
+        Note:
+            For the Known/Novel and Class-Label columns, if the training species is
+            different than the results species, this information is obtained by looking
+            at the one-to-one orthologs between the species.
+
+        Note:
+            Due to the high complexity of the embedding space, and wide variety of
+            postive and negative genes determined for each model, the resulting
+            probabilities may not be well calibrated, however the resulting rankings
+            are very meaningful as evaluated with log2(auPRC/prior).
+
+        :attr:`GenePlexus.probs` (1D array of floats)
+            Genome-wide gene prediction scores. A high value indicates the
+            relevance of the gene to the input gene list.
+
+        """
+        for i in range(len(self.sp_res)):
+            probs = _geneplexus._get_predictions(
+                self.file_loc,
+                self.sp_res[i],
+                self.features,
+                self.net_type,
+                self.scale,
+                self.std_scale,
+                self.clf,
+            )
+            df_probs = _geneplexus._make_prob_df(
+                self.file_loc,
+                self.sp_trn,
+                self.sp_res[i],
+                self.net_type,
+                probs,
+                self.pos_genes_in_net,
+                self.negative_genes,
+            )
+            self.results[f"{self.sp_res[i]}-{self.gsc_res[i]}"].probs = probs
+            self.results[f"{self.sp_res[i]}-{self.gsc_res[i]}"].df_probs = df_probs
+        return self.results
 
     def make_sim_dfs(self):
         """Compute similarities bewteen the input genes and GO, Monarch and/or Mondo.
@@ -649,15 +702,18 @@ class GenePlexus:
                }
 
         """
-        self.df_sim, self.weights_dict = _geneplexus._make_sim_dfs(
-            self.file_loc,
-            self.mdl_weights,
-            self.sp_res,
-            self.gsc_res,
-            self.net_type,
-            self.features,
-        )
-        return self.df_sim, self.weights_dict
+        for i in range(len(self.sp_res)):
+            df_sim, weights_dict = _geneplexus._make_sim_dfs(
+                self.file_loc,
+                self.mdl_weights,
+                self.sp_res[i],
+                self.gsc_res[i],
+                self.net_type,
+                self.features,
+            )
+            self.results[f"{self.sp_res[i]}-{self.gsc_res[i]}"].df_sim = df_sim
+            self.results[f"{self.sp_res[i]}-{self.gsc_res[i]}"].weights_dict = weights_dict
+        return self.results
 
     def make_small_edgelist(self, num_nodes: int = 50):
         """Make a subgraph induced by the top predicted genes.
@@ -681,14 +737,19 @@ class GenePlexus:
             other top predicted genes in the network.
 
         """
-        self.df_edge, self.isolated_genes, self.df_edge_sym, self.isolated_genes_sym = _geneplexus._make_small_edgelist(
-            self.file_loc,
-            self.df_probs,
-            self.sp_res,
-            self.net_type,
-            num_nodes=num_nodes,
-        )
-        return self.df_edge, self.isolated_genes, self.df_edge_sym, self.isolated_genes_sym
+        for i in range(len(self.sp_res)):
+            df_edge, isolated_genes, df_edge_sym, isolated_genes_sym = _geneplexus._make_small_edgelist(
+                self.file_loc,
+                self.results[f"{self.sp_res[i]}-{self.gsc_res[i]}"].df_probs,
+                self.sp_res[i],
+                self.net_type,
+                num_nodes=num_nodes,
+            )
+            self.results[f"{self.sp_res[i]}-{self.gsc_res[i]}"].df_edge = df_edge
+            self.results[f"{self.sp_res[i]}-{self.gsc_res[i]}"].isolated_genes = isolated_genes
+            self.results[f"{self.sp_res[i]}-{self.gsc_res[i]}"].df_edge_sym = df_edge_sym
+            self.results[f"{self.sp_res[i]}-{self.gsc_res[i]}"].isolated_genes_sym = isolated_genes_sym
+        return self.results
 
     def alter_validation_df(self):
         """Make table about presence of input genes in the network used durning training.
