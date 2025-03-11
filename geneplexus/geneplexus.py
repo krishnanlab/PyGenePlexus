@@ -674,28 +674,28 @@ class GenePlexus:
             relevance of the gene to the input gene list.
 
         """
-        for i in range(len(self.sp_res)):
+        for res_combo in list(self.model_info["All-Genes"].results):
             probs = _geneplexus._get_predictions(
                 self.file_loc,
-                self.sp_res[i],
+                res_combo.split("-")[0],
                 self.features,
                 self.net_type,
-                self.scale,
-                self.std_scale,
-                self.clf,
+                self.model_info["All-Genes"].scale,
+                self.model_info["All-Genes"].std_scale,
+                self.model_info["All-Genes"].clf,
             )
             df_probs = _geneplexus._make_prob_df(
                 self.file_loc,
                 self.sp_trn,
-                self.sp_res[i],
+                res_combo.split("-")[0],
                 self.net_type,
                 probs,
-                self.pos_genes_in_net,
-                self.negative_genes,
+                self.model_info["All-Genes"].pos_genes_in_net,
+                self.model_info["All-Genes"].negative_genes,
             )
-            self.results["All-Genes"][f"{self.sp_res[i]}-{self.gsc_res[i]}"].probs = probs
-            self.results["All-Genes"][f"{self.sp_res[i]}-{self.gsc_res[i]}"].df_probs = df_probs
-        return self.results
+            self.model_info["All-Genes"].results[res_combo].probs = probs
+            self.model_info["All-Genes"].results[res_combo].df_probs = df_probs
+        return self.model_info["All-Genes"].results
 
     def make_sim_dfs(self):
         """Compute similarities bewteen the input genes and GO, Monarch and/or Mondo.
@@ -739,18 +739,18 @@ class GenePlexus:
                }
 
         """
-        for i in range(len(self.sp_res)):
+        for res_combo in list(self.model_info["All-Genes"].results):
             df_sim, weights_dict = _geneplexus._make_sim_dfs(
                 self.file_loc,
-                self.mdl_weights,
-                self.sp_res[i],
-                self.gsc_res[i],
+                self.model_info["All-Genes"].mdl_weights,
+                res_combo.split("-")[0],
+                res_combo.split("-")[1],
                 self.net_type,
                 self.features,
             )
-            self.results["All-Genes"][f"{self.sp_res[i]}-{self.gsc_res[i]}"].df_sim = df_sim
-            self.results["All-Genes"][f"{self.sp_res[i]}-{self.gsc_res[i]}"].weights_dict = weights_dict
-        return self.results
+            self.model_info["All-Genes"].results[res_combo].df_sim = df_sim
+            self.model_info["All-Genes"].results[res_combo].weights_dict = weights_dict
+        return self.model_info["All-Genes"].results
 
     def make_small_edgelist(self, num_nodes: int = 50):
         """Make a subgraph induced by the top predicted genes.
@@ -774,19 +774,19 @@ class GenePlexus:
             other top predicted genes in the network.
 
         """
-        for i in range(len(self.sp_res)):
+        for res_combo in list(self.model_info["All-Genes"].results):
             df_edge, isolated_genes, df_edge_sym, isolated_genes_sym = _geneplexus._make_small_edgelist(
                 self.file_loc,
-                self.results["All-Genes"][f"{self.sp_res[i]}-{self.gsc_res[i]}"].df_probs,
-                self.sp_res[i],
+                self.model_info["All-Genes"].results[res_combo].df_probs,
+                res_combo.split("-")[0],
                 self.net_type,
                 num_nodes=num_nodes,
             )
-            self.results["All-Genes"][f"{self.sp_res[i]}-{self.gsc_res[i]}"].df_edge = df_edge
-            self.results["All-Genes"][f"{self.sp_res[i]}-{self.gsc_res[i]}"].isolated_genes = isolated_genes
-            self.results["All-Genes"][f"{self.sp_res[i]}-{self.gsc_res[i]}"].df_edge_sym = df_edge_sym
-            self.results["All-Genes"][f"{self.sp_res[i]}-{self.gsc_res[i]}"].isolated_genes_sym = isolated_genes_sym
-        return self.results
+            self.model_info["All-Genes"].results[res_combo].df_edge = df_edge
+            self.model_info["All-Genes"].results[res_combo].isolated_genes = isolated_genes
+            self.model_info["All-Genes"].results[res_combo].df_edge_sym = df_edge_sym
+            self.model_info["All-Genes"].results[res_combo].isolated_genes_sym = isolated_genes_sym
+        return self.model_info["All-Genes"].results
 
     def alter_validation_df(self):
         """Make table about presence of input genes in the network used durning training.
