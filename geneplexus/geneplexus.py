@@ -25,10 +25,12 @@ class ModelInfo:
         """Class to hold the trainig objects"""
         pass
 
+
 class ModelResults:
     def __init__(self):
         """Class to hold the result objects"""
         pass
+
 
 class GenePlexus:
     """The GenePlexus API class."""
@@ -153,7 +155,7 @@ class GenePlexus:
 
         # create objects that will always be used
         sp_gsc_pairs = ["-".join(str(item) for item in pair) for pair in zip(self.sp_res, self.gsc_res_original)]
-        self.model_info = {"All-Genes" : ModelInfo()}
+        self.model_info = {"All-Genes": ModelInfo()}
         self.model_info["All-Genes"].results = {}
         for apair in sp_gsc_pairs:
             self.model_info["All-Genes"].results[apair] = ModelResults()
@@ -476,10 +478,8 @@ class GenePlexus:
         clust_res: int = 1,
         clust_weighted: bool = True,
     ):
-        """"CLuster input gene list"""
-    
-        
-    
+        """ "CLuster input gene list"""
+
     def fit(
         self,
         logreg_kwargs: Optional[Dict[str, Any]] = None,
@@ -534,7 +534,13 @@ class GenePlexus:
             )
         for model_name in list(self.model_info):
             self._get_pos_and_neg_genes(model_name, min_num_pos)
-            self.model_info[model_name].mdl_weights, self.model_info[model_name].avgps, self.model_info[model_name].scale, self.model_info[model_name].clf, self.model_info[model_name].std_scale = _geneplexus._run_sl(
+            (
+                self.model_info[model_name].mdl_weights,
+                self.model_info[model_name].avgps,
+                self.model_info[model_name].scale,
+                self.model_info[model_name].clf,
+                self.model_info[model_name].std_scale,
+            ) = _geneplexus._run_sl(
                 self.file_loc,
                 self.sp_trn,
                 self.net_type,
@@ -582,7 +588,11 @@ class GenePlexus:
                }
 
         """
-        self.model_info[model_name].pos_genes_in_net, self.model_info[model_name].genes_not_in_net, self.model_info[model_name].net_genes = _geneplexus._get_genes_in_network(
+        (
+            self.model_info[model_name].pos_genes_in_net,
+            self.model_info[model_name].genes_not_in_net,
+            self.model_info[model_name].net_genes,
+        ) = _geneplexus._get_genes_in_network(
             self.file_loc,
             self.sp_trn,
             self.net_type,
@@ -599,7 +609,10 @@ class GenePlexus:
         else:
             # remove genes from negatives if they are also positives
             user_negatives = np.setdiff1d(self.convert_ids_negatives, self.model_info[model_name].model_genes).tolist()
-        self.model_info[model_name].negative_genes, self.model_info[model_name].neutral_gene_info = _geneplexus._get_negatives(
+        (
+            self.model_info[model_name].negative_genes,
+            self.model_info[model_name].neutral_gene_info,
+        ) = _geneplexus._get_negatives(
             self.file_loc,
             self.sp_trn,
             self.net_type,
@@ -608,7 +621,12 @@ class GenePlexus:
             user_negatives,
         )
 
-        return self.model_info[model_name].pos_genes_in_net, self.model_info[model_name].negative_genes, self.model_info[model_name].net_genes, self.model_info[model_name].neutral_gene_info
+        return (
+            self.model_info[model_name].pos_genes_in_net,
+            self.model_info[model_name].negative_genes,
+            self.model_info[model_name].net_genes,
+            self.model_info[model_name].neutral_gene_info,
+        )
 
     def predict(self):
         """Predict gene scores from fit model.
