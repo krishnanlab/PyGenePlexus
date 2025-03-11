@@ -99,27 +99,34 @@ def _make_validation_df(df_convert_out, file_loc, species):
 
     return df_convert_out, table_summary, input_count
 
-def _generate_clusters(file_loc, species, net_type, input_genes, clust_min_size, clust_max_size, clust_max_tries, clust_res, clust_weighted):
+
+def _generate_clusters(
+    file_loc, species, net_type, input_genes, clust_min_size, clust_max_size, clust_max_tries, clust_res, clust_weighted
+):
     # Load network as edge list dataframe
     filepath = osp.join(file_loc, f"Edgelist__{species}__{net_type}.edg")
     if net_type == "BioGRID":
         df_edge = pd.read_csv(filepath, sep="\t", header=None, names=["Node1", "Node2"])
     else:
         df_edge = pd.read_csv(filepath, sep="\t", header=None, names=["Node1", "Node2", "Weight"])
-        df_edge['Weight'] = df_edge['Weight'].astype(float)
+        df_edge["Weight"] = df_edge["Weight"].astype(float)
     df_edge = df_edge.astype({"Node1": str, "Node2": str})
     # iteratively run through clustering
     for clus_try in range(clust_max_tries):
         logger.info(f"On clustering try {clus_try + 1}")
         if clus_try == 0:
-            final_clusters, large_clusters = util.cluster_louvain(df_edge, [input_genes], [], clust_min_size, clust_max_size, clust_res, clust_weighted)
+            final_clusters, large_clusters = util.cluster_louvain(
+                df_edge, [input_genes], [], clust_min_size, clust_max_size, clust_res, clust_weighted
+            )
         else:
-            final_clusters, large_clusters = util.cluster_louvain(df_edge, large_clusters, final_clusters, clust_min_size, clust_max_size, clust_res, clust_weighted)
+            final_clusters, large_clusters = util.cluster_louvain(
+                df_edge, large_clusters, final_clusters, clust_min_size, clust_max_size, clust_res, clust_weighted
+            )
         if len(large_clusters) == 0:
             break
-    final_clusters = final_clusters + large_clusters # add back in large clusters if couldn't be made smaller
+    final_clusters = final_clusters + large_clusters  # add back in large clusters if couldn't be made smaller
     return final_clusters
-    
+
 
 def _get_genes_in_network(file_loc, species, net_type, convert_ids):
     net_genes = util.load_node_order(file_loc, species, net_type)

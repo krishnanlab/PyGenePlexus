@@ -1,7 +1,6 @@
 """Utilities including file and path handling."""
 import functools
 import json
-import networkx as nx
 import os
 import os.path as osp
 import warnings
@@ -13,6 +12,7 @@ from typing import List
 from typing import Literal
 from typing import Optional
 
+import networkx as nx
 import numpy as np
 
 from . import config
@@ -487,17 +487,19 @@ def remove_duplicates(
             gsc_res.pop(i)
             gsc_res_original.pop(i)
     return sp_res, gsc_res, gsc_res_original
-    
-    
-def cluster_louvain(df_edge, sets_to_cluster, final_clusters, clust_min_size, clust_max_size, clust_res, clust_weighted):
+
+
+def cluster_louvain(
+    df_edge, sets_to_cluster, final_clusters, clust_min_size, clust_max_size, clust_res, clust_weighted
+):
     if clust_weighted == True:
         clust_weight = "Weight"
     else:
         clust_weight = None
     for aset in sets_to_cluster:
         df_edge_tmp = df_edge[(df_edge["Node1"].isin(aset)) & (df_edge["Node2"].isin(aset))]
-        G = nx.from_pandas_edgelist(df_edge_tmp, source = "Node1", target = "Node2", edge_attr=True)
-        clusters = nx.community.louvain_communities(G, weight = clust_weight, resolution=clust_res, seed=123)
+        G = nx.from_pandas_edgelist(df_edge_tmp, source="Node1", target="Node2", edge_attr=True)
+        clusters = nx.community.louvain_communities(G, weight=clust_weight, resolution=clust_res, seed=123)
         large_clusters = []
         for idx, aclus in enumerate(clusters):
             if len(aclus) >= clust_min_size and len(aclus) <= clust_max_size:

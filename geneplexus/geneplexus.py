@@ -479,7 +479,7 @@ class GenePlexus:
         clust_weighted: bool = True,
     ):
         """Cluster input gene list.
-    
+
         Args:
             clust_min_size: Ignore clusters if smaller than this value.
             clust_max_size: Try to recluster if a cluster is bigger than this value.
@@ -489,7 +489,7 @@ class GenePlexus:
             clust_res: Resolution parameter in clustering algorithm.
             clust_weighted: Wether or not to use weighted edges when building the clusters
         """
-    
+
         if list(self.model_info) != ["All-Genes"]:
             warnings.warn(
                 "\nOeleting previously generated clusters.",
@@ -499,7 +499,7 @@ class GenePlexus:
             for item in list(self.model_info):
                 if "Cluster-" in item:
                     del self.model_info[item]
-            
+
         clust_genes = _geneplexus._generate_clusters(
             self.file_loc,
             self.sp_trn,
@@ -515,15 +515,14 @@ class GenePlexus:
         if len(clust_genes) == 0:
             logger.info(f"No clusters were added")
         else:
-            clust_genes.sort(key=len, reverse=True) # make biggest clusters first
+            clust_genes.sort(key=len, reverse=True)  # make biggest clusters first
             for i in range(len(clust_genes)):
                 clus_id = i + 1
-                self.model_info[f"Cluster-{clus_id:02d}"] =  ModelInfo()
+                self.model_info[f"Cluster-{clus_id:02d}"] = ModelInfo()
                 self.model_info[f"Cluster-{clus_id:02d}"].model_genes = clust_genes[i]
                 self.model_info[f"Cluster-{clus_id:02d}"].results = {}
                 for apair in self.sp_gsc_pairs:
                     self.model_info[f"Cluster-{clus_id:02d}"].results[apair] = ModelResults()
-            
 
     def fit(
         self,
