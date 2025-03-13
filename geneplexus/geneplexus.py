@@ -785,12 +785,12 @@ class GenePlexus:
 
         """
         for model_name in list(self.model_info):
-            for res_combo in list(self.model_info[model_name].results):
+            for idx, res_combo in enumerate(list(self.model_info[model_name].results)):
                 df_sim, weights_dict = _geneplexus._make_sim_dfs(
                     self.file_loc,
                     self.model_info[model_name].mdl_weights,
                     res_combo.split("-")[0],
-                    res_combo.split("-")[1],
+                    self.gsc_res[idx], # needs to be different for Combines becoming GOs
                     self.net_type,
                     self.features,
                 )
