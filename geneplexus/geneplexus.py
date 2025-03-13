@@ -20,7 +20,13 @@ from .download import download_select_data
 from .exception import NoPositivesError
 
 
-class SpeciesResults:
+class ModelInfo:
+    def __init__(self):
+        """Class to hold the trainig objects"""
+        pass
+
+
+class ModelResults:
     def __init__(self):
         """Class to hold the result objects"""
         pass
@@ -147,11 +153,12 @@ class GenePlexus:
         self.gsc_res = gsc_res_nodup
         self.gsc_res_original = gsc_res_original_nodup
 
-        # create results dictionaries
-        sp_gsc_pairs = ["-".join(str(item) for item in pair) for pair in zip(self.sp_res, self.gsc_res_original)]
-        self.results = {}
-        for apair in sp_gsc_pairs:
-            self.results[apair] = SpeciesResults()
+        # create objects that will always be used
+        self.sp_gsc_pairs = ["-".join(str(item) for item in pair) for pair in zip(self.sp_res, self.gsc_res_original)]
+        self.model_info = {"All-Genes": ModelInfo()}
+        self.model_info["All-Genes"].results = {}
+        for apair in self.sp_gsc_pairs:
+            self.model_info["All-Genes"].results[apair] = ModelResults()
 
     @property
     def _params(self) -> List[str]:
@@ -376,6 +383,7 @@ class GenePlexus:
         self.table_summary = load_genes_outputs[1]
         self.input_count = load_genes_outputs[2]
         self.convert_ids = load_genes_outputs[3]
+        self.model_info["All-Genes"].model_genes = self.convert_ids
 
     def load_negatives(self, input_negatives: List[str]):
         """Load gene list and convert to Entrez that will used as negatives.
@@ -462,6 +470,60 @@ class GenePlexus:
         load_outputs = [df_convert_out, table_summary, input_count, convert_ids]
         return load_outputs
 
+    def cluster_input(
+        self,
+        clust_min_size: int = 5,
+        clust_max_size: int = 70,
+        clust_max_tries: int = 3,
+        clust_res: int = 1,
+        clust_weighted: bool = True,
+    ):
+        """Cluster input gene list.
+
+        Args:
+            clust_min_size: Ignore clusters if smaller than this value.
+            clust_max_size: Try to recluster if a cluster is bigger than this value.
+            clust_max_tries: The number of times to recluster any clusters that are
+                bigger the `clust_max_size`. If cannot accomplished this by `clust_max_tries`
+                the larger clusters are still retained.
+            clust_res: Resolution parameter in clustering algorithm.
+            clust_weighted: Wether or not to use weighted edges when building the clusters
+        """
+
+        if list(self.model_info) != ["All-Genes"]:
+            warnings.warn(
+                "\nOeleting previously generated clusters.",
+                UserWarning,
+                stacklevel=2,
+            )
+            for item in list(self.model_info):
+                if "Cluster-" in item:
+                    del self.model_info[item]
+
+        clust_genes = _geneplexus._generate_clusters(
+            self.file_loc,
+            self.sp_trn,
+            self.net_type,
+            self.model_info["All-Genes"].model_genes,
+            clust_min_size,
+            clust_max_size,
+            clust_max_tries,
+            clust_res,
+            clust_weighted,
+        )
+        # add keys to model_info
+        if len(clust_genes) == 0:
+            logger.info(f"No clusters were added")
+        else:
+            clust_genes.sort(key=len, reverse=True)  # make biggest clusters first
+            for i in range(len(clust_genes)):
+                clus_id = i + 1
+                self.model_info[f"Cluster-{clus_id:02d}"] = ModelInfo()
+                self.model_info[f"Cluster-{clus_id:02d}"].model_genes = clust_genes[i]
+                self.model_info[f"Cluster-{clus_id:02d}"].results = {}
+                for apair in self.sp_gsc_pairs:
+                    self.model_info[f"Cluster-{clus_id:02d}"].results[apair] = ModelResults()
+
     def fit(
         self,
         logreg_kwargs: Optional[Dict[str, Any]] = None,
@@ -514,26 +576,33 @@ class GenePlexus:
             raise NoPositivesError(
                 f"No positives genes were added, use function load_genes()",
             )
-        self._get_pos_and_neg_genes(min_num_pos)
-        self.mdl_weights, self.avgps, self.scale, self.clf, self.std_scale = _geneplexus._run_sl(
-            self.file_loc,
-            self.sp_trn,
-            self.net_type,
-            self.features,
-            self.pos_genes_in_net,
-            self.negative_genes,
-            self.net_genes,
-            logreg_kwargs=logreg_kwargs,
-            min_num_pos_cv=min_num_pos_cv,
-            num_folds=num_folds,
-            null_val=null_val,
-            random_state=random_state,
-            cross_validate=cross_validate,
-            scale=scale,
-        )
-        return self.mdl_weights, self.avgps
+        for model_name in list(self.model_info):
+            self._get_pos_and_neg_genes(model_name, min_num_pos)
+            (
+                self.model_info[model_name].mdl_weights,
+                self.model_info[model_name].avgps,
+                self.model_info[model_name].scale,
+                self.model_info[model_name].clf,
+                self.model_info[model_name].std_scale,
+            ) = _geneplexus._run_sl(
+                self.file_loc,
+                self.sp_trn,
+                self.net_type,
+                self.features,
+                self.model_info[model_name].pos_genes_in_net,
+                self.model_info[model_name].negative_genes,
+                self.model_info[model_name].net_genes,
+                logreg_kwargs=logreg_kwargs,
+                min_num_pos_cv=min_num_pos_cv,
+                num_folds=num_folds,
+                null_val=null_val,
+                random_state=random_state,
+                cross_validate=cross_validate,
+                scale=scale,
+            )
+        return self.model_info
 
-    def _get_pos_and_neg_genes(self, min_num_pos):
+    def _get_pos_and_neg_genes(self, model_name, min_num_pos):
         """Set up positive and negative splits.
 
         **The following clsss attributes are set when this function is run**
@@ -563,15 +632,19 @@ class GenePlexus:
                }
 
         """
-        self.pos_genes_in_net, self.genes_not_in_net, self.net_genes = _geneplexus._get_genes_in_network(
+        (
+            self.model_info[model_name].pos_genes_in_net,
+            self.model_info[model_name].genes_not_in_net,
+            self.model_info[model_name].net_genes,
+        ) = _geneplexus._get_genes_in_network(
             self.file_loc,
             self.sp_trn,
             self.net_type,
-            self.convert_ids,
+            self.model_info[model_name].model_genes,
         )
-        if len(self.pos_genes_in_net) < min_num_pos:
+        if len(self.model_info[model_name].pos_genes_in_net) < min_num_pos:
             raise NoPositivesError(
-                f"There were not enough positive genes to train the model with. "
+                f"There were not enough positive genes to train the model {model_name} with. "
                 f"This limit is set to {min_num_pos} and can be changed in fit().",
             )
 
@@ -579,17 +652,25 @@ class GenePlexus:
             user_negatives = None
         else:
             # remove genes from negatives if they are also positives
-            user_negatives = np.setdiff1d(self.convert_ids_negatives, self.convert_ids).tolist()
-        self.negative_genes, self.neutral_gene_info = _geneplexus._get_negatives(
+            user_negatives = np.setdiff1d(self.convert_ids_negatives, self.model_info[model_name].model_genes).tolist()
+        (
+            self.model_info[model_name].negative_genes,
+            self.model_info[model_name].neutral_gene_info,
+        ) = _geneplexus._get_negatives(
             self.file_loc,
             self.sp_trn,
             self.net_type,
             self.gsc_trn,
-            self.pos_genes_in_net,
+            self.model_info[model_name].pos_genes_in_net,
             user_negatives,
         )
 
-        return self.pos_genes_in_net, self.negative_genes, self.net_genes, self.neutral_gene_info
+        return (
+            self.model_info[model_name].pos_genes_in_net,
+            self.model_info[model_name].negative_genes,
+            self.model_info[model_name].net_genes,
+            self.model_info[model_name].neutral_gene_info,
+        )
 
     def predict(self):
         """Predict gene scores from fit model.
@@ -637,28 +718,29 @@ class GenePlexus:
             relevance of the gene to the input gene list.
 
         """
-        for i in range(len(self.sp_res)):
-            probs = _geneplexus._get_predictions(
-                self.file_loc,
-                self.sp_res[i],
-                self.features,
-                self.net_type,
-                self.scale,
-                self.std_scale,
-                self.clf,
-            )
-            df_probs = _geneplexus._make_prob_df(
-                self.file_loc,
-                self.sp_trn,
-                self.sp_res[i],
-                self.net_type,
-                probs,
-                self.pos_genes_in_net,
-                self.negative_genes,
-            )
-            self.results[f"{self.sp_res[i]}-{self.gsc_res[i]}"].probs = probs
-            self.results[f"{self.sp_res[i]}-{self.gsc_res[i]}"].df_probs = df_probs
-        return self.results
+        for model_name in list(self.model_info):
+            for res_combo in list(self.model_info[model_name].results):
+                probs = _geneplexus._get_predictions(
+                    self.file_loc,
+                    res_combo.split("-")[0],
+                    self.features,
+                    self.net_type,
+                    self.model_info[model_name].scale,
+                    self.model_info[model_name].std_scale,
+                    self.model_info[model_name].clf,
+                )
+                df_probs = _geneplexus._make_prob_df(
+                    self.file_loc,
+                    self.sp_trn,
+                    res_combo.split("-")[0],
+                    self.net_type,
+                    probs,
+                    self.model_info[model_name].pos_genes_in_net,
+                    self.model_info[model_name].negative_genes,
+                )
+                self.model_info[model_name].results[res_combo].probs = probs
+                self.model_info[model_name].results[res_combo].df_probs = df_probs
+        return self.model_info
 
     def make_sim_dfs(self):
         """Compute similarities bewteen the input genes and GO, Monarch and/or Mondo.
@@ -702,18 +784,19 @@ class GenePlexus:
                }
 
         """
-        for i in range(len(self.sp_res)):
-            df_sim, weights_dict = _geneplexus._make_sim_dfs(
-                self.file_loc,
-                self.mdl_weights,
-                self.sp_res[i],
-                self.gsc_res[i],
-                self.net_type,
-                self.features,
-            )
-            self.results[f"{self.sp_res[i]}-{self.gsc_res[i]}"].df_sim = df_sim
-            self.results[f"{self.sp_res[i]}-{self.gsc_res[i]}"].weights_dict = weights_dict
-        return self.results
+        for model_name in list(self.model_info):
+            for idx, res_combo in enumerate(list(self.model_info[model_name].results)):
+                df_sim, weights_dict = _geneplexus._make_sim_dfs(
+                    self.file_loc,
+                    self.model_info[model_name].mdl_weights,
+                    res_combo.split("-")[0],
+                    self.gsc_res[idx],  # needs to be different for Combines becoming GOs
+                    self.net_type,
+                    self.features,
+                )
+                self.model_info[model_name].results[res_combo].df_sim = df_sim
+                self.model_info[model_name].results[res_combo].weights_dict = weights_dict
+        return self.model_info
 
     def make_small_edgelist(self, num_nodes: int = 50):
         """Make a subgraph induced by the top predicted genes.
@@ -737,19 +820,20 @@ class GenePlexus:
             other top predicted genes in the network.
 
         """
-        for i in range(len(self.sp_res)):
-            df_edge, isolated_genes, df_edge_sym, isolated_genes_sym = _geneplexus._make_small_edgelist(
-                self.file_loc,
-                self.results[f"{self.sp_res[i]}-{self.gsc_res[i]}"].df_probs,
-                self.sp_res[i],
-                self.net_type,
-                num_nodes=num_nodes,
-            )
-            self.results[f"{self.sp_res[i]}-{self.gsc_res[i]}"].df_edge = df_edge
-            self.results[f"{self.sp_res[i]}-{self.gsc_res[i]}"].isolated_genes = isolated_genes
-            self.results[f"{self.sp_res[i]}-{self.gsc_res[i]}"].df_edge_sym = df_edge_sym
-            self.results[f"{self.sp_res[i]}-{self.gsc_res[i]}"].isolated_genes_sym = isolated_genes_sym
-        return self.results
+        for model_name in list(self.model_info):
+            for res_combo in list(self.model_info[model_name].results):
+                df_edge, isolated_genes, df_edge_sym, isolated_genes_sym = _geneplexus._make_small_edgelist(
+                    self.file_loc,
+                    self.model_info[model_name].results[res_combo].df_probs,
+                    res_combo.split("-")[0],
+                    self.net_type,
+                    num_nodes=num_nodes,
+                )
+                self.model_info[model_name].results[res_combo].df_edge = df_edge
+                self.model_info[model_name].results[res_combo].isolated_genes = isolated_genes
+                self.model_info[model_name].results[res_combo].df_edge_sym = df_edge_sym
+                self.model_info[model_name].results[res_combo].isolated_genes_sym = isolated_genes_sym
+        return self.model_info
 
     def alter_validation_df(self):
         """Make table about presence of input genes in the network used durning training.
