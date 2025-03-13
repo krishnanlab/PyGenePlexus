@@ -490,7 +490,13 @@ def remove_duplicates(
 
 
 def cluster_louvain(
-    df_edge, sets_to_cluster, final_clusters, clust_min_size, clust_max_size, clust_res, clust_weighted
+    df_edge,
+    sets_to_cluster,
+    final_clusters,
+    clust_min_size,
+    clust_max_size,
+    clust_res,
+    clust_weighted,
 ):
     if clust_weighted == True:
         clust_weight = "Weight"

@@ -101,7 +101,15 @@ def _make_validation_df(df_convert_out, file_loc, species):
 
 
 def _generate_clusters(
-    file_loc, species, net_type, input_genes, clust_min_size, clust_max_size, clust_max_tries, clust_res, clust_weighted
+    file_loc,
+    species,
+    net_type,
+    input_genes,
+    clust_min_size,
+    clust_max_size,
+    clust_max_tries,
+    clust_res,
+    clust_weighted,
 ):
     # Load network as edge list dataframe
     filepath = osp.join(file_loc, f"Edgelist__{species}__{net_type}.edg")
@@ -116,11 +124,23 @@ def _generate_clusters(
         logger.info(f"On clustering try {clus_try + 1}")
         if clus_try == 0:
             final_clusters, large_clusters = util.cluster_louvain(
-                df_edge, [input_genes], [], clust_min_size, clust_max_size, clust_res, clust_weighted
+                df_edge,
+                [input_genes],
+                [],
+                clust_min_size,
+                clust_max_size,
+                clust_res,
+                clust_weighted,
             )
         else:
             final_clusters, large_clusters = util.cluster_louvain(
-                df_edge, large_clusters, final_clusters, clust_min_size, clust_max_size, clust_res, clust_weighted
+                df_edge,
+                large_clusters,
+                final_clusters,
+                clust_min_size,
+                clust_max_size,
+                clust_res,
+                clust_weighted,
             )
         if len(large_clusters) == 0:
             break

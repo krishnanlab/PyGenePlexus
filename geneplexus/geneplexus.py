@@ -790,7 +790,7 @@ class GenePlexus:
                     self.file_loc,
                     self.model_info[model_name].mdl_weights,
                     res_combo.split("-")[0],
-                    self.gsc_res[idx], # needs to be different for Combines becoming GOs
+                    self.gsc_res[idx],  # needs to be different for Combines becoming GOs
                     self.net_type,
                     self.features,
                 )
