@@ -159,7 +159,7 @@ class GenePlexus:
         self.model_info["All-Genes"].results = {}
         for apair in self.sp_gsc_pairs:
             self.model_info["All-Genes"].results[apair] = ModelResults()
-            
+
         # set a clus_min_size to make sure it matching min_num_pos later
         self.clust_min_size = None
 
@@ -529,14 +529,13 @@ class GenePlexus:
                     self.model_info[f"Cluster-{clus_id:02d}"].results[apair] = ModelResults()
             # set min cluster size to be used later
             self.clust_min_size = clust_min_size
-            unique_clus_genes = list(set([item for sublist in clust_genes for item in sublist]))
+            unique_clus_genes = list({item for sublist in clust_genes for item in sublist})
             num_genes_lost = len(self.model_info["All-Genes"].model_genes) - len(unique_clus_genes)
             per_genes_lost = 100 - ((len(unique_clus_genes) / len(self.model_info["All-Genes"].model_genes)) * 100)
             logger.info(
                 f"The number of clusters added is {len(clust_genes)}. "
                 f"The number(%) of genes lost to clustering is {num_genes_lost} ({per_genes_lost:.2f}%)",
             )
-            
 
     def fit(
         self,
@@ -594,10 +593,9 @@ class GenePlexus:
         if (self.clust_min_size != None) and (self.clust_min_size > self.min_num_pos):
             self.min_num_pos = self.clust_min_size
             logger.warning(
-                "Setting the minimum number of genes to train "
-                "a model to match the minumum allowable cluster size."
+                "Setting the minimum number of genes to train " "a model to match the minumum allowable cluster size.",
             )
-            
+
         for model_name in list(self.model_info):
             self._get_pos_and_neg_genes(model_name)
             (

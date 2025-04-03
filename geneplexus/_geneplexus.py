@@ -352,7 +352,7 @@ def _make_small_edgelist(file_loc, df_probs, species, net_type, num_nodes=50):
     df_edge = df_edge[(df_edge["Node1"].isin(top_genes)) & (df_edge["Node2"].isin(top_genes))]
     if net_type == "BioGRID":
         df_edge["Weight"] = [1.0] * df_edge.shape[0]
-    df_edge = df_edge.sort_values(by=['Weight', "Node1", "Node2"], ascending=[False, True, True])
+    df_edge = df_edge.sort_values(by=["Weight", "Node1", "Node2"], ascending=[False, True, True])
     genes_in_edge = np.union1d(df_edge["Node1"].unique(), df_edge["Node2"].unique())
     isolated_genes = np.setdiff1d(top_genes, genes_in_edge).tolist()
     isolated_genes = [str(item) for item in isolated_genes]
@@ -361,7 +361,7 @@ def _make_small_edgelist(file_loc, df_probs, species, net_type, num_nodes=50):
     replace_dict = {gene: util.mapgene(gene, Entrez_to_Symbol) for gene in genes_in_edge}
     isolated_genes_sym = [util.mapgene(gene, Entrez_to_Symbol) for gene in isolated_genes]
     df_edge_sym = df_edge.replace(to_replace=replace_dict)
-    df_edge_sym = df_edge_sym.sort_values(by=['Weight', "Node1", "Node2"], ascending=[False, True, True])
+    df_edge_sym = df_edge_sym.sort_values(by=["Weight", "Node1", "Node2"], ascending=[False, True, True])
     return df_edge, isolated_genes, df_edge_sym, isolated_genes_sym
 
 
