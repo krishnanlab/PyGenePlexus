@@ -159,6 +159,9 @@ class GenePlexus:
         self.model_info["All-Genes"].results = {}
         for apair in self.sp_gsc_pairs:
             self.model_info["All-Genes"].results[apair] = ModelResults()
+            
+        # set a clus_min_size to make sure it matching min_num_pos later
+        self.clust_min_size = None
 
     @property
     def _params(self) -> List[str]:
@@ -515,6 +518,7 @@ class GenePlexus:
         if len(clust_genes) == 0:
             logger.info(f"No clusters were added")
         else:
+            # add keys to model info
             clust_genes.sort(key=len, reverse=True)  # make biggest clusters first
             for i in range(len(clust_genes)):
                 clus_id = i + 1
@@ -523,6 +527,9 @@ class GenePlexus:
                 self.model_info[f"Cluster-{clus_id:02d}"].results = {}
                 for apair in self.sp_gsc_pairs:
                     self.model_info[f"Cluster-{clus_id:02d}"].results[apair] = ModelResults()
+            # set min cluster size to be used later
+            self.clust_min_size = clust_min_size
+            
 
     def fit(
         self,
@@ -576,8 +583,16 @@ class GenePlexus:
             raise NoPositivesError(
                 f"No positives genes were added, use function load_genes()",
             )
+        self.min_num_pos = min_num_pos
+        if (self.clust_min_size != None) and (self.clust_min_size > self.min_num_pos):
+            self.min_num_pos = self.clust_min_size
+            logger.warning(
+                "Setting the minimum number of genes to train "
+                "a model to match the minumum allowable cluster size."
+            )
+            
         for model_name in list(self.model_info):
-            self._get_pos_and_neg_genes(model_name, min_num_pos)
+            self._get_pos_and_neg_genes(model_name)
             (
                 self.model_info[model_name].mdl_weights,
                 self.model_info[model_name].avgps,
@@ -602,7 +617,7 @@ class GenePlexus:
             )
         return self.model_info
 
-    def _get_pos_and_neg_genes(self, model_name, min_num_pos):
+    def _get_pos_and_neg_genes(self, model_name):
         """Set up positive and negative splits.
 
         **The following clsss attributes are set when this function is run**
@@ -642,7 +657,7 @@ class GenePlexus:
             self.net_type,
             self.model_info[model_name].model_genes,
         )
-        if len(self.model_info[model_name].pos_genes_in_net) < min_num_pos:
+        if len(self.model_info[model_name].pos_genes_in_net) < self.min_num_pos:
             raise NoPositivesError(
                 f"There were not enough positive genes to train the model {model_name} with. "
                 f"This limit is set to {min_num_pos} and can be changed in fit().",
