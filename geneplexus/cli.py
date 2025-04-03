@@ -89,7 +89,8 @@ def parse_args() -> argparse.Namespace:
         "--sp_res",
         default="Mouse",
         metavar="",
-        help=f"Species of results data {format_choices(config.ALL_SPECIES)}",
+        help=f"Species of results data {format_choices(config.ALL_SPECIES)}. "
+        "If more than one species make comma seaprated.",
     )
 
     parser.add_argument(
@@ -105,7 +106,8 @@ def parse_args() -> argparse.Namespace:
         "--gsc_res",
         default="GO",
         metavar="",
-        help=f"Geneset collection used for model similarities. {format_choices(config.ALL_GSCS)}",
+        help=f"Geneset collection used for model similarities. {format_choices(config.ALL_GSCS)}. "
+        "If more than one gsc can be comma spearated.",
     )
 
     parser.add_argument(
@@ -178,21 +180,32 @@ def parse_args() -> argparse.Namespace:
         help="Skip making small edgelist.",
     )
 
+    parser.add_argument(
+        "--do_clustering",
+        action="store_true",
+        help="Do clustering step.",
+    )
+
     return parser.parse_args()
 
 
-def run_pipeline(gp: GenePlexus, num_nodes: int, skip_mdl_sim: bool, skip_sm_edgelist: bool):
+def run_pipeline(gp: GenePlexus, do_clustering: bool, num_nodes: int, skip_mdl_sim: bool, skip_sm_edgelist: bool):
     """Run the full GenePlexus pipeline.
 
     Args:
+        do_clustering: wehter to run the clustering step or not
         num_nodes: Number of top predicted genes to include in the induced
             subgraph.
         skip_mdl_sim: Whether or not to skip the computation of model
             similarities with GO and Mondo. This option is not yet available
             for custom networks.
+        skip_sm_edgelist: skips making small edgelist of top predictions
 
     """
-    gp.fit_and_predict()
+    if do_clustering:
+        gp.cluster_input()
+    gp.fit()
+    gp.predict()
     if not skip_mdl_sim:
         gp.make_sim_dfs()
     else:
@@ -337,6 +350,11 @@ def main():
         auto_download = True
 
     clear_data(args)
+    
+    if "," in args.sp_res:
+        args.sp_res = args.sp_res.split(",")
+    if "," in args.gsc_res:
+        args.gsc_res = args.gsc_res.split(",") 
 
     # Create geneplexus object and auto download data files
     gp = GenePlexus(
@@ -354,18 +372,16 @@ def main():
     # Load input gene list
     gp.load_genes(read_gene_list(args.input_file, args.gene_list_delimiter))
 
-    # Save config
-
     # Run pipeline and save results
-    run_pipeline(gp, args.small_edgelist_num_nodes, args.skip_mdl_sim, args.skip_sm_edgelist)
-    save_results(
-        gp,
-        normexpand(args.output_dir),
-        args.zip_output,
-        args.overwrite,
-        args.skip_mdl_sim,
-        args.skip_sm_edgelist,
-    )
+    run_pipeline(gp, args.do_clustering, args.small_edgelist_num_nodes, args.skip_mdl_sim, args.skip_sm_edgelist)
+    # save_results(
+    #     gp,
+    #     normexpand(args.output_dir),
+    #     args.zip_output,
+    #     args.overwrite,
+    #     args.skip_mdl_sim,
+    #     args.skip_sm_edgelist,
+    # )
 
 
 if __name__ == "__main__":
