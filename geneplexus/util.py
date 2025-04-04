@@ -1,5 +1,6 @@
 """Utilities including file and path handling."""
 import functools
+import joblib
 import json
 import os
 import os.path as osp
@@ -14,6 +15,7 @@ from typing import Optional
 
 import networkx as nx
 import numpy as np
+import pandas as pd
 
 from . import config
 from ._config import logger
@@ -513,3 +515,167 @@ def cluster_louvain(
             elif len(aclus) > clust_max_size:
                 large_clusters.append(list(aclus))
     return final_clusters, large_clusters
+    
+
+def save_results(gp, outdir, zip_output, overwrite):
+    """Save everything in the GenePlexus class.
+
+    Args:
+        outdir: Output directory.
+        zip_output: Whether or not to zip the output directory into a zip file.
+        overwrite: Whether or not to overwrite existing results.
+
+    """
+    outdir = suffix_dir(outdir, overwrite=overwrite)
+    if zip_output:
+        zip_outpath = suffix_zip(f"{outdir}.zip", overwrite=overwrite)
+    print(outdir)
+    print(zip_outpath)
+    _save_results(gp, outdir)
+    # df_to_tsv(gp.df_convert_out, outdir, "df_convert_out.tsv")
+    # np.savetxt(osp.join(outdir, "pos_genes_in_net.txt"), gp.pos_genes_in_net, fmt="%s")
+    # np.savetxt(osp.join(outdir, "negative_genes.txt"), gp.negative_genes, fmt="%s")
+    # np.savetxt(osp.join(outdir, "net_genes.txt"), gp.net_genes, fmt="%s")
+    # with open(osp.join(outdir, "neutral_gene_info.json"), "w") as f:
+    #     json.dump(gp.neutral_gene_info, f)
+    # np.savetxt(osp.join(outdir, "avgps.txt"), gp.avgps, fmt="%.18f")
+    # np.savetxt(osp.join(outdir, "mdl_weights.txt"), gp.mdl_weights, fmt="%.18f")
+    # df_to_tsv(gp.df_probs, outdir, "df_probs.tsv")
+    # if not skip_mdl_sim:
+    #     df_to_tsv(gp.df_sim, outdir, "df_sim.tsv")
+    # if not skip_mdl_sim:
+    #     df_to_tsv(gp.df_edge, outdir, "df_edge.tsv")
+    #     df_to_tsv(gp.df_edge_sym, outdir, "df_edge_sym.tsv")
+    #     np.savetxt(osp.join(outdir, "isolated_genes.txt"), gp.isolated_genes, fmt="%s")
+    #     np.savetxt(osp.join(outdir, "isolated_genes_sym.txt"), gp.isolated_genes_sym, fmt="%s")
+    # df_to_tsv(gp.df_convert_out_subset, outdir, "df_convert_out_subset.tsv")
+    #
+    # # Dump config, close file handler and move run log to result directory
+    # gp.dump_config(outdir)
+    # logger.removeHandler(FILE_HANDLER)
+    # FILE_HANDLER.flush()
+    # FILE_HANDLER.close()
+    # os.close(TMP_LOG_FP)  # https://stackoverflow.com/a/60357401
+    # shutil.move(TMP_LOG_PATH, osp.join(outdir, "run.log"))
+    #
+    # # Optionally zip the result directory
+    # if zip_output:
+    #     outpath = pathlib.Path(outdir)
+    #     logger.info("Zipping output files")
+    #     shutil.make_archive(zip_outpath[:-4], "zip", outpath.parent, outpath.name)
+    #     shutil.rmtree(outdir)
+    #     logger.info(f"Removing temporary directory {outdir}")
+    #     logger.info(f"Done! Results saved to {zip_outpath}")
+    # else:
+    #     logger.info(f"Done! Results saved to {outdir}")
+
+
+def suffix_dir(path, idx=0, overwrite=False):
+    """Add int suffix to dir name if nonempty dir existed."""
+    new_path = normexpand(f"{path}_{idx}" if idx > 0 else path)
+    if os.listdir(new_path):
+        if overwrite:
+            logger.warning(f"Output directory exits {path}, overwriting.")
+            shutil.rmtree(new_path)
+            os.makedirs(new_path)
+        else:
+            new_path = suffix_dir(path, idx=idx + 1)
+    elif path != new_path:
+        logger.warning(f"Output directory exists {path}, redirecting to {new_path}")
+    return new_path
+
+
+def suffix_zip(path, idx=0, overwrite=False):
+    """Add int suffix to file name if file existed."""
+    new_path = f"_{idx}".join(osp.splitext(path)) if idx > 0 else path
+    if osp.isfile(new_path):
+        if overwrite:
+            logger.warning(f"Output zip file exits {path}, overwriting.")
+            os.remove(new_path)
+        else:
+            new_path = suffix_fn(path, idx=idx + 1)
+    elif path != new_path:
+        logger.warning(f"Output zip file exists {path}, redirecting to {new_path}")
+    return new_path
+    
+def _save_results(gp, outdir):
+    all_models = list(gp.model_info)
+    all_results = list(gp.model_info["All-Genes"].results)
+    save_top_level(gp, outdir)
+    for amodel in all_models:
+        model_path = osp.join(outdir,amodel)
+        os.makedirs(model_path)
+        save_model_level(gp, model_path, amodel)
+        for aresult in all_results:
+            result_path = osp.join(model_path, aresult)
+            os.makedirs(result_path)
+            save_result_level(gp, result_path, amodel, aresult)
+    
+def save_top_level(gp, outdir):
+    top_level_dict = gp.__dict__
+    # save cinfig json
+    keys_to_tsv_save = ["df_convert_out", "df_convert_out_subset"]
+    keys_to_remove = ["model_info"] + keys_to_tsv_save
+    config_dict = {k: v for k, v in top_level_dict.items() if k not in keys_to_remove}
+    save_json_from_dict(outdir, "top_level_config.json", config_dict)
+    keys_to_tsv_save = set(keys_to_tsv_save).intersection(list(top_level_dict))
+    if len(keys_to_tsv_save) > 0:
+        for item in keys_to_tsv_save:
+            fn_tmp = f"{item}.tsv"
+            df_to_tsv(top_level_dict[item], outdir, fn_tmp)
+            
+def save_model_level(gp, model_path, model_name):
+    model_level_dict = gp.model_info[model_name].__dict__
+    # save cinfig json
+    keys_to_remove = ["results", "clf"]
+    config_dict = {k: v for k, v in model_level_dict.items() if k not in keys_to_remove}
+    config_dict = convert_umpy_in_config(config_dict)
+    save_json_from_dict(model_path, "model_level_config.json", config_dict)
+    joblib.dump(model_level_dict["clf"], osp.join(model_path, "clf.joblib"))
+    
+def save_result_level(gp, result_path, model_name, result_name):
+    result_level_dict = gp.model_info[model_name].results[result_name].__dict__
+    keys_to_tsv_save = set(["df_probs", "df_sim", "df_edge", "df_edge_sym"]).intersection(result_level_dict)
+    if len(keys_to_tsv_save) > 0:
+        for item in keys_to_tsv_save:
+            fn_tmp = f"{item}.tsv"
+            df_to_tsv(result_level_dict[item], result_path, fn_tmp)
+    keys_to_json_save = set(["weights_dict"]).intersection(result_level_dict)
+    if len(keys_to_json_save) > 0:
+        for item in keys_to_json_save:
+            data_dict_tmp = result_level_dict[item]
+            fn_tmp = f"{item}.json"
+            save_json_from_dict(result_path, fn_tmp, data_dict_tmp)
+    keys_to_nptxt_save = set(["probs", "isolated_genes", "isolated_genes_sym"]).intersection(result_level_dict)
+    if len(keys_to_nptxt_save) > 0:
+        for item in keys_to_nptxt_save:
+            nptxt_object = result_level_dict[item]
+            fn_tmp = f"{item}.txt"
+            save_1d_to_nptxt(result_path, fn_tmp, nptxt_object)
+        
+    
+def df_to_tsv(df: pd.DataFrame, root: str, name: str):
+    """Save a dataframe as a tsv file.
+
+    Args:
+        df: DataFrame to be saved.
+        root: Output directory,
+        name: Name of the file to be saved.
+
+    """
+    df.to_csv(osp.join(root, name), sep="\t", index=False)
+    
+def convert_umpy_in_config(config_dict):
+    for akey in list(config_dict):
+        if isinstance(config_dict[akey], np.ndarray):
+            config_dict[akey] = config_dict[akey].tolist()
+    # was true for pos_genes_in_net, genes_not_in_net, net_genes, negative_genes, mdl_weights
+    return config_dict
+    
+    
+def save_json_from_dict(outdir, filename, data_dict):
+    with open(osp.join(outdir, filename), "w") as f:
+        json.dump(data_dict, f, indent=4)
+        
+def save_1d_to_nptxt(outdir, fn_tmp, OneD_object):
+    np.savetxt(osp.join(outdir, fn_tmp), OneD_object, fmt="%s")
