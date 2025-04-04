@@ -349,12 +349,12 @@ def main():
     else:
         auto_download = True
 
-    clear_data(args) # data cleared if args.clear_data is true
-    
+    clear_data(args)  # data cleared if args.clear_data is true
+
     if "," in args.sp_res:
         args.sp_res = args.sp_res.split(",")
     if "," in args.gsc_res:
-        args.gsc_res = args.gsc_res.split(",") 
+        args.gsc_res = args.gsc_res.split(",")
 
     # Create geneplexus object and auto download data files
     gp = GenePlexus(

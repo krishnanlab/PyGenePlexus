@@ -885,7 +885,7 @@ class GenePlexus:
             self.net_type,
         )
         return self.df_convert_out_subset, self.positive_genes
-        
+
     def save_class(self, outdir: str, zip_output: bool = False, overwrite: bool = False):
         """Save all parts of the class.
 
@@ -895,6 +895,5 @@ class GenePlexus:
             overwrite: wether to overwrite data or make new directory with incremented index
 
         """
-        
+
         util.save_results(self, outdir, zip_output, overwrite)
-        
