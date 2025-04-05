@@ -644,12 +644,12 @@ def save_result_level(gp, result_path, model_name, result_name):
         for item in keys_to_tsv_save:
             fn_tmp = f"{item}.tsv"
             df_to_tsv(result_level_dict[item], result_path, fn_tmp)
-    keys_to_json_save = {"weights_dict"}.intersection(result_level_dict)
-    if len(keys_to_json_save) > 0:
-        for item in keys_to_json_save:
-            data_dict_tmp = result_level_dict[item]
-            fn_tmp = f"{item}.json"
-            save_json_from_dict(result_path, fn_tmp, data_dict_tmp)
+    # keys_to_json_save = {"weights_dict"}.intersection(result_level_dict)
+    # if len(keys_to_json_save) > 0:
+    #     for item in keys_to_json_save:
+    #         data_dict_tmp = result_level_dict[item]
+    #         fn_tmp = f"{item}.json"
+    #         save_json_from_dict(result_path, fn_tmp, data_dict_tmp)
     keys_to_nptxt_save = {"probs", "isolated_genes", "isolated_genes_sym"}.intersection(result_level_dict)
     if len(keys_to_nptxt_save) > 0:
         for item in keys_to_nptxt_save:
