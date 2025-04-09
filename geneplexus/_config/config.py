@@ -52,7 +52,7 @@ VALID_ID_CONVERSION: Set[Tuple[ID_SRC_TYPE, ID_DST_TYPE]] = {
 NET_TYPE = Literal["BioGRID", "STRING", "IMP"]
 FEATURE_TYPE = Literal["SixSpeciesN2V"]
 GSC_TYPE = Literal["GO", "Monarch", "Mondo", "Combined"]
-SPECIES_TYPE = Literal["Human", "Mouse", "Fly", "Worm", "Fish", "Yeast"]
+SPECIES_TYPE = Literal["Human", "Mouse", "Fly", "Worm", "Zebrafish", "Yeast"]
 
 NET_SELECTION_TYPE = Union[Literal["All"], NET_TYPE, List[NET_TYPE]]
 FEATURE_SELECTION_TYPE = Union[Literal["All"], FEATURE_TYPE, List[FEATURE_TYPE]]
