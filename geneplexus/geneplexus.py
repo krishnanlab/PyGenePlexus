@@ -143,7 +143,7 @@ class GenePlexus:
             self.gsc_res_original = self.gsc_res
             self.gsc_res = gsc_res_updated
 
-        # remove duplicate sp-gsc comboms if any for results
+        # remove duplicate sp-gsc combos if any for results
         sp_res_nodup, gsc_res_nodup, gsc_res_original_nodup = util.remove_duplicates(
             self.sp_res,
             self.gsc_res,
@@ -514,6 +514,12 @@ class GenePlexus:
             clust_res,
             clust_weighted,
         )
+        # set params to self for saving later
+        self.clust_min_size = clust_min_size
+        self.clust_max_size = clust_max_size
+        self.clust_max_tries = clust_max_tries
+        self.clust_res = clust_res
+        self.clust_weighted = clust_weighted
         # add keys to model_info
         if len(clust_genes) == 0:
             logger.info(f"No clusters were added")
@@ -527,8 +533,7 @@ class GenePlexus:
                 self.model_info[f"Cluster-{clus_id:02d}"].results = {}
                 for apair in self.sp_gsc_pairs:
                     self.model_info[f"Cluster-{clus_id:02d}"].results[apair] = ModelResults()
-            # set min cluster size to be used later
-            self.clust_min_size = clust_min_size
+            # generate info about the clusters
             unique_clus_genes = list({item for sublist in clust_genes for item in sublist})
             num_genes_lost = len(self.model_info["All-Genes"].model_genes) - len(unique_clus_genes)
             per_genes_lost = 100 - ((len(unique_clus_genes) / len(self.model_info["All-Genes"].model_genes)) * 100)
@@ -578,6 +583,19 @@ class GenePlexus:
         :attr:`GenePlexus.avgps` (1D array of floats)
             Cross validation results. Performance is measured using
             log2(auprc/prior).
+        :attr:`df_convert_out_subset` (DataFrame)
+            A table with the following 4 columns:
+
+            .. list-table::
+
+               * - Original ID
+                 - User supplied Gene ID used to train the model
+               * - Entrez ID
+                 - Entrez Gene ID
+               * - Gene Name
+                 - Name Gene ID
+               * - In {Network}?
+                 - Y or N if the gene was found in the {Network} used to train the model
 
         Note:
             If setting scale to ``True`` then comparison of user trained model
@@ -593,7 +611,7 @@ class GenePlexus:
         if (self.clust_min_size != None) and (self.clust_min_size > self.min_num_pos):
             self.min_num_pos = self.clust_min_size
             logger.warning(
-                "Setting the minimum number of genes to train " "a model to match the minumum allowable cluster size.",
+                "Setting the minimum number of genes to train a model to match the minumum allowable cluster size.",
             )
 
         for model_name in list(self.model_info):
@@ -620,6 +638,21 @@ class GenePlexus:
                 cross_validate=cross_validate,
                 scale=scale,
             )
+
+            # make df for genes used in training
+            self.model_info[model_name].df_convert_out_for_model = _geneplexus._alter_validation_df(
+                self.df_convert_out,
+                self.model_info[model_name].pos_genes_in_net,
+                self.net_type,
+            )
+        
+        # set function arguments for saving later
+        self.logreg_kwargs = logreg_kwargs
+        self.min_num_pos_cv = min_num_pos_cv
+        self.num_folds = num_folds
+        self.null_val = null_val
+        self.random_state = random_state
+        self.cross_validate = cross_validate
         return self.model_info
 
     def _get_pos_and_neg_genes(self, model_name):
@@ -692,6 +725,7 @@ class GenePlexus:
             self.model_info[model_name].neutral_gene_info,
         )
 
+
     def predict(self):
         """Predict gene scores from fit model.
 
@@ -733,10 +767,6 @@ class GenePlexus:
             probabilities may not be well calibrated, however the resulting rankings
             are very meaningful as evaluated with log2(auPRC/prior).
 
-        :attr:`GenePlexus.probs` (1D array of floats)
-            Genome-wide gene prediction scores. A high value indicates the
-            relevance of the gene to the input gene list.
-
         """
         for model_name in list(self.model_info):
             for res_combo in list(self.model_info[model_name].results):
@@ -758,7 +788,6 @@ class GenePlexus:
                     self.model_info[model_name].pos_genes_in_net,
                     self.model_info[model_name].negative_genes,
                 )
-                self.model_info[model_name].results[res_combo].probs = probs
                 self.model_info[model_name].results[res_combo].df_probs = df_probs
         return self.model_info
 
@@ -853,38 +882,10 @@ class GenePlexus:
                 self.model_info[model_name].results[res_combo].isolated_genes = isolated_genes
                 self.model_info[model_name].results[res_combo].df_edge_sym = df_edge_sym
                 self.model_info[model_name].results[res_combo].isolated_genes_sym = isolated_genes_sym
+        # set value for saving later
+        self.num_nodes = num_nodes
         return self.model_info
 
-    def alter_validation_df(self):
-        """Make table about presence of input genes in the network used durning training.
-
-        **The following clsss attributes are set when this function is run**
-
-        :attr:`df_convert_out_subset` (DataFrame)
-            A table with the following 6 columns:
-
-            .. list-table::
-
-               * - Original ID
-                 - User supplied Gene ID
-               * - Entrez ID
-                 - Entrez Gene ID
-               * - Gene Name
-                 - Name Gene ID
-               * - In {Network}?
-                 - Y or N if the gene was found in the {Network} used to train the model
-
-        :attr:`positive_genes` (List[str])
-            List of genes used as positives when training the model
-
-
-        """
-        self.df_convert_out_subset, self.positive_genes = _geneplexus._alter_validation_df(
-            self.df_convert_out,
-            self.table_summary,
-            self.net_type,
-        )
-        return self.df_convert_out_subset, self.positive_genes
 
     def save_class(self, outdir: str, zip_output: bool = False, overwrite: bool = False):
         """Save all parts of the class.

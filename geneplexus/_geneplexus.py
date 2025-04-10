@@ -365,8 +365,7 @@ def _make_small_edgelist(file_loc, df_probs, species, net_type, num_nodes=50):
     return df_edge, isolated_genes, df_edge_sym, isolated_genes_sym
 
 
-def _alter_validation_df(df_convert_out, table_summary, net_type):
+def _alter_validation_df(df_convert_out, pos_genes_for_model, net_type):
     df_convert_out_subset = df_convert_out[["Original ID", "Entrez ID", "Gene Name", f"In {net_type}?"]]
-    network = next((item for item in table_summary if item["Network"] == net_type), None)
-    positive_genes = network.get("PositiveGenes")
-    return df_convert_out_subset, positive_genes
+    df_convert_out_subset = df_convert_out_subset[df_convert_out_subset["Entrez ID"].isin(pos_genes_for_model)]
+    return df_convert_out_subset

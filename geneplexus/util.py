@@ -616,7 +616,7 @@ def _save_results(gp, outdir):
 def save_top_level(gp, outdir):
     top_level_dict = gp.__dict__
     # save cinfig json
-    keys_to_tsv_save = ["df_convert_out", "df_convert_out_subset"]
+    keys_to_tsv_save = ["df_convert_out"]
     keys_to_remove = ["model_info"] + keys_to_tsv_save
     config_dict = {k: v for k, v in top_level_dict.items() if k not in keys_to_remove}
     save_json_from_dict(outdir, "top_level_config.json", config_dict)
@@ -630,11 +630,16 @@ def save_top_level(gp, outdir):
 def save_model_level(gp, model_path, model_name):
     model_level_dict = gp.model_info[model_name].__dict__
     # save cinfig json
-    keys_to_remove = ["results", "clf"]
+    keys_to_tsv_save = ["df_convert_out_for_model"]
+    keys_to_remove = ["results", "clf"] + keys_to_tsv_save 
     config_dict = {k: v for k, v in model_level_dict.items() if k not in keys_to_remove}
-    config_dict = convert_umpy_in_config(config_dict)
+    config_dict = convert_numpy_in_config(config_dict)
     save_json_from_dict(model_path, "model_level_config.json", config_dict)
     joblib.dump(model_level_dict["clf"], osp.join(model_path, "clf.joblib"))
+    if len(keys_to_tsv_save) > 0:
+        for item in keys_to_tsv_save:
+            fn_tmp = f"{item}.tsv"
+            df_to_tsv(model_level_dict[item], model_path, fn_tmp)
 
 
 def save_result_level(gp, result_path, model_name, result_name):
@@ -650,7 +655,7 @@ def save_result_level(gp, result_path, model_name, result_name):
     #         data_dict_tmp = result_level_dict[item]
     #         fn_tmp = f"{item}.json"
     #         save_json_from_dict(result_path, fn_tmp, data_dict_tmp)
-    keys_to_nptxt_save = {"probs", "isolated_genes", "isolated_genes_sym"}.intersection(result_level_dict)
+    keys_to_nptxt_save = {"isolated_genes", "isolated_genes_sym"}.intersection(result_level_dict)
     if len(keys_to_nptxt_save) > 0:
         for item in keys_to_nptxt_save:
             nptxt_object = result_level_dict[item]
@@ -670,7 +675,7 @@ def df_to_tsv(df: pd.DataFrame, root: str, name: str):
     df.to_csv(osp.join(root, name), sep="\t", index=False)
 
 
-def convert_umpy_in_config(config_dict):
+def convert_numpy_in_config(config_dict):
     for akey in list(config_dict):
         if isinstance(config_dict[akey], np.ndarray):
             config_dict[akey] = config_dict[akey].tolist()
