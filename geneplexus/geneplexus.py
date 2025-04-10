@@ -504,6 +504,7 @@ class GenePlexus:
             unique_clus_genes = list({item for sublist in clust_genes for item in sublist})
             num_genes_lost = len(self.model_info["All-Genes"].model_genes) - len(unique_clus_genes)
             per_genes_lost = 100 - ((len(unique_clus_genes) / len(self.model_info["All-Genes"].model_genes)) * 100)
+            self.genes_not_clustered = np.setdiff1d(self.model_info["All-Genes"].model_genes, unique_clus_genes).tolist()
             logger.info(
                 f"The number of clusters added is {len(clust_genes)}. "
                 f"The number(%) of genes lost to clustering is {num_genes_lost} ({per_genes_lost:.2f}%)",
