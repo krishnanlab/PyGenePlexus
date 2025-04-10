@@ -185,11 +185,33 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Do clustering step.",
     )
+    
+    parser.add_argument(
+       "-st",
+        "--save_type",
+        default="all",
+        metavar="",
+        type=str,
+        help="Which files to save.",
+    )
 
     return parser.parse_args()
 
 
-def run_pipeline(gp: GenePlexus, do_clustering: bool, num_nodes: int, skip_mdl_sim: bool, skip_sm_edgelist: bool):
+
+def run_pipeline(
+    gp: GenePlexus,
+    do_clustering: bool,
+    num_nodes: int,
+    skip_mdl_sim: bool,
+    skip_sm_edgelist: bool,
+    output_dir: str,
+    save_type: str,
+    zip_output: bool,
+    overwrite: bool
+    
+    
+):
     """Run the full GenePlexus pipeline.
 
     Args:
@@ -214,19 +236,24 @@ def run_pipeline(gp: GenePlexus, do_clustering: bool, num_nodes: int, skip_mdl_s
         gp.make_small_edgelist(num_nodes=num_nodes)
     else:
         logger.info("Skipping making small edgelist.")
-    gp.alter_validation_df()
+    gp.save_class(
+        output_dir,
+        save_type=save_type,
+        zip_output=zip_output,
+        overwrite=overwrite
+    )
 
 
-def df_to_tsv(df: pd.DataFrame, root: str, name: str):
-    """Save a dataframe as a tsv file.
-
-    Args:
-        df: DataFrame to be saved.
-        root: Output directory,
-        name: Name of the file to be saved.
-
-    """
-    df.to_csv(osp.join(root, name), sep="\t", index=False)
+# def df_to_tsv(df: pd.DataFrame, root: str, name: str):
+#     """Save a dataframe as a tsv file.
+#
+#     Args:
+#         df: DataFrame to be saved.
+#         root: Output directory,
+#         name: Name of the file to be saved.
+#
+#     """
+#     df.to_csv(osp.join(root, name), sep="\t", index=False)
 
 
 # def save_results(gp, outdir, zip_output, overwrite, skip_mdl_sim, skip_sm_edgelist):
@@ -373,7 +400,17 @@ def main():
     gp.load_genes(read_gene_list(args.input_file, args.gene_list_delimiter))
 
     # Run pipeline and save results
-    run_pipeline(gp, args.do_clustering, args.small_edgelist_num_nodes, args.skip_mdl_sim, args.skip_sm_edgelist)
+    run_pipeline(
+        gp,
+        args.do_clustering,
+        args.small_edgelist_num_nodes, 
+        args.skip_mdl_sim, 
+        args.skip_sm_edgelist,
+        args.output_dir,
+        args.save_type,
+        args.zip_output,
+        args.overwrite,
+    )
     # save_results(
     #     gp,
     #     normexpand(args.output_dir),
