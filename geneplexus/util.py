@@ -2,7 +2,9 @@
 import functools
 import json
 import os
+import pathlib
 import os.path as osp
+import shutil
 import warnings
 from threading import Thread
 from typing import Any
@@ -530,6 +532,17 @@ def save_results(gp, outdir, save_type, zip_output, overwrite):
     if zip_output:
         zip_outpath = suffix_zip(f"{outdir}.zip", overwrite=overwrite)
     _save_results(gp, outdir, save_type)
+    # Optionally zip the result directory
+    if zip_output:
+        outpath = pathlib.Path(outdir)
+        logger.info("Zipping output files")
+        shutil.make_archive(zip_outpath[:-4], "zip", outpath.parent, outpath.name)
+        shutil.rmtree(outdir)
+        logger.info(f"Removing temporary directory {outdir}")
+        logger.info(f"Done! Results saved to {zip_outpath}")
+    else:
+        logger.info(f"Done! Results saved to {outdir}")
+    
 
 
 def suffix_dir(path, idx=0, overwrite=False):
