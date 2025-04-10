@@ -517,7 +517,7 @@ def cluster_louvain(
     return final_clusters, large_clusters
 
 
-def save_results(gp, outdir, zip_output, overwrite):
+def save_results(gp, outdir, save_type, zip_output, overwrite):
     """Save everything in the GenePlexus class.
 
     Args:
@@ -529,45 +529,7 @@ def save_results(gp, outdir, zip_output, overwrite):
     outdir = suffix_dir(outdir, overwrite=overwrite)
     if zip_output:
         zip_outpath = suffix_zip(f"{outdir}.zip", overwrite=overwrite)
-    print(outdir)
-    print(zip_outpath)
-    _save_results(gp, outdir)
-    # df_to_tsv(gp.df_convert_out, outdir, "df_convert_out.tsv")
-    # np.savetxt(osp.join(outdir, "pos_genes_in_net.txt"), gp.pos_genes_in_net, fmt="%s")
-    # np.savetxt(osp.join(outdir, "negative_genes.txt"), gp.negative_genes, fmt="%s")
-    # np.savetxt(osp.join(outdir, "net_genes.txt"), gp.net_genes, fmt="%s")
-    # with open(osp.join(outdir, "neutral_gene_info.json"), "w") as f:
-    #     json.dump(gp.neutral_gene_info, f)
-    # np.savetxt(osp.join(outdir, "avgps.txt"), gp.avgps, fmt="%.18f")
-    # np.savetxt(osp.join(outdir, "mdl_weights.txt"), gp.mdl_weights, fmt="%.18f")
-    # df_to_tsv(gp.df_probs, outdir, "df_probs.tsv")
-    # if not skip_mdl_sim:
-    #     df_to_tsv(gp.df_sim, outdir, "df_sim.tsv")
-    # if not skip_mdl_sim:
-    #     df_to_tsv(gp.df_edge, outdir, "df_edge.tsv")
-    #     df_to_tsv(gp.df_edge_sym, outdir, "df_edge_sym.tsv")
-    #     np.savetxt(osp.join(outdir, "isolated_genes.txt"), gp.isolated_genes, fmt="%s")
-    #     np.savetxt(osp.join(outdir, "isolated_genes_sym.txt"), gp.isolated_genes_sym, fmt="%s")
-    # df_to_tsv(gp.df_convert_out_subset, outdir, "df_convert_out_subset.tsv")
-    #
-    # # Dump config, close file handler and move run log to result directory
-    # gp.dump_config(outdir)
-    # logger.removeHandler(FILE_HANDLER)
-    # FILE_HANDLER.flush()
-    # FILE_HANDLER.close()
-    # os.close(TMP_LOG_FP)  # https://stackoverflow.com/a/60357401
-    # shutil.move(TMP_LOG_PATH, osp.join(outdir, "run.log"))
-    #
-    # # Optionally zip the result directory
-    # if zip_output:
-    #     outpath = pathlib.Path(outdir)
-    #     logger.info("Zipping output files")
-    #     shutil.make_archive(zip_outpath[:-4], "zip", outpath.parent, outpath.name)
-    #     shutil.rmtree(outdir)
-    #     logger.info(f"Removing temporary directory {outdir}")
-    #     logger.info(f"Done! Results saved to {zip_outpath}")
-    # else:
-    #     logger.info(f"Done! Results saved to {outdir}")
+    _save_results(gp, outdir, save_type)
 
 
 def suffix_dir(path, idx=0, overwrite=False):
@@ -599,18 +561,21 @@ def suffix_zip(path, idx=0, overwrite=False):
     return new_path
 
 
-def _save_results(gp, outdir):
+def _save_results(gp, outdir, save_type):
     all_models = list(gp.model_info)
     all_results = list(gp.model_info["All-Genes"].results)
-    save_top_level(gp, outdir)
+    if save_type == "all":
+        save_top_level(gp, outdir)
     for amodel in all_models:
         model_path = osp.join(outdir, amodel)
         os.makedirs(model_path)
-        save_model_level(gp, model_path, amodel)
+        if save_type == "all":
+            save_model_level(gp, model_path, amodel)
         for aresult in all_results:
             result_path = osp.join(model_path, aresult)
             os.makedirs(result_path)
-            save_result_level(gp, result_path, amodel, aresult)
+            if save_type in ["all", "results_only"]:
+                save_result_level(gp, result_path, amodel, aresult)
 
 
 def save_top_level(gp, outdir):

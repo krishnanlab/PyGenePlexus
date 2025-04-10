@@ -844,7 +844,6 @@ class GenePlexus:
                     self.features,
                 )
                 self.model_info[model_name].results[res_combo].df_sim = df_sim
-                self.model_info[model_name].results[res_combo].weights_dict = weights_dict
         return self.model_info
 
     def make_small_edgelist(self, num_nodes: int = 50):
@@ -887,14 +886,15 @@ class GenePlexus:
         return self.model_info
 
 
-    def save_class(self, outdir: str, zip_output: bool = False, overwrite: bool = False):
+    def save_class(self, outdir: str, save_type: str = "all", zip_output: bool = False, overwrite: bool = False):
         """Save all parts of the class.
 
         Args:
+            save_type: which files to save (options all or results_only)
             outdir: Path to save the files to.
             zip_output: wehter or not to compress all the results into one zip file
             overwrite: wether to overwrite data or make new directory with incremented index
 
         """
 
-        util.save_results(self, outdir, zip_output, overwrite)
+        util.save_results(self, outdir, save_type, zip_output, overwrite)
