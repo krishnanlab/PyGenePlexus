@@ -163,39 +163,6 @@ class GenePlexus:
         # set a clus_min_size to make sure it matching min_num_pos later
         self.clust_min_size = None
 
-    @property
-    def _params(self) -> List[str]:
-        return [
-            "file_loc",
-            "net_type",
-            "features",
-            "sp_trn",
-            "sp_res",
-            "gsc_trn",
-            "gsc_res",
-            "auto_download",
-            "log_level",
-            "input_genes",
-            "input_negatives",
-        ]
-
-    def dump_config(self, outdir: str):
-        """Save parameters configuration to a config file,
-        used with CLI.
-        """
-        params_dict = {i: getattr(self, i) for i in self._params}
-        if params_dict["gsc_trn"] == "Combined":
-            params_dict["gsc_trn"] = config.COMBINED_CONTEXTS[params_dict["sp_trn"]]
-        if params_dict["gsc_res"] == "Combined":
-            params_dict["gsc_res"] = config.COMBINED_CONTEXTS[params_dict["sp_res"]]
-        if hasattr(self, "gsc_trn_original") and (self.gsc_trn_original == "Combined"):
-            params_dict["gsc_trn"] = config.COMBINED_CONTEXTS[params_dict["sp_trn"]]
-        if hasattr(self, "gsc_res_original") and (self.gsc_res_original == "Combined"):
-            params_dict["gsc_res"] = config.COMBINED_CONTEXTS[params_dict["sp_res"]]
-        path = osp.join(outdir, "config.yaml")
-        with open(path, "w") as f:
-            yaml.dump(params_dict, f)
-            logger.info(f"Config saved to {path}")
 
     @property
     def file_loc(self) -> str:
