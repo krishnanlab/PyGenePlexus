@@ -163,7 +163,6 @@ class GenePlexus:
         # set a clus_min_size to make sure it matching min_num_pos later
         self.clust_min_size = None
 
-
     @property
     def file_loc(self) -> str:
         """File location.
@@ -504,7 +503,9 @@ class GenePlexus:
             unique_clus_genes = list({item for sublist in clust_genes for item in sublist})
             num_genes_lost = len(self.model_info["All-Genes"].model_genes) - len(unique_clus_genes)
             per_genes_lost = 100 - ((len(unique_clus_genes) / len(self.model_info["All-Genes"].model_genes)) * 100)
-            self.genes_not_clustered = np.setdiff1d(self.model_info["All-Genes"].model_genes, unique_clus_genes).tolist()
+            self.genes_not_clustered = np.setdiff1d(
+                self.model_info["All-Genes"].model_genes, unique_clus_genes
+            ).tolist()
             logger.info(
                 f"The number of clusters added is {len(clust_genes)}. "
                 f"The number(%) of genes lost to clustering is {num_genes_lost} ({per_genes_lost:.2f}%)",
@@ -613,7 +614,7 @@ class GenePlexus:
                 self.model_info[model_name].pos_genes_in_net,
                 self.net_type,
             )
-        
+
         # set function arguments for saving later
         self.logreg_kwargs = logreg_kwargs
         self.min_num_pos_cv = min_num_pos_cv
@@ -692,7 +693,6 @@ class GenePlexus:
             self.model_info[model_name].net_genes,
             self.model_info[model_name].neutral_gene_info,
         )
-
 
     def predict(self):
         """Predict gene scores from fit model.
@@ -852,7 +852,6 @@ class GenePlexus:
         # set value for saving later
         self.num_nodes = num_nodes
         return self.model_info
-
 
     def save_class(self, outdir: str, save_type: str = "all", zip_output: bool = False, overwrite: bool = False):
         """Save all parts of the class.

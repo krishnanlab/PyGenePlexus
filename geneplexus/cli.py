@@ -185,9 +185,9 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Do clustering step.",
     )
-    
+
     parser.add_argument(
-       "-st",
+        "-st",
         "--save_type",
         default="all",
         metavar="",
@@ -196,7 +196,6 @@ def parse_args() -> argparse.Namespace:
     )
 
     return parser.parse_args()
-
 
 
 def run_pipeline(
@@ -208,9 +207,7 @@ def run_pipeline(
     output_dir: str,
     save_type: str,
     zip_output: bool,
-    overwrite: bool
-    
-    
+    overwrite: bool,
 ):
     """Run the full GenePlexus pipeline.
 
@@ -240,7 +237,7 @@ def run_pipeline(
         output_dir,
         save_type=save_type,
         zip_output=zip_output,
-        overwrite=overwrite
+        overwrite=overwrite,
     )
 
 
@@ -403,8 +400,8 @@ def main():
     run_pipeline(
         gp,
         args.do_clustering,
-        args.small_edgelist_num_nodes, 
-        args.skip_mdl_sim, 
+        args.small_edgelist_num_nodes,
+        args.skip_mdl_sim,
         args.skip_sm_edgelist,
         args.output_dir,
         args.save_type,

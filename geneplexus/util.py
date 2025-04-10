@@ -2,8 +2,8 @@
 import functools
 import json
 import os
-import pathlib
 import os.path as osp
+import pathlib
 import shutil
 import warnings
 from threading import Thread
@@ -542,7 +542,6 @@ def save_results(gp, outdir, save_type, zip_output, overwrite):
         logger.info(f"Done! Results saved to {zip_outpath}")
     else:
         logger.info(f"Done! Results saved to {outdir}")
-    
 
 
 def suffix_dir(path, idx=0, overwrite=False):
@@ -609,7 +608,7 @@ def save_model_level(gp, model_path, model_name):
     model_level_dict = gp.model_info[model_name].__dict__
     # save cinfig json
     keys_to_tsv_save = ["df_convert_out_for_model"]
-    keys_to_remove = ["results", "clf"] + keys_to_tsv_save 
+    keys_to_remove = ["results", "clf"] + keys_to_tsv_save
     config_dict = {k: v for k, v in model_level_dict.items() if k not in keys_to_remove}
     config_dict = convert_numpy_in_config(config_dict)
     save_json_from_dict(model_path, "model_level_config.json", config_dict)
