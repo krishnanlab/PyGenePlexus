@@ -1,8 +1,8 @@
 """GenePlexus API."""
 import os
 import os.path as osp
-import warnings
 import tempfile
+import warnings
 from typing import Any
 from typing import Dict
 from typing import List
@@ -105,7 +105,6 @@ class GenePlexus:
         self.input_genes: List[str] = input_genes
         self.input_negatives: List[str] = input_negatives
 
-        
         if self.auto_download and self._is_custom:
             warnings.warn(
                 "\nSkipping auto download for custom files. Unset auto_download option to suppress this message.",
@@ -519,7 +518,8 @@ class GenePlexus:
             num_genes_lost = len(self.model_info["All-Genes"].model_genes) - len(unique_clus_genes)
             per_genes_lost = 100 - ((len(unique_clus_genes) / len(self.model_info["All-Genes"].model_genes)) * 100)
             self.genes_not_clustered = np.setdiff1d(
-                self.model_info["All-Genes"].model_genes, unique_clus_genes
+                self.model_info["All-Genes"].model_genes,
+                unique_clus_genes,
             ).tolist()
             logger.info(
                 f"The number of clusters added is {len(clust_genes)}. "
@@ -880,12 +880,11 @@ class GenePlexus:
         """
 
         util.save_results(self, outdir, save_type, zip_output, overwrite)
-        
+
     def remove_log_file(self):
         """Remove the tmp log file. Only do when at the end of the script)"""
-        
+
         if self.log_to_file:
             if os.path.exists(self.log_tmp_path):
                 logger.removeHandler(self.file_handler)
                 os.remove(self.log_tmp_path)
-            
