@@ -2,6 +2,7 @@
 import os
 import os.path as osp
 import warnings
+import tempfile
 from typing import Any
 from typing import Dict
 from typing import List
@@ -15,6 +16,7 @@ from . import _geneplexus
 from . import util
 from ._config import config
 from ._config import logger
+from ._config.logger_util import attach_file_handler
 from ._config.logger_util import set_stream_level
 from .download import download_select_data
 from .exception import NoPositivesError
@@ -48,6 +50,7 @@ class GenePlexus:
         input_negatives: Optional[List[str]] = None,
         auto_download: bool = False,
         log_level: config.LOG_LEVEL_TYPE = "WARNING",
+        log_to_file: bool = False,
     ):
         """Initialize the GenePlexus object.
 
@@ -70,6 +73,9 @@ class GenePlexus:
                 :meth:`load_negatives`.
             auto_download: Automatically download necessary files if set.
             log_level: Logging level.
+            log_to_file: If True logger will be saved when `save_class` is run. This
+                will also create a tmp file that can be explicitly deleted with
+                `remove_log_file`.
 
         :attr:`GenePlexus.gsc_trn_original` str
             If internal data checks are run, this can different that gsc_trn.
@@ -78,6 +84,13 @@ class GenePlexus:
 
         """
         set_stream_level(logger, log_level)
+        if log_to_file:
+            # Create a temporary file that is deleted on close or script exit
+            TMP_LOG_FP, TMP_LOG_PATH = tempfile.mkstemp(suffix="_geneplexus.log")
+            print(f"The TMP_LOG_PATH is {TMP_LOG_PATH}")
+            FILE_HANDLER = attach_file_handler(logger, log_path=TMP_LOG_PATH, log_level=log_level)
+            self.file_handler = FILE_HANDLER
+            self.log_tmp_path = TMP_LOG_PATH
         self._is_custom: bool = False
         self.file_loc = file_loc  # type: ignore
         self.features = features
@@ -87,10 +100,12 @@ class GenePlexus:
         self.gsc_res = gsc_res
         self.net_type = net_type
         self.log_level = log_level
+        self.log_to_file = log_to_file
         self.auto_download = auto_download
         self.input_genes: List[str] = input_genes
         self.input_negatives: List[str] = input_negatives
 
+        
         if self.auto_download and self._is_custom:
             warnings.warn(
                 "\nSkipping auto download for custom files. Unset auto_download option to suppress this message.",
@@ -865,3 +880,12 @@ class GenePlexus:
         """
 
         util.save_results(self, outdir, save_type, zip_output, overwrite)
+        
+    def remove_log_file(self):
+        """Remove the tmp log file. Only do when at the end of the script)"""
+        
+        if self.log_to_file:
+            if os.path.exists(self.log_tmp_path):
+                logger.removeHandler(self.file_handler)
+                os.remove(self.log_tmp_path)
+            

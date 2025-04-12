@@ -594,9 +594,11 @@ def save_top_level(gp, outdir):
     top_level_dict = gp.__dict__
     # save cinfig json
     keys_to_tsv_save = ["df_convert_out"]
-    keys_to_remove = ["model_info"] + keys_to_tsv_save
+    keys_to_remove = ["model_info", "file_handler"] + keys_to_tsv_save
     config_dict = {k: v for k, v in top_level_dict.items() if k not in keys_to_remove}
     save_json_from_dict(outdir, "top_level_config.json", config_dict)
+    if gp.log_to_file:
+        shutil.copy2(gp.log_tmp_path, osp.join(outdir,"geneplexus.log"))
     keys_to_tsv_save = set(keys_to_tsv_save).intersection(list(top_level_dict))
     if len(keys_to_tsv_save) > 0:
         for item in keys_to_tsv_save:
