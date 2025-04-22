@@ -87,7 +87,7 @@ class GenePlexus:
         if log_to_file:
             # Create a temporary file that is deleted on close or script exit
             TMP_LOG_FP, TMP_LOG_PATH = tempfile.mkstemp(suffix="_geneplexus.log")
-            print(f"The TMP_LOG_PATH is {TMP_LOG_PATH}")
+            logger.info(f"The TMP_LOG_PATH is {TMP_LOG_PATH}")
             FILE_HANDLER = attach_file_handler(logger, log_path=TMP_LOG_PATH, log_level=log_level)
             self.file_handler = FILE_HANDLER
             self.log_tmp_path = TMP_LOG_PATH
@@ -879,7 +879,7 @@ class GenePlexus:
 
         """
 
-        util.save_results(self, outdir, save_type, zip_output, overwrite)
+        _geneplexus._save_class(self, outdir, save_type, zip_output, overwrite)
 
     def remove_log_file(self):
         """Remove the tmp log file. Only do when at the end of the script)"""

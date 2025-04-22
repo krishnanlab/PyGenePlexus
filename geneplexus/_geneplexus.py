@@ -1,3 +1,5 @@
+import pathlib
+import shutil
 import os.path as osp
 from typing import Any
 from typing import Dict
@@ -369,3 +371,19 @@ def _alter_validation_df(df_convert_out, pos_genes_for_model, net_type):
     df_convert_out_subset = df_convert_out[["Original ID", "Entrez ID", "Gene Name", f"In {net_type}?"]]
     df_convert_out_subset = df_convert_out_subset[df_convert_out_subset["Entrez ID"].isin(pos_genes_for_model)]
     return df_convert_out_subset
+    
+def _save_class(gp, outdir, save_type, zip_output, overwrite):
+    outdir = util.suffix_dir(outdir, overwrite=overwrite)
+    if zip_output:
+        zip_outpath = util.suffix_zip(f"{outdir}.zip", overwrite=overwrite)
+    util._save_results(gp, outdir, save_type)
+    # Optionally zip the result directory
+    if zip_output:
+        outpath = pathlib.Path(outdir)
+        logger.info("Zipping output files")
+        shutil.make_archive(zip_outpath[:-4], "zip", outpath.parent, outpath.name)
+        shutil.rmtree(outdir)
+        logger.info(f"Removing temporary directory {outdir}")
+        logger.info(f"Done! Results saved to {zip_outpath}")
+    else:
+        logger.info(f"Done! Results saved to {outdir}")

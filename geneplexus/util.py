@@ -519,29 +519,29 @@ def cluster_louvain(
     return final_clusters, large_clusters
 
 
-def save_results(gp, outdir, save_type, zip_output, overwrite):
-    """Save everything in the GenePlexus class.
-
-    Args:
-        outdir: Output directory.
-        zip_output: Whether or not to zip the output directory into a zip file.
-        overwrite: Whether or not to overwrite existing results.
-
-    """
-    outdir = suffix_dir(outdir, overwrite=overwrite)
-    if zip_output:
-        zip_outpath = suffix_zip(f"{outdir}.zip", overwrite=overwrite)
-    _save_results(gp, outdir, save_type)
-    # Optionally zip the result directory
-    if zip_output:
-        outpath = pathlib.Path(outdir)
-        logger.info("Zipping output files")
-        shutil.make_archive(zip_outpath[:-4], "zip", outpath.parent, outpath.name)
-        shutil.rmtree(outdir)
-        logger.info(f"Removing temporary directory {outdir}")
-        logger.info(f"Done! Results saved to {zip_outpath}")
-    else:
-        logger.info(f"Done! Results saved to {outdir}")
+# def save_results(gp, outdir, save_type, zip_output, overwrite):
+#     """Save everything in the GenePlexus class.
+#
+#     Args:
+#         outdir: Output directory.
+#         zip_output: Whether or not to zip the output directory into a zip file.
+#         overwrite: Whether or not to overwrite existing results.
+#
+#     """
+#     outdir = suffix_dir(outdir, overwrite=overwrite)
+#     if zip_output:
+#         zip_outpath = suffix_zip(f"{outdir}.zip", overwrite=overwrite)
+#     _save_results(gp, outdir, save_type)
+#     # Optionally zip the result directory
+#     if zip_output:
+#         outpath = pathlib.Path(outdir)
+#         logger.info("Zipping output files")
+#         shutil.make_archive(zip_outpath[:-4], "zip", outpath.parent, outpath.name)
+#         shutil.rmtree(outdir)
+#         logger.info(f"Removing temporary directory {outdir}")
+#         logger.info(f"Done! Results saved to {zip_outpath}")
+#     else:
+#         logger.info(f"Done! Results saved to {outdir}")
 
 
 def suffix_dir(path, idx=0, overwrite=False):
@@ -567,7 +567,7 @@ def suffix_zip(path, idx=0, overwrite=False):
             logger.warning(f"Output zip file exits {path}, overwriting.")
             os.remove(new_path)
         else:
-            new_path = suffix_fn(path, idx=idx + 1)
+            new_path = suffix_zip(path, idx=idx + 1)
     elif path != new_path:
         logger.warning(f"Output zip file exists {path}, redirecting to {new_path}")
     return new_path
