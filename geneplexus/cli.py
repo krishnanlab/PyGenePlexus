@@ -28,6 +28,8 @@ def parse_args() -> argparse.Namespace:
         usage=argparse.SUPPRESS,
     )
 
+    ### main set of arguements ###
+
     parser.add_argument(
         "-i",
         "--input_file",
@@ -43,7 +45,7 @@ def parse_args() -> argparse.Namespace:
         metavar="",
         help="Delimiter used in the gene list. Use 'newline' if the genes are "
         "separated by new line, and use 'tab' if the genes are seperate by "
-        "tabs. Other generic separator are also supported, e.g. ', '.",
+        "tabs. If not newline or tab, will use argument directly, so /t, /n, ,",
     )
 
     parser.add_argument(
@@ -106,51 +108,30 @@ def parse_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
-        "-s",
-        "--small_edgelist_num_nodes",
-        default=50,
-        metavar="",
-        type=int,
-        help="Number of nodes in the small edgelist.",
-    )
-
-    parser.add_argument(
         "-od",
         "--output_dir",
         default="result/",
         metavar="",
         help="Output directory with respect to the repo root directory.",
     )
-
+    
     parser.add_argument(
-        "-l",
-        "--log_level",
-        default="INFO",
+        "-in",
+        "--input_negatives",
+        default=None,
         metavar="",
-        help=f"Logging level. {format_choices(config.LOG_LEVELS)}",
+        help="Input negative gene list (.txt) file.",
     )
 
+    ### pipeline control arguements ###
+
     parser.add_argument(
-        "-ad",
+        "-ado",
         "--auto_download_off",
         action="store_true",
         help="Turns off autodownloader which is on by default.",
     )
-
-    parser.add_argument(
-        "-q",
-        "--quiet",
-        action="store_true",
-        help="Suppress log messages (same as setting log_level to CRITICAL).",
-    )
-
-    parser.add_argument(
-        "-z",
-        "--zip-output",
-        action="store_true",
-        help="If set, then compress the output directory into a Zip file.",
-    )
-
+    
     parser.add_argument(
         "--clear-data",
         action="store_true",
@@ -158,9 +139,9 @@ def parse_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
-        "--overwrite",
+        "--do_clustering",
         action="store_true",
-        help="Overwrite existing result directory if set.",
+        help="Do clustering step.",
     )
 
     parser.add_argument(
@@ -175,10 +156,141 @@ def parse_args() -> argparse.Namespace:
         help="Skip making small edgelist.",
     )
 
+    ### Class methods arguements ###
+
     parser.add_argument(
-        "--do_clustering",
+        "-l",
+        "--log_level",
+        default="INFO",
+        metavar="",
+        help=f"Logging level. {format_choices(config.LOG_LEVELS)}",
+    )
+
+    parser.add_argument(
+        "-q",
+        "--quiet",
         action="store_true",
-        help="Do clustering step.",
+        help="Suppress log messages (same as setting log_level to CRITICAL).",
+    )
+
+    parser.add_argument(
+        "-cmin",
+        "--clust_min_size",
+        default=5,
+        metavar="",
+        type=int,
+        help="Minimum size of clusters allowed.",
+    )
+    
+    parser.add_argument(
+        "-cmax",
+        "--clust_max_size",
+        default=70,
+        metavar="",
+        type=int,
+        help="Maximum size of clusters allowed.",
+    )
+    
+    parser.add_argument(
+        "-ctries",
+        "--clust_max_tries",
+        default=3,
+        metavar="",
+        type=int,
+        help="Number of times to try to sub-cluster large clusters.",
+    )
+    
+    parser.add_argument(
+        "-cres",
+        "--clust_res",
+        default=1,
+        metavar="",
+        type=int,
+        help="Cluster resolution parameter.",
+    )
+    
+    parser.add_argument(
+        "-cweight",
+        "--clust_unweighted",
+        action="store_false",
+        help="If set, will not use cluster weights.",
+    )
+
+    parser.add_argument(
+        "-flk",
+        "--fit_logreg_kwargs",
+        default=None,
+        metavar="",
+        type=json.loads,
+        help="Logistic regression leyword arguments.",
+    )
+    
+    parser.add_argument(
+        "-fs",
+        "--fit_scale",
+        action="store_true",
+        help="If set, will scale input data. See docs for more info of when this is good to do.",
+    )
+    
+    parser.add_argument(
+        "-fmnp",
+        "--fit_min_num_pos",
+        default=5,
+        metavar="",
+        type=int,
+        help="Number of genes needed to fit a model.",
+    )
+    
+    parser.add_argument(
+        "-fmnpcv",
+        "--fit_min_num_pos_cv",
+        default=15,
+        metavar="",
+        type=int,
+        help="Number of genes needed to do cross validation.",
+    )
+    
+    parser.add_argument(
+        "-fnf",
+        "--fit_num_folds",
+        default=3,
+        metavar="",
+        type=int,
+        help="Number of genes needed to do cross validation.",
+    )
+    
+    parser.add_argument(
+        "-fnv",
+        "--fit_null_val",
+        default=None,
+        metavar="",
+        type=float,
+        help="Value to use when CV can't be done.",
+    )
+    
+    parser.add_argument(
+        "-frs",
+        "--fit_random_state",
+        default=0,
+        metavar="",
+        type=int,
+        help="Random state value to use when fitting.",
+    )
+    
+    parser.add_argument(
+        "-fscv",
+        "--fit_skip_cross_validate",
+        action="store_false",
+        help="If set, will not try to do CV.",
+    )
+
+    parser.add_argument(
+        "-s",
+        "--small_edgelist_num_nodes",
+        default=50,
+        metavar="",
+        type=int,
+        help="Number of nodes in the small edgelist.",
     )
 
     parser.add_argument(
@@ -189,52 +301,22 @@ def parse_args() -> argparse.Namespace:
         type=str,
         help="Which files to save.",
     )
+    
+    parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="Overwrite existing result directory if set.",
+    )
+    
+    parser.add_argument(
+        "-z",
+        "--zip-output",
+        action="store_true",
+        help="If set, then compress the output directory into a Zip file.",
+    )
+
 
     return parser.parse_args()
-
-
-def run_pipeline(
-    gp: GenePlexus,
-    do_clustering: bool,
-    num_nodes: int,
-    skip_mdl_sim: bool,
-    skip_sm_edgelist: bool,
-    output_dir: str,
-    save_type: str,
-    zip_output: bool,
-    overwrite: bool,
-):
-    """Run the full GenePlexus pipeline.
-
-    Args:
-        do_clustering: wehter to run the clustering step or not
-        num_nodes: Number of top predicted genes to include in the induced
-            subgraph.
-        skip_mdl_sim: Whether or not to skip the computation of model
-            similarities with GO and Mondo. This option is not yet available
-            for custom networks.
-        skip_sm_edgelist: skips making small edgelist of top predictions
-
-    """
-    if do_clustering:
-        gp.cluster_input()
-    gp.fit()
-    gp.predict()
-    if not skip_mdl_sim:
-        gp.make_sim_dfs()
-    else:
-        logger.info("Skipping model similarity computation.")
-    if not skip_sm_edgelist:
-        gp.make_small_edgelist(num_nodes=num_nodes)
-    else:
-        logger.info("Skipping making small edgelist.")
-    gp.save_class(
-        output_dir,
-        save_type=save_type,
-        zip_output=zip_output,
-        overwrite=overwrite,
-    )
-    gp.remove_log_file()
 
 
 def clear_data(args):
@@ -255,13 +337,9 @@ def clear_data(args):
 
 
 def main():
-    """Command line interface."""
+    """Run the full GenePlexus pipeline."""
     args = parse_args()
     log_level = "CRITICAL" if args.quiet else args.log_level
-    if args.auto_download_off:
-        auto_download = False
-    else:
-        auto_download = True
 
     clear_data(args)  # data cleared if args.clear_data is true
 
@@ -279,26 +357,55 @@ def main():
         sp_res=args.sp_res,
         gsc_trn=args.gsc_trn,
         gsc_res=args.gsc_res,
-        auto_download=auto_download,
+        auto_download=args.auto_download_off,
         log_level=log_level,
         log_to_file=True,
     )
 
     # Load input gene list
     gp.load_genes(read_gene_list(args.input_file, args.gene_list_delimiter))
-
-    # Run pipeline and save results
-    run_pipeline(
-        gp,
-        args.do_clustering,
-        args.small_edgelist_num_nodes,
-        args.skip_mdl_sim,
-        args.skip_sm_edgelist,
-        args.output_dir,
-        args.save_type,
-        args.zip_output,
-        args.overwrite,
+    
+    # load negative gene list if one provided
+    if args.input_negatives != None:
+        gp.load_negatives(read_gene_list(args.input_negatives, args.gene_list_delimiter))
+    
+    # run the pipeline
+    if args.do_clustering:
+        gp.cluster_input(
+            clust_min_size=args.clust_min_size,
+            clust_max_size=args.clust_max_size,
+            clust_max_tries=args.clust_max_tries,
+            clust_res=args.clust_res,
+            clust_weighted=args.clust_unweighted,
+        )
+    gp.fit(
+        logreg_kwargs=args.fit_logreg_kwargs,
+        scale=args.fit_scale,
+        min_num_pos=args.fit_min_num_pos,
+        min_num_pos_cv=args.fit_min_num_pos_cv,
+        num_folds=args.fit_num_folds,
+        null_val=args.fit_null_val,
+        random_state=args.fit_random_state,
+        cross_validate=args.fit_skip_cross_validate,
     )
+    gp.predict()
+    if not args.skip_mdl_sim:
+        gp.make_sim_dfs()
+    else:
+        logger.info("Skipping model similarity computation.")
+    if not args.skip_sm_edgelist:
+        gp.make_small_edgelist(
+        num_nodes=args.small_edgelist_num_nodes,
+        )
+    else:
+        logger.info("Skipping making small edgelist.")
+    gp.save_class(
+        args.output_dir,
+        save_type=args.save_type,
+        zip_output=args.zip_output,
+        overwrite=args.overwrite,
+    )
+    gp.remove_log_file()
 
 
 if __name__ == "__main__":
