@@ -114,7 +114,7 @@ def parse_args() -> argparse.Namespace:
         metavar="",
         help="Output directory with respect to the repo root directory.",
     )
-    
+
     parser.add_argument(
         "-in",
         "--input_negatives",
@@ -131,7 +131,7 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Turns off autodownloader which is on by default.",
     )
-    
+
     parser.add_argument(
         "--clear-data",
         action="store_true",
@@ -181,7 +181,7 @@ def parse_args() -> argparse.Namespace:
         type=int,
         help="Minimum size of clusters allowed.",
     )
-    
+
     parser.add_argument(
         "-cmax",
         "--clust_max_size",
@@ -190,7 +190,7 @@ def parse_args() -> argparse.Namespace:
         type=int,
         help="Maximum size of clusters allowed.",
     )
-    
+
     parser.add_argument(
         "-ctries",
         "--clust_max_tries",
@@ -199,7 +199,7 @@ def parse_args() -> argparse.Namespace:
         type=int,
         help="Number of times to try to sub-cluster large clusters.",
     )
-    
+
     parser.add_argument(
         "-cres",
         "--clust_res",
@@ -208,7 +208,7 @@ def parse_args() -> argparse.Namespace:
         type=int,
         help="Cluster resolution parameter.",
     )
-    
+
     parser.add_argument(
         "-cweight",
         "--clust_unweighted",
@@ -224,14 +224,14 @@ def parse_args() -> argparse.Namespace:
         type=json.loads,
         help="Logistic regression leyword arguments.",
     )
-    
+
     parser.add_argument(
         "-fs",
         "--fit_scale",
         action="store_true",
         help="If set, will scale input data. See docs for more info of when this is good to do.",
     )
-    
+
     parser.add_argument(
         "-fmnp",
         "--fit_min_num_pos",
@@ -240,7 +240,7 @@ def parse_args() -> argparse.Namespace:
         type=int,
         help="Number of genes needed to fit a model.",
     )
-    
+
     parser.add_argument(
         "-fmnpcv",
         "--fit_min_num_pos_cv",
@@ -249,7 +249,7 @@ def parse_args() -> argparse.Namespace:
         type=int,
         help="Number of genes needed to do cross validation.",
     )
-    
+
     parser.add_argument(
         "-fnf",
         "--fit_num_folds",
@@ -258,7 +258,7 @@ def parse_args() -> argparse.Namespace:
         type=int,
         help="Number of genes needed to do cross validation.",
     )
-    
+
     parser.add_argument(
         "-fnv",
         "--fit_null_val",
@@ -267,7 +267,7 @@ def parse_args() -> argparse.Namespace:
         type=float,
         help="Value to use when CV can't be done.",
     )
-    
+
     parser.add_argument(
         "-frs",
         "--fit_random_state",
@@ -276,7 +276,7 @@ def parse_args() -> argparse.Namespace:
         type=int,
         help="Random state value to use when fitting.",
     )
-    
+
     parser.add_argument(
         "-fscv",
         "--fit_skip_cross_validate",
@@ -301,20 +301,19 @@ def parse_args() -> argparse.Namespace:
         type=str,
         help="Which files to save.",
     )
-    
+
     parser.add_argument(
         "--overwrite",
         action="store_true",
         help="Overwrite existing result directory if set.",
     )
-    
+
     parser.add_argument(
         "-z",
         "--zip-output",
         action="store_true",
         help="If set, then compress the output directory into a Zip file.",
     )
-
 
     return parser.parse_args()
 
@@ -364,11 +363,11 @@ def main():
 
     # Load input gene list
     gp.load_genes(read_gene_list(args.input_file, args.gene_list_delimiter))
-    
+
     # load negative gene list if one provided
     if args.input_negatives != None:
         gp.load_negatives(read_gene_list(args.input_negatives, args.gene_list_delimiter))
-    
+
     # run the pipeline
     if args.do_clustering:
         gp.cluster_input(
@@ -395,7 +394,7 @@ def main():
         logger.info("Skipping model similarity computation.")
     if not args.skip_sm_edgelist:
         gp.make_small_edgelist(
-        num_nodes=args.small_edgelist_num_nodes,
+            num_nodes=args.small_edgelist_num_nodes,
         )
     else:
         logger.info("Skipping making small edgelist.")

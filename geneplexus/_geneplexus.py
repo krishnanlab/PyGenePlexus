@@ -1,6 +1,6 @@
+import os.path as osp
 import pathlib
 import shutil
-import os.path as osp
 from typing import Any
 from typing import Dict
 from typing import Optional
@@ -371,7 +371,8 @@ def _alter_validation_df(df_convert_out, pos_genes_for_model, net_type):
     df_convert_out_subset = df_convert_out[["Original ID", "Entrez ID", "Gene Name", f"In {net_type}?"]]
     df_convert_out_subset = df_convert_out_subset[df_convert_out_subset["Entrez ID"].isin(pos_genes_for_model)]
     return df_convert_out_subset
-    
+
+
 def _save_class(gp, outdir, save_type, zip_output, overwrite):
     outdir = util.suffix_dir(outdir, overwrite=overwrite)
     if zip_output:
