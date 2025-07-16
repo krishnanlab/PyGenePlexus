@@ -1,4 +1,6 @@
 import os.path as osp
+import pathlib
+import shutil
 from typing import Any
 from typing import Dict
 from typing import Optional
@@ -98,6 +100,57 @@ def _make_validation_df(df_convert_out, file_loc, species):
         df_convert_out[f"In {anet}?"] = tmp_ins
 
     return df_convert_out, table_summary, input_count
+
+
+def _generate_clusters(
+    file_loc,
+    species,
+    net_type,
+    input_genes,
+    clust_min_size,
+    clust_max_size,
+    clust_max_tries,
+    clust_res,
+    clust_weighted,
+    clust_seed,
+):
+    # Load network as edge list dataframe
+    filepath = osp.join(file_loc, f"Edgelist__{species}__{net_type}.edg")
+    if net_type == "BioGRID":
+        df_edge = pd.read_csv(filepath, sep="\t", header=None, names=["Node1", "Node2"])
+    else:
+        df_edge = pd.read_csv(filepath, sep="\t", header=None, names=["Node1", "Node2", "Weight"])
+        df_edge["Weight"] = df_edge["Weight"].astype(float)
+    df_edge = df_edge.astype({"Node1": str, "Node2": str})
+    # iteratively run through clustering
+    for clus_try in range(clust_max_tries):
+        logger.info(f"On clustering try {clus_try + 1}")
+        if clus_try == 0:
+            final_clusters, large_clusters = util.cluster_louvain(
+                df_edge,
+                [input_genes],
+                [],
+                clust_min_size,
+                clust_max_size,
+                clust_res,
+                clust_weighted,
+                clust_seed,
+            )
+        else:
+            final_clusters, large_clusters = util.cluster_louvain(
+                df_edge,
+                large_clusters,
+                final_clusters,
+                clust_min_size,
+                clust_max_size,
+                clust_res,
+                clust_weighted,
+                clust_seed,
+            )
+        if len(large_clusters) == 0:
+            break
+    final_clusters = final_clusters + large_clusters  # add back in large clusters if couldn't be made smaller
+    return final_clusters
 
 
 def _get_genes_in_network(file_loc, species, net_type, convert_ids):
@@ -304,6 +357,7 @@ def _make_small_edgelist(file_loc, df_probs, species, net_type, num_nodes=50):
     df_edge = df_edge[(df_edge["Node1"].isin(top_genes)) & (df_edge["Node2"].isin(top_genes))]
     if net_type == "BioGRID":
         df_edge["Weight"] = [1.0] * df_edge.shape[0]
+    df_edge = df_edge.sort_values(by=["Weight", "Node1", "Node2"], ascending=[False, True, True])
     genes_in_edge = np.union1d(df_edge["Node1"].unique(), df_edge["Node2"].unique())
     isolated_genes = np.setdiff1d(top_genes, genes_in_edge).tolist()
     isolated_genes = [str(item) for item in isolated_genes]
@@ -312,11 +366,28 @@ def _make_small_edgelist(file_loc, df_probs, species, net_type, num_nodes=50):
     replace_dict = {gene: util.mapgene(gene, Entrez_to_Symbol) for gene in genes_in_edge}
     isolated_genes_sym = [util.mapgene(gene, Entrez_to_Symbol) for gene in isolated_genes]
     df_edge_sym = df_edge.replace(to_replace=replace_dict)
+    df_edge_sym = df_edge_sym.sort_values(by=["Weight", "Node1", "Node2"], ascending=[False, True, True])
     return df_edge, isolated_genes, df_edge_sym, isolated_genes_sym
 
 
-def _alter_validation_df(df_convert_out, table_summary, net_type):
+def _alter_validation_df(df_convert_out, pos_genes_for_model, net_type):
     df_convert_out_subset = df_convert_out[["Original ID", "Entrez ID", "Gene Name", f"In {net_type}?"]]
-    network = next((item for item in table_summary if item["Network"] == net_type), None)
-    positive_genes = network.get("PositiveGenes")
-    return df_convert_out_subset, positive_genes
+    df_convert_out_subset = df_convert_out_subset[df_convert_out_subset["Entrez ID"].isin(pos_genes_for_model)]
+    return df_convert_out_subset
+
+
+def _save_class(gp, outdir, save_type, zip_output, overwrite):
+    outdir = util.suffix_dir(outdir, overwrite=overwrite)
+    if zip_output:
+        zip_outpath = util.suffix_zip(f"{outdir}.zip", overwrite=overwrite)
+    util._save_results(gp, outdir, save_type)
+    # Optionally zip the result directory
+    if zip_output:
+        outpath = pathlib.Path(outdir)
+        logger.info("Zipping output files")
+        shutil.make_archive(zip_outpath[:-4], "zip", outpath.parent, outpath.name)
+        shutil.rmtree(outdir)
+        logger.info(f"Removing temporary directory {outdir}")
+        logger.info(f"Done! Results saved to {zip_outpath}")
+    else:
+        logger.info(f"Done! Results saved to {outdir}")

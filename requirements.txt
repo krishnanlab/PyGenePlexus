@@ -1,6 +1,7 @@
 numpy==1.23.5
 requests==2.32.3
 scikit-learn==1.6.1
+networkx==3.3
 statsmodels==0.14.4
 tqdm==4.67.1
 pystow==0.7.0

@@ -1,5 +1,12 @@
 """PyGenePlexus is a Python package for running the [GenePlexus]_ model.
 
+.. warning::
+
+    The documentation on the "latest" version of ReadTheDocs may not yet reflect,
+    code pushed to the main branch of the GitHub repository. However, the douemntation
+    for stable releases on PyPi will be correct on ReadTheDocs.
+
+
 .. currentmodule:: geneplexus.GenePlexus
 
 PyGenePlexus enables researchers to predict genes similar to an uploaded

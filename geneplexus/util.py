@@ -3,6 +3,8 @@ import functools
 import json
 import os
 import os.path as osp
+import pathlib
+import shutil
 import warnings
 from threading import Thread
 from typing import Any
@@ -12,7 +14,10 @@ from typing import List
 from typing import Literal
 from typing import Optional
 
+import joblib
+import networkx as nx
 import numpy as np
+import pandas as pd
 
 from . import config
 from ._config import logger
@@ -486,3 +491,182 @@ def remove_duplicates(
             gsc_res.pop(i)
             gsc_res_original.pop(i)
     return sp_res, gsc_res, gsc_res_original
+
+
+def cluster_louvain(
+    df_edge,
+    sets_to_cluster,
+    final_clusters,
+    clust_min_size,
+    clust_max_size,
+    clust_res,
+    clust_weighted,
+    clust_seed,
+):
+    if clust_weighted == True:
+        clust_weight = "Weight"
+    else:
+        clust_weight = None
+    for aset in sets_to_cluster:
+        df_edge_tmp = df_edge[(df_edge["Node1"].isin(aset)) & (df_edge["Node2"].isin(aset))]
+        G = nx.from_pandas_edgelist(df_edge_tmp, source="Node1", target="Node2", edge_attr=True)
+        clusters = nx.community.louvain_communities(G, weight=clust_weight, resolution=clust_res, seed=clust_seed)
+        large_clusters = []
+        for idx, aclus in enumerate(clusters):
+            if len(aclus) >= clust_min_size and len(aclus) <= clust_max_size:
+                final_clusters.append(list(aclus))
+            elif len(aclus) > clust_max_size:
+                large_clusters.append(list(aclus))
+    return final_clusters, large_clusters
+
+
+# def save_results(gp, outdir, save_type, zip_output, overwrite):
+#     """Save everything in the GenePlexus class.
+#
+#     Args:
+#         outdir: Output directory.
+#         zip_output: Whether or not to zip the output directory into a zip file.
+#         overwrite: Whether or not to overwrite existing results.
+#
+#     """
+#     outdir = suffix_dir(outdir, overwrite=overwrite)
+#     if zip_output:
+#         zip_outpath = suffix_zip(f"{outdir}.zip", overwrite=overwrite)
+#     _save_results(gp, outdir, save_type)
+#     # Optionally zip the result directory
+#     if zip_output:
+#         outpath = pathlib.Path(outdir)
+#         logger.info("Zipping output files")
+#         shutil.make_archive(zip_outpath[:-4], "zip", outpath.parent, outpath.name)
+#         shutil.rmtree(outdir)
+#         logger.info(f"Removing temporary directory {outdir}")
+#         logger.info(f"Done! Results saved to {zip_outpath}")
+#     else:
+#         logger.info(f"Done! Results saved to {outdir}")
+
+
+def suffix_dir(path, idx=0, overwrite=False):
+    """Add int suffix to dir name if nonempty dir existed."""
+    new_path = normexpand(f"{path}_{idx}" if idx > 0 else path)
+    if os.listdir(new_path):
+        if overwrite:
+            logger.warning(f"Output directory exits {path}, overwriting.")
+            shutil.rmtree(new_path)
+            os.makedirs(new_path)
+        else:
+            new_path = suffix_dir(path, idx=idx + 1)
+    elif path != new_path:
+        logger.warning(f"Output directory exists {path}, redirecting to {new_path}")
+    return new_path
+
+
+def suffix_zip(path, idx=0, overwrite=False):
+    """Add int suffix to file name if file existed."""
+    new_path = f"_{idx}".join(osp.splitext(path)) if idx > 0 else path
+    if osp.isfile(new_path):
+        if overwrite:
+            logger.warning(f"Output zip file exits {path}, overwriting.")
+            os.remove(new_path)
+        else:
+            new_path = suffix_zip(path, idx=idx + 1)
+    elif path != new_path:
+        logger.warning(f"Output zip file exists {path}, redirecting to {new_path}")
+    return new_path
+
+
+def _save_results(gp, outdir, save_type):
+    all_models = list(gp.model_info)
+    all_results = list(gp.model_info["All-Genes"].results)
+    if save_type == "all":
+        save_top_level(gp, outdir)
+    for amodel in all_models:
+        model_path = osp.join(outdir, amodel)
+        os.makedirs(model_path)
+        if save_type == "all":
+            save_model_level(gp, model_path, amodel)
+        for aresult in all_results:
+            result_path = osp.join(model_path, aresult)
+            os.makedirs(result_path)
+            if save_type in ["all", "results_only"]:
+                save_result_level(gp, result_path, amodel, aresult)
+
+
+def save_top_level(gp, outdir):
+    top_level_dict = gp.__dict__
+    # save cinfig json
+    keys_to_tsv_save = ["df_convert_out"]
+    keys_to_remove = ["model_info", "file_handler"] + keys_to_tsv_save
+    config_dict = {k: v for k, v in top_level_dict.items() if k not in keys_to_remove}
+    save_json_from_dict(outdir, "top_level_config.json", config_dict)
+    if gp.log_to_file:
+        shutil.copy2(gp.log_tmp_path, osp.join(outdir, "geneplexus.log"))
+    keys_to_tsv_save = set(keys_to_tsv_save).intersection(list(top_level_dict))
+    if len(keys_to_tsv_save) > 0:
+        for item in keys_to_tsv_save:
+            fn_tmp = f"{item}.tsv"
+            df_to_tsv(top_level_dict[item], outdir, fn_tmp)
+
+
+def save_model_level(gp, model_path, model_name):
+    model_level_dict = gp.model_info[model_name].__dict__
+    # save cinfig json
+    keys_to_tsv_save = ["df_convert_out_for_model"]
+    keys_to_remove = ["results", "clf"] + keys_to_tsv_save
+    config_dict = {k: v for k, v in model_level_dict.items() if k not in keys_to_remove}
+    config_dict = convert_numpy_in_config(config_dict)
+    save_json_from_dict(model_path, "model_level_config.json", config_dict)
+    joblib.dump(model_level_dict["clf"], osp.join(model_path, "clf.joblib"))
+    if len(keys_to_tsv_save) > 0:
+        for item in keys_to_tsv_save:
+            fn_tmp = f"{item}.tsv"
+            df_to_tsv(model_level_dict[item], model_path, fn_tmp)
+
+
+def save_result_level(gp, result_path, model_name, result_name):
+    result_level_dict = gp.model_info[model_name].results[result_name].__dict__
+    keys_to_tsv_save = {"df_probs", "df_sim", "df_edge", "df_edge_sym"}.intersection(result_level_dict)
+    if len(keys_to_tsv_save) > 0:
+        for item in keys_to_tsv_save:
+            fn_tmp = f"{item}.tsv"
+            df_to_tsv(result_level_dict[item], result_path, fn_tmp)
+    # keys_to_json_save = {"weights_dict"}.intersection(result_level_dict)
+    # if len(keys_to_json_save) > 0:
+    #     for item in keys_to_json_save:
+    #         data_dict_tmp = result_level_dict[item]
+    #         fn_tmp = f"{item}.json"
+    #         save_json_from_dict(result_path, fn_tmp, data_dict_tmp)
+    keys_to_nptxt_save = {"isolated_genes", "isolated_genes_sym"}.intersection(result_level_dict)
+    if len(keys_to_nptxt_save) > 0:
+        for item in keys_to_nptxt_save:
+            nptxt_object = result_level_dict[item]
+            fn_tmp = f"{item}.txt"
+            save_1d_to_nptxt(result_path, fn_tmp, nptxt_object)
+
+
+def df_to_tsv(df: pd.DataFrame, root: str, name: str):
+    """Save a dataframe as a tsv file.
+
+    Args:
+        df: DataFrame to be saved.
+        root: Output directory,
+        name: Name of the file to be saved.
+
+    """
+    df.to_csv(osp.join(root, name), sep="\t", index=False)
+
+
+def convert_numpy_in_config(config_dict):
+    for akey in list(config_dict):
+        if isinstance(config_dict[akey], np.ndarray):
+            config_dict[akey] = config_dict[akey].tolist()
+    # was true for pos_genes_in_net, genes_not_in_net, net_genes, negative_genes, mdl_weights
+    return config_dict
+
+
+def save_json_from_dict(outdir, filename, data_dict):
+    with open(osp.join(outdir, filename), "w") as f:
+        json.dump(data_dict, f, indent=4)
+
+
+def save_1d_to_nptxt(outdir, fn_tmp, OneD_object):
+    np.savetxt(osp.join(outdir, fn_tmp), OneD_object, fmt="%s")

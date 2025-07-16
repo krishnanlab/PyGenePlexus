@@ -109,7 +109,7 @@ def _download_and_extract(data_dir, file_cat, fn_download, data_loc, num_retries
     num_tries = 0
     while num_tries <= num_retries - 1:
         num_tries += 1
-        logger.info(f"On attempt {num_tries} of downloading the file")
+        logger.info(f"On attempt {num_tries} of {num_retries} for downloading the data")
         try:
             with requests.get(url, timeout=2) as r:
                 if r.ok:
