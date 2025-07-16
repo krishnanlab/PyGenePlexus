@@ -501,6 +501,7 @@ def cluster_louvain(
     clust_max_size,
     clust_res,
     clust_weighted,
+    clust_seed,
 ):
     if clust_weighted == True:
         clust_weight = "Weight"
@@ -509,7 +510,7 @@ def cluster_louvain(
     for aset in sets_to_cluster:
         df_edge_tmp = df_edge[(df_edge["Node1"].isin(aset)) & (df_edge["Node2"].isin(aset))]
         G = nx.from_pandas_edgelist(df_edge_tmp, source="Node1", target="Node2", edge_attr=True)
-        clusters = nx.community.louvain_communities(G, weight=clust_weight, resolution=clust_res, seed=123)
+        clusters = nx.community.louvain_communities(G, weight=clust_weight, resolution=clust_res, seed=clust_seed)
         large_clusters = []
         for idx, aclus in enumerate(clusters):
             if len(aclus) >= clust_min_size and len(aclus) <= clust_max_size:

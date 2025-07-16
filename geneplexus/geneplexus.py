@@ -460,6 +460,7 @@ class GenePlexus:
         clust_max_tries: int = 3,
         clust_res: int = 1,
         clust_weighted: bool = True,
+        clust_seed: int = 123,
     ):
         """Cluster input gene list.
 
@@ -470,7 +471,8 @@ class GenePlexus:
                 bigger the `clust_max_size`. If cannot accomplished this by `clust_max_tries`
                 the larger clusters are still retained.
             clust_res: Resolution parameter in clustering algorithm.
-            clust_weighted: Wether or not to use weighted edges when building the clusters
+            clust_weighted: Whether or not to use weighted edges when building the clusters
+            clust_seed: Set seed used in clustering. Chose None to have this randomally set.
         """
 
         if list(self.model_info) != ["All-Genes"]:
@@ -493,6 +495,7 @@ class GenePlexus:
             clust_max_tries,
             clust_res,
             clust_weighted,
+            clust_seed,
         )
         # set params to self for saving later
         self.clust_min_size = clust_min_size
@@ -500,6 +503,7 @@ class GenePlexus:
         self.clust_max_tries = clust_max_tries
         self.clust_res = clust_res
         self.clust_weighted = clust_weighted
+        self.clust_seed = clust_seed
         # add keys to model_info
         if len(clust_genes) == 0:
             logger.info(f"No clusters were added")

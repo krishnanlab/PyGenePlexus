@@ -112,6 +112,7 @@ def _generate_clusters(
     clust_max_tries,
     clust_res,
     clust_weighted,
+    clust_seed,
 ):
     # Load network as edge list dataframe
     filepath = osp.join(file_loc, f"Edgelist__{species}__{net_type}.edg")
@@ -133,6 +134,7 @@ def _generate_clusters(
                 clust_max_size,
                 clust_res,
                 clust_weighted,
+                clust_seed,
             )
         else:
             final_clusters, large_clusters = util.cluster_louvain(
@@ -143,6 +145,7 @@ def _generate_clusters(
                 clust_max_size,
                 clust_res,
                 clust_weighted,
+                clust_seed,
             )
         if len(large_clusters) == 0:
             break
