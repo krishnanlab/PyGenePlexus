@@ -455,16 +455,23 @@ class GenePlexus:
 
     def cluster_input(
         self,
+        clust_method: str = "louvain",
         clust_min_size: int = 5,
-        clust_max_size: int = 70,
-        clust_max_tries: int = 3,
-        clust_res: int = 1,
         clust_weighted: bool = True,
-        clust_seed: int = 123,
+        louvain_max_size: int = 70,
+        louvain_max_tries: int = 3,
+        louvain_res: float = 1,
+        louvain_seed: int = 123,
+        domino_res: float = 1,
+        domino_slice_thresh: float = 0.3,
+        domino_n_steps: int = 20,
+        domino_module_threshold: float = 0.05,
+        domino_seed: int = 123,
     ):
         """Cluster input gene list.
 
         Args:
+            clust_method: Clustering methos to use (either louvain or domino).
             clust_min_size: Ignore clusters if smaller than this value.
             clust_max_size: Try to recluster if a cluster is bigger than this value.
             clust_max_tries: The number of times to recluster any clusters that are
@@ -490,20 +497,27 @@ class GenePlexus:
             self.sp_trn,
             self.net_type,
             self.model_info["All-Genes"].model_genes,
+            clust_method,
             clust_min_size,
-            clust_max_size,
-            clust_max_tries,
-            clust_res,
             clust_weighted,
-            clust_seed,
+            louvain_max_size,
+            louvain_max_tries,
+            louvain_res,
+            louvain_seed,
+            domino_res,
+            domino_slice_thresh,
+            domino_n_steps,
+            domino_module_threshold,
+            domino_seed,
         )
         # set params to self for saving later
+        self.clust_method = clust_method
         self.clust_min_size = clust_min_size
-        self.clust_max_size = clust_max_size
-        self.clust_max_tries = clust_max_tries
-        self.clust_res = clust_res
         self.clust_weighted = clust_weighted
-        self.clust_seed = clust_seed
+        self.louvain_max_size = louvain_max_size
+        self.louvain_max_tries = louvain_max_tries
+        self.louvain_res = louvain_res
+        self.louvain_seed = louvain_seed
         # add keys to model_info
         if len(clust_genes) == 0:
             logger.info(f"No clusters were added")
