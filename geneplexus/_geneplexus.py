@@ -19,10 +19,10 @@ from sklearn.preprocessing import StandardScaler
 from statsmodels.stats.multitest import multipletests
 
 from . import util
+from ._clustering.domino import domino_main
+from ._clustering.louvain import louvain_main
 from ._config import logger
 from ._config.config import DEFAULT_LOGREG_KWARGS
-from ._clustering.louvain import louvain_main
-from ._clustering.domino import domino_main
 
 
 def _initial_id_convert(input_genes, file_loc, species):
@@ -133,7 +133,7 @@ def _generate_clusters(
     df_edge = df_edge.astype({"Node1": str, "Node2": str})
     # edgelist used for clustering can be subset of genes in data and node_ordwer
     # make sure those input geens are removed
-    df_edge_genes = np.unique(np.union1d(df_edge["Node1"].to_numpy(),df_edge["Node2"].to_numpy()))
+    df_edge_genes = np.unique(np.union1d(df_edge["Node1"].to_numpy(), df_edge["Node2"].to_numpy()))
     bad_input_genes = np.setdiff1d(input_genes, df_edge_genes).tolist()
     input_genes = np.intersect1d(input_genes, df_edge_genes).tolist()
     print(f"genes removed from input list are {bad_input_genes}")

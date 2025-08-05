@@ -1,11 +1,13 @@
-import pcst_fast
-import numpy as np
-import networkx as nx
-import sys
 import copy
+import sys
+
+import networkx as nx
+import numpy as np
+import pcst_fast
 
 # for linear threshold the setrecursion limit was set crazy high, I commented it out
 # sys.setrecursionlimit(100000000)
+
 
 def run_pcst(G_cc, i_cc, labels, n_steps, nodes, prize_factor):
     ## set prize ##
@@ -13,7 +15,8 @@ def run_pcst(G_cc, i_cc, labels, n_steps, nodes, prize_factor):
     vertices_prizes = []
     for cur_node in nodes:
         vertices_prizes.append(
-            G_cc.nodes[cur_node]["Active"] if G_cc.nodes[cur_node]["Active"] else prizes[cur_node])
+            G_cc.nodes[cur_node]["Active"] if G_cc.nodes[cur_node]["Active"] else prizes[cur_node],
+        )
 
     ## set cost ##
     edges_grid = []
@@ -30,10 +33,17 @@ def run_pcst(G_cc, i_cc, labels, n_steps, nodes, prize_factor):
     ## find pcst component by running pcst fast##
     root = -1
     num_clusters = 1
-    pruning = 'strong'  # 'none'
+    pruning = "strong"  # 'none'
     verbosity_level = 0
-    vertices, edges = pcst_fast.pcst_fast(edges_grid, vertices_prizes, edges_costs, root, num_clusters, pruning,
-                                          verbosity_level)
+    vertices, edges = pcst_fast.pcst_fast(
+        edges_grid,
+        vertices_prizes,
+        edges_costs,
+        root,
+        num_clusters,
+        pruning,
+        verbosity_level,
+    )
 
     return edges, edges_grid
 
@@ -45,9 +55,10 @@ def get_pcst_prize(G_cc, prize_factor, n_steps):
         prizes[p_node] = 0
     for i_cur_layer, cur_layer in enumerate(p_cc):
         for cur_node in cur_layer:
-            prizes[cur_node] += prize_factor ** i_cur_layer
+            prizes[cur_node] += prize_factor**i_cur_layer
 
     return prizes
+
 
 def get_putative_modules(
     G,
@@ -86,12 +97,11 @@ def get_putative_modules(
     G_optimized.remove_nodes_from(list(nx.isolates(G_optimized)))
 
     cc_optimized = (
-        []
-        if len(G_optimized.nodes) == 0
-        else [G_optimized.subgraph(c) for c in nx.connected_components(G_optimized)]
+        [] if len(G_optimized.nodes) == 0 else [G_optimized.subgraph(c) for c in nx.connected_components(G_optimized)]
     )
 
     return G_optimized, cc_optimized
+
 
 #### I have not checked out these function yet but appear to do nothing
 def split_subslice_into_putative_modules(
@@ -101,9 +111,7 @@ def split_subslice_into_putative_modules(
     modularity_score_objective,
     best_modularity,
 ):
-    cur_components = [
-        G_optimized.subgraph(c) for c in connected_components(G_optimized)
-    ]
+    cur_components = [G_optimized.subgraph(c) for c in connected_components(G_optimized)]
     cur_modularity = modularity(G_optimized, cur_components, weight="weight")
 
     if cur_modularity >= modularity_score_objective:
@@ -131,9 +139,11 @@ def split_subslice_into_putative_modules(
             G_optimized.remove_edges_from(edges_to_remove)
 
             return False, cur_modularity
+
+
 def split_subslice_into_putative_modules2(G_optimized, improvement_delta, modularity_score_objective, best_modularity):
     cur_components = [G_optimized.subgraph(c) for c in connected_components(G_optimized)]
-    cur_modularity = modularity(G_optimized, cur_components, weight='weight')
+    cur_modularity = modularity(G_optimized, cur_components, weight="weight")
     if cur_modularity >= modularity_score_objective:
         return True, best_modularity
 
@@ -146,7 +156,7 @@ def split_subslice_into_putative_modules2(G_optimized, improvement_delta, modula
 
     optimized_connected_components = girvan_newman(G_optimized)
     cur_components = sorted(next(optimized_connected_components))
-    cur_modularity = modularity(G_optimized, cur_components, weight='weight')
+    cur_modularity = modularity(G_optimized, cur_components, weight="weight")
     if cur_modularity <= best_modularity + improvement_delta:
         return True, best_modularity
 
@@ -165,7 +175,8 @@ def split_subslice_into_putative_modules2(G_optimized, improvement_delta, modula
         G_optimized.remove_edges_from(edges_to_remove)
 
         return False, cur_modularity
-    
+
+
 ###########################################################################################################################
 
 """
@@ -237,7 +248,9 @@ def linear_threshold(G, seeds, steps=0):
             DG.nodes[n]["threshold"] = 0.5
         elif DG.nodes[n]["threshold"] > 1:
             raise Exception(
-                "node threshold:", DG.nodes[n]["threshold"], "cannot be larger than 1"
+                "node threshold:",
+                DG.nodes[n]["threshold"],
+                "cannot be larger than 1",
             )
 
     # init influences

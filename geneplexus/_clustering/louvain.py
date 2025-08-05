@@ -1,5 +1,6 @@
 import networkx as nx
 
+
 def louvain_main(
     df_edge,
     input_genes,
