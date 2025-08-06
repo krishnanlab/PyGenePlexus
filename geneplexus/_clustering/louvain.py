@@ -5,12 +5,14 @@ def louvain_main(
     df_edge,
     input_genes,
     clust_min_size,
-    louvain_max_size,
-    louvain_max_tries,
-    louvain_res,
     clust_weighted,
-    louvain_seed,
+    **kwargs,
 ):
+    louvain_max_tries = kwargs["louvain_max_tries"]
+    louvain_max_size = kwargs["louvain_max_size"]
+    louvain_res = kwargs["louvain_res"]
+    louvain_seed = kwargs["louvain_seed"]
+    
     for num_try in range(louvain_max_tries):
         ######## logger.info(f"On clustering try {clus_try + 1}")
         if num_try == 0:

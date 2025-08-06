@@ -458,28 +458,25 @@ class GenePlexus:
         clust_method: str = "louvain",
         clust_min_size: int = 5,
         clust_weighted: bool = True,
-        louvain_max_size: int = 70,
-        louvain_max_tries: int = 3,
-        louvain_res: float = 1,
-        louvain_seed: int = 123,
-        domino_res: float = 1,
-        domino_slice_thresh: float = 0.3,
-        domino_n_steps: int = 20,
-        domino_module_threshold: float = 0.05,
-        domino_seed: int = 123,
+        **kwargs,
     ):
         """Cluster input gene list.
 
         Args:
             clust_method: Clustering methos to use (either louvain or domino).
             clust_min_size: Ignore clusters if smaller than this value.
-            clust_max_size: Try to recluster if a cluster is bigger than this value.
-            clust_max_tries: The number of times to recluster any clusters that are
+            clust_weighted: Whether or not to use weighted edges when building the clusters
+            louvain_max_size: (kwarg) Try to recluster if a cluster is bigger than this value.
+            louvain_max_tries: (kwarg) The number of times to recluster any clusters that are
                 bigger the `clust_max_size`. If cannot accomplished this by `clust_max_tries`
                 the larger clusters are still retained.
-            clust_res: Resolution parameter in clustering algorithm.
-            clust_weighted: Whether or not to use weighted edges when building the clusters
-            clust_seed: Set seed used in clustering. Chose None to have this randomally set.
+            louvain_res: (kwarg) Resolution parameter in clustering algorithm.
+            louvain_seed: (kwarg) Set seed used in clustering. Chose None to have this randomally set.
+            domino_res: (kwarg) resolution used to make initial slices.
+            domino_slice_thresh: (kwarg) threshold used for calling slice significant
+            domino_n_steps: (kwarg) number of steps used in pcst
+            domino_module_threshold: (kwarg) threshold used to consider module signifianct
+            domino_seed: (kwarg) random seed to be used in clustering algorithm
         """
 
         if list(self.model_info) != ["All-Genes"]:
@@ -492,6 +489,26 @@ class GenePlexus:
                 if "Cluster-" in item:
                     del self.model_info[item]
 
+        if clust_method == "louvain":
+            preset_kwargs = {
+                "louvain_max_size" : 70,
+                "louvain_max_tries" : 3,
+                "louvain_res" : 1,
+                "louvain_seed" : 123,
+            }
+        elif clust_method == "domino":
+            preset_kwargs = {
+                "domino_res" : 1,
+                "domino_slice_thresh" : 0.3,
+                "domino_n_steps" : 20,
+                "domino_module_threshold" : 0.05,
+                "domino_seed" : 123,
+            }
+        preset_kwargs_keys = list(preset_kwargs.keys())
+        kwargs = {key: value for key, value in kwargs.items() if key in preset_kwargs_keys}
+        preset_kwargs.update(kwargs)
+        
+        
         clust_genes = _geneplexus._generate_clusters(
             self.file_loc,
             self.sp_trn,
@@ -500,24 +517,14 @@ class GenePlexus:
             clust_method,
             clust_min_size,
             clust_weighted,
-            louvain_max_size,
-            louvain_max_tries,
-            louvain_res,
-            louvain_seed,
-            domino_res,
-            domino_slice_thresh,
-            domino_n_steps,
-            domino_module_threshold,
-            domino_seed,
+            **preset_kwargs,
         )
+        
         # set params to self for saving later
         self.clust_method = clust_method
         self.clust_min_size = clust_min_size
         self.clust_weighted = clust_weighted
-        self.louvain_max_size = louvain_max_size
-        self.louvain_max_tries = louvain_max_tries
-        self.louvain_res = louvain_res
-        self.louvain_seed = louvain_seed
+        self.clus_kwargs = preset_kwargs
         # add keys to model_info
         if len(clust_genes) == 0:
             logger.info(f"No clusters were added")

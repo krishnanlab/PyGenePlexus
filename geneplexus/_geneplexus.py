@@ -112,15 +112,7 @@ def _generate_clusters(
     clust_method,
     clust_min_size,
     clust_weighted,
-    louvain_max_size,
-    louvain_max_tries,
-    louvain_res,
-    louvain_seed,
-    domino_res,
-    domino_slice_thresh,
-    domino_n_steps,
-    domino_module_threshold,
-    domino_seed,
+    **kwargs,
 ):
     # Load network as edge list dataframe
     filepath = osp.join(file_loc, f"Edgelist__{species}__{net_type}.edg")
@@ -143,23 +135,16 @@ def _generate_clusters(
             df_edge,
             input_genes,
             clust_min_size,
-            louvain_max_size,
-            louvain_max_tries,
-            louvain_res,
             clust_weighted,
-            louvain_seed,
+            **kwargs,
         )
     elif clust_method == "domino":
         final_clusters = domino_main(
             df_edge,
             input_genes,
-            clust_weighted,
-            domino_res,
-            domino_seed,
-            domino_slice_thresh,
-            domino_n_steps,
             clust_min_size,
-            domino_module_threshold,
+            clust_weighted,
+            **kwargs,
         )
     return final_clusters
 

@@ -13,14 +13,16 @@ from . import domino_utls
 def domino_main(
     df_edge,
     input_genes,
-    clust_weighted,
-    domino_res,
-    domino_seed,
-    domino_slice_thresh,
-    domino_n_steps,
     clust_min_size,
-    domino_module_threshold,
+    clust_weighted,
+    **kwargs,
 ):
+    domino_res = kwargs["domino_res"]
+    domino_seed = kwargs["domino_seed"]
+    domino_slice_thresh = kwargs["domino_slice_thresh"]
+    domino_n_steps = kwargs["domino_n_steps"]
+    domino_module_threshold = kwargs["domino_module_threshold"]
+    
     # This section is what Hao,s dta_io class does
     # This is what domino does in main lines 326 to 344
     # print(df_edge[df_edge["Node2"]=="998"])
