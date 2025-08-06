@@ -22,7 +22,7 @@ def domino_main(
     domino_slice_thresh = kwargs["domino_slice_thresh"]
     domino_n_steps = kwargs["domino_n_steps"]
     domino_module_threshold = kwargs["domino_module_threshold"]
-    
+
     # This section is what Hao,s dta_io class does
     # This is what domino does in main lines 326 to 344
     # print(df_edge[df_edge["Node2"]=="998"])
@@ -55,7 +55,9 @@ def domino_main(
     G = add_scores_to_G(G, input_genes)
     G_modularity = make_modularity_graph(G, slice_genes)
     G_modularity, relevant_slices, qvals = retain_relevant_slices(
-        G_modularity, G, domino_slice_thresh
+        G_modularity,
+        G,
+        domino_slice_thresh,
     )  # G_modularity and qvals maybe never called again
     ############ need to fix part of this function maybe for while loop ###############
     putative_modules = prune_slice(relevant_slices, G, domino_n_steps, clust_min_size)
@@ -159,7 +161,10 @@ def retain_relevant_slices(G_modularity, G, domino_slice_thresh):
         large_modules, sig_scores = zip(*res)
         # print(sig_scores)
         fdr_bh_results = multipletests(
-            sig_scores, method="fdr_bh", is_sorted=False, alpha=domino_slice_thresh
+            sig_scores,
+            method="fdr_bh",
+            is_sorted=False,
+            alpha=domino_slice_thresh,
         )  # hao took this fdr step out
         passed_modules = [cur_cc for cur_cc, is_passed_th in zip(large_modules, fdr_bh_results[0]) if is_passed_th]
         # print(passed_modules)
