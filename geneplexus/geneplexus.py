@@ -458,7 +458,7 @@ class GenePlexus:
         clust_method: str = "louvain",
         clust_min_size: int = 5,
         clust_weighted: bool = True,
-        **kwargs,
+        clust_kwargs: Optional[Dict[str, Any]] = None,
     ):
         """Cluster input gene list.
 
@@ -466,6 +466,7 @@ class GenePlexus:
             clust_method: Clustering methos to use (either louvain or domino).
             clust_min_size: Ignore clusters if smaller than this value.
             clust_weighted: Whether or not to use weighted edges when building the clusters
+            clust_kwargs: keywords args specfic to each clustering method
             louvain_max_size: (kwarg) Try to recluster if a cluster is bigger than this value.
             louvain_max_tries: (kwarg) The number of times to recluster any clusters that are
                 bigger the `clust_max_size`. If cannot accomplished this by `clust_max_tries`
@@ -505,8 +506,8 @@ class GenePlexus:
                 "domino_seed" : 123,
             }
         preset_kwargs_keys = list(preset_kwargs.keys())
-        kwargs = {key: value for key, value in kwargs.items() if key in preset_kwargs_keys}
-        preset_kwargs.update(kwargs)
+        clust_kwargs = {key: value for key, value in clust_kwargs.items() if key in preset_kwargs_keys}
+        preset_kwargs.update(clust_kwargs)
         
         
         clust_genes = _geneplexus._generate_clusters(
