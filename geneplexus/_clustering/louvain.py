@@ -12,7 +12,7 @@ def louvain_main(
     louvain_max_size = kwargs["louvain_max_size"]
     louvain_res = kwargs["louvain_res"]
     louvain_seed = kwargs["louvain_seed"]
-    
+
     for num_try in range(louvain_max_tries):
         ######## logger.info(f"On clustering try {clus_try + 1}")
         if num_try == 0:
