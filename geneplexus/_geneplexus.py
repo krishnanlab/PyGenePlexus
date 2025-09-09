@@ -19,6 +19,8 @@ from sklearn.preprocessing import StandardScaler
 from statsmodels.stats.multitest import multipletests
 
 from . import util
+from ._clustering.domino import domino_main
+from ._clustering.louvain import louvain_main
 from ._config import logger
 from ._config.config import DEFAULT_LOGREG_KWARGS
 
@@ -107,49 +109,46 @@ def _generate_clusters(
     species,
     net_type,
     input_genes,
+    clust_method,
     clust_min_size,
-    clust_max_size,
-    clust_max_tries,
-    clust_res,
     clust_weighted,
-    clust_seed,
+    **kwargs,
 ):
+    logger.info("Generating Clusters")
     # Load network as edge list dataframe
     filepath = osp.join(file_loc, f"Edgelist__{species}__{net_type}.edg")
     if net_type == "BioGRID":
         df_edge = pd.read_csv(filepath, sep="\t", header=None, names=["Node1", "Node2"])
+        df_edge["Weight"] = 1.0
     else:
         df_edge = pd.read_csv(filepath, sep="\t", header=None, names=["Node1", "Node2", "Weight"])
         df_edge["Weight"] = df_edge["Weight"].astype(float)
     df_edge = df_edge.astype({"Node1": str, "Node2": str})
+    # edgelist used for clustering can be subset of genes in data and node_order
+    # make sure those input geens are removed
+    df_edge_genes = np.unique(np.union1d(df_edge["Node1"].to_numpy(), df_edge["Node2"].to_numpy()))
+    bad_input_genes = np.setdiff1d(input_genes, df_edge_genes).tolist()
+    input_genes = np.intersect1d(input_genes, df_edge_genes).tolist()
+    logger.info(
+        f"Input genes removed that weren't in network being clustered (thresholded version of the full network) {bad_input_genes}",
+    )
     # iteratively run through clustering
-    for clus_try in range(clust_max_tries):
-        logger.info(f"On clustering try {clus_try + 1}")
-        if clus_try == 0:
-            final_clusters, large_clusters = util.cluster_louvain(
-                df_edge,
-                [input_genes],
-                [],
-                clust_min_size,
-                clust_max_size,
-                clust_res,
-                clust_weighted,
-                clust_seed,
-            )
-        else:
-            final_clusters, large_clusters = util.cluster_louvain(
-                df_edge,
-                large_clusters,
-                final_clusters,
-                clust_min_size,
-                clust_max_size,
-                clust_res,
-                clust_weighted,
-                clust_seed,
-            )
-        if len(large_clusters) == 0:
-            break
-    final_clusters = final_clusters + large_clusters  # add back in large clusters if couldn't be made smaller
+    if clust_method == "louvain":
+        final_clusters = louvain_main(
+            df_edge,
+            input_genes,
+            clust_min_size,
+            clust_weighted,
+            **kwargs,
+        )
+    elif clust_method == "domino":
+        final_clusters = domino_main(
+            df_edge,
+            input_genes,
+            clust_min_size,
+            clust_weighted,
+            **kwargs,
+        )
     return final_clusters
 
 

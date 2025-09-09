@@ -455,24 +455,29 @@ class GenePlexus:
 
     def cluster_input(
         self,
+        clust_method: str = "louvain",
         clust_min_size: int = 5,
-        clust_max_size: int = 70,
-        clust_max_tries: int = 3,
-        clust_res: int = 1,
         clust_weighted: bool = True,
-        clust_seed: int = 123,
+        clust_kwargs: Optional[Dict[str, Any]] = None,
     ):
         """Cluster input gene list.
 
         Args:
+            clust_method: Clustering methos to use (either louvain or domino).
             clust_min_size: Ignore clusters if smaller than this value.
-            clust_max_size: Try to recluster if a cluster is bigger than this value.
-            clust_max_tries: The number of times to recluster any clusters that are
+            clust_weighted: Whether or not to use weighted edges when building the clusters
+            clust_kwargs: keywords args specfic to each clustering method
+            louvain_max_size: (kwarg) Try to recluster if a cluster is bigger than this value.
+            louvain_max_tries: (kwarg) The number of times to recluster any clusters that are
                 bigger the `clust_max_size`. If cannot accomplished this by `clust_max_tries`
                 the larger clusters are still retained.
-            clust_res: Resolution parameter in clustering algorithm.
-            clust_weighted: Whether or not to use weighted edges when building the clusters
-            clust_seed: Set seed used in clustering. Chose None to have this randomally set.
+            louvain_res: (kwarg) Resolution parameter in clustering algorithm.
+            louvain_seed: (kwarg) Set seed used in clustering. Chose None to have this randomally set.
+            domino_res: (kwarg) resolution used to make initial slices.
+            domino_slice_thresh: (kwarg) threshold used for calling slice significant
+            domino_n_steps: (kwarg) number of steps used in pcst
+            domino_module_threshold: (kwarg) threshold used to consider module signifianct
+            domino_seed: (kwarg) random seed to be used in clustering algorithm
         """
 
         if list(self.model_info) != ["All-Genes"]:
@@ -485,25 +490,41 @@ class GenePlexus:
                 if "Cluster-" in item:
                     del self.model_info[item]
 
+        if clust_method == "louvain":
+            preset_kwargs = {
+                "louvain_max_size": 70,
+                "louvain_max_tries": 3,
+                "louvain_res": 1,
+                "louvain_seed": 123,
+            }
+        elif clust_method == "domino":
+            preset_kwargs = {
+                "domino_res": 1,
+                "domino_slice_thresh": 0.3,
+                "domino_n_steps": 20,
+                "domino_module_threshold": 0.05,
+                "domino_seed": 123,
+            }
+        preset_kwargs_keys = list(preset_kwargs.keys())
+        clust_kwargs = {key: value for key, value in clust_kwargs.items() if key in preset_kwargs_keys}
+        preset_kwargs.update(clust_kwargs)
+
         clust_genes = _geneplexus._generate_clusters(
             self.file_loc,
             self.sp_trn,
             self.net_type,
             self.model_info["All-Genes"].model_genes,
+            clust_method,
             clust_min_size,
-            clust_max_size,
-            clust_max_tries,
-            clust_res,
             clust_weighted,
-            clust_seed,
+            **preset_kwargs,
         )
+
         # set params to self for saving later
+        self.clust_method = clust_method
         self.clust_min_size = clust_min_size
-        self.clust_max_size = clust_max_size
-        self.clust_max_tries = clust_max_tries
-        self.clust_res = clust_res
         self.clust_weighted = clust_weighted
-        self.clust_seed = clust_seed
+        self.clus_kwargs = preset_kwargs
         # add keys to model_info
         if len(clust_genes) == 0:
             logger.info(f"No clusters were added")
@@ -519,15 +540,27 @@ class GenePlexus:
                     self.model_info[f"Cluster-{clus_id:02d}"].results[apair] = ModelResults()
             # generate info about the clusters
             unique_clus_genes = list({item for sublist in clust_genes for item in sublist})
-            num_genes_lost = len(self.model_info["All-Genes"].model_genes) - len(unique_clus_genes)
-            per_genes_lost = 100 - ((len(unique_clus_genes) / len(self.model_info["All-Genes"].model_genes)) * 100)
-            self.genes_not_clustered = np.setdiff1d(
+            num_genes_lost = len(np.setdiff1d(self.model_info["All-Genes"].model_genes, unique_clus_genes))
+            per_genes_lost = (num_genes_lost / len(self.model_info["All-Genes"].model_genes)) * 100
+            num_genes_gained = len(np.setdiff1d(unique_clus_genes, self.model_info["All-Genes"].model_genes))
+            per_genes_gained = (num_genes_gained / len(self.model_info["All-Genes"].model_genes)) * 100
+            # set values for saving later
+            self.num_genes_lost = num_genes_lost
+            self.per_genes_lost = per_genes_lost
+            self.num_genes_gained = num_genes_gained
+            self.per_genes_gained = per_genes_gained
+            self.genes_lost_clustered = np.setdiff1d(
                 self.model_info["All-Genes"].model_genes,
                 unique_clus_genes,
             ).tolist()
+            self.genes_gained_clustered = np.setdiff1d(
+                unique_clus_genes,
+                self.model_info["All-Genes"].model_genes,
+            ).tolist()
             logger.info(
-                f"The number of clusters added is {len(clust_genes)}. "
-                f"The number(%) of genes lost to clustering is {num_genes_lost} ({per_genes_lost:.2f}%)",
+                f"The number of clusters added is {len(clust_genes)}.\n"
+                f"The number(%) of input genes removed by clustering is {num_genes_lost} ({per_genes_lost:.2f}%)\n"
+                f"The number(%) of non-input genes added as positives by clustering is {num_genes_gained} ({per_genes_gained:.2f}%)",
             )
 
     def fit(
@@ -603,6 +636,7 @@ class GenePlexus:
             )
 
         for model_name in list(self.model_info):
+            logger.info(f"Starting model training for {model_name}")
             self._get_pos_and_neg_genes(model_name)
             (
                 self.model_info[model_name].mdl_weights,
@@ -757,6 +791,7 @@ class GenePlexus:
         """
         for model_name in list(self.model_info):
             for res_combo in list(self.model_info[model_name].results):
+                logger.info(f"Generating predictions for {model_name} and {res_combo}")
                 probs = _geneplexus._get_predictions(
                     self.file_loc,
                     res_combo.split("-")[0],
@@ -822,6 +857,7 @@ class GenePlexus:
         """
         for model_name in list(self.model_info):
             for idx, res_combo in enumerate(list(self.model_info[model_name].results)):
+                logger.info(f"Generating model similarities for {model_name} and {res_combo}")
                 df_sim, weights_dict = _geneplexus._make_sim_dfs(
                     self.file_loc,
                     self.model_info[model_name].mdl_weights,
@@ -857,6 +893,7 @@ class GenePlexus:
         """
         for model_name in list(self.model_info):
             for res_combo in list(self.model_info[model_name].results):
+                logger.info(f"Generating small edgelists for {model_name} and {res_combo}")
                 df_edge, isolated_genes, df_edge_sym, isolated_genes_sym = _geneplexus._make_small_edgelist(
                     self.file_loc,
                     self.model_info[model_name].results[res_combo].df_probs,
