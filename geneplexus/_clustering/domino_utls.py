@@ -5,11 +5,10 @@ import networkx as nx
 import numpy as np
 import pcst_fast
 
-# for linear threshold the setrecursion limit was set crazy high, I commented it out
-# sys.setrecursionlimit(100000000)
+from networkx.algorithms.community.quality import modularity
+from networkx.algorithms.community.centrality import girvan_newman
 
-
-def run_pcst(G_cc, i_cc, labels, n_steps, nodes, prize_factor):
+def run_pcst(G_cc, n_steps, nodes, prize_factor):
     ## set prize ##
     prizes = get_pcst_prize(G_cc, prize_factor, n_steps)
     vertices_prizes = []
@@ -17,19 +16,16 @@ def run_pcst(G_cc, i_cc, labels, n_steps, nodes, prize_factor):
         vertices_prizes.append(
             G_cc.nodes[cur_node]["Active"] if G_cc.nodes[cur_node]["Active"] else prizes[cur_node],
         )
-
     ## set cost ##
     edges_grid = []
     for cur_edge in G_cc.edges:
         edges_grid.append([nodes.index(cur_edge[0]), nodes.index(cur_edge[1])])
-
     edges_costs = []
     for cur_edge in edges_grid:
         u_score = 0 if G_cc.nodes[nodes[cur_edge[0]]]["Active"] else 0.9999
         v_score = 0 if G_cc.nodes[nodes[cur_edge[1]]]["Active"] else 0.9999
 
         edges_costs.append(np.min([u_score, v_score]))
-
     ## find pcst component by running pcst fast##
     root = -1
     num_clusters = 1
@@ -61,67 +57,57 @@ def get_pcst_prize(G_cc, prize_factor, n_steps):
 
 
 def get_putative_modules(
-    G,
-    improvement_delta=0,
-    modularity_score_objective=1,
-    n_cc=1.0,
+    G_subslice,
+    domino_weight,
+    improvement_delta,
+    modularity_score_objective,
 ):
     """"""
-    G_optimized = G.copy()
+    G_optimized = G_subslice.copy()
 
     # clean subslice from cycles and isolated nodes
     G_optimized.remove_edges_from(list(nx.selfloop_edges(G_optimized)))
     G_optimized.remove_nodes_from(list(nx.isolates(G_optimized)))
 
-    # in DOMINO code there was a bunch of code about finding sig values for
-    # each sublice. However where it was used to subset was commented out
-    # that is why this function doesn't have full_G or module_threshold
-
-    # # not sure what the below does for anything so skipping right now
-    # # for module size between 0 and 100 won't be further sliced
-    # ### seems like this should just be <100 and the ==0 isn't doing anything
-    # is_enriched_sublice = (len(G_optimized.nodes) < 100) or len(
-    #     G_optimized.nodes
-    # ) == 0
-    #
-    # break_loop = is_enriched_sublice
-    # best_modularity = -1
-    # while not break_loop:
-    #     break_loop, best_modularity = split_subslice_into_putative_modules(
-    #         G_optimized,
-    #         improvement_delta,
-    #         modularity_score_objective,
-    #         best_modularity,
-    #     )
-
+    # start so if module size < 100 won't be further sliced
+    is_enriched_sublice = len(G_optimized.nodes) < 100
+    best_modularity = -1
+    # loop executes until subslice is enriched
+    while not is_enriched_sublice:
+        is_enriched_sublice, best_modularity, G_optimized = split_subslice_into_putative_modules(
+            G_optimized,
+            improvement_delta,
+            modularity_score_objective,
+            best_modularity,
+            domino_weight,
+        )
     G_optimized.remove_nodes_from(list(nx.isolates(G_optimized)))
-
+    # get all cc's from final enriched subslice
     cc_optimized = (
         [] if len(G_optimized.nodes) == 0 else [G_optimized.subgraph(c) for c in nx.connected_components(G_optimized)]
     )
 
-    return G_optimized, cc_optimized
+    return cc_optimized
 
 
-#### I have not checked out these function yet but appear to do nothing
 def split_subslice_into_putative_modules(
-    self,
     G_optimized,
     improvement_delta,
     modularity_score_objective,
     best_modularity,
+    domino_weight,
 ):
-    cur_components = [G_optimized.subgraph(c) for c in connected_components(G_optimized)]
-    cur_modularity = modularity(G_optimized, cur_components, weight="weight")
+    cur_components = [G_optimized.subgraph(c) for c in nx.connected_components(G_optimized)]
+    cur_modularity = modularity(G_optimized, cur_components, weight=domino_weight)
 
     if cur_modularity >= modularity_score_objective:
-        return True, best_modularity
+        return True, best_modularity, G_optimized
     elif len(cur_components) == 0:
-        return True, best_modularity
+        return True, best_modularity, G_optimized
     else:
         optimized_connected_components = girvan_newman(G_optimized)
         cur_components = sorted(next(optimized_connected_components))
-        cur_modularity = modularity(G_optimized, cur_components, weight="weight")
+        cur_modularity = modularity(G_optimized, cur_components, weight=domino_weight)
         if cur_modularity <= best_modularity + improvement_delta:
             return True, best_modularity
         else:
@@ -138,44 +124,7 @@ def split_subslice_into_putative_modules(
 
             G_optimized.remove_edges_from(edges_to_remove)
 
-            return False, cur_modularity
-
-
-def split_subslice_into_putative_modules2(G_optimized, improvement_delta, modularity_score_objective, best_modularity):
-    cur_components = [G_optimized.subgraph(c) for c in connected_components(G_optimized)]
-    cur_modularity = modularity(G_optimized, cur_components, weight="weight")
-    if cur_modularity >= modularity_score_objective:
-        return True, best_modularity
-
-        if len(n_nodes) < 4:
-            G_optimized.remove_nodes_from(n_nodes)
-
-    cur_components = [G_optimized.subgraph(c) for c in connected_components(G_optimized)]
-    if len(cur_components) == 0:
-        return True, best_modularity
-
-    optimized_connected_components = girvan_newman(G_optimized)
-    cur_components = sorted(next(optimized_connected_components))
-    cur_modularity = modularity(G_optimized, cur_components, weight="weight")
-    if cur_modularity <= best_modularity + improvement_delta:
-        return True, best_modularity
-
-    else:
-        optimal_components = cur_components
-
-        edges_to_remove = []
-        for cur_edge in G_optimized.edges:
-            included = False
-            for n_nodes in optimal_components:
-                if cur_edge[0] in n_nodes and cur_edge[1] in n_nodes:
-                    included = True
-            if not included:
-                edges_to_remove.append(cur_edge)
-
-        G_optimized.remove_edges_from(edges_to_remove)
-
-        return False, cur_modularity
-
+            return False, cur_modularity, G_optimized
 
 ###########################################################################################################################
 

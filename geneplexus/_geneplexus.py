@@ -114,6 +114,7 @@ def _generate_clusters(
     clust_weighted,
     **kwargs,
 ):
+    logger.info("Generating Clusters")
     # Load network as edge list dataframe
     filepath = osp.join(file_loc, f"Edgelist__{species}__{net_type}.edg")
     if net_type == "BioGRID":
@@ -123,12 +124,12 @@ def _generate_clusters(
         df_edge = pd.read_csv(filepath, sep="\t", header=None, names=["Node1", "Node2", "Weight"])
         df_edge["Weight"] = df_edge["Weight"].astype(float)
     df_edge = df_edge.astype({"Node1": str, "Node2": str})
-    # edgelist used for clustering can be subset of genes in data and node_ordwer
+    # edgelist used for clustering can be subset of genes in data and node_order
     # make sure those input geens are removed
     df_edge_genes = np.unique(np.union1d(df_edge["Node1"].to_numpy(), df_edge["Node2"].to_numpy()))
     bad_input_genes = np.setdiff1d(input_genes, df_edge_genes).tolist()
     input_genes = np.intersect1d(input_genes, df_edge_genes).tolist()
-    print(f"genes removed from input list are {bad_input_genes}")
+    logger.info(f"Input genes removed that weren't in network being clustered (thresholded version of the full network) {bad_input_genes}")
     # iteratively run through clustering
     if clust_method == "louvain":
         final_clusters = louvain_main(

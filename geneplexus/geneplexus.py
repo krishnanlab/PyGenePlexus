@@ -540,15 +540,27 @@ class GenePlexus:
                     self.model_info[f"Cluster-{clus_id:02d}"].results[apair] = ModelResults()
             # generate info about the clusters
             unique_clus_genes = list({item for sublist in clust_genes for item in sublist})
-            num_genes_lost = len(self.model_info["All-Genes"].model_genes) - len(unique_clus_genes)
-            per_genes_lost = 100 - ((len(unique_clus_genes) / len(self.model_info["All-Genes"].model_genes)) * 100)
-            self.genes_not_clustered = np.setdiff1d(
+            num_genes_lost = len(np.setdiff1d(self.model_info["All-Genes"].model_genes, unique_clus_genes))
+            per_genes_lost = (num_genes_lost / len(self.model_info["All-Genes"].model_genes)) * 100
+            num_genes_gained = len(np.setdiff1d(unique_clus_genes, self.model_info["All-Genes"].model_genes))
+            per_genes_gained = (num_genes_gained / len(self.model_info["All-Genes"].model_genes)) * 100
+            # set values for saving later
+            self.num_genes_lost = num_genes_lost
+            self.per_genes_lost = per_genes_lost
+            self.num_genes_gained = num_genes_gained
+            self.per_genes_gained = per_genes_gained
+            self.genes_lost_clustered = np.setdiff1d(
                 self.model_info["All-Genes"].model_genes,
                 unique_clus_genes,
             ).tolist()
+            self.genes_gained_clustered = np.setdiff1d(
+                unique_clus_genes,
+                self.model_info["All-Genes"].model_genes,
+            ).tolist()
             logger.info(
-                f"The number of clusters added is {len(clust_genes)}. "
-                f"The number(%) of genes lost to clustering is {num_genes_lost} ({per_genes_lost:.2f}%)",
+                f"The number of clusters added is {len(clust_genes)}.\n"
+                f"The number(%) of input genes removed by clustering is {num_genes_lost} ({per_genes_lost:.2f}%)\n"
+                f"The number(%) of non-input genes added as positives by clustering is {num_genes_gained} ({per_genes_gained:.2f}%)",
             )
 
     def fit(
@@ -624,6 +636,7 @@ class GenePlexus:
             )
 
         for model_name in list(self.model_info):
+            logger.info(f"Starting model training for {model_name}")
             self._get_pos_and_neg_genes(model_name)
             (
                 self.model_info[model_name].mdl_weights,
@@ -778,6 +791,7 @@ class GenePlexus:
         """
         for model_name in list(self.model_info):
             for res_combo in list(self.model_info[model_name].results):
+                logger.info(f"Generating predictions for {model_name} and {res_combo}")
                 probs = _geneplexus._get_predictions(
                     self.file_loc,
                     res_combo.split("-")[0],
@@ -843,6 +857,7 @@ class GenePlexus:
         """
         for model_name in list(self.model_info):
             for idx, res_combo in enumerate(list(self.model_info[model_name].results)):
+                logger.info(f"Generating model similarities for {model_name} and {res_combo}")
                 df_sim, weights_dict = _geneplexus._make_sim_dfs(
                     self.file_loc,
                     self.model_info[model_name].mdl_weights,
@@ -878,6 +893,7 @@ class GenePlexus:
         """
         for model_name in list(self.model_info):
             for res_combo in list(self.model_info[model_name].results):
+                logger.info(f"Generating small edgelists for {model_name} and {res_combo}")
                 df_edge, isolated_genes, df_edge_sym, isolated_genes_sym = _geneplexus._make_small_edgelist(
                     self.file_loc,
                     self.model_info[model_name].results[res_combo].df_probs,
