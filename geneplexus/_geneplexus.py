@@ -129,7 +129,9 @@ def _generate_clusters(
     df_edge_genes = np.unique(np.union1d(df_edge["Node1"].to_numpy(), df_edge["Node2"].to_numpy()))
     bad_input_genes = np.setdiff1d(input_genes, df_edge_genes).tolist()
     input_genes = np.intersect1d(input_genes, df_edge_genes).tolist()
-    logger.info(f"Input genes removed that weren't in network being clustered (thresholded version of the full network) {bad_input_genes}")
+    logger.info(
+        f"Input genes removed that weren't in network being clustered (thresholded version of the full network) {bad_input_genes}"
+    )
     # iteratively run through clustering
     if clust_method == "louvain":
         final_clusters = louvain_main(

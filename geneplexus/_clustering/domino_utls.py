@@ -4,9 +4,9 @@ import sys
 import networkx as nx
 import numpy as np
 import pcst_fast
-
-from networkx.algorithms.community.quality import modularity
 from networkx.algorithms.community.centrality import girvan_newman
+from networkx.algorithms.community.quality import modularity
+
 
 def run_pcst(G_cc, n_steps, nodes, prize_factor):
     ## set prize ##
@@ -125,6 +125,7 @@ def split_subslice_into_putative_modules(
             G_optimized.remove_edges_from(edges_to_remove)
 
             return False, cur_modularity, G_optimized
+
 
 ###########################################################################################################################
 
