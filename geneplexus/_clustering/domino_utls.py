@@ -127,8 +127,6 @@ def split_subslice_into_putative_modules(
             return False, cur_modularity, G_optimized
 
 
-###########################################################################################################################
-
 """
 Implement linear threshold models
 """
