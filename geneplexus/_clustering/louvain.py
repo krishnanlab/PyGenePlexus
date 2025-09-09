@@ -14,7 +14,6 @@ def louvain_main(
     louvain_seed = kwargs["louvain_seed"]
 
     for num_try in range(louvain_max_tries):
-        ######## logger.info(f"On clustering try {clus_try + 1}")
         if num_try == 0:
             final_clusters, large_clusters = louvain_cluster(
                 df_edge,
@@ -39,7 +38,8 @@ def louvain_main(
             )
         if len(large_clusters) == 0:
             break
-    final_clusters = final_clusters + large_clusters  # add back in large clusters if couldn't be made smaller
+    # add back in large clusters if couldn't be made smaller
+    final_clusters = final_clusters + large_clusters
     return final_clusters
 
 
