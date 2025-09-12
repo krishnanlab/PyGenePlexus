@@ -300,7 +300,7 @@ def _make_prob_df(file_loc, sp_trn, sp_res, net_type, probs, pos_genes_in_net, n
     df_probs = df_probs.astype({"Entrez": str, "Probability": float})
     df_probs = df_probs.sort_values(by=["Probability"], ascending=False).reset_index(drop=True)
     z = zscore(df_probs["Probability"].to_numpy())
-    p = norm.sf(abs(z))
+    p = norm.sf(z)
     rejects, padjusts, b, c = multipletests(p, method="bonferroni", is_sorted=True)
     df_probs["Z-score"] = z
     df_probs["P-adjusted"] = padjusts
@@ -335,7 +335,7 @@ def _make_sim_dfs(file_loc, mdl_weights, species, gsc, net_type, features):
         by=["Similarity"],
         ascending=False,
     )
-    p = norm.sf(abs(df_sim["Z-score"].to_numpy()))
+    p = norm.sf(df_sim["Z-score"].to_numpy())
     rejects, padjusts, b, c = multipletests(p, method="bonferroni", is_sorted=True)
     df_sim["P-adjusted"] = padjusts
     df_sim["Rank"] = rankdata(-1 * (df_sim["Similarity"].to_numpy() + 1e-9), method="min")
