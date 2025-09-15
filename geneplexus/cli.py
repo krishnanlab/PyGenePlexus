@@ -120,7 +120,8 @@ def parse_args() -> argparse.Namespace:
         "--log_level",
         default=config.DEFAULT_PARAMETERS["log_level"],
         metavar="",
-        help=f"Logging level. {format_choices(config.LOG_LEVELS)}",
+        help=f"Logging level. {format_choices(config.LOG_LEVELS)}. "
+        "Set to CRITICAL for quietest logging.",
     )
     
     parser.add_argument(
@@ -165,13 +166,6 @@ def parse_args() -> argparse.Namespace:
     )
 
     ### Class methods arguements ###
-
-    parser.add_argument(
-        "-q",
-        "--quiet",
-        action="store_true",
-        help="Suppress log messages (same as setting log_level to CRITICAL).",
-    )
 
     parser.add_argument(
         "-cmin",
@@ -338,7 +332,6 @@ def clear_data(args):
 def main():
     """Run the full GenePlexus pipeline."""
     args = parse_args()
-    log_level = "CRITICAL" if args.quiet else args.log_level
 
     clear_data(args)  # data cleared if args.clear_data is true
 
@@ -357,7 +350,7 @@ def main():
         gsc_trn=args.gsc_trn,
         gsc_res=args.gsc_res,
         auto_download=args.auto_download,
-        log_level=log_level,
+        log_level=args.log_level,
         log_to_file=True,
     )
 
