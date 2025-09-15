@@ -126,10 +126,10 @@ def parse_args() -> argparse.Namespace:
     ### pipeline control arguements ###
 
     parser.add_argument(
-        "-ado",
-        "--auto_download_off",
+        "-ad",
+        "--auto_download",
         action="store_true",
-        help="Turns off autodownloader which is on by default.",
+        help="When added turns on autodownloader which is off by default.",
     )
 
     parser.add_argument(
@@ -356,7 +356,7 @@ def main():
         sp_res=args.sp_res,
         gsc_trn=args.gsc_trn,
         gsc_res=args.gsc_res,
-        auto_download=args.auto_download_off,
+        auto_download=args.auto_download,
         log_level=log_level,
         log_to_file=True,
     )
