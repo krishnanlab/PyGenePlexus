@@ -73,6 +73,7 @@ COMBINED_CONTEXTS: Dict[str, Any] = {
     "Fly": "Combined - Gene Set Contexts Used [GO]",
 }
 
+# Note here, boolean arguments need to be changed in CLI manually if changed here
 DEFAULT_PARAMETERS = {
     "file_loc": None,
     "net_type": "STRING",

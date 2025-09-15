@@ -59,52 +59,75 @@ def parse_args() -> argparse.Namespace:
 
     parser.add_argument(
         "-n",
-        "--network",
-        default="STRING",
+        "--net_type",
+        default=config.DEFAULT_PARAMETERS["net_type"],
         metavar="",
         help=f"Network to use. {format_choices(config.ALL_NETWORKS)}",
     )
 
     parser.add_argument(
         "-f",
-        "--feature",
-        default="SixSpeciesN2V",
+        "--features",
+        default=config.DEFAULT_PARAMETERS["features"],
         metavar="",
         help=f"Types of feature to use. {format_choices(config.ALL_FEATURES)}",
     )
 
     parser.add_argument(
-        "-s1",
+        "-st",
         "--sp_trn",
-        default="Human",
+        default=config.DEFAULT_PARAMETERS["sp_trn"],
         metavar="",
         help=f"Species of training data {format_choices(config.ALL_SPECIES)}",
     )
 
     parser.add_argument(
-        "-s2",
+        "-sr",
         "--sp_res",
-        default="Mouse",
+        default=config.DEFAULT_PARAMETERS["sp_res"],
         metavar="",
         help=f"Species of results data {format_choices(config.ALL_SPECIES)}. "
         "If more than one species make comma seaprated.",
     )
 
     parser.add_argument(
-        "-g1",
+        "-gt",
         "--gsc_trn",
-        default="GO",
+        default=config.DEFAULT_PARAMETERS["gsc_trn"],
         metavar="",
         help=f"Geneset collection used to generate negatives. {format_choices(config.ALL_GSCS)}",
     )
 
     parser.add_argument(
-        "-g2",
+        "-gr",
         "--gsc_res",
-        default="GO",
+        default=config.DEFAULT_PARAMETERS["gsc_res"],
         metavar="",
         help=f"Geneset collection used for model similarities. {format_choices(config.ALL_GSCS)}. "
         "If more than one gsc can be comma spearated.",
+    )
+    
+    parser.add_argument(
+        "-in",
+        "--input_negatives",
+        default=config.DEFAULT_PARAMETERS["input_negatives"],
+        metavar="",
+        help="Input negative gene list (.txt) file.",
+    )
+    
+    parser.add_argument(
+        "-l",
+        "--log_level",
+        default=config.DEFAULT_PARAMETERS["log_level"],
+        metavar="",
+        help=f"Logging level. {format_choices(config.LOG_LEVELS)}",
+    )
+    
+    parser.add_argument(
+        "-ad",
+        "--auto_download",
+        action="store_true",
+        help="When added turns on autodownloader which is off by default.",
     )
 
     parser.add_argument(
@@ -115,22 +138,7 @@ def parse_args() -> argparse.Namespace:
         help="Output directory with respect to the repo root directory.",
     )
 
-    parser.add_argument(
-        "-in",
-        "--input_negatives",
-        default=None,
-        metavar="",
-        help="Input negative gene list (.txt) file.",
-    )
-
     ### pipeline control arguements ###
-
-    parser.add_argument(
-        "-ad",
-        "--auto_download",
-        action="store_true",
-        help="When added turns on autodownloader which is off by default.",
-    )
 
     parser.add_argument(
         "--clear-data",
@@ -157,14 +165,6 @@ def parse_args() -> argparse.Namespace:
     )
 
     ### Class methods arguements ###
-
-    parser.add_argument(
-        "-l",
-        "--log_level",
-        default="INFO",
-        metavar="",
-        help=f"Logging level. {format_choices(config.LOG_LEVELS)}",
-    )
 
     parser.add_argument(
         "-q",
@@ -294,7 +294,7 @@ def parse_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
-        "-st",
+        "-svt",
         "--save_type",
         default="all",
         metavar="",
@@ -350,8 +350,8 @@ def main():
     # Create geneplexus object and auto download data files
     gp = GenePlexus(
         file_loc=args.file_loc,
-        net_type=args.network,
-        features=args.feature,
+        net_type=args.net_type,
+        features=args.features,
         sp_trn=args.sp_trn,
         sp_res=args.sp_res,
         gsc_trn=args.gsc_trn,
