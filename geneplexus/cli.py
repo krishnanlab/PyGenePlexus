@@ -144,28 +144,28 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--clear-data",
         action="store_true",
-        help="Clear data directory and exit.",
+        help="When added will allow user to interactively clear file_loc data and exit.",
     )
 
     parser.add_argument(
         "--do_clustering",
         action="store_true",
-        help="Do clustering step.",
+        help="When added cluster_input() function will be run.",
     )
 
     parser.add_argument(
         "--skip-mdl-sim",
         action="store_true",
-        help="Skip model similarity computation",
+        help="When added make_sim_dfs() will not be run",
     )
 
     parser.add_argument(
         "--skip-sm-edgelist",
         action="store_true",
-        help="Skip making small edgelist.",
+        help="When added make_small_edgelist() will not be run",
     )
 
-    ### Class methods arguements ###
+    ### Pipeline control arguements ###
 
     parser.add_argument(
         "-cmin",
