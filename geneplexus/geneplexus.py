@@ -39,18 +39,18 @@ class GenePlexus:
 
     def __init__(
         self,
-        file_loc: Optional[str] = None,
-        net_type: config.NET_TYPE = "STRING",
-        features: config.FEATURE_TYPE = "SixSpeciesN2V",
-        sp_trn: config.SPECIES_TYPE = "Human",
-        sp_res: config.SPECIES_SELECTION_TYPE = "Human",
-        gsc_trn: config.GSC_TYPE = "Combined",
-        gsc_res: config.GSC_SELECTION_TYPE = "Combined",
-        input_genes: Optional[List[str]] = None,
-        input_negatives: Optional[List[str]] = None,
-        auto_download: bool = False,
-        log_level: config.LOG_LEVEL_TYPE = "WARNING",
-        log_to_file: bool = False,
+        file_loc: Optional[str] = config.DEFAULT_PARAMETERS["file_loc"],
+        net_type: config.NET_TYPE = config.DEFAULT_PARAMETERS["net_type"],
+        features: config.FEATURE_TYPE = config.DEFAULT_PARAMETERS["features"],
+        sp_trn: config.SPECIES_TYPE = config.DEFAULT_PARAMETERS["sp_trn"],
+        sp_res: config.SPECIES_SELECTION_TYPE = config.DEFAULT_PARAMETERS["sp_res"],
+        gsc_trn: config.GSC_TYPE = config.DEFAULT_PARAMETERS["gsc_trn"],
+        gsc_res: config.GSC_SELECTION_TYPE = config.DEFAULT_PARAMETERS["gsc_res"],
+        input_genes: Optional[List[str]] = config.DEFAULT_PARAMETERS["input_genes"],
+        input_negatives: Optional[List[str]] = config.DEFAULT_PARAMETERS["input_negatives"],
+        auto_download: bool = config.DEFAULT_PARAMETERS["auto_download"],
+        log_level: config.LOG_LEVEL_TYPE = config.DEFAULT_PARAMETERS["log_level"],
+        log_to_file: bool = config.DEFAULT_PARAMETERS["log_to_file"],
     ):
         """Initialize the GenePlexus object.
 
@@ -455,9 +455,9 @@ class GenePlexus:
 
     def cluster_input(
         self,
-        clust_method: str = "louvain",
-        clust_min_size: int = 5,
-        clust_weighted: bool = True,
+        clust_method: str = config.DEFAULT_PARAMETERS["clust_method"],
+        clust_min_size: int = config.DEFAULT_PARAMETERS["clust_min_size"],
+        clust_weighted: bool = config.DEFAULT_PARAMETERS["clust_weighted"],
         clust_kwargs: Optional[Dict[str, Any]] = None,
     ):
         """Cluster input gene list.
@@ -566,13 +566,13 @@ class GenePlexus:
     def fit(
         self,
         logreg_kwargs: Optional[Dict[str, Any]] = None,
-        scale: bool = False,
-        min_num_pos: int = 5,
-        min_num_pos_cv: int = 15,
-        num_folds: int = 3,
-        null_val: float = None,
-        random_state: Optional[int] = 0,
-        cross_validate: bool = True,
+        scale: bool = config.DEFAULT_PARAMETERS["scale"],
+        min_num_pos: int = config.DEFAULT_PARAMETERS["min_num_pos"],
+        min_num_pos_cv: int = config.DEFAULT_PARAMETERS["min_num_pos_cv"],
+        num_folds: int = config.DEFAULT_PARAMETERS["num_folds"],
+        null_val: float = config.DEFAULT_PARAMETERS["null_val"],
+        random_state: Optional[int] = config.DEFAULT_PARAMETERS["random_state"],
+        cross_validate: bool = config.DEFAULT_PARAMETERS["cross_validate"],
     ):
         """Fit the model.
 
@@ -869,7 +869,10 @@ class GenePlexus:
                 self.model_info[model_name].results[res_combo].df_sim = df_sim
         return self.model_info
 
-    def make_small_edgelist(self, num_nodes: int = 50):
+    def make_small_edgelist(
+        self,
+        num_nodes: int = config.DEFAULT_PARAMETERS["num_nodes"],
+    ):
         """Make a subgraph induced by the top predicted genes.
 
         Args:
@@ -909,7 +912,13 @@ class GenePlexus:
         self.num_nodes = num_nodes
         return self.model_info
 
-    def save_class(self, outdir: str, save_type: str = "all", zip_output: bool = False, overwrite: bool = False):
+    def save_class(
+        self,
+        outdir: str = config.DEFAULT_PARAMETERS["outdir"],
+        save_type: str = config.DEFAULT_PARAMETERS["save_type"],
+        zip_output: bool = config.DEFAULT_PARAMETERS["zip_output"],
+        overwrite: bool = config.DEFAULT_PARAMETERS["overwrite"],
+    ):
         """Save all parts of the class.
 
         Args:

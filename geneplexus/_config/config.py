@@ -73,6 +73,36 @@ COMBINED_CONTEXTS: Dict[str, Any] = {
     "Fly": "Combined - Gene Set Contexts Used [GO]",
 }
 
+DEFAULT_PARAMETERS = {
+    "file_loc": None,
+    "net_type": "STRING",
+    "features": "SixSpeciesN2V",
+    "sp_trn": "Human",
+    "sp_res": "Human",
+    "gsc_trn": "Combined",
+    "gsc_res": "Combined",
+    "input_genes": None,
+    "input_negatives": None,
+    "auto_download": False,
+    "log_level": "INFO",
+    "log_to_file": False,
+    "clust_method": "louvain",
+    "clust_min_size": 5,
+    "clust_weighted": True,
+    "scale": False,
+    "min_num_pos": 5,
+    "min_num_pos_cv": 15,
+    "num_folds": 3,
+    "null_val": None,
+    "random_state": 0,
+    "cross_validate": True,
+    "num_nodes": 50,
+    "outdir": None,
+    "save_type": "all",
+    "zip_output": False,
+    "overwrite": False,
+}
+
 __all__ = [
     "URL_DICT",
     "CONFIG_PATH",
@@ -97,4 +127,5 @@ __all__ = [
     "GSC_DATA_TYPE",
     "PRETRAINED_DATA_TYPE",
     "COMBINED_CONTEXTS",
+    "DEFAULT_PARAMETERS",
 ]
