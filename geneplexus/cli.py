@@ -49,9 +49,9 @@ def parse_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
-        "-dd",
-        "--data_dir",
-        default=None,
+        "-fl",
+        "--file_loc",
+        default=config.DEFAULT_PARAMETERS["file_loc"],
         metavar="",
         help="Directory in which the data are stored, if set to None, then use "
         "the default data directory ~/.data/geneplexus",
@@ -321,17 +321,17 @@ def parse_args() -> argparse.Namespace:
 def clear_data(args):
     """Clear data path.
 
-    If data_dir is default, then remove directly. Otherwise, prompt for
+    If file_loc is default, then remove directly. Otherwise, prompt for
     acknowledgement.
 
     """
     if args.clear_data:
-        if args.data_dir is None:
+        if args.file_loc is None:
             shutil.rmtree(GenePlexus(log_level="CRITICAL").file_loc)
         else:
-            data_dir = normexpand(args.data_dir)
-            if input("Remove directory {data_dir}? [y/n]") == "y":
-                shutil.rmtree(data_dir)
+            file_loc = normexpand(args.file_loc)
+            if input("Remove directory {file_loc}? [y/n]") == "y":
+                shutil.rmtree(file_loc)
         exit()
 
 
@@ -349,7 +349,7 @@ def main():
 
     # Create geneplexus object and auto download data files
     gp = GenePlexus(
-        file_loc=args.data_dir,
+        file_loc=args.file_loc,
         net_type=args.network,
         features=args.feature,
         sp_trn=args.sp_trn,
