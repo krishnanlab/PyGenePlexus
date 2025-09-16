@@ -498,6 +498,8 @@ class GenePlexus:
         if isinstance(clust_kwargs, dict):
             clust_kwargs = {key: value for key, value in clust_kwargs.items() if key in preset_kwargs_keys}
             preset_kwargs.update(clust_kwargs)
+        else:
+            logger.warning(f"clust_kwargs not a dictionary or None, using defaults")
 
         clust_genes = _geneplexus._generate_clusters(
             self.file_loc,
@@ -641,13 +643,13 @@ class GenePlexus:
                 self.model_info[model_name].pos_genes_in_net,
                 self.model_info[model_name].negative_genes,
                 self.model_info[model_name].net_genes,
-                logreg_kwargs=logreg_kwargs,
-                min_num_pos_cv=min_num_pos_cv,
-                num_folds=num_folds,
-                null_val=null_val,
-                random_state=random_state,
-                cross_validate=cross_validate,
-                scale=scale,
+                logreg_kwargs,
+                min_num_pos_cv,
+                num_folds,
+                null_val,
+                random_state,
+                cross_validate,
+                scale,
             )
 
             # make df for genes used in training
@@ -787,7 +789,7 @@ class GenePlexus:
                     res_combo.split("-")[0],
                     self.features,
                     self.net_type,
-                    self.model_info[model_name].scale,
+                    self.scale,
                     self.model_info[model_name].std_scale,
                     self.model_info[model_name].clf,
                 )
