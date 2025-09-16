@@ -41,13 +41,6 @@ SAVE_TYPE = Literal["all", "results_only"]
 SPECIES_SELECTION_TYPE = Union[Literal["All"], SPECIES_TYPE, List[SPECIES_TYPE]]
 GSC_SELECTION_TYPE = Union[GSC_TYPE, List[GSC_TYPE]]
 
-DEFAULT_LOGREG_KWARGS: Dict[str, Any] = {
-    "max_iter": 10000,
-    "solver": "lbfgs",
-    "penalty": "l2",
-    "C": 1.0,
-}
-
 
 ID_SRC_TYPE = Literal["ENSG", "ENSP", "ENST", "Entrez", "Symbol"]
 ID_DST_TYPE = Literal["Entrez", "ENSG", "Name", "Symbol"]
@@ -107,6 +100,28 @@ DEFAULT_PARAMETERS = {
     "overwrite": False,
 }
 
+DEFAULT_LOUVAIN_KWARGS = {
+    "louvain_max_size": 70,
+    "louvain_max_tries": 3,
+    "louvain_res": 1,
+    "louvain_seed": 123,
+}
+
+DEFAULT_DOMINO_KWARGS = {
+    "domino_res": 1,
+    "domino_slice_thresh": 0.3,
+    "domino_n_steps": 20,
+    "domino_module_threshold": 0.05,
+    "domino_seed": 123,
+}
+
+DEFAULT_LOGREG_KWARGS: Dict[str, Any] = {
+    "max_iter": 10000,
+    "solver": "lbfgs",
+    "penalty": "l2",
+    "C": 1.0,
+}
+
 __all__ = [
     "URL_DICT",
     "CONFIG_PATH",
@@ -133,4 +148,7 @@ __all__ = [
     "PRETRAINED_DATA_TYPE",
     "COMBINED_CONTEXTS",
     "DEFAULT_PARAMETERS",
+    "DEFAULT_LOUVAIN_KWARGS",
+    "DEFAULT_DOMINO_KWARGS",
+    "DEFAULT_LOGREG_KWARG",
 ]

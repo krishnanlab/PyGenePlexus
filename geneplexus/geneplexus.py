@@ -491,20 +491,9 @@ class GenePlexus:
                     del self.model_info[item]
 
         if clust_method == "louvain":
-            preset_kwargs = {
-                "louvain_max_size": 70,
-                "louvain_max_tries": 3,
-                "louvain_res": 1,
-                "louvain_seed": 123,
-            }
+            preset_kwargs = config.DEFAULT_LOUVAIN_KWARGS
         elif clust_method == "domino":
-            preset_kwargs = {
-                "domino_res": 1,
-                "domino_slice_thresh": 0.3,
-                "domino_n_steps": 20,
-                "domino_module_threshold": 0.05,
-                "domino_seed": 123,
-            }
+            preset_kwargs = config.DEFAULT_DOMINO_KWARGS
         preset_kwargs_keys = list(preset_kwargs.keys())
         if isinstance(clust_kwargs, dict):
             clust_kwargs = {key: value for key, value in clust_kwargs.items() if key in preset_kwargs_keys}
