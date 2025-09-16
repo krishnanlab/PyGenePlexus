@@ -375,18 +375,18 @@ def _alter_validation_df(df_convert_out, pos_genes_for_model, net_type):
     return df_convert_out_subset
 
 
-def _save_class(gp, outdir, save_type, zip_output, overwrite):
-    outdir = util.suffix_dir(outdir, overwrite=overwrite)
+def _save_class(gp, output_dir, save_type, zip_output, overwrite):
+    output_dir = util.suffix_dir(output_dir, overwrite=overwrite)
     if zip_output:
-        zip_outpath = util.suffix_zip(f"{outdir}.zip", overwrite=overwrite)
-    util._save_results(gp, outdir, save_type)
+        zip_outpath = util.suffix_zip(f"{output_dir}.zip", overwrite=overwrite)
+    util._save_results(gp, output_dir, save_type)
     # Optionally zip the result directory
     if zip_output:
-        outpath = pathlib.Path(outdir)
+        outpath = pathlib.Path(output_dir)
         logger.info("Zipping output files")
         shutil.make_archive(zip_outpath[:-4], "zip", outpath.parent, outpath.name)
-        shutil.rmtree(outdir)
-        logger.info(f"Removing temporary directory {outdir}")
+        shutil.rmtree(output_dir)
+        logger.info(f"Removing temporary directory {output_dir}")
         logger.info(f"Done! Results saved to {zip_outpath}")
     else:
-        logger.info(f"Done! Results saved to {outdir}")
+        logger.info(f"Done! Results saved to {output_dir}")

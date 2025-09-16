@@ -101,7 +101,7 @@ DEFAULT_PARAMETERS = {
     "random_state": 0,
     "cross_validate": True,
     "num_nodes": 50,
-    "outdir": None,
+    "output_dir": None,
     "save_type": "all",
     "zip_output": False,
     "overwrite": False,

@@ -915,22 +915,22 @@ class GenePlexus:
 
     def save_class(
         self,
-        outdir: str = config.DEFAULT_PARAMETERS["outdir"],
+        output_dir: str = config.DEFAULT_PARAMETERS["output_dir"],
         save_type: str = config.DEFAULT_PARAMETERS["save_type"],
         zip_output: bool = config.DEFAULT_PARAMETERS["zip_output"],
         overwrite: bool = config.DEFAULT_PARAMETERS["overwrite"],
     ):
-        """Save all parts of the class.
+        """Save all or parts of the GenePlexus class and results.
 
         Args:
+            output_dir: Path to save the files to.
             save_type: which files to save (options all or results_only)
-            outdir: Path to save the files to.
             zip_output: wehter or not to compress all the results into one zip file
             overwrite: wether to overwrite data or make new directory with incremented index
 
         """
 
-        _geneplexus._save_class(self, outdir, save_type, zip_output, overwrite)
+        _geneplexus._save_class(self, output_dir, save_type, zip_output, overwrite)
 
     def remove_log_file(self):
         """Remove the tmp log file. Only do when at the end of the script)"""
