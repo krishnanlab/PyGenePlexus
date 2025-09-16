@@ -106,7 +106,7 @@ def parse_args() -> argparse.Namespace:
         help=f"Geneset collection used for model similarities. {format_choices(config.ALL_GSCS)}. "
         "If more than one gsc can be comma spearated.",
     )
-    
+
     parser.add_argument(
         "-in",
         "--input_negatives",
@@ -114,16 +114,15 @@ def parse_args() -> argparse.Namespace:
         metavar="",
         help="Input negative gene list (.txt) file.",
     )
-    
+
     parser.add_argument(
         "-l",
         "--log_level",
         default=config.DEFAULT_PARAMETERS["log_level"],
         metavar="",
-        help=f"Logging level. {format_choices(config.LOG_LEVELS)}. "
-        "Set to CRITICAL for quietest logging.",
+        help=f"Logging level. {format_choices(config.LOG_LEVELS)}. " "Set to CRITICAL for quietest logging.",
     )
-    
+
     parser.add_argument(
         "-ad",
         "--auto_download",
@@ -184,14 +183,14 @@ def parse_args() -> argparse.Namespace:
         type=int,
         help="Minimum size of clusters allowed.",
     )
-    
+
     parser.add_argument(
         "-cw",
         "--clust_weighted",
         action="store_false",
         help="When added will set clust_weight argument to False.",
     )
-    
+
     parser.add_argument(
         "-ck",
         "--clust_kwargs",
@@ -385,7 +384,7 @@ def main():
             clust_method=args.clust_method,
             clust_min_size=args.clust_min_size,
             clust_weighted=args.clust_weighted,
-            clust_kwargs=args.clust_kwargs
+            clust_kwargs=args.clust_kwargs,
         )
     gp.fit(
         logreg_kwargs=args.fit_logreg_kwargs,
