@@ -569,7 +569,7 @@ class GenePlexus:
         Args:
             logreg_kwargs: Scikit-learn logistic regression settings (see
                 :class:`~sklearn.linear_model.LogisticRegression`). If not set,
-                then use the default logistic regression settings (l2 penalty,
+                then use the default logistic regression settings (l2 penalty with C=1,
                 10,000 max iterations, lbfgs solver).
             scale: Whether to scale the data when doing model training and prediction. It is
                 not recommended to set to ``True`` unless using custom data.
@@ -631,7 +631,6 @@ class GenePlexus:
             (
                 self.model_info[model_name].mdl_weights,
                 self.model_info[model_name].avgps,
-                self.model_info[model_name].scale,
                 self.model_info[model_name].clf,
                 self.model_info[model_name].std_scale,
             ) = _geneplexus._run_sl(
@@ -660,6 +659,7 @@ class GenePlexus:
 
         # set function arguments for saving later
         self.logreg_kwargs = logreg_kwargs
+        self.scale = scale
         self.min_num_pos_cv = min_num_pos_cv
         self.num_folds = num_folds
         self.null_val = null_val

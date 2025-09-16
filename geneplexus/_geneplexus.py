@@ -248,9 +248,9 @@ def _run_sl(
         logger.info(f"{np.median(avgps)=:.2f}")
         logger.info(f"{np.mean(avgps)=:.2f}")
     if scale:
-        return mdl_weights, avgps, scale, clf, std_scale
+        return mdl_weights, avgps, clf, std_scale
     else:
-        return mdl_weights, avgps, scale, clf, None
+        return mdl_weights, avgps, clf, None
 
 
 def _get_predictions(
