@@ -28,7 +28,7 @@ ALL_FEATURES = ["SixSpeciesN2V"]
 ALL_GSCS = ["GO", "Monarch", "Mondo", "Combined"]
 ALL_SPECIES = ["Human", "Mouse", "Fly", "Worm", "Zebrafish", "Yeast"]
 ALL_CLUSTERING = ["louvain", "domino"]
-ALL_SAVES = ["all","results_only"]
+ALL_SAVES = ["all", "results_only"]
 
 DEFAULT_LOGREG_KWARGS: Dict[str, Any] = {
     "max_iter": 10000,
@@ -56,7 +56,7 @@ FEATURE_TYPE = Literal["SixSpeciesN2V"]
 GSC_TYPE = Literal["GO", "Monarch", "Mondo", "Combined"]
 SPECIES_TYPE = Literal["Human", "Mouse", "Fly", "Worm", "Zebrafish", "Yeast"]
 CLUSTERING_TYPE = Literal["louvain", "domino"]
-SAVE_TYPE = Literal["all","results_only"]
+SAVE_TYPE = Literal["all", "results_only"]
 
 NET_SELECTION_TYPE = Union[Literal["All"], NET_TYPE, List[NET_TYPE]]
 FEATURE_SELECTION_TYPE = Union[Literal["All"], FEATURE_TYPE, List[FEATURE_TYPE]]

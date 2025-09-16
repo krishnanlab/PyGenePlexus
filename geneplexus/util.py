@@ -4,7 +4,6 @@ import json
 import os
 import os.path as osp
 import pathlib
-import pystow
 import shutil
 import warnings
 from threading import Thread
@@ -19,6 +18,7 @@ import joblib
 import networkx as nx
 import numpy as np
 import pandas as pd
+import pystow
 
 from . import config
 from ._config import logger

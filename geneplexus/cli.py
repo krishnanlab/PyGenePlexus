@@ -295,7 +295,7 @@ def parse_args() -> argparse.Namespace:
         type=int,
         help="Number of nodes in make_small_edgelist().",
     )
-    
+
     parser.add_argument(
         "-od",
         "--output_dir",
