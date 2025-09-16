@@ -455,7 +455,7 @@ class GenePlexus:
 
     def cluster_input(
         self,
-        clust_method: str = config.DEFAULT_PARAMETERS["clust_method"],
+        clust_method: config.CLUSTERING_TYPE = config.DEFAULT_PARAMETERS["clust_method"],
         clust_min_size: int = config.DEFAULT_PARAMETERS["clust_min_size"],
         clust_weighted: bool = config.DEFAULT_PARAMETERS["clust_weighted"],
         clust_kwargs: Optional[Dict[str, Any]] = None,

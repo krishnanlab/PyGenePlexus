@@ -172,7 +172,7 @@ def parse_args() -> argparse.Namespace:
         default=config.DEFAULT_PARAMETERS["clust_method"],
         metavar="",
         type=str,
-        help="Minimum size of clusters allowed.",
+        help="Sets the clustering method in cluster_input(). {format_choices(config.ALL_CLUSTERING)}",
     )
 
     parser.add_argument(
@@ -181,14 +181,14 @@ def parse_args() -> argparse.Namespace:
         default=config.DEFAULT_PARAMETERS["clust_min_size"],
         metavar="",
         type=int,
-        help="Minimum size of clusters allowed.",
+        help="Sets the minimum size of clusters allowed in cluster_input().",
     )
 
     parser.add_argument(
         "-cw",
         "--clust_weighted",
         action="store_false",
-        help="When added will set clust_weight argument to False.",
+        help="When added will set clust_weight argument to False in cluster_input().",
     )
 
     parser.add_argument(
@@ -197,106 +197,106 @@ def parse_args() -> argparse.Namespace:
         default=None,
         metavar="",
         type=json.loads,
-        help="clustering keyword arguments.",
+        help="Sets the clustering keyword arguments in cluster_input().",
     )
 
-    parser.add_argument(
-        "-cmax",
-        "--clust_max_size",
-        default=70,
-        metavar="",
-        type=int,
-        help="Maximum size of clusters allowed.",
-    )
+    # parser.add_argument(
+    #     "-cmax",
+    #     "--clust_max_size",
+    #     default=70,
+    #     metavar="",
+    #     type=int,
+    #     help="Maximum size of clusters allowed.",
+    # )
+
+    # parser.add_argument(
+    #     "-ctries",
+    #     "--clust_max_tries",
+    #     default=3,
+    #     metavar="",
+    #     type=int,
+    #     help="Number of times to try to sub-cluster large clusters.",
+    # )
+
+    # parser.add_argument(
+    #     "-cres",
+    #     "--clust_res",
+    #     default=1,
+    #     metavar="",
+    #     type=int,
+    #     help="Cluster resolution parameter.",
+    # )
 
     parser.add_argument(
-        "-ctries",
-        "--clust_max_tries",
-        default=3,
-        metavar="",
-        type=int,
-        help="Number of times to try to sub-cluster large clusters.",
-    )
-
-    parser.add_argument(
-        "-cres",
-        "--clust_res",
-        default=1,
-        metavar="",
-        type=int,
-        help="Cluster resolution parameter.",
-    )
-
-    parser.add_argument(
-        "-flk",
-        "--fit_logreg_kwargs",
+        "-lk",
+        "--logreg_kwargs",
         default=None,
         metavar="",
         type=json.loads,
-        help="Logistic regression keyword arguments.",
-    )
-
-    parser.add_argument(
-        "-fs",
-        "--fit_scale",
-        action="store_true",
-        help="If set, will scale input data. See docs for more info of when this is good to do.",
-    )
-
-    parser.add_argument(
-        "-fmnp",
-        "--fit_min_num_pos",
-        default=5,
-        metavar="",
-        type=int,
-        help="Number of genes needed to fit a model.",
-    )
-
-    parser.add_argument(
-        "-fmnpcv",
-        "--fit_min_num_pos_cv",
-        default=15,
-        metavar="",
-        type=int,
-        help="Number of genes needed to do cross validation.",
-    )
-
-    parser.add_argument(
-        "-fnf",
-        "--fit_num_folds",
-        default=3,
-        metavar="",
-        type=int,
-        help="Number of genes needed to do cross validation.",
-    )
-
-    parser.add_argument(
-        "-fnv",
-        "--fit_null_val",
-        default=None,
-        metavar="",
-        type=float,
-        help="Value to use when CV can't be done.",
-    )
-
-    parser.add_argument(
-        "-frs",
-        "--fit_random_state",
-        default=0,
-        metavar="",
-        type=int,
-        help="Random state value to use when fitting.",
-    )
-
-    parser.add_argument(
-        "-fscv",
-        "--fit_skip_cross_validate",
-        action="store_false",
-        help="If set, will not try to do CV.",
+        help="Set the logistic regression keyword arguments in fit().",
     )
 
     parser.add_argument(
         "-s",
+        "--scale",
+        action="store_true",
+        help="When added, will set scale to True in fit(). See docs for more info of when this is good to do.",
+    )
+
+    parser.add_argument(
+        "-mnp",
+        "--min_num_pos",
+        default=config.DEFAULT_PARAMETERS["min_num_pos"],
+        metavar="",
+        type=int,
+        help="Minimum umber of genes needed to fit a model in fit().",
+    )
+
+    parser.add_argument(
+        "-mnpcv",
+        "--min_num_pos_cv",
+        default=config.DEFAULT_PARAMETERS["min_num_pos_cv"],
+        metavar="",
+        type=int,
+        help="Minumum number of genes needed to do cross validation in fit().",
+    )
+
+    parser.add_argument(
+        "-nf",
+        "--num_folds",
+        default=config.DEFAULT_PARAMETERS["num_folds"],
+        metavar="",
+        type=int,
+        help="Number of folds to do for cross validation in fit().",
+    )
+
+    parser.add_argument(
+        "-nv",
+        "--null_val",
+        default=config.DEFAULT_PARAMETERS["null_val"],
+        metavar="",
+        type=float,
+        help="Value to use when CV can't be done in fit().",
+    )
+
+    parser.add_argument(
+        "-rs",
+        "--random_state",
+        default=config.DEFAULT_PARAMETERS["random_state"],
+        metavar="",
+        type=int,
+        help="Random state value to use in fit().",
+    )
+
+    parser.add_argument(
+        "-cv",
+        "--cross_validate",
+        action="store_false",
+        help="When added, will set cross validate to False in fit().",
+    )
+
+    parser.add_argument(
+        "-senn",
         "--small_edgelist_num_nodes",
         default=50,
         metavar="",
@@ -387,14 +387,14 @@ def main():
             clust_kwargs=args.clust_kwargs,
         )
     gp.fit(
-        logreg_kwargs=args.fit_logreg_kwargs,
-        scale=args.fit_scale,
-        min_num_pos=args.fit_min_num_pos,
-        min_num_pos_cv=args.fit_min_num_pos_cv,
-        num_folds=args.fit_num_folds,
-        null_val=args.fit_null_val,
-        random_state=args.fit_random_state,
-        cross_validate=args.fit_skip_cross_validate,
+        logreg_kwargs=args.logreg_kwargs,
+        scale=args.scale,
+        min_num_pos=args.min_num_pos,
+        min_num_pos_cv=args.min_num_pos_cv,
+        num_folds=args.num_folds,
+        null_val=args.null_val,
+        random_state=args.random_state,
+        cross_validate=args.cross_validate,
     )
     gp.predict()
     if not args.skip_mdl_sim:

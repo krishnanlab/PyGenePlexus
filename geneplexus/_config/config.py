@@ -27,6 +27,7 @@ ALL_NETWORKS = ["BioGRID", "STRING", "IMP"]
 ALL_FEATURES = ["SixSpeciesN2V"]
 ALL_GSCS = ["GO", "Monarch", "Mondo", "Combined"]
 ALL_SPECIES = ["Human", "Mouse", "Fly", "Worm", "Zebrafish", "Yeast"]
+ALL_CLUSTERING = ["louvain", "domino"]
 
 DEFAULT_LOGREG_KWARGS: Dict[str, Any] = {
     "max_iter": 10000,
@@ -53,11 +54,13 @@ NET_TYPE = Literal["BioGRID", "STRING", "IMP"]
 FEATURE_TYPE = Literal["SixSpeciesN2V"]
 GSC_TYPE = Literal["GO", "Monarch", "Mondo", "Combined"]
 SPECIES_TYPE = Literal["Human", "Mouse", "Fly", "Worm", "Zebrafish", "Yeast"]
+CLUSTERING_TYPE = Literal["louvain", "domino"]
 
 NET_SELECTION_TYPE = Union[Literal["All"], NET_TYPE, List[NET_TYPE]]
 FEATURE_SELECTION_TYPE = Union[Literal["All"], FEATURE_TYPE, List[FEATURE_TYPE]]
 SPECIES_SELECTION_TYPE = Union[Literal["All"], SPECIES_TYPE, List[SPECIES_TYPE]]
 GSC_SELECTION_TYPE = Union[GSC_TYPE, List[GSC_TYPE]]  # slightly different than the others
+CLUSTERING_SELECTION_TYPE = Union[CLUSTERING_TYPE, List[CLUSTERING_TYPE]]
 
 ID_CONVERSION_MAP_TYPE = Dict[str, List[str]]
 GSC_DATA_TYPE = Dict[str, Dict[Literal["Name", "Genes"], Union[str, np.ndarray]]]
