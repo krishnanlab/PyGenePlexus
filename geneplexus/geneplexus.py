@@ -923,8 +923,8 @@ class GenePlexus:
         """Save all or parts of the GenePlexus class and results.
 
         Args:
-            output_dir: Path to save the files to.
-            save_type: which files to save
+            output_dir: Path to save the files to If None will try ~/.data/geneplexus_outputs/results.
+            save_type: which file saving method to use
             zip_output: wehter or not to compress all the results into one zip file
             overwrite: wether to overwrite data or make new directory with incremented index
 
