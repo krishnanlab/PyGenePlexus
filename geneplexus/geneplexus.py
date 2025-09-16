@@ -506,8 +506,9 @@ class GenePlexus:
                 "domino_seed": 123,
             }
         preset_kwargs_keys = list(preset_kwargs.keys())
-        clust_kwargs = {key: value for key, value in clust_kwargs.items() if key in preset_kwargs_keys}
-        preset_kwargs.update(clust_kwargs)
+        if isinstance(clust_kwargs, dict):
+            clust_kwargs = {key: value for key, value in clust_kwargs.items() if key in preset_kwargs_keys}
+            preset_kwargs.update(clust_kwargs)
 
         clust_genes = _geneplexus._generate_clusters(
             self.file_loc,
