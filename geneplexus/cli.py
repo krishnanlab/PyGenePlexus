@@ -296,12 +296,12 @@ def parse_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
-        "-senn",
-        "--small_edgelist_num_nodes",
-        default=50,
+        "-nn",
+        "--num_nodes",
+        default=config.DEFAULT_PARAMETERS["num_nodes"],
         metavar="",
         type=int,
-        help="Number of nodes in the small edgelist.",
+        help="Number of nodes in make_small_edgelist().",
     )
 
     parser.add_argument(
@@ -403,7 +403,7 @@ def main():
         logger.info("Skipping model similarity computation.")
     if not args.skip_sm_edgelist:
         gp.make_small_edgelist(
-            num_nodes=args.small_edgelist_num_nodes,
+            num_nodes=args.num_nodes,
         )
     else:
         logger.info("Skipping making small edgelist.")
