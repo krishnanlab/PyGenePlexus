@@ -21,14 +21,24 @@ URL_DICT = {
 CONFIG_PATH = pathlib.Path(__file__).parent.absolute()
 DATA_FILENAMES_PATH = osp.join(CONFIG_PATH, "data_filenames.txt")
 
-LOG_LEVELS = ["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"]
-
+# these used in F-strings and lists
+ALL_LOG_LEVELS = ["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"]
 ALL_NETWORKS = ["BioGRID", "STRING", "IMP"]
 ALL_FEATURES = ["SixSpeciesN2V"]
 ALL_GSCS = ["GO", "Monarch", "Mondo", "Combined"]
 ALL_SPECIES = ["Human", "Mouse", "Fly", "Worm", "Zebrafish", "Yeast"]
 ALL_CLUSTERING = ["louvain", "domino"]
 ALL_SAVES = ["all", "results_only"]
+# these are used for setting types in functions
+LOG_LEVEL_TYPE = Literal["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"]
+NET_TYPE = Literal["BioGRID", "STRING", "IMP"]
+FEATURE_TYPE = Literal["SixSpeciesN2V"]
+GSC_TYPE = Literal["GO", "Monarch", "Mondo", "Combined"]
+SPECIES_TYPE = Literal["Human", "Mouse", "Fly", "Worm", "Zebrafish", "Yeast"]
+CLUSTERING_TYPE = Literal["louvain", "domino"]
+SAVE_TYPE = Literal["all", "results_only"]
+SPECIES_SELECTION_TYPE = Union[Literal["All"], SPECIES_TYPE, List[SPECIES_TYPE]]
+GSC_SELECTION_TYPE = Union[GSC_TYPE, List[GSC_TYPE]]
 
 DEFAULT_LOGREG_KWARGS: Dict[str, Any] = {
     "max_iter": 10000,
@@ -37,7 +47,6 @@ DEFAULT_LOGREG_KWARGS: Dict[str, Any] = {
     "C": 1.0,
 }
 
-LOG_LEVEL_TYPE = Literal["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"]
 
 ID_SRC_TYPE = Literal["ENSG", "ENSP", "ENST", "Entrez", "Symbol"]
 ID_DST_TYPE = Literal["Entrez", "ENSG", "Name", "Symbol"]
@@ -51,19 +60,6 @@ VALID_ID_CONVERSION: Set[Tuple[ID_SRC_TYPE, ID_DST_TYPE]] = {
     ("Entrez", "Symbol"),
 }
 
-NET_TYPE = Literal["BioGRID", "STRING", "IMP"]
-FEATURE_TYPE = Literal["SixSpeciesN2V"]
-GSC_TYPE = Literal["GO", "Monarch", "Mondo", "Combined"]
-SPECIES_TYPE = Literal["Human", "Mouse", "Fly", "Worm", "Zebrafish", "Yeast"]
-CLUSTERING_TYPE = Literal["louvain", "domino"]
-SAVE_TYPE = Literal["all", "results_only"]
-
-NET_SELECTION_TYPE = Union[Literal["All"], NET_TYPE, List[NET_TYPE]]
-FEATURE_SELECTION_TYPE = Union[Literal["All"], FEATURE_TYPE, List[FEATURE_TYPE]]
-SPECIES_SELECTION_TYPE = Union[Literal["All"], SPECIES_TYPE, List[SPECIES_TYPE]]
-GSC_SELECTION_TYPE = Union[GSC_TYPE, List[GSC_TYPE]]  # slightly different than the others
-CLUSTERING_SELECTION_TYPE = Union[CLUSTERING_TYPE, List[CLUSTERING_TYPE]]
-SAVE_SELECTION_TYPE = Union[SAVE_TYPE, List[SAVE_TYPE]]
 
 ID_CONVERSION_MAP_TYPE = Dict[str, List[str]]
 GSC_DATA_TYPE = Dict[str, Dict[Literal["Name", "Genes"], Union[str, np.ndarray]]]
@@ -114,6 +110,7 @@ __all__ = [
     "URL_DICT",
     "CONFIG_PATH",
     "DATA_FILENAMES_PATH",
+    "ALL_LOG_LEVELS",
     "ALL_NETWORKS",
     "ALL_FEATURES",
     "ALL_GSCS",
@@ -126,10 +123,10 @@ __all__ = [
     "FEATURE_TYPE",
     "GSC_TYPE",
     "SPECIES_TYPE",
-    "NET_SELECTION_TYPE",
-    "FEATURE_SELECTION_TYPE",
-    "GSC_SELECTION_TYPE",
+    "CLUSTERING_TYPE",
+    "SAVE_TYPE",
     "SPECIES_SELECTION_TYPE",
+    "GSC_SELECTION_TYPE",
     "ID_CONVERSION_MAP_TYPE",
     "GSC_DATA_TYPE",
     "PRETRAINED_DATA_TYPE",

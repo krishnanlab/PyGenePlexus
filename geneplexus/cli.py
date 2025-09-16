@@ -35,7 +35,7 @@ def parse_args() -> argparse.Namespace:
         "--input_file",
         metavar="",
         required=True,
-        help="Input gene list (.txt) file.",
+        help="Input gene list file (eg. (.txt file)).",
     )
 
     parser.add_argument(
@@ -120,7 +120,7 @@ def parse_args() -> argparse.Namespace:
         "--log_level",
         default=config.DEFAULT_PARAMETERS["log_level"],
         metavar="",
-        help=f"Logging level. {format_choices(config.LOG_LEVELS)}. " "Set to CRITICAL for quietest logging.",
+        help=f"Logging level. {format_choices(config.ALL_LOG_LEVELS)}. Set to CRITICAL for quietest logging.",
     )
 
     parser.add_argument(
@@ -164,7 +164,7 @@ def parse_args() -> argparse.Namespace:
         default=config.DEFAULT_PARAMETERS["clust_method"],
         metavar="",
         type=str,
-        help="Sets the clustering method in cluster_input(). {format_choices(config.ALL_CLUSTERING)}",
+        help=f"Sets the clustering method in cluster_input(). {format_choices(config.ALL_CLUSTERING)}",
     )
 
     parser.add_argument(
@@ -311,7 +311,7 @@ def parse_args() -> argparse.Namespace:
         default=config.DEFAULT_PARAMETERS["save_type"],
         metavar="",
         type=str,
-        help="Which file saving method to use in save_class(). {format_choices(config.ALL_SAVES)}",
+        help=f"Which file saving method to use in save_class(). {format_choices(config.ALL_SAVES)}",
     )
 
     parser.add_argument(
