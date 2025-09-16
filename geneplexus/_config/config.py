@@ -30,6 +30,7 @@ ALL_SPECIES = ["Human", "Mouse", "Fly", "Worm", "Zebrafish", "Yeast"]
 ALL_CLUSTERING = ["louvain", "domino"]
 ALL_SAVES = ["all", "results_only"]
 # these are used for setting types in functions
+# here seelction is for the res which can be different than trn
 LOG_LEVEL_TYPE = Literal["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"]
 NET_TYPE = Literal["BioGRID", "STRING", "IMP"]
 FEATURE_TYPE = Literal["SixSpeciesN2V"]
