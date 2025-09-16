@@ -165,15 +165,40 @@ def parse_args() -> argparse.Namespace:
         help="When added make_small_edgelist() will not be run",
     )
 
-    ### Pipeline control arguements ###
+    ### class method arguements ###
+
+    parser.add_argument(
+        "-cm",
+        "--clust_method",
+        default=config.DEFAULT_PARAMETERS["clust_method"],
+        metavar="",
+        type=str,
+        help="Minimum size of clusters allowed.",
+    )
 
     parser.add_argument(
         "-cmin",
         "--clust_min_size",
-        default=5,
+        default=config.DEFAULT_PARAMETERS["clust_min_size"],
         metavar="",
         type=int,
         help="Minimum size of clusters allowed.",
+    )
+    
+    parser.add_argument(
+        "-cw",
+        "--clust_weighted",
+        action="store_false",
+        help="When added will set clust_weight argument to False.",
+    )
+    
+    parser.add_argument(
+        "-ck",
+        "--clust_kwargs",
+        default=None,
+        metavar="",
+        type=json.loads,
+        help="clustering keyword arguments.",
     )
 
     parser.add_argument(
@@ -204,19 +229,12 @@ def parse_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
-        "-cweight",
-        "--clust_unweighted",
-        action="store_false",
-        help="If set, will not use cluster weights.",
-    )
-
-    parser.add_argument(
         "-flk",
         "--fit_logreg_kwargs",
         default=None,
         metavar="",
         type=json.loads,
-        help="Logistic regression leyword arguments.",
+        help="Logistic regression keyword arguments.",
     )
 
     parser.add_argument(
@@ -364,11 +382,10 @@ def main():
     # run the pipeline
     if args.do_clustering:
         gp.cluster_input(
+            clust_method=args.clust_method,
             clust_min_size=args.clust_min_size,
-            clust_max_size=args.clust_max_size,
-            clust_max_tries=args.clust_max_tries,
-            clust_res=args.clust_res,
-            clust_weighted=args.clust_unweighted,
+            clust_weighted=args.clust_weighted,
+            clust_kwargs=args.clust_kwargs
         )
     gp.fit(
         logreg_kwargs=args.fit_logreg_kwargs,
