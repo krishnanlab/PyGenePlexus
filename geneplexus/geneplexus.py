@@ -916,7 +916,7 @@ class GenePlexus:
     def save_class(
         self,
         output_dir: str = config.DEFAULT_PARAMETERS["output_dir"],
-        save_type: str = config.DEFAULT_PARAMETERS["save_type"],
+        save_type: config.SAVE_TYPE = config.DEFAULT_PARAMETERS["save_type"],
         zip_output: bool = config.DEFAULT_PARAMETERS["zip_output"],
         overwrite: bool = config.DEFAULT_PARAMETERS["overwrite"],
     ):
@@ -924,7 +924,7 @@ class GenePlexus:
 
         Args:
             output_dir: Path to save the files to.
-            save_type: which files to save (options all or results_only)
+            save_type: which files to save
             zip_output: wehter or not to compress all the results into one zip file
             overwrite: wether to overwrite data or make new directory with incremented index
 

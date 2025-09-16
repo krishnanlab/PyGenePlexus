@@ -130,14 +130,6 @@ def parse_args() -> argparse.Namespace:
         help="When added turns on autodownloader which is off by default.",
     )
 
-    parser.add_argument(
-        "-od",
-        "--output_dir",
-        default="result/",
-        metavar="",
-        help="Output directory with respect to the repo root directory.",
-    )
-
     ### pipeline control arguements ###
 
     parser.add_argument(
@@ -303,27 +295,37 @@ def parse_args() -> argparse.Namespace:
         type=int,
         help="Number of nodes in make_small_edgelist().",
     )
+    
+    parser.add_argument(
+        "-od",
+        "--output_dir",
+        default=config.DEFAULT_PARAMETERS["output_dir"],
+        metavar="",
+        help="Output directory with respect to the repo root directory used in save_class(). "
+        "if set to None, then use the default output directory ~/.data/geneplexus_outputs/results",
+    )
 
     parser.add_argument(
         "-svt",
         "--save_type",
-        default="all",
+        default=config.DEFAULT_PARAMETERS["save_type"],
         metavar="",
         type=str,
-        help="Which files to save.",
-    )
-
-    parser.add_argument(
-        "--overwrite",
-        action="store_true",
-        help="Overwrite existing result directory if set.",
+        help="Which file saving method to use in save_class(). {format_choices(config.ALL_SAVES)}",
     )
 
     parser.add_argument(
         "-z",
         "--zip-output",
         action="store_true",
-        help="If set, then compress the output directory into a Zip file.",
+        help="When added, zip_ouput is set to True in save_class().",
+    )
+
+    parser.add_argument(
+        "-o",
+        "--overwrite",
+        action="store_true",
+        help="When added, overwrite is set to True in save_class().",
     )
 
     return parser.parse_args()
@@ -408,7 +410,7 @@ def main():
     else:
         logger.info("Skipping making small edgelist.")
     gp.save_class(
-        args.output_dir,
+        output_dir=args.output_dir,
         save_type=args.save_type,
         zip_output=args.zip_output,
         overwrite=args.overwrite,
