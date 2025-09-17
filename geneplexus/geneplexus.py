@@ -39,18 +39,18 @@ class GenePlexus:
 
     def __init__(
         self,
-        file_loc: Optional[str] = None,
-        net_type: config.NET_TYPE = "STRING",
-        features: config.FEATURE_TYPE = "SixSpeciesN2V",
-        sp_trn: config.SPECIES_TYPE = "Human",
-        sp_res: config.SPECIES_SELECTION_TYPE = "Human",
-        gsc_trn: config.GSC_TYPE = "Combined",
-        gsc_res: config.GSC_SELECTION_TYPE = "Combined",
-        input_genes: Optional[List[str]] = None,
-        input_negatives: Optional[List[str]] = None,
-        auto_download: bool = False,
-        log_level: config.LOG_LEVEL_TYPE = "WARNING",
-        log_to_file: bool = False,
+        file_loc: Optional[str] = config.DEFAULT_PARAMETERS["file_loc"],
+        net_type: config.NET_TYPE = config.DEFAULT_PARAMETERS["net_type"],
+        features: config.FEATURE_TYPE = config.DEFAULT_PARAMETERS["features"],
+        sp_trn: config.SPECIES_TYPE = config.DEFAULT_PARAMETERS["sp_trn"],
+        sp_res: config.SPECIES_SELECTION_TYPE = config.DEFAULT_PARAMETERS["sp_res"],
+        gsc_trn: config.GSC_TYPE = config.DEFAULT_PARAMETERS["gsc_trn"],
+        gsc_res: config.GSC_SELECTION_TYPE = config.DEFAULT_PARAMETERS["gsc_res"],
+        input_genes: Optional[List[str]] = config.DEFAULT_PARAMETERS["input_genes"],
+        input_negatives: Optional[List[str]] = config.DEFAULT_PARAMETERS["input_negatives"],
+        auto_download: bool = config.DEFAULT_PARAMETERS["auto_download"],
+        log_level: config.LOG_LEVEL_TYPE = config.DEFAULT_PARAMETERS["log_level"],
+        log_to_file: bool = config.DEFAULT_PARAMETERS["log_to_file"],
     ):
         """Initialize the GenePlexus object.
 
@@ -455,9 +455,9 @@ class GenePlexus:
 
     def cluster_input(
         self,
-        clust_method: str = "louvain",
-        clust_min_size: int = 5,
-        clust_weighted: bool = True,
+        clust_method: config.CLUSTERING_TYPE = config.DEFAULT_PARAMETERS["clust_method"],
+        clust_min_size: int = config.DEFAULT_PARAMETERS["clust_min_size"],
+        clust_weighted: bool = config.DEFAULT_PARAMETERS["clust_weighted"],
         clust_kwargs: Optional[Dict[str, Any]] = None,
     ):
         """Cluster input gene list.
@@ -491,23 +491,15 @@ class GenePlexus:
                     del self.model_info[item]
 
         if clust_method == "louvain":
-            preset_kwargs = {
-                "louvain_max_size": 70,
-                "louvain_max_tries": 3,
-                "louvain_res": 1,
-                "louvain_seed": 123,
-            }
+            preset_kwargs = config.DEFAULT_LOUVAIN_KWARGS
         elif clust_method == "domino":
-            preset_kwargs = {
-                "domino_res": 1,
-                "domino_slice_thresh": 0.3,
-                "domino_n_steps": 20,
-                "domino_module_threshold": 0.05,
-                "domino_seed": 123,
-            }
+            preset_kwargs = config.DEFAULT_DOMINO_KWARGS
         preset_kwargs_keys = list(preset_kwargs.keys())
-        clust_kwargs = {key: value for key, value in clust_kwargs.items() if key in preset_kwargs_keys}
-        preset_kwargs.update(clust_kwargs)
+        if isinstance(clust_kwargs, dict):
+            clust_kwargs = {key: value for key, value in clust_kwargs.items() if key in preset_kwargs_keys}
+            preset_kwargs.update(clust_kwargs)
+        else:
+            logger.warning(f"clust_kwargs not a dictionary or None, using defaults")
 
         clust_genes = _geneplexus._generate_clusters(
             self.file_loc,
@@ -566,20 +558,20 @@ class GenePlexus:
     def fit(
         self,
         logreg_kwargs: Optional[Dict[str, Any]] = None,
-        scale: bool = False,
-        min_num_pos: int = 5,
-        min_num_pos_cv: int = 15,
-        num_folds: int = 3,
-        null_val: float = None,
-        random_state: Optional[int] = 0,
-        cross_validate: bool = True,
+        scale: bool = config.DEFAULT_PARAMETERS["scale"],
+        min_num_pos: int = config.DEFAULT_PARAMETERS["min_num_pos"],
+        min_num_pos_cv: int = config.DEFAULT_PARAMETERS["min_num_pos_cv"],
+        num_folds: int = config.DEFAULT_PARAMETERS["num_folds"],
+        null_val: float = config.DEFAULT_PARAMETERS["null_val"],
+        random_state: Optional[int] = config.DEFAULT_PARAMETERS["random_state"],
+        cross_validate: bool = config.DEFAULT_PARAMETERS["cross_validate"],
     ):
         """Fit the model.
 
         Args:
             logreg_kwargs: Scikit-learn logistic regression settings (see
                 :class:`~sklearn.linear_model.LogisticRegression`). If not set,
-                then use the default logistic regression settings (l2 penalty,
+                then use the default logistic regression settings (l2 penalty with C=1,
                 10,000 max iterations, lbfgs solver).
             scale: Whether to scale the data when doing model training and prediction. It is
                 not recommended to set to ``True`` unless using custom data.
@@ -641,7 +633,6 @@ class GenePlexus:
             (
                 self.model_info[model_name].mdl_weights,
                 self.model_info[model_name].avgps,
-                self.model_info[model_name].scale,
                 self.model_info[model_name].clf,
                 self.model_info[model_name].std_scale,
             ) = _geneplexus._run_sl(
@@ -652,13 +643,13 @@ class GenePlexus:
                 self.model_info[model_name].pos_genes_in_net,
                 self.model_info[model_name].negative_genes,
                 self.model_info[model_name].net_genes,
-                logreg_kwargs=logreg_kwargs,
-                min_num_pos_cv=min_num_pos_cv,
-                num_folds=num_folds,
-                null_val=null_val,
-                random_state=random_state,
-                cross_validate=cross_validate,
-                scale=scale,
+                logreg_kwargs,
+                min_num_pos_cv,
+                num_folds,
+                null_val,
+                random_state,
+                cross_validate,
+                scale,
             )
 
             # make df for genes used in training
@@ -670,6 +661,7 @@ class GenePlexus:
 
         # set function arguments for saving later
         self.logreg_kwargs = logreg_kwargs
+        self.scale = scale
         self.min_num_pos_cv = min_num_pos_cv
         self.num_folds = num_folds
         self.null_val = null_val
@@ -797,7 +789,7 @@ class GenePlexus:
                     res_combo.split("-")[0],
                     self.features,
                     self.net_type,
-                    self.model_info[model_name].scale,
+                    self.scale,
                     self.model_info[model_name].std_scale,
                     self.model_info[model_name].clf,
                 )
@@ -869,7 +861,10 @@ class GenePlexus:
                 self.model_info[model_name].results[res_combo].df_sim = df_sim
         return self.model_info
 
-    def make_small_edgelist(self, num_nodes: int = 50):
+    def make_small_edgelist(
+        self,
+        num_nodes: int = config.DEFAULT_PARAMETERS["num_nodes"],
+    ):
         """Make a subgraph induced by the top predicted genes.
 
         Args:
@@ -909,18 +904,24 @@ class GenePlexus:
         self.num_nodes = num_nodes
         return self.model_info
 
-    def save_class(self, outdir: str, save_type: str = "all", zip_output: bool = False, overwrite: bool = False):
-        """Save all parts of the class.
+    def save_class(
+        self,
+        output_dir: str = config.DEFAULT_PARAMETERS["output_dir"],
+        save_type: config.SAVE_TYPE = config.DEFAULT_PARAMETERS["save_type"],
+        zip_output: bool = config.DEFAULT_PARAMETERS["zip_output"],
+        overwrite: bool = config.DEFAULT_PARAMETERS["overwrite"],
+    ):
+        """Save all or parts of the GenePlexus class and results.
 
         Args:
-            save_type: which files to save (options all or results_only)
-            outdir: Path to save the files to.
+            output_dir: Path to save the files to If None will try ~/.data/geneplexus_outputs/results.
+            save_type: which file saving method to use
             zip_output: wehter or not to compress all the results into one zip file
             overwrite: wether to overwrite data or make new directory with incremented index
 
         """
 
-        _geneplexus._save_class(self, outdir, save_type, zip_output, overwrite)
+        _geneplexus._save_class(self, output_dir, save_type, zip_output, overwrite)
 
     def remove_log_file(self):
         """Remove the tmp log file. Only do when at the end of the script)"""

@@ -35,7 +35,7 @@ def parse_args() -> argparse.Namespace:
         "--input_file",
         metavar="",
         required=True,
-        help="Input gene list (.txt) file.",
+        help="Input gene list file (eg. (.txt file)).",
     )
 
     parser.add_argument(
@@ -49,9 +49,9 @@ def parse_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
-        "-dd",
-        "--data_dir",
-        default=None,
+        "-fl",
+        "--file_loc",
+        default=config.DEFAULT_PARAMETERS["file_loc"],
         metavar="",
         help="Directory in which the data are stored, if set to None, then use "
         "the default data directory ~/.data/geneplexus",
@@ -59,260 +59,273 @@ def parse_args() -> argparse.Namespace:
 
     parser.add_argument(
         "-n",
-        "--network",
-        default="STRING",
+        "--net_type",
+        default=config.DEFAULT_PARAMETERS["net_type"],
         metavar="",
         help=f"Network to use. {format_choices(config.ALL_NETWORKS)}",
     )
 
     parser.add_argument(
         "-f",
-        "--feature",
-        default="SixSpeciesN2V",
+        "--features",
+        default=config.DEFAULT_PARAMETERS["features"],
         metavar="",
         help=f"Types of feature to use. {format_choices(config.ALL_FEATURES)}",
     )
 
     parser.add_argument(
-        "-s1",
+        "-st",
         "--sp_trn",
-        default="Human",
+        default=config.DEFAULT_PARAMETERS["sp_trn"],
         metavar="",
         help=f"Species of training data {format_choices(config.ALL_SPECIES)}",
     )
 
     parser.add_argument(
-        "-s2",
+        "-sr",
         "--sp_res",
-        default="Mouse",
+        default=config.DEFAULT_PARAMETERS["sp_res"],
         metavar="",
         help=f"Species of results data {format_choices(config.ALL_SPECIES)}. "
         "If more than one species make comma seaprated.",
     )
 
     parser.add_argument(
-        "-g1",
+        "-gt",
         "--gsc_trn",
-        default="GO",
+        default=config.DEFAULT_PARAMETERS["gsc_trn"],
         metavar="",
         help=f"Geneset collection used to generate negatives. {format_choices(config.ALL_GSCS)}",
     )
 
     parser.add_argument(
-        "-g2",
+        "-gr",
         "--gsc_res",
-        default="GO",
+        default=config.DEFAULT_PARAMETERS["gsc_res"],
         metavar="",
         help=f"Geneset collection used for model similarities. {format_choices(config.ALL_GSCS)}. "
         "If more than one gsc can be comma spearated.",
     )
 
     parser.add_argument(
-        "-od",
-        "--output_dir",
-        default="result/",
+        "-in",
+        "--input_negatives",
+        default=config.DEFAULT_PARAMETERS["input_negatives"],
         metavar="",
-        help="Output directory with respect to the repo root directory.",
+        help="Input negative gene list (.txt) file.",
     )
 
     parser.add_argument(
-        "-in",
-        "--input_negatives",
-        default=None,
+        "-l",
+        "--log_level",
+        default=config.DEFAULT_PARAMETERS["log_level"],
         metavar="",
-        help="Input negative gene list (.txt) file.",
+        help=f"Logging level. {format_choices(config.ALL_LOG_LEVELS)}. Set to CRITICAL for quietest logging.",
+    )
+
+    parser.add_argument(
+        "-ad",
+        "--auto_download",
+        action="store_true",
+        help="When added turns on autodownloader which is off by default.",
     )
 
     ### pipeline control arguements ###
 
     parser.add_argument(
-        "-ado",
-        "--auto_download_off",
-        action="store_true",
-        help="Turns off autodownloader which is on by default.",
-    )
-
-    parser.add_argument(
         "--clear-data",
         action="store_true",
-        help="Clear data directory and exit.",
+        help="When added will allow user to interactively clear file_loc data and exit.",
     )
 
     parser.add_argument(
         "--do_clustering",
         action="store_true",
-        help="Do clustering step.",
+        help="When added cluster_input() function will be run.",
     )
 
     parser.add_argument(
         "--skip-mdl-sim",
         action="store_true",
-        help="Skip model similarity computation",
+        help="When added make_sim_dfs() will not be run",
     )
 
     parser.add_argument(
         "--skip-sm-edgelist",
         action="store_true",
-        help="Skip making small edgelist.",
+        help="When added make_small_edgelist() will not be run",
     )
 
-    ### Class methods arguements ###
+    ### class method arguements ###
 
     parser.add_argument(
-        "-l",
-        "--log_level",
-        default="INFO",
+        "-cm",
+        "--clust_method",
+        default=config.DEFAULT_PARAMETERS["clust_method"],
         metavar="",
-        help=f"Logging level. {format_choices(config.LOG_LEVELS)}",
-    )
-
-    parser.add_argument(
-        "-q",
-        "--quiet",
-        action="store_true",
-        help="Suppress log messages (same as setting log_level to CRITICAL).",
+        type=str,
+        help=f"Sets the clustering method in cluster_input(). {format_choices(config.ALL_CLUSTERING)}",
     )
 
     parser.add_argument(
         "-cmin",
         "--clust_min_size",
-        default=5,
+        default=config.DEFAULT_PARAMETERS["clust_min_size"],
         metavar="",
         type=int,
-        help="Minimum size of clusters allowed.",
+        help="Sets the minimum size of clusters allowed in cluster_input().",
     )
 
     parser.add_argument(
-        "-cmax",
-        "--clust_max_size",
-        default=70,
-        metavar="",
-        type=int,
-        help="Maximum size of clusters allowed.",
-    )
-
-    parser.add_argument(
-        "-ctries",
-        "--clust_max_tries",
-        default=3,
-        metavar="",
-        type=int,
-        help="Number of times to try to sub-cluster large clusters.",
-    )
-
-    parser.add_argument(
-        "-cres",
-        "--clust_res",
-        default=1,
-        metavar="",
-        type=int,
-        help="Cluster resolution parameter.",
-    )
-
-    parser.add_argument(
-        "-cweight",
-        "--clust_unweighted",
+        "-cw",
+        "--clust_weighted",
         action="store_false",
-        help="If set, will not use cluster weights.",
+        help="When added will set clust_weight argument to False in cluster_input().",
     )
 
     parser.add_argument(
-        "-flk",
-        "--fit_logreg_kwargs",
+        "-ck",
+        "--clust_kwargs",
         default=None,
         metavar="",
         type=json.loads,
-        help="Logistic regression leyword arguments.",
+        help="Sets the clustering keyword arguments in cluster_input().",
     )
 
-    parser.add_argument(
-        "-fs",
-        "--fit_scale",
-        action="store_true",
-        help="If set, will scale input data. See docs for more info of when this is good to do.",
-    )
+    # parser.add_argument(
+    #     "-cmax",
+    #     "--clust_max_size",
+    #     default=70,
+    #     metavar="",
+    #     type=int,
+    #     help="Maximum size of clusters allowed.",
+    # )
+
+    # parser.add_argument(
+    #     "-ctries",
+    #     "--clust_max_tries",
+    #     default=3,
+    #     metavar="",
+    #     type=int,
+    #     help="Number of times to try to sub-cluster large clusters.",
+    # )
+
+    # parser.add_argument(
+    #     "-cres",
+    #     "--clust_res",
+    #     default=1,
+    #     metavar="",
+    #     type=int,
+    #     help="Cluster resolution parameter.",
+    # )
 
     parser.add_argument(
-        "-fmnp",
-        "--fit_min_num_pos",
-        default=5,
-        metavar="",
-        type=int,
-        help="Number of genes needed to fit a model.",
-    )
-
-    parser.add_argument(
-        "-fmnpcv",
-        "--fit_min_num_pos_cv",
-        default=15,
-        metavar="",
-        type=int,
-        help="Number of genes needed to do cross validation.",
-    )
-
-    parser.add_argument(
-        "-fnf",
-        "--fit_num_folds",
-        default=3,
-        metavar="",
-        type=int,
-        help="Number of genes needed to do cross validation.",
-    )
-
-    parser.add_argument(
-        "-fnv",
-        "--fit_null_val",
+        "-lk",
+        "--logreg_kwargs",
         default=None,
         metavar="",
-        type=float,
-        help="Value to use when CV can't be done.",
-    )
-
-    parser.add_argument(
-        "-frs",
-        "--fit_random_state",
-        default=0,
-        metavar="",
-        type=int,
-        help="Random state value to use when fitting.",
-    )
-
-    parser.add_argument(
-        "-fscv",
-        "--fit_skip_cross_validate",
-        action="store_false",
-        help="If set, will not try to do CV.",
+        type=json.loads,
+        help="Set the logistic regression keyword arguments in fit().",
     )
 
     parser.add_argument(
         "-s",
-        "--small_edgelist_num_nodes",
-        default=50,
+        "--scale",
+        action="store_true",
+        help="When added, will set scale to True in fit(). See docs for more info of when this is good to do.",
+    )
+
+    parser.add_argument(
+        "-mnp",
+        "--min_num_pos",
+        default=config.DEFAULT_PARAMETERS["min_num_pos"],
         metavar="",
         type=int,
-        help="Number of nodes in the small edgelist.",
+        help="Minimum umber of genes needed to fit a model in fit().",
     )
 
     parser.add_argument(
-        "-st",
+        "-mnpcv",
+        "--min_num_pos_cv",
+        default=config.DEFAULT_PARAMETERS["min_num_pos_cv"],
+        metavar="",
+        type=int,
+        help="Minumum number of genes needed to do cross validation in fit().",
+    )
+
+    parser.add_argument(
+        "-nf",
+        "--num_folds",
+        default=config.DEFAULT_PARAMETERS["num_folds"],
+        metavar="",
+        type=int,
+        help="Number of folds to do for cross validation in fit().",
+    )
+
+    parser.add_argument(
+        "-nv",
+        "--null_val",
+        default=config.DEFAULT_PARAMETERS["null_val"],
+        metavar="",
+        type=float,
+        help="Value to use when CV can't be done in fit().",
+    )
+
+    parser.add_argument(
+        "-rs",
+        "--random_state",
+        default=config.DEFAULT_PARAMETERS["random_state"],
+        metavar="",
+        type=int,
+        help="Random state value to use in fit().",
+    )
+
+    parser.add_argument(
+        "-cv",
+        "--cross_validate",
+        action="store_false",
+        help="When added, will set cross validate to False in fit().",
+    )
+
+    parser.add_argument(
+        "-nn",
+        "--num_nodes",
+        default=config.DEFAULT_PARAMETERS["num_nodes"],
+        metavar="",
+        type=int,
+        help="Number of nodes in make_small_edgelist().",
+    )
+
+    parser.add_argument(
+        "-od",
+        "--output_dir",
+        default=config.DEFAULT_PARAMETERS["output_dir"],
+        metavar="",
+        help="Output directory with respect to the repo root directory used in save_class(). "
+        "if set to None, then use the default output directory ~/.data/geneplexus_outputs/results",
+    )
+
+    parser.add_argument(
+        "-svt",
         "--save_type",
-        default="all",
+        default=config.DEFAULT_PARAMETERS["save_type"],
         metavar="",
         type=str,
-        help="Which files to save.",
-    )
-
-    parser.add_argument(
-        "--overwrite",
-        action="store_true",
-        help="Overwrite existing result directory if set.",
+        help=f"Which file saving method to use in save_class(). {format_choices(config.ALL_SAVES)}",
     )
 
     parser.add_argument(
         "-z",
         "--zip-output",
         action="store_true",
-        help="If set, then compress the output directory into a Zip file.",
+        help="When added, zip_ouput is set to True in save_class().",
+    )
+
+    parser.add_argument(
+        "-o",
+        "--overwrite",
+        action="store_true",
+        help="When added, overwrite is set to True in save_class().",
     )
 
     return parser.parse_args()
@@ -321,24 +334,23 @@ def parse_args() -> argparse.Namespace:
 def clear_data(args):
     """Clear data path.
 
-    If data_dir is default, then remove directly. Otherwise, prompt for
+    If file_loc is default, then remove directly. Otherwise, prompt for
     acknowledgement.
 
     """
     if args.clear_data:
-        if args.data_dir is None:
+        if args.file_loc is None:
             shutil.rmtree(GenePlexus(log_level="CRITICAL").file_loc)
         else:
-            data_dir = normexpand(args.data_dir)
-            if input("Remove directory {data_dir}? [y/n]") == "y":
-                shutil.rmtree(data_dir)
+            file_loc = normexpand(args.file_loc)
+            if input("Remove directory {file_loc}? [y/n]") == "y":
+                shutil.rmtree(file_loc)
         exit()
 
 
 def main():
     """Run the full GenePlexus pipeline."""
     args = parse_args()
-    log_level = "CRITICAL" if args.quiet else args.log_level
 
     clear_data(args)  # data cleared if args.clear_data is true
 
@@ -349,15 +361,15 @@ def main():
 
     # Create geneplexus object and auto download data files
     gp = GenePlexus(
-        file_loc=args.data_dir,
-        net_type=args.network,
-        features=args.feature,
+        file_loc=args.file_loc,
+        net_type=args.net_type,
+        features=args.features,
         sp_trn=args.sp_trn,
         sp_res=args.sp_res,
         gsc_trn=args.gsc_trn,
         gsc_res=args.gsc_res,
-        auto_download=args.auto_download_off,
-        log_level=log_level,
+        auto_download=args.auto_download,
+        log_level=args.log_level,
         log_to_file=True,
     )
 
@@ -371,21 +383,20 @@ def main():
     # run the pipeline
     if args.do_clustering:
         gp.cluster_input(
+            clust_method=args.clust_method,
             clust_min_size=args.clust_min_size,
-            clust_max_size=args.clust_max_size,
-            clust_max_tries=args.clust_max_tries,
-            clust_res=args.clust_res,
-            clust_weighted=args.clust_unweighted,
+            clust_weighted=args.clust_weighted,
+            clust_kwargs=args.clust_kwargs,
         )
     gp.fit(
-        logreg_kwargs=args.fit_logreg_kwargs,
-        scale=args.fit_scale,
-        min_num_pos=args.fit_min_num_pos,
-        min_num_pos_cv=args.fit_min_num_pos_cv,
-        num_folds=args.fit_num_folds,
-        null_val=args.fit_null_val,
-        random_state=args.fit_random_state,
-        cross_validate=args.fit_skip_cross_validate,
+        logreg_kwargs=args.logreg_kwargs,
+        scale=args.scale,
+        min_num_pos=args.min_num_pos,
+        min_num_pos_cv=args.min_num_pos_cv,
+        num_folds=args.num_folds,
+        null_val=args.null_val,
+        random_state=args.random_state,
+        cross_validate=args.cross_validate,
     )
     gp.predict()
     if not args.skip_mdl_sim:
@@ -394,12 +405,12 @@ def main():
         logger.info("Skipping model similarity computation.")
     if not args.skip_sm_edgelist:
         gp.make_small_edgelist(
-            num_nodes=args.small_edgelist_num_nodes,
+            num_nodes=args.num_nodes,
         )
     else:
         logger.info("Skipping making small edgelist.")
     gp.save_class(
-        args.output_dir,
+        output_dir=args.output_dir,
         save_type=args.save_type,
         zip_output=args.zip_output,
         overwrite=args.overwrite,
