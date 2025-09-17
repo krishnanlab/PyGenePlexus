@@ -551,7 +551,7 @@ def suffix_dir(path, idx=0, overwrite=False):
     if path == None:
         path = str(pystow.join("geneplexus_outputs/results"))
     new_path = normexpand(f"{path}_{idx}" if idx > 0 else path)
-    if os.listdir(new_path):
+    if os.listdir(new_path) or osp.isfile(f"{new_path}.zip"):
         if overwrite:
             logger.warning(f"Output directory exits {path}, overwriting.")
             shutil.rmtree(new_path)
@@ -560,20 +560,6 @@ def suffix_dir(path, idx=0, overwrite=False):
             new_path = suffix_dir(path, idx=idx + 1)
     elif path != new_path:
         logger.warning(f"Output directory exists {path}, redirecting to {new_path}")
-    return new_path
-
-
-def suffix_zip(path, idx=0, overwrite=False):
-    """Add int suffix to file name if file existed."""
-    new_path = f"_{idx}".join(osp.splitext(path)) if idx > 0 else path
-    if osp.isfile(new_path):
-        if overwrite:
-            logger.warning(f"Output zip file exits {path}, overwriting.")
-            os.remove(new_path)
-        else:
-            new_path = suffix_zip(path, idx=idx + 1)
-    elif path != new_path:
-        logger.warning(f"Output zip file exists {path}, redirecting to {new_path}")
     return new_path
 
 

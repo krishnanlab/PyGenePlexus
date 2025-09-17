@@ -377,12 +377,11 @@ def _alter_validation_df(df_convert_out, pos_genes_for_model, net_type):
 
 def _save_class(gp, output_dir, save_type, zip_output, overwrite):
     output_dir = util.suffix_dir(output_dir, overwrite=overwrite)
-    if zip_output:
-        zip_outpath = util.suffix_zip(f"{output_dir}.zip", overwrite=overwrite)
     util._save_results(gp, output_dir, save_type)
     # Optionally zip the result directory
     if zip_output:
         outpath = pathlib.Path(output_dir)
+        zip_outpath = f"{outpath}.zip"
         logger.info("Zipping output files")
         shutil.make_archive(zip_outpath[:-4], "zip", outpath.parent, outpath.name)
         shutil.rmtree(output_dir)
