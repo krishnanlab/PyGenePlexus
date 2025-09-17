@@ -18,6 +18,7 @@ import joblib
 import networkx as nx
 import numpy as np
 import pandas as pd
+import pystow
 
 from . import config
 from ._config import logger
@@ -547,6 +548,8 @@ def cluster_louvain(
 
 def suffix_dir(path, idx=0, overwrite=False):
     """Add int suffix to dir name if nonempty dir existed."""
+    if path == None:
+        path = str(pystow.join("geneplexus_outputs/results"))
     new_path = normexpand(f"{path}_{idx}" if idx > 0 else path)
     if os.listdir(new_path):
         if overwrite:

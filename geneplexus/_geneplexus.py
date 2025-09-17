@@ -196,19 +196,19 @@ def _run_sl(
     pos_genes_in_net,
     negative_genes,
     net_genes,
-    logreg_kwargs: Optional[Dict[str, Any]] = None,
-    min_num_pos_cv: int = 15,
-    num_folds: int = 3,
-    null_val: float = None,
-    random_state: Optional[int] = 0,
-    cross_validate: bool = True,
-    scale: bool = False,
+    logreg_kwargs,
+    min_num_pos_cv,
+    num_folds,
+    null_val,
+    random_state,
+    cross_validate,
+    scale,
 ):
-    if logreg_kwargs is None:
-        logreg_kwargs = DEFAULT_LOGREG_KWARGS
-        logger.info(f"Using default logistic regression settings: {logreg_kwargs}")
+    logreg_kwargs_defaults = DEFAULT_LOGREG_KWARGS
+    if isinstance(logreg_kwargs, dict):
+        logreg_kwargs_defaults.update(logreg_kwargs)
     else:
-        logger.info(f"Using custom logistic regression settings: {logreg_kwargs}")
+        logger.warning(f"logreg_kwargs not a dictionary or None, using defaults")
     # train the model
     pos_inds = [np.where(net_genes == agene)[0][0] for agene in pos_genes_in_net]
     neg_inds = [np.where(net_genes == agene)[0][0] for agene in negative_genes]
@@ -218,7 +218,7 @@ def _run_sl(
         data = std_scale.transform(data)
     Xdata = data[pos_inds + neg_inds, :]
     ydata = np.array([1] * len(pos_inds) + [0] * len(neg_inds))
-    clf = LogisticRegression(**logreg_kwargs)
+    clf = LogisticRegression(**logreg_kwargs_defaults)
     clf.fit(Xdata, ydata)
     mdl_weights = np.squeeze(clf.coef_)
     # validate the model
@@ -236,7 +236,7 @@ def _run_sl(
         avgps = []
         skf = StratifiedKFold(n_splits=num_folds, shuffle=True, random_state=random_state)
         for trn_inds, tst_inds in skf.split(Xdata, ydata):
-            clf_cv = LogisticRegression(**logreg_kwargs)
+            clf_cv = LogisticRegression(**logreg_kwargs_defaults)
             clf_cv.fit(Xdata[trn_inds], ydata[trn_inds])
             probs_cv = clf_cv.predict_proba(Xdata[tst_inds])[:, 1]
             avgp = average_precision_score(ydata[tst_inds], probs_cv)
@@ -248,9 +248,9 @@ def _run_sl(
         logger.info(f"{np.median(avgps)=:.2f}")
         logger.info(f"{np.mean(avgps)=:.2f}")
     if scale:
-        return mdl_weights, avgps, scale, clf, std_scale
+        return mdl_weights, avgps, clf, std_scale
     else:
-        return mdl_weights, avgps, scale, clf, None
+        return mdl_weights, avgps, clf, None
 
 
 def _get_predictions(
@@ -375,18 +375,18 @@ def _alter_validation_df(df_convert_out, pos_genes_for_model, net_type):
     return df_convert_out_subset
 
 
-def _save_class(gp, outdir, save_type, zip_output, overwrite):
-    outdir = util.suffix_dir(outdir, overwrite=overwrite)
+def _save_class(gp, output_dir, save_type, zip_output, overwrite):
+    output_dir = util.suffix_dir(output_dir, overwrite=overwrite)
     if zip_output:
-        zip_outpath = util.suffix_zip(f"{outdir}.zip", overwrite=overwrite)
-    util._save_results(gp, outdir, save_type)
+        zip_outpath = util.suffix_zip(f"{output_dir}.zip", overwrite=overwrite)
+    util._save_results(gp, output_dir, save_type)
     # Optionally zip the result directory
     if zip_output:
-        outpath = pathlib.Path(outdir)
+        outpath = pathlib.Path(output_dir)
         logger.info("Zipping output files")
         shutil.make_archive(zip_outpath[:-4], "zip", outpath.parent, outpath.name)
-        shutil.rmtree(outdir)
-        logger.info(f"Removing temporary directory {outdir}")
+        shutil.rmtree(output_dir)
+        logger.info(f"Removing temporary directory {output_dir}")
         logger.info(f"Done! Results saved to {zip_outpath}")
     else:
-        logger.info(f"Done! Results saved to {outdir}")
+        logger.info(f"Done! Results saved to {output_dir}")
