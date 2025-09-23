@@ -174,7 +174,7 @@ class TestGenePlexusPipeline(unittest.TestCase):
 
         assert os.path.isfile(osp.join(pytest.CLIRESULTSDIR, "geneplexus.log"))
 
-        assert os.path.isfile(osp.join(pytest.CLIRESULTSDIR, "All-Genes", "Human-Combined/df_probs.tsv"))
+        assert os.path.isfile(osp.join(pytest.CLIRESULTSDIR, "All-Genes", "Mouse-Combined/df_probs.tsv"))
 
 
 if __name__ == "__main__":
