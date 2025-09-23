@@ -58,15 +58,15 @@ def test_run_sl(
 
         if not cross_validate:
             assert "Skipping cross validation." in caplog.text
-            assert gp.model_info['All-Genes'].avgps == [null_val] * num_folds
+            assert gp.model_info["All-Genes"].avgps == [null_val] * num_folds
         elif min_num_pos_cv > len(gp.model_info["All-Genes"].pos_genes_in_net):
             assert "Insufficient number of positive genes" in caplog.text
             assert f"{len(gp.model_info['All-Genes'].pos_genes_in_net)} ({min_num_pos_cv} needed)" in caplog.text
-            assert gp.model_info['All-Genes'].avgps == [null_val] * num_folds
+            assert gp.model_info["All-Genes"].avgps == [null_val] * num_folds
         else:
             assert "Performing cross validation." in caplog.text
 
-        assert len(gp.model_info['All-Genes'].avgps) == num_folds
-        
+        assert len(gp.model_info["All-Genes"].avgps) == num_folds
+
     except NoPositivesError as e:
         assert excepted_error_message in str(e)

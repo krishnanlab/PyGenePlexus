@@ -1,16 +1,16 @@
+import json
+import os
 import os.path as osp
 import shutil
 import tempfile
 import unittest
+from collections import Counter
 
 import pandas as pd
 import pytest
 import yaml
-import json
-import os
 
 import geneplexus
-from collections import Counter
 
 
 @pytest.mark.usefixtures("data")
@@ -145,34 +145,35 @@ class TestGenePlexusPipeline(unittest.TestCase):
 
     @pytest.mark.order(6)
     def test_save_class(self):
-        self.gp.save_class(output_dir=pytest.RESULTSDIR,
-                           overwrite=True,
+        self.gp.save_class(
+            output_dir=pytest.RESULTSDIR,
+            overwrite=True,
         )
-        
+
         with self.subTest("TopLevel"):
             with open(osp.join(pytest.RESULTSDIR, "top_level_config.json")) as f:
                 top_level_json = json.load(f)
             with open(osp.join(pytest.ANSWERDIR, "expected_pipeline/top_level_config.json")) as f:
                 top_level_json_expected = json.load(f)
             assert Counter(list(top_level_json)) == Counter(list(top_level_json_expected))
-            
+
         with self.subTest("ModelLevel"):
             with open(osp.join(pytest.RESULTSDIR, "All-Genes/model_level_config.json")) as f:
                 model_level_json = json.load(f)
             with open(osp.join(pytest.ANSWERDIR, "expected_pipeline/All-Genes/model_level_config.json")) as f:
                 model_level_json_expected = json.load(f)
             assert Counter(list(model_level_json)) == Counter(list(model_level_json_expected))
-            
+
     @pytest.mark.order(7)
     def test_cli_main(self):
         os.system(f"geneplexus -i {pytest.GENELIST_PATH} -od {pytest.CLIRESULTSDIR} --overwrite")
-        
+
         assert os.path.isfile(osp.join(pytest.CLIRESULTSDIR, "top_level_config.json"))
-        
+
         assert os.path.isfile(osp.join(pytest.CLIRESULTSDIR, "geneplexus.log"))
-        
+
         assert os.path.isfile(osp.join(pytest.CLIRESULTSDIR, "All-Genes/Human-Combined/df_probs.tsv"))
-            
+
 
 if __name__ == "__main__":
     unittest.main()
