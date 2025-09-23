@@ -52,7 +52,7 @@ class TestGenePlexusPipeline(unittest.TestCase):
         columns = ["Original ID", "Entrez ID"]
         df_convert_out[columns] = df_convert_out[columns].astype(str)
 
-        path = osp.join(pytest.ANSWERDIR, "expected_pipeline/df_convert_out.tsv")
+        path = osp.join(pytest.ANSWERDIR, "expected_pipeline", "df_convert_out.tsv")
         df_convert_out_expected = pd.read_csv(path, sep="\t", dtype=str, keep_default_na=False)
         self.assertEqual(
             df_convert_out[df_convert_out_expected.columns].values.tolist(),
@@ -69,7 +69,7 @@ class TestGenePlexusPipeline(unittest.TestCase):
         df_probs = self.gp.model_info["All-Genes"].results["Mouse-Combined"].df_probs.copy()
         df_probs["Entrez"] = df_probs["Entrez"].astype(str)
 
-        path = osp.join(pytest.ANSWERDIR, "expected_pipeline/All-Genes/Mouse-Combined/df_probs.tsv")
+        path = osp.join(pytest.ANSWERDIR, "expected_pipeline", "All-Genes", "Mouse-Combined", "df_probs.tsv")
         df_probs_expected = pd.read_csv(path, sep="\t", keep_default_na=False)
         df_probs_expected["Entrez"] = df_probs_expected["Entrez"].astype(str)
 
@@ -95,7 +95,7 @@ class TestGenePlexusPipeline(unittest.TestCase):
         df_sim = self.gp.model_info["All-Genes"].results["Mouse-Combined"].df_sim.copy()
         columns = ["Task", "ID", "Name"]
 
-        path = osp.join(pytest.ANSWERDIR, "expected_pipeline/All-Genes/Mouse-Combined/df_sim.tsv")
+        path = osp.join(pytest.ANSWERDIR, "expected_pipeline", "All-Genes", "Mouse-Combined", "df_sim.tsv")
         df_sim_expected = pd.read_csv(path, sep="\t", keep_default_na=False)
         self.assertEqual(
             df_sim.sort_values("ID")[columns].values.tolist(),
@@ -116,7 +116,7 @@ class TestGenePlexusPipeline(unittest.TestCase):
         with self.subTest("Edge"):
             df_edge = self.gp.model_info["All-Genes"].results["Mouse-Combined"].df_edge.copy()
             df_edge[columns] = df_edge[columns].astype(str)
-            path = osp.join(pytest.ANSWERDIR, "expected_pipeline/All-Genes/Mouse-Combined/df_edge.tsv")
+            path = osp.join(pytest.ANSWERDIR, "expected_pipeline", "All-Genes", "Mouse-Combined", "df_edge.tsv")
             df_edge_expected = pd.read_csv(path, sep="\t", keep_default_na=False)
             df_edge_expected[columns] = df_edge_expected[columns].astype(str)
             self.assertEqual(
@@ -131,7 +131,7 @@ class TestGenePlexusPipeline(unittest.TestCase):
 
         with self.subTest("Edge sym"):
             df_edge_sym = self.gp.model_info["All-Genes"].results["Mouse-Combined"].df_edge_sym.copy()
-            path = osp.join(pytest.ANSWERDIR, "expected_pipeline/All-Genes/Mouse-Combined/df_edge_sym.tsv")
+            path = osp.join(pytest.ANSWERDIR, "expected_pipeline", "All-Genes", "Mouse-Combined", "df_edge_sym.tsv")
             df_edge_sym_expected = pd.read_csv(path, sep="\t", keep_default_na=False)
             self.assertEqual(
                 df_edge_sym[columns].values.tolist(),
@@ -153,14 +153,14 @@ class TestGenePlexusPipeline(unittest.TestCase):
         with self.subTest("TopLevel"):
             with open(osp.join(pytest.RESULTSDIR, "top_level_config.json")) as f:
                 top_level_json = json.load(f)
-            with open(osp.join(pytest.ANSWERDIR, "expected_pipeline/top_level_config.json")) as f:
+            with open(osp.join(pytest.ANSWERDIR, "expected_pipeline", "top_level_config.json")) as f:
                 top_level_json_expected = json.load(f)
             assert Counter(list(top_level_json)) == Counter(list(top_level_json_expected))
 
         with self.subTest("ModelLevel"):
-            with open(osp.join(pytest.RESULTSDIR, "All-Genes/model_level_config.json")) as f:
+            with open(osp.join(pytest.RESULTSDIR, "All-Genes", "model_level_config.json")) as f:
                 model_level_json = json.load(f)
-            with open(osp.join(pytest.ANSWERDIR, "expected_pipeline/All-Genes/model_level_config.json")) as f:
+            with open(osp.join(pytest.ANSWERDIR, "expected_pipeline", "All-Genes", "model_level_config.json")) as f:
                 model_level_json_expected = json.load(f)
             assert Counter(list(model_level_json)) == Counter(list(model_level_json_expected))
 
@@ -172,7 +172,7 @@ class TestGenePlexusPipeline(unittest.TestCase):
 
         assert os.path.isfile(osp.join(pytest.CLIRESULTSDIR, "geneplexus.log"))
 
-        assert os.path.isfile(osp.join(pytest.CLIRESULTSDIR, "All-Genes/Human-Combined/df_probs.tsv"))
+        assert os.path.isfile(osp.join(pytest.CLIRESULTSDIR, "All-Genes", "Human-Combined/df_probs.tsv"))
 
 
 if __name__ == "__main__":
