@@ -166,7 +166,7 @@ class TestGenePlexusPipeline(unittest.TestCase):
 
     @pytest.mark.order(7)
     def test_cli_main(self):
-        os.system(f"geneplexus -i {pytest.GENELIST_PATH} -od {pytest.CLIRESULTSDIR} --overwrite")
+        os.system(f"geneplexus -i {pytest.GENELIST_PATH} -fl {pytest.DATADIR} -od {pytest.CLIRESULTSDIR} --overwrite")
 
         assert os.path.isfile(osp.join(pytest.CLIRESULTSDIR, "top_level_config.json"))
 
