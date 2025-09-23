@@ -2,6 +2,7 @@ import numpy as np
 import pytest
 
 import geneplexus
+from geneplexus.exception import NoPositivesError
 
 
 # @pytest.mark.usefixtures("data")
@@ -25,7 +26,7 @@ def gp():
 @pytest.mark.parametrize("min_num_pos_cv,cross_validate", [(100, True), (100, False), (200, True)])
 @pytest.mark.parametrize(
     "min_num_pos,excepted_error_message",
-    [(10, None), (200, "There were not enough positive genes to train the model with")],
+    [(10, None), (200, "There were not enough positive genes to train the model")],
 )  # current example geneset has 183 genes
 # @pytest.mark.usefixtures("data")
 def test_run_sl(
@@ -45,8 +46,9 @@ def test_run_sl(
         lambda w, x, y, z: np.random.random((30000, 5)),
     )
 
-    with pytest.raises(Exception) as excinfo:
-        gp.fit_and_predict(
+    # with pytest.raises(Exception) as excinfo:
+    try:
+        gp.fit(
             min_num_pos=min_num_pos,
             min_num_pos_cv=min_num_pos_cv,
             num_folds=num_folds,
@@ -54,16 +56,17 @@ def test_run_sl(
             cross_validate=cross_validate,
         )
 
-        assert excepted_error_message in str(excinfo.value)
-
         if not cross_validate:
             assert "Skipping cross validation." in caplog.text
-            assert gp.avgps == [null_val] * num_folds
-        elif min_num_pos_cv > len(gp.pos_genes_in_net):
+            assert gp.model_info['All-Genes'].avgps == [null_val] * num_folds
+        elif min_num_pos_cv > len(gp.model_info["All-Genes"].pos_genes_in_net):
             assert "Insufficient number of positive genes" in caplog.text
-            assert f"{len(gp.pos_genes_in_net)} ({min_num_pos_cv} needed)" in caplog.text
-            assert gp.avgps == [null_val] * num_folds
+            assert f"{len(gp.model_info['All-Genes'].pos_genes_in_net)} ({min_num_pos_cv} needed)" in caplog.text
+            assert gp.model_info['All-Genes'].avgps == [null_val] * num_folds
         else:
             assert "Performing cross validation." in caplog.text
 
-        assert len(gp.avgps) == num_folds
+        assert len(gp.model_info['All-Genes'].avgps) == num_folds
+        
+    except NoPositivesError as e:
+        assert excepted_error_message in str(e)

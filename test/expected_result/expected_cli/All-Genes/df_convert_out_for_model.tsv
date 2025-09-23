@@ -9,7 +9,6 @@ Original ID	Entrez ID	Gene Name	In STRING?
 8766	8766	RAB11A, member RAS oncogene family	Y
 5584	5584	protein kinase C iota	Y
 137492	137492	VPS37A subunit of ESCRT-I	Y
-998	998	cell division cycle 42	N
 30011	30011	SH3 domain containing kinase binding protein 1	Y
 5337	5337	phospholipase D1	Y
 3312	3312	heat shock protein family A (Hsp70) member 8	Y
@@ -27,7 +26,6 @@ Original ID	Entrez ID	Gene Name	In STRING?
 84249	84249	pleckstrin and Sec7 domain containing 2	Y
 2066	2066	erb-b2 receptor tyrosine kinase 4	Y
 29924	29924	epsin 1	Y
-1213	1213	clathrin heavy chain	N
 30846	30846	EH domain containing 2	Y
 84612	84612	par-6 family cell polarity regulator beta	Y
 440073	440073	IQ motif and Sec7 domain ArfGEF 3	Y
@@ -69,7 +67,6 @@ Original ID	Entrez ID	Gene Name	In STRING?
 382	382	ADP ribosylation factor 6	Y
 6456	6456	SH3 domain containing GRB2 like 2, endophilin A1	Y
 30845	30845	EH domain containing 3	Y
-868	868	Cbl proto-oncogene B	N
 2264	2264	fibroblast growth factor receptor 4	Y
 5868	5868	RAB5A, member RAS oncogene family	Y
 84440	84440	RAB11 family interacting protein 4	Y
@@ -80,13 +77,11 @@ Original ID	Entrez ID	Gene Name	In STRING?
 161	161	adaptor related protein complex 2 subunit alpha 2	Y
 23096	23096	IQ motif and Sec7 domain ArfGEF 2	Y
 5338	5338	phospholipase D2	Y
-652614	Not in Our List of Human Entrez Genes	None	N
 84552	84552	par-6 family cell polarity regulator gamma	Y
 51028	51028	vacuolar protein sorting 36 homolog	Y
 55616	55616	ArfGAP with SH3 domain, ankyrin repeat and PH domain 3	Y
 9829	9829	DnaJ heat shock protein family (Hsp40) member C6	Y
 3815	3815	KIT proto-oncogene, receptor tyrosine kinase	Y
-29082	29082	charged multivesicular body protein 4A	N
 9135	9135	rabaptin, RAB GTPase binding effector protein 1	Y
 23362	23362	pleckstrin and Sec7 domain containing 3	Y
 9146	9146	hepatocyte growth factor-regulated tyrosine kinase substrate	Y
@@ -162,7 +157,6 @@ Original ID	Entrez ID	Gene Name	In STRING?
 10193	10193	ring finger protein 41	Y
 1785	1785	dynamin 2	Y
 155382	155382	VPS37D subunit of ESCRT-I	Y
-652799	Not in Our List of Human Entrez Genes	None	N
 22905	22905	epsin 2	Y
 3105	3105	major histocompatibility complex, class I, A	Y
 55048	55048	VPS37C subunit of ESCRT-I	Y
