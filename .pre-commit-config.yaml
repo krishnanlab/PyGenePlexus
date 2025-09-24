@@ -27,5 +27,5 @@ repos:
     rev: 25.9.0
     hooks:
     -   id: black
-        args: ["--safe", "-l120"]
+        args: ["-l120"]
         exclude: ^docs/
