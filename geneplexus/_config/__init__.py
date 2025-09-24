@@ -1,5 +1,4 @@
 """Basic configurations."""
-
 from . import config
 from .logger_util import make_logger
 

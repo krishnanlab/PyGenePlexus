@@ -1,5 +1,4 @@
 """Command line interface for the GenePlexus pipeline."""
-
 import argparse
 import atexit
 import json
