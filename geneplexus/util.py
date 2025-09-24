@@ -1,4 +1,5 @@
 """Utilities including file and path handling."""
+
 import functools
 import json
 import os
@@ -6,10 +7,10 @@ import os.path as osp
 import pathlib
 import shutil
 import warnings
+from collections.abc import Generator
 from threading import Thread
 from typing import Any
 from typing import Dict
-from typing import Generator
 from typing import List
 from typing import Literal
 from typing import Optional
