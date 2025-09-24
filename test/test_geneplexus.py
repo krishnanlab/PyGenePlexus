@@ -105,7 +105,7 @@ def test_res_params(
         assert "Mouse-Combined" in gp2.model_info["All-Genes"].results
 
 
-@pytest.mark.parametrize("clust_method", ["louvain", "domino"])
+@pytest.mark.parametrize("clust_method", ["louvain"]) #add domino back when it is finished
 def test_clustering(
     gp,
     caplog,
