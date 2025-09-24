@@ -9,6 +9,8 @@ import geneplexus
 @pytest.fixture(scope="session")
 def data(request):
     pytest.DATADIR = request.config.cache.makedir("download")
+    pytest.RESULTSDIR = request.config.cache.makedir("results")
+    pytest.CLIRESULTSDIR = request.config.cache.makedir("cli_results")
     pytest.HOMEDIR = pathlib.Path(__file__).parent.parent
     pytest.ANSWERDIR = osp.join(pytest.HOMEDIR, "test", "expected_result")
     pytest.GENELIST_PATH = osp.join(pytest.HOMEDIR, "example", "input_genes.txt")

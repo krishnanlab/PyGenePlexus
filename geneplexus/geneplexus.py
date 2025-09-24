@@ -712,7 +712,7 @@ class GenePlexus:
         if len(self.model_info[model_name].pos_genes_in_net) < self.min_num_pos:
             raise NoPositivesError(
                 f"There were not enough positive genes to train the model {model_name} with. "
-                f"This limit is set to {min_num_pos} and can be changed in fit().",
+                f"This limit is set to {self.min_num_pos} and can be changed in fit().",
             )
 
         if (self.input_negatives == None) or (len(self.input_negatives) == 0):
