@@ -458,26 +458,26 @@ class GenePlexus:
         clust_method: config.CLUSTERING_TYPE = config.DEFAULT_PARAMETERS["clust_method"],
         clust_min_size: int = config.DEFAULT_PARAMETERS["clust_min_size"],
         clust_weighted: bool = config.DEFAULT_PARAMETERS["clust_weighted"],
-        clust_kwargs: Optional[Dict[str, Any]] = None,
+        clust_kwargs: Optional[Dict[str, Any]] = config.DEFAULT_LOUVAIN_KWARGS | config.DEFAULT_DOMINO_KWARGS,
     ):
         """Cluster input gene list.
 
         Args:
-            clust_method: Clustering methos to use (either louvain or domino).
+            clust_method: Clustering method to use (either louvain or domino).
             clust_min_size: Ignore clusters if smaller than this value.
             clust_weighted: Whether or not to use weighted edges when building the clusters
             clust_kwargs: keywords args specfic to each clustering method
-            louvain_max_size: (kwarg) Try to recluster if a cluster is bigger than this value.
-            louvain_max_tries: (kwarg) The number of times to recluster any clusters that are
+            louvain_max_size: (clust_kwarg, int) Try to recluster if a cluster is bigger than this value.
+            louvain_max_tries: (clust_kwarg, int) The number of times to recluster any clusters that are
                 bigger the `clust_max_size`. If cannot accomplished this by `clust_max_tries`
                 the larger clusters are still retained.
-            louvain_res: (kwarg) Resolution parameter in clustering algorithm.
-            louvain_seed: (kwarg) Set seed used in clustering. Chose None to have this randomally set.
-            domino_res: (kwarg) resolution used to make initial slices.
-            domino_slice_thresh: (kwarg) threshold used for calling slice significant
-            domino_n_steps: (kwarg) number of steps used in pcst
-            domino_module_threshold: (kwarg) threshold used to consider module signifianct
-            domino_seed: (kwarg) random seed to be used in clustering algorithm
+            louvain_res: (clust_kwarg, float) Resolution parameter in clustering algorithm.
+            louvain_seed: (clust_kwarg, int) Set seed used in clustering. Chose None to have this randomally set.
+            domino_res: (clust_kwarg, float) resolution used to make initial slices.
+            domino_slice_thresh: (clust_kwarg, float) threshold used for calling slice significant
+            domino_n_steps: (clust_kwarg, int) number of steps used in pcst
+            domino_module_threshold: (clust_kwarg, float) threshold used to consider module signifianct
+            domino_seed: (clust_kwarg, int) random seed to be used in clustering algorithm
         """
 
         if list(self.model_info) != ["All-Genes"]:
