@@ -20,5 +20,5 @@ PyGenePlexus can be run in R using the ``reticulate`` pacakge.
    gp$fit()
    gp$predict()
    df_probs <- gp$model_info[["All-Genes"]]$results[["Human-Combined"]]$df_probs
-   
+
    write.csv(df_probs,file="probs.csv")

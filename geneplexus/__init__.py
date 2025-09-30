@@ -112,7 +112,7 @@ can be found in :ref:`PyGenePlexus API`.
 
    `v3` of PyGenePlexus is signifcanlty different than `v2` and `v1`
    Documentation of older stable releases can be found out
-   https://pygeneplexus.readthedocs.io/en/v2.0.4/ or 
+   https://pygeneplexus.readthedocs.io/en/v2.0.4/ or
    https://pygeneplexus.readthedocs.io/en/v1.0.1/
 
 

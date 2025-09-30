@@ -170,7 +170,7 @@ class GenePlexus:
 
         # set a clus_min_size to make sure it matching min_num_pos later
         self.clust_min_size = None
-        
+
         if input_genes is not None:
             self.load_genes(input_genes)
 
