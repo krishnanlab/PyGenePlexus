@@ -30,10 +30,9 @@ species.
 #. Genome-wide prediction of how **functionally similar** a gene is to the \
 input gene list. Evaluation of the model is provided by performing \
 k-fold cross validation. The default is 3-fold cross validation when a \
-minimum of 15 input genes are supplied. These parameters can be changed when accessing \
-the Python class. PyGenePlexus does not enforce a minimum or maximum number \
+minimum of 15 input genes are supplied. PyGenePlexus does not enforce a minimum or maximum number \
 of genes, and we note evaluations of the model were carried out for gene sets \
-ranging between 5 and 500 genes. See :meth:`fit_and_predict`
+ranging between 10 and 500 genes. See :meth:`fit` and :meth:`predict`
 #. (Optional) Interpretability of the model is provided by comparing the \
 model trained on the user gene set to models pretrained on 1000's of known \
 gene sets from [GO]_ bioloigcal proceses, [Monarch]_ phenotypes and [Mondo]_ diseases. See \
@@ -45,6 +44,7 @@ returning their network connectivity. :meth:`make_small_edgelist`
 
     **Links to other GenePlexus products**
 
+    * `GenePlexus for post-omics and post-GWAS Data (ModGenePlexus) <https://www.biorxiv.org/content/10.1101/2025.08.11.669721v1.abstract>`_
     * `Cross Species GenePlexus Paper (GenePlexusZoo) <https://doi.org/10.1371/journal.pcbi.1011773>`_
     * `GenePlexus Web Server <https://www.geneplexus.net>`_
     * `GenePlexus Web Server Paper \
@@ -103,14 +103,16 @@ can be found in :ref:`PyGenePlexus API`.
                     gsc_trn="Combined", gsc_res="Combined",
                     input_genes=input_genes, auto_download=True,
                     log_level="INFO")
-    df_probs = gp.fit_and_predict()[1]
+    gp.fit()
+    gp.predict()
+    df_probs = gp.model_info["All-Genes"].results["Human-Combined"].df_probs
     print(df_probs.iloc[:10])
 
 .. note::
 
-   v2 of PyGenePlexus is signifcanlty different than v1 and uses
-   a different set of backend data, which only includes human data.
-   For information of that version see
+   `v3` of PyGenePlexus is signifcanlty different than `v2` and `v1`
+   Documentation of older stable releases can be found out
+   https://pygeneplexus.readthedocs.io/en/v2.0.4/ or 
    https://pygeneplexus.readthedocs.io/en/v1.0.1/
 
 
