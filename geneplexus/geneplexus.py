@@ -118,12 +118,6 @@ class GenePlexus:
                 log_level=log_level,
             )
 
-        if input_genes is not None:
-            self.load_genes(input_genes)
-
-        if input_negatives is not None:
-            self.load_negatives(input_negatives)
-
         if self._is_custom:
             warnings.warn(
                 f"is_custom is set to True either manually "
@@ -176,6 +170,12 @@ class GenePlexus:
 
         # set a clus_min_size to make sure it matching min_num_pos later
         self.clust_min_size = None
+        
+        if input_genes is not None:
+            self.load_genes(input_genes)
+
+        if input_negatives is not None:
+            self.load_negatives(input_negatives)
 
     @property
     def file_loc(self) -> str:
