@@ -112,6 +112,6 @@ Next, run the pipline using the :class:`GenePlexus` object.
 
 	# save the class. If output_dir=None will try to save to ~/.data/geneplexus_outputs/results
 	gp.save_class(output_dir = None)
-	
+
 - For all items saved in GenePlexus class see :class:`GenePlexus`.
 - For structure of save_class output see :ref:`PyGenePlexus CLI <cli>`.
