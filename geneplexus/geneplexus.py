@@ -557,7 +557,7 @@ class GenePlexus:
 
     def fit(
         self,
-        logreg_kwargs: Optional[Dict[str, Any]] = None,
+        logreg_kwargs: Optional[Dict[str, Any]] = config.DEFAULT_LOGREG_KWARGS,
         scale: bool = config.DEFAULT_PARAMETERS["scale"],
         min_num_pos: int = config.DEFAULT_PARAMETERS["min_num_pos"],
         min_num_pos_cv: int = config.DEFAULT_PARAMETERS["min_num_pos_cv"],
@@ -570,9 +570,7 @@ class GenePlexus:
 
         Args:
             logreg_kwargs: Scikit-learn logistic regression settings (see
-                :class:`~sklearn.linear_model.LogisticRegression`). If not set,
-                then use the default logistic regression settings (l2 penalty with C=1,
-                10,000 max iterations, lbfgs solver).
+                :class:`~sklearn.linear_model.LogisticRegression`).
             scale: Whether to scale the data when doing model training and prediction. It is
                 not recommended to set to ``True`` unless using custom data.
             min_num_pos: Minimum number of positives required for the model

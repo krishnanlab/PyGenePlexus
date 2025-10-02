@@ -222,7 +222,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "-lk",
         "--logreg_kwargs",
-        default=None,
+        default=config.DEFAULT_LOGREG_KWARGS,
         metavar="",
         type=json.loads,
         help="Set the logistic regression keyword arguments in fit().",
