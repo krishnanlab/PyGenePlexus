@@ -10,8 +10,10 @@ from typing import Tuple
 from typing import Union
 from urllib.parse import urljoin
 
+import pystow
 import requests
 
+from . import util
 from ._config import logger
 from ._config.config import ALL_SPECIES
 from ._config.config import LOG_LEVEL_TYPE
@@ -25,7 +27,7 @@ from .exception import DownloadError
 
 
 def download_select_data(
-    file_loc: str,
+    file_loc: str = None,
     species: SPECIES_SELECTION_TYPE = "All",
     data_loc: str = "ZenodoAPI",
     num_retries: int = MAX_RETRY,
@@ -34,7 +36,8 @@ def download_select_data(
     """Select species of data to download.
 
     Args:
-        file_loc: Location of data files.
+        file_loc: Location to save data files to . if not specified, set to default
+            data path ``~/.data/geneplexus``
         species: Species of interest, accept multiple selection as a
             list. Do all the species if set to "All".
         data_loc: the remote system where to look for the data
@@ -42,6 +45,10 @@ def download_select_data(
         log_level: Level to set the logger
 
     """
+    if file_loc is None:
+        file_loc = str(pystow.join("geneplexus"))
+    else:
+        file_loc = util.normexpand(file_loc)
     species = _get_species_list(species)
     with stream_level_context(logger, log_level):
         for aspecies in species:
@@ -144,7 +151,7 @@ def _download_and_extract(file_loc, file_cat, fn_download, data_loc, num_retries
 
 
 def download_pytest_data(
-    file_loc: str,
+    file_loc: str = None,
     data_loc: str = "ZenodoAPI",
     num_retries: int = MAX_RETRY,
     log_level: LOG_LEVEL_TYPE = "INFO",
@@ -158,6 +165,10 @@ def download_pytest_data(
         log_level: Level to set the logger
 
     """
+    if file_loc is None:
+        file_loc = str(pystow.join("geneplexus"))
+    else:
+        file_loc = util.normexpand(file_loc)
     with stream_level_context(logger, log_level):
         if not _check_all_files(file_loc, "pytest"):
             if data_loc in ["Zenodo", "ZenodoAPI"]:
