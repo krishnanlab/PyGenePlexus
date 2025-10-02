@@ -18,8 +18,7 @@ Manual download
 .. code-block:: python
 
    from geneplexus.download import download_select_data
-   download_select_data("my_data", species = ["Human", "Mouse"]) # download just Human nd Mouse data
-   download_select_data("my_data")  # download all data at once
+   download_select_data(file_loc=None, species=["Human", "Mouse"]) # download just Human nd Mouse data
 
 See :meth:`geneplexus.download.download_select_data` for more information
 
@@ -33,8 +32,8 @@ download necessary data at initialization of the :class:`GenePlexus` object.
 
    from geneplexus import GenePlexus
    gp = GenePlexus(net_type="STRING", features="SixSpeciesN2V",
-                   sp_trn = "Human", sp_res = "Human",
-                   auto_download=True)
+                   sp_trn="Human", sp_res="Human",
+                   file_loc=None, auto_download=True)
 
 .. note::
 
