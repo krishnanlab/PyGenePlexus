@@ -23,13 +23,13 @@ output files will be saved under ``my_result/``.
 Full CLI options (check out with ``geneplexus --help``)
 
 .. code-block:: text
-	  
+
 	Run the GenePlexus pipline on a input gene list.
 
 	options:
 	  -h, --help            show this help message and exit
 	  -i , --input_file     Input gene list file (eg. (.txt file)). (default: None)
-	  -d , --gene_list_delimiter 
+	  -d , --gene_list_delimiter
 	                        Delimiter used in the gene list. Use 'newline' if the genes are separated
 	                        by new line, and use 'tab' if the genes are seperate by tabs. If not
 	                        newline or tab, will use argument directly, so /t, /n, , (default:
@@ -49,7 +49,7 @@ Full CLI options (check out with ``geneplexus --help``)
 	  -gr , --gsc_res       Geneset collection used for model similarities. The choices are: {GO,
 	                        Monarch, Mondo, Combined}. If more than one gsc can be comma spearated.
 	                        (default: Combined)
-	  -in , --input_negatives 
+	  -in , --input_negatives
 	                        Input negative gene list (.txt) file. (default: None)
 	  -l , --log_level      Logging level. The choices are: {CRITICAL, ERROR, WARNING, INFO, DEBUG}.
 	                        Set to CRITICAL for quietest logging. (default: INFO)
@@ -60,32 +60,32 @@ Full CLI options (check out with ``geneplexus --help``)
 	  --do_clustering       When added cluster_input() function will be run. (default: False)
 	  --skip-mdl-sim        When added make_sim_dfs() will not be run (default: False)
 	  --skip-sm-edgelist    When added make_small_edgelist() will not be run (default: False)
-	  -cm , --clust_method 
+	  -cm , --clust_method
 	                        Sets the clustering method in cluster_input(). The choices are: {louvain,
 	                        domino} (default: louvain)
-	  -cmin , --clust_min_size 
+	  -cmin , --clust_min_size
 	                        Sets the minimum size of clusters allowed in cluster_input(). (default: 5)
 	  -cw, --clust_weighted
 	                        When added will set clust_weight argument to False in cluster_input().
 	                        (default: True)
-	  -ck , --clust_kwargs 
+	  -ck , --clust_kwargs
 	                        Sets the clustering keyword arguments in cluster_input(). (default:
 	                        {'louvain_max_size': 70, 'louvain_max_tries': 3, 'louvain_res': 1,
 	                        'louvain_seed': 123, 'domino_res': 1, 'domino_slice_thresh': 0.3,
 	                        'domino_n_steps': 20, 'domino_module_threshold': 0.05, 'domino_seed':
 	                        123})
-	  -lk , --logreg_kwargs 
+	  -lk , --logreg_kwargs
 	                        Set the logistic regression keyword arguments in fit(). (default: None)
 	  -s, --scale           When added, will set scale to True in fit(). See docs for more info of
 	                        when this is good to do. (default: False)
-	  -mnp , --min_num_pos 
+	  -mnp , --min_num_pos
 	                        Minimum umber of genes needed to fit a model in fit(). (default: 5)
-	  -mnpcv , --min_num_pos_cv 
+	  -mnpcv , --min_num_pos_cv
 	                        Minumum number of genes needed to do cross validation in fit(). (default:
 	                        15)
 	  -nf , --num_folds     Number of folds to do for cross validation in fit(). (default: 3)
 	  -nv , --null_val      Value to use when CV can't be done in fit(). (default: None)
-	  -rs , --random_state 
+	  -rs , --random_state
 	                        Random state value to use in fit(). (default: 0)
 	  -cv, --cross_validate
 	                        When added, will set cross validate to False in fit(). (default: True)
@@ -97,7 +97,7 @@ Full CLI options (check out with ``geneplexus --help``)
 	                        results_only} (default: all)
 	  -z, --zip-output      When added, zip_ouput is set to True in save_class(). (default: False)
 	  -o, --overwrite       When added, overwrite is set to True in save_class(). (default: False)
-	  
+
 
 The output file structure is as follows. This is for `--save_type all`, if `--save_type results_only` is
 used then only select files will be saved.
@@ -108,16 +108,15 @@ used then only select files will be saved.
    * ``top_level_config.json`` Contains configuration infomration for GenePlexus class.
    * ``df_convert_out.tsv`` Table showing conversion of input genes to Entrez IDs for all networks. (see :meth:`geneplexus.GenePlexus.load_genes`)
    * ``Model Directories`` Folders containing information for each of the trained models. `All-Genes` for full input gene list and `Cluster-N` for each cluster if clustering was performed.
-   
+
       * ``clf.joblib`` Serialized version of the trained model.
       * ``model_level_config.json`` Contains configuration information specific to each model including evaluation metrics and positive, megative and neutral genes, and model weights.
       * ``df_convert_out_for_model.tsv`` Table showing conversion of input genes for each model. (see :meth:`geneplexus.GenePlexus.fit`)
       * ``Result Directories`` Folders containing results for each ``sp_res`` and ``gsc_res`` combination
-	  
+
 	     * ``df_probs.tsv`` Top predicted genes related to the input gene list. (see :meth:`geneplexus.GenePlexus.predict`)
 	     * ``df_sim.tsv`` Similarity of model trained on user gene list to models trained on known gene sets. (see :meth:`geneplexus.GenePlexus.make_sim_dfs`)
 	     * ``df_edge.tsv`` Edgelist (Entrez ID) of subgraph induced by top predicted genes. (see :meth:`geneplexus.GenePlexus.make_small_edgelist`)
 	     * ``df_edge_sym.tsv`` Edgelist (Symbol) of subgraph induced by top predicted genes. (see :meth:`geneplexus.GenePlexus.make_small_edgelist`)
 	     * ``isoloated_genes.txt`` List of top predicted genes (Entrez ID) that have no edges in the network. (see :meth:`geneplexus.GenePlexus.make_small_edgelist`)
 	     * ``isoloated_genes_sym.txt`` List of top predicted genes (Symbol) that have no edges in the network. (see :meth:`geneplexus.GenePlexus.make_small_edgelist`)
-	  
