@@ -36,7 +36,7 @@ def download_select_data(
     """Select species of data to download.
 
     Args:
-        file_loc: Location to save data files to . if not specified, set to default
+        file_loc: Location to save data files to. If not specified, set to default
             data path ``~/.data/geneplexus``
         species: Species of interest, accept multiple selection as a
             list. Do all the species if set to "All".
@@ -159,7 +159,8 @@ def download_pytest_data(
     """Download data for pytests.
 
     Args:
-        file_loc: Location of data files.
+        file_loc: Location to save data files to. If not specified, set to default
+            data path ``~/.data/geneplexus``
         data_loc: the remote system where to look for the data
         num_retries: Number of times to retry downloading a file.
         log_level: Level to set the logger
