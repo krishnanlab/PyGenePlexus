@@ -12,5 +12,4 @@ geneplexus.geneplexus
    save_class
 .. autoclass:: geneplexus.GenePlexus
    :members:
-   :private-members: _load_genes, _convert_to_entrez, _get_pos_and_neg_genes
    :undoc-members:
