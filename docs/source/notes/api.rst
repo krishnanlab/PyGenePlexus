@@ -109,14 +109,14 @@ Next, run the pipline using the :class:`GenePlexus` object.
 	print(gp.model_info["All-Genes"].results["Human-Combined"].df_sim)
 	# get network connections for the top 50 human genes predcited using full input gene set model
 	print(gp.model_info["All-Genes"].results["Human-Combined"].df_edge_sym)
-	
+
 	# get mouse gene prediction results for cluster 1 gene set model
 	print(gp.model_info["Cluster-01"].results["Mouse-Combined"].df_probs)
 	# get similarties of trainied model to other models trained with mouse annotations
 	print(gp.model_info["Cluster-01"].results["Mouse-Combined"].df_sim)
 	# get network connections for the top 50 mouse genes predcited using cluster 1 gene set model
 	print(gp.model_info["Cluster-01"].results["Mouse-Combined"].df_edge_sym)
-	
+
 	# get log2(auPRC/prior) metric for the full input gene set model
 	print(gp.model_info["All-Genes"].avgps)
 

@@ -78,7 +78,7 @@ class GenePlexus:
                 `remove_log_file`.
 
         The following clsss attributes are set when ``__init__`` is run
-        
+
         :attr:`GenePlexus._is_custom` bool
             If the species, network or feature type was supplied by the user.
         :attr:`GenePlexus._file_loc` str
@@ -111,7 +111,7 @@ class GenePlexus:
             model_info is a dictionary where each key is a different model and holds the ModelInfo class.
         :attr:`GenePlexus.model_info[ModelName].results[ResultName]` Class
             results is a dictionary where each key is a different result and holds ModelResults class.
-    
+
 
         """
         set_stream_level(logger, log_level)
@@ -509,7 +509,7 @@ class GenePlexus:
             domino_n_steps: (clust_kwarg, int) number of steps used in pcst
             domino_module_threshold: (clust_kwarg, float) threshold used to consider module signifianct
             domino_seed: (clust_kwarg, int) random seed to be used in clustering algorithm
-    
+
         The following clsss attributes are set when ``cluster_input`` is run
 
         :attr:`GenePlexus.clust_method` (str)
@@ -520,7 +520,7 @@ class GenePlexus:
             Whether or not to use edge weights when generating clusters
         :attr:`GenePlexus.clust_kwags` (dict)
             Keyword arguments used for each clustering method
-    
+
         :attr:`GenePlexus.num_genes_lost` (int)
             Number of input_genes not in any cluster
         :attr:`GenePlexus.per_genes_lost` (float)
@@ -537,7 +537,7 @@ class GenePlexus:
             List of genes used as positives for each clusters model
         :attr:`GenePlexus.model_info[ModelName].results[ResultName]` (Class)
             For each clusters model, set up a key in results dicts for ModelResults class
-    
+
         """
 
         if list(self.model_info) != ["All-Genes"]:
@@ -688,7 +688,7 @@ class GenePlexus:
                     }
                  "All Neutrals" : # returns list of all genes considered neutral
                }
-        
+
         :attr:`GenePlexus.model_info[ModelName].mdl_weights` (1D array of floats)
             Trained model parameters.
         :attr:`GenePlexus.model_info[ModelName].clf` (LogisticRegression)
