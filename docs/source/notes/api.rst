@@ -103,11 +103,21 @@ Next, run the pipline using the :class:`GenePlexus` object.
 	gp.make_sim_dfs()
 	gp.make_small_edgelist()
 
-	# get human gene prediction results for full input gene set
+	# get human gene prediction results for full input gene set model
 	print(gp.model_info["All-Genes"].results["Human-Combined"].df_probs)
-	# get mouse gene prediction results for cluster 1 gene set
+	# get similarties of trainied model to other models trained with human annotations
+	print(gp.model_info["All-Genes"].results["Human-Combined"].df_sim)
+	# get network connections for the top 50 human genes predcited using full input gene set model
+	print(gp.model_info["All-Genes"].results["Human-Combined"].df_edge_sym)
+	
+	# get mouse gene prediction results for cluster 1 gene set model
 	print(gp.model_info["Cluster-01"].results["Mouse-Combined"].df_probs)
-	# get log2(auPRC/prior) metric for the All-Gene model
+	# get similarties of trainied model to other models trained with mouse annotations
+	print(gp.model_info["Cluster-01"].results["Mouse-Combined"].df_sim)
+	# get network connections for the top 50 mouse genes predcited using cluster 1 gene set model
+	print(gp.model_info["Cluster-01"].results["Mouse-Combined"].df_edge_sym)
+	
+	# get log2(auPRC/prior) metric for the full input gene set model
 	print(gp.model_info["All-Genes"].avgps)
 
 	# save the class. If output_dir=None will try to save to ~/.data/geneplexus_outputs/results
