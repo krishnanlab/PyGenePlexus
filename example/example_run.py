@@ -8,26 +8,6 @@ import numpy as np
 import geneplexus
 
 # The first step is for a user to supply a gene list
-input_genes = [
-    "ARL6",
-    "BBS1",
-    "BBS10",
-    "BBS12",
-    "BBS2",
-    "BBS4",
-    "BBS5",
-    "BBS7",
-    "BBS9",
-    "CCDC28B",
-    "CEP290",
-    "KIF7",
-    "MKKS",
-    "MKS1",
-    "TRIM32",
-    "TTC8",
-    "WDPCP",
-]
-
 # bardet biedl syndrome gene set
 input_genes = ["6457","7037","57403","3134","50807","93343","11311","8766","5584","137492","998","30011","5337","3312","155",
                "10015","55738","57132","153","116986","163","11267","1950","3559","6714","84249","2066","29924","1213","30846",
