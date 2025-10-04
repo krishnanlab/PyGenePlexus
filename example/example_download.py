@@ -25,6 +25,6 @@ species = ["Human", "Mouse"]
 """
 
 geneplexus.download.download_select_data(
-    datadir,
+    file_loc=datadir,
     species=["Human", "Mouse", "Fly", "Worm", "Zebrafish", "Yeast"],
 )
