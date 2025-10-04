@@ -31,13 +31,15 @@ pip install geneplexus
 
 See `example/example_run.py` for example usage of the API.
 
+For other examples see [Package Documentation](https://pygeneplexus.readthedocs.io).
+
 ### Command-line interface
 
 ```bash
 geneplexus --input_file example/input_genes.txt --output_dir example_result
 ```
 
-Full CLI options (check out with ``geneplexus --help``)
+Run ``geneplexus --help`` to see full CLI options.
 
 # Dev
 
