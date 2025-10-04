@@ -86,3 +86,12 @@ simplify_optional_unions = False
 # so a file named "default.css" will overwrite the builtin "default.css".
 # html_static_path = ['_static']
 html_static_path = []
+
+# don't show properties'
+def skip_all_properties(app, what, name, obj, skip, options):
+    # Skip anything that's a @property
+    if isinstance(obj, property):
+        return True
+    return skip
+def setup(app):
+    app.connect("autodoc-skip-member", skip_all_properties)

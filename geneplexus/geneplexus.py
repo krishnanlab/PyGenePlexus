@@ -77,10 +77,41 @@ class GenePlexus:
                 will also create a tmp file that can be explicitly deleted with
                 `remove_log_file`.
 
+        The following clsss attributes are set when ``__init__`` is run
+
+        :attr:`GenePlexus._is_custom` bool
+            If the species, network or feature type was supplied by the user.
+        :attr:`GenePlexus._file_loc` str
+            File path set for the data.
+        :attr:`GenePlexus._features` str
+            Type of network features used.
+        :attr:`GenePlexus._sp_trn` str
+            Species used in training.
+        :attr:`GenePlexus._sp_res` (str, List[str])
+            Species used in the results.
+        :attr:`GenePlexus._gsc_trn` str
+            Gene set collection used in training.
+        :attr:`GenePlexus._gsc_res` (str, List[str])
+            TGene set collection(s) used in results.
+        :attr:`GenePlexus._net_type` str
+            Type of network used.
+        :attr:`GenePlexus.log_level` str
+            The verbosity of the logger.
+        :attr:`GenePlexus.log_to_file` bool
+            Whether or not the log file was saved as a file
+        :attr:`GenePlexus.auto_download` bool
+            If data was attmepted to be auto downloaded.
         :attr:`GenePlexus.gsc_trn_original` str
-            If internal data checks are run, this can different that gsc_trn.
-        :attr:`GenePlexus.gsc_res_original` (List[str])
-            If internal data checks are run, this can different that res_trn.
+            If internal data checks are run, this can different than _gsc_trn.
+        :attr:`GenePlexus.gsc_res_original` (str, List[str])
+            If internal data checks are run, this can different that _gsc_res.
+        :attr:`GenePlexus.sp_gsc_pairs` List[str]
+            The combination of all sp and gsc used, hyphen separated.
+        :attr:`GenePlexus.model_info[ModelName]` Class
+            model_info is a dictionary where each key is a different model and holds the ModelInfo class.
+        :attr:`GenePlexus.model_info[ModelName].results[ResultName]` Class
+            results is a dictionary where each key is a different result and holds ModelResults class.
+
 
         """
         set_stream_level(logger, log_level)
@@ -117,12 +148,6 @@ class GenePlexus:
                 [self.sp_trn] + self.sp_res,
                 log_level=log_level,
             )
-
-        if input_genes is not None:
-            self.load_genes(input_genes)
-
-        if input_negatives is not None:
-            self.load_negatives(input_negatives)
 
         if self._is_custom:
             warnings.warn(
@@ -176,6 +201,12 @@ class GenePlexus:
 
         # set a clus_min_size to make sure it matching min_num_pos later
         self.clust_min_size = None
+
+        if input_genes is not None:
+            self.load_genes(input_genes)
+
+        if input_negatives is not None:
+            self.load_negatives(input_negatives)
 
     @property
     def file_loc(self) -> str:
@@ -316,7 +347,7 @@ class GenePlexus:
         Args:
             input_genes: Input gene list, can be mixed type.
 
-        **The following clsss attributes are set when this function is run**
+        The following clsss attributes are set when ``load_genes`` is run
 
         :attr:`GenePlexus.input_genes` (List[str])
             Input genes converted to uppercase
@@ -374,7 +405,7 @@ class GenePlexus:
         Args:
             input_negatives: Input negative gene list, can be mixed type.
 
-        **The following clsss attributes are set when this function is run**
+        The following clsss attributes are set when ``load_negatives`` is run
 
         :attr:`GenePlexus.input_negatives` (List[str])
             Input negatives converted to uppercase
@@ -458,26 +489,55 @@ class GenePlexus:
         clust_method: config.CLUSTERING_TYPE = config.DEFAULT_PARAMETERS["clust_method"],
         clust_min_size: int = config.DEFAULT_PARAMETERS["clust_min_size"],
         clust_weighted: bool = config.DEFAULT_PARAMETERS["clust_weighted"],
-        clust_kwargs: Optional[Dict[str, Any]] = None,
+        clust_kwargs: Optional[Dict[str, Any]] = config.DEFAULT_LOUVAIN_KWARGS | config.DEFAULT_DOMINO_KWARGS,
     ):
         """Cluster input gene list.
 
         Args:
-            clust_method: Clustering methos to use (either louvain or domino).
+            clust_method: Clustering method to use (either louvain or domino).
             clust_min_size: Ignore clusters if smaller than this value.
             clust_weighted: Whether or not to use weighted edges when building the clusters
             clust_kwargs: keywords args specfic to each clustering method
-            louvain_max_size: (kwarg) Try to recluster if a cluster is bigger than this value.
-            louvain_max_tries: (kwarg) The number of times to recluster any clusters that are
+            louvain_max_size: (clust_kwarg, int) Try to recluster if a cluster is bigger than this value.
+            louvain_max_tries: (clust_kwarg, int) The number of times to recluster any clusters that are
                 bigger the `clust_max_size`. If cannot accomplished this by `clust_max_tries`
                 the larger clusters are still retained.
-            louvain_res: (kwarg) Resolution parameter in clustering algorithm.
-            louvain_seed: (kwarg) Set seed used in clustering. Chose None to have this randomally set.
-            domino_res: (kwarg) resolution used to make initial slices.
-            domino_slice_thresh: (kwarg) threshold used for calling slice significant
-            domino_n_steps: (kwarg) number of steps used in pcst
-            domino_module_threshold: (kwarg) threshold used to consider module signifianct
-            domino_seed: (kwarg) random seed to be used in clustering algorithm
+            louvain_res: (clust_kwarg, float) Resolution parameter in clustering algorithm.
+            louvain_seed: (clust_kwarg, int) Set seed used in clustering. Chose None to have this randomally set.
+            domino_res: (clust_kwarg, float) resolution used to make initial slices.
+            domino_slice_thresh: (clust_kwarg, float) threshold used for calling slice significant
+            domino_n_steps: (clust_kwarg, int) number of steps used in pcst
+            domino_module_threshold: (clust_kwarg, float) threshold used to consider module signifianct
+            domino_seed: (clust_kwarg, int) random seed to be used in clustering algorithm
+
+        The following clsss attributes are set when ``cluster_input`` is run
+
+        :attr:`GenePlexus.clust_method` (str)
+            Clustering method used
+        :attr:`GenePlexus.clust_min_size` (int)
+            Minimum size of clusters allowed
+        :attr:`GenePlexus.clust_weighted` (bool)
+            Whether or not to use edge weights when generating clusters
+        :attr:`GenePlexus.clust_kwags` (dict)
+            Keyword arguments used for each clustering method
+
+        :attr:`GenePlexus.num_genes_lost` (int)
+            Number of input_genes not in any cluster
+        :attr:`GenePlexus.per_genes_lost` (float)
+            Percentage of input_genes not in any cluster
+        :attr:`GenePlexus.num_genes_gained` (int)
+            Number of genes in clusters not in input_genes
+        :attr:`GenePlexus.per_genes_gained` (float)
+            Percentage of genes in clusters not in input_genes
+        :attr:`GenePlexus.genes_lost_clustered` (List[str])
+            List of input_genes not in any cluster
+        :attr:`GenePlexus.genes_gained_clustered` (List[str])
+            List of cluster genes not in input_genes
+        :attr:`GenePlexus.model_info[ModelName].model_genes` (List[str])
+            List of genes used as positives for each clusters model
+        :attr:`GenePlexus.model_info[ModelName].results[ResultName]` (Class)
+            For each clusters model, set up a key in results dicts for ModelResults class
+
         """
 
         if list(self.model_info) != ["All-Genes"]:
@@ -557,7 +617,7 @@ class GenePlexus:
 
     def fit(
         self,
-        logreg_kwargs: Optional[Dict[str, Any]] = None,
+        logreg_kwargs: Optional[Dict[str, Any]] = config.DEFAULT_LOGREG_KWARGS,
         scale: bool = config.DEFAULT_PARAMETERS["scale"],
         min_num_pos: int = config.DEFAULT_PARAMETERS["min_num_pos"],
         min_num_pos_cv: int = config.DEFAULT_PARAMETERS["min_num_pos_cv"],
@@ -570,9 +630,7 @@ class GenePlexus:
 
         Args:
             logreg_kwargs: Scikit-learn logistic regression settings (see
-                :class:`~sklearn.linear_model.LogisticRegression`). If not set,
-                then use the default logistic regression settings (l2 penalty with C=1,
-                10,000 max iterations, lbfgs solver).
+                :class:`~sklearn.linear_model.LogisticRegression`).
             scale: Whether to scale the data when doing model training and prediction. It is
                 not recommended to set to ``True`` unless using custom data.
             min_num_pos: Minimum number of positives required for the model
@@ -589,15 +647,59 @@ class GenePlexus:
                 ``False``, then skip cross validation and return null_val as cv
                 scores.
 
-        **The following clsss attributes are set when this function is run**
+        The following clsss attributes are set when ``fit`` is run
 
-        :attr:`GenePlexus.mdl_weights` (1D array of floats)
+        :attr:`GenePlexus.min_num_pos` (int)
+            Minumum number of postivies needed to train a model.
+        :attr:`GenePlexus.logreg_kwargs` (dict)
+            Keyword arguments for LogisitcRegression function.
+        :attr:`GenePlexus.scale` (bool)
+            Whether or not scaling of the data was done in LogisticRegression.
+        :attr:`GenePlexus.min_num_pos_cv` (int)
+            The minumum number of positive genes needed for doing cross validation.
+        :attr:`GenePlexus.num_folds` (int)
+            Number of cross validation folds to do
+        :attr:`GenePlexus.null_vall` (None, str, int, float)
+            Value to fill in for avgps if cross validation couldn't be performed
+        :attr:`GenePlexus.random_state` (None, int)
+            Seed set for doing cross validation
+        :attr:`GenePlexus.cross_validate` (bool)
+            Whether or not to perform cross validation
+        :attr:`GenePlexus.model_info[ModelName].pos_genes_in_net` (1D array of str)
+            Input gene Entrez IDs that are present in the network.
+        :attr:`GenePlexus.model_info[ModelName].genes_not_in_net` (1D array of str)
+            Input gene Entrez IDs that are absent in the network.
+        :attr:`GenePlexus.model_info[ModelName].net_genes` (1D array of str)
+            All genes in the network.
+        :attr:`GenePlexus.model_info[ModelName].negative_genes` (1D array of str)
+            Negative gene Entrez IDs derived using the input genes and
+            the background gene set collection (gp_trn).
+        :attr:`GenePlexus.model_info[ModelName].neutral_gene_info` (Dict of Dicts)
+            Dictionary saying which genes were set to neutrals because the
+            term annotation matched closely enough to the positive training genes.
+
+            ::
+
+               {
+                 "{Term ID}" # ID of the matched term : {
+                    "Name"  : # returns string of term name
+                    "Genes" : # returns list of genes annotated to term
+                    "Task"  : # returns type of GSC the term is from
+                    }
+                 "All Neutrals" : # returns list of all genes considered neutral
+               }
+
+        :attr:`GenePlexus.model_info[ModelName].mdl_weights` (1D array of floats)
             Trained model parameters.
-        :attr:`GenePlexus.avgps` (1D array of floats)
+        :attr:`GenePlexus.model_info[ModelName].clf` (LogisticRegression)
+            The fit classifer from sci-kit learn LogisticRegression class.
+        :attr:`GenePlexusmodel_info[ModelName]..avgps` (1D array of floats)
             Cross validation results. Performance is measured using
             log2(auprc/prior).
-        :attr:`df_convert_out_subset` (DataFrame)
-            A table with the following 4 columns:
+        :attr:`GenePlexus.model_info[ModelName].std_scale` (StandardScale)
+            If scaling was performed the object returned from StandardScaler.
+        :attr:`GenePlexus.model_info[ModelName].df_convert_out_for_model` (DataFrame)
+            A table specifc to input_genes for each model with the following 4 columns:
 
             .. list-table::
 
@@ -670,35 +772,7 @@ class GenePlexus:
         return self.model_info
 
     def _get_pos_and_neg_genes(self, model_name):
-        """Set up positive and negative splits.
-
-        **The following clsss attributes are set when this function is run**
-
-        :attr:`GenePlexus.pos_genes_in_net` (1D array of str)
-            Input gene Entrez IDs that are present in the network.
-        :attr:`GenePlexus.genes_not_in_net` (1D array of str)
-            Input gene Entrez IDs that are absent in the network.
-        :attr:`GenePlexus.net_genes` (1D array of str)
-            All genes in the network.
-        :attr:`GenePlexus.negative_genes` (1D array of str)
-            Negative gene Entrez IDs derived using the input genes and
-            the background gene set collection (gp_trn).
-        :attr:`GenePlexus.neutral_gene_info` (Dict of Dicts)
-            Dictionary saying which genes were set to neutrals because the
-            term annotation matched closely enough to the positive training genes.
-
-            ::
-
-               {
-                 "{Term ID}" # ID of the matched term : {
-                    "Name"  : # returns string of term name
-                    "Genes" : # returns list of genes annotated to term
-                    "Task"  : # returns type of GSC the term is from
-                    }
-                 "All Neutrals" : # returns list of all genes considered neutral
-               }
-
-        """
+        """Set up positive and negative splits."""
         (
             self.model_info[model_name].pos_genes_in_net,
             self.model_info[model_name].genes_not_in_net,
@@ -742,9 +816,9 @@ class GenePlexus:
     def predict(self):
         """Predict gene scores from fit model.
 
-        **The following clsss attributes are set when this function is run**
+        The following clsss attributes are set when ``predict`` is run
 
-        :attr:`GenePlexus.df_probs` (DataFrame)
+        :attr:`GenePlexus.model_info[ModelName].results[ResultName].df_probs` (DataFrame)
             A table with the following 9 columns:
 
             .. list-table::
@@ -808,9 +882,9 @@ class GenePlexus:
     def make_sim_dfs(self):
         """Compute similarities bewteen the input genes and GO, Monarch and/or Mondo.
 
-        **The following clsss attributes are set when this function is run**
+        The following clsss attributes are set when ``make_sim_df`` is run
 
-        :attr:`GenePlexus.df_sim` (DataFrame)
+        :attr:`GenePlexus.model_info[ModelName].results[ResultName].df_sim` (DataFrame)
             A table showing how similar the coefficients of the user trained models
             are to the coefficients of models trained using genes annotated to gsc_res.
             The table has the following 7 columns:
@@ -831,20 +905,6 @@ class GenePlexus:
                  - The Bonferroni adjusted p-values from the z-scores
                * - Rank
                  - The rank of the term with one being the term with the highest similarity to the user model
-
-        :attr:`GenePlexus.weights`
-            Dictionary of pretrained model weights for gsc_res.
-
-            ::
-
-               {
-                 "{Term ID}" # ID of the GSC term : {
-                    "Name"  : # returns string of term name
-                    "PosGenes" : # returns list of genes annotated to term
-                    "Task"  : # returns type of GSC the term is from
-                    "Weights" : # return list of coefficients from models trained using genes annotated to the term
-                    }
-               }
 
         """
         for model_name in list(self.model_info):
@@ -870,18 +930,20 @@ class GenePlexus:
         Args:
             num_nodes: Number of top genes to include.
 
-        **The following clsss attributes are set when this function is run**
+        The following clsss attributes are set when ``make_small_edgelist`` is run
 
-        :attr:`GenePlexus.df_edge` (DataFrame)
+        :attr:`GenePlexus.num_nodes` (int)
+            The number of nodes to include in the edgelist.
+        :attr:`GenePlexus.model_info[ModelName].results[ResultName].df_edge` (DataFrame)
             Table of edge list corresponding to the subgraph induced by the top
             predicted genes (in Entrez gene ID).
-        :attr:`GenePlexus.isolated_genes` (List[str])
+        :attr:`GenePlexus.model_info[ModelName].results[ResultName].isolated_genes` (List[str])
             List of top predicted genes (in Entrez gene ID) that are isolated
             from other top predicted genes in the network.
-        :attr:`GenePlexus.df_edge_sym` (DataFrame)
+        :attr:`GenePlexus.model_info[ModelName].results[ResultName].df_edge_sym` (DataFrame)
             Table of edge list corresponding to the subgraph induced by the top
             predicted genes (in gene symbol).
-        :attr:`GenePlexus.isolated_genes_sym` (List[str])
+        :attr:`GenePlexus.model_info[ModelName].results[ResultName].isolated_genes_sym` (List[str])
             List of top predicted genes (in gene symbol) that are isolated from
             other top predicted genes in the network.
 

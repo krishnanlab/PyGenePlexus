@@ -186,7 +186,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "-ck",
         "--clust_kwargs",
-        default=None,
+        default=config.DEFAULT_LOUVAIN_KWARGS | config.DEFAULT_DOMINO_KWARGS,
         metavar="",
         type=json.loads,
         help="Sets the clustering keyword arguments in cluster_input().",
@@ -222,7 +222,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "-lk",
         "--logreg_kwargs",
-        default=None,
+        default=config.DEFAULT_LOGREG_KWARGS,
         metavar="",
         type=json.loads,
         help="Set the logistic regression keyword arguments in fit().",
