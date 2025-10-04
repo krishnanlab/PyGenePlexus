@@ -17,5 +17,8 @@ PyGenePlexus can be run in R using the ``reticulate`` pacakge.
 		    "MKKS", "MKS1", "TRIM32", "TTC8", "WDPCP")
    # Note: Below need to use $ and not . to access pacakge methods
    gp$load_genes(input_genes)
-   gp$fit_and_predict()
-   write.csv(gp$df_probs,file="probs.csv")
+   gp$fit()
+   gp$predict()
+   df_probs <- gp$model_info[["All-Genes"]]$results[["Human-Combined"]]$df_probs
+
+   write.csv(df_probs,file="probs.csv")
