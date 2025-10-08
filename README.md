@@ -9,6 +9,7 @@
 
 A Python package of the GenePlexus analysis pipeline.
 
+* The [ModGenePlexus Method Paper](https://www.biorxiv.org/content/10.1101/2025.08.11.669721v1.abstract)
 * The [GenePlexusZoo Method Paper](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1011773)
 * The [GenePlexus Benchmarking Paper](https://academic.oup.com/bioinformatics/article/36/11/3457/5780279)
 * The [Webserver](https://www.geneplexus.net/)
