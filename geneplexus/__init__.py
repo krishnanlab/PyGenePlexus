@@ -4,7 +4,7 @@
 
     The documentation on the "latest" version of ReadTheDocs may not yet reflect,
     code pushed to the main branch of the GitHub repository. However, the douemntation
-    for stable releases on PyPi will be correct on ReadTheDocs.
+    for releases on PyPi will be correct on ReadTheDocs.
 
 
 .. currentmodule:: geneplexus.GenePlexus
@@ -124,5 +124,5 @@ from . import util
 from .geneplexus import GenePlexus
 
 
-__version__ = "2.0.4"
+__version__ = "3.0.0.dev0"
 __all__ = ["download", "GenePlexus", "util", "config"]

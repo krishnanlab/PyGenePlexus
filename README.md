@@ -1,5 +1,5 @@
 [![Tests](https://github.com/krishnanlab/PyGenePlexus/actions/workflows/tests.yml/badge.svg)](https://github.com/krishnanlab/PyGenePlexus/actions/workflows/tests.yml)
-[![Documentation Status](https://readthedocs.org/projects/pygeneplexus/badge/?version=v2.0.4)](https://pygeneplexus.readthedocs.io/en/v2.0.4/?badge=v2.0.4)
+[![Documentation Status](https://readthedocs.org/projects/pygeneplexus/badge/?version=v3.0.0.dev0)](https://pygeneplexus.readthedocs.io/en/v2.0.4/?badge=v3.0.0.dev0)
 [![PyPI](https://img.shields.io/pypi/v/geneplexus)](https://pypi.org/project/geneplexus/)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/geneplexus)
 [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
@@ -9,6 +9,7 @@
 
 A Python package of the GenePlexus analysis pipeline.
 
+* The [ModGenePlexus Method Paper](https://www.biorxiv.org/content/10.1101/2025.08.11.669721v1.abstract)
 * The [GenePlexusZoo Method Paper](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1011773)
 * The [GenePlexus Benchmarking Paper](https://academic.oup.com/bioinformatics/article/36/11/3457/5780279)
 * The [Webserver](https://www.geneplexus.net/)
