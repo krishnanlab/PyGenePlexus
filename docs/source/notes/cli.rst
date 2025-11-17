@@ -113,6 +113,7 @@ used then only select files will be saved.
    * ``Model Directories`` Folders containing information for each of the trained models. `All-Genes` for full input gene list and `Cluster-N` for each cluster if clustering was performed.
 
       * ``clf.joblib`` Serialized version of the trained model.
+      * ``std_scale.joblib`` Serialized version of the standard scaler used (``None`` if `scale=False` in :meth:`geneplexus.GenePlexus.fit`).
       * ``model_level_config.json`` Contains configuration information specific to each model including evaluation metrics and positive, megative and neutral genes, and model weights.
       * ``df_convert_out_for_model.tsv`` Table showing conversion of input genes for each model. (see :meth:`geneplexus.GenePlexus.fit`)
       * ``Result Directories`` Folders containing results for each ``sp_res`` and ``gsc_res`` combination
