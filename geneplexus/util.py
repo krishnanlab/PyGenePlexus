@@ -600,11 +600,12 @@ def save_model_level(gp, model_path, model_name):
     model_level_dict = gp.model_info[model_name].__dict__
     # save cinfig json
     keys_to_tsv_save = ["df_convert_out_for_model"]
-    keys_to_remove = ["results", "clf"] + keys_to_tsv_save
+    keys_to_remove = ["results", "clf", "std_scale"] + keys_to_tsv_save
     config_dict = {k: v for k, v in model_level_dict.items() if k not in keys_to_remove}
     config_dict = convert_numpy_in_config(config_dict)
     save_json_from_dict(model_path, "model_level_config.json", config_dict)
     joblib.dump(model_level_dict["clf"], osp.join(model_path, "clf.joblib"))
+    joblib.dump(model_level_dict["std_scale"], osp.join(model_path, "std_scale.joblib"))
     if len(keys_to_tsv_save) > 0:
         for item in keys_to_tsv_save:
             fn_tmp = f"{item}.tsv"
