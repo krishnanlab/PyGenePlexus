@@ -118,9 +118,11 @@ def _download_and_extract(file_loc, file_cat, fn_download, data_loc, num_retries
         num_tries += 1
         logger.info(f"On attempt {num_tries} of {num_retries} for downloading the data")
         try:
-            with requests.get(url,
-                              timeout=2,
-                              headers={"User-Agent": "<geneplexus>/v3 (https://github.com/krishnanlab/PyGenePlexus)"},) as r:
+            with requests.get(
+                url,
+                timeout=2,
+                headers={"User-Agent": "<geneplexus>/v3 (https://github.com/krishnanlab/PyGenePlexus)"},
+            ) as r:
                 if r.ok:
                     logger.debug(f"Response ok ({r!r}): {url=}")
                     with tarfile.open(fileobj=io.BytesIO(r.content), mode="r:gz") as tf:
