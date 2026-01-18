@@ -31,8 +31,9 @@ species.
 input gene list. Evaluation of the model is provided by performing \
 k-fold cross validation. The default is 3-fold cross validation when a \
 minimum of 15 input genes are supplied. PyGenePlexus does not enforce a minimum or maximum number \
-of genes, and we note evaluations of the model were carried out for gene sets \
-ranging between 10 and 500 genes. See :meth:`fit` and :meth:`predict`
+of genes (the minumum number of genes can be set in :meth:`fit`), and we \
+note evaluations of the model were carried out for gene sets \
+ranging between 15 and 500 genes. See :meth:`fit` and :meth:`predict`
 #. (Optional) Interpretability of the model is provided by comparing the \
 model trained on the user gene set to models pretrained on 1000's of known \
 gene sets from [GO]_ bioloigcal proceses, [Monarch]_ phenotypes and [Mondo]_ diseases. See \
