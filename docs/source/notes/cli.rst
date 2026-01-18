@@ -66,7 +66,8 @@ Full CLI options (check out with ``geneplexus --help``)
 	                        Sets the clustering method in cluster_input(). The choices are: {louvain,
 	                        domino} (default: louvain)
 	  -cmin , --clust_min_size
-	                        Sets the minimum size of clusters allowed in cluster_input(). (default: 5)
+	                        Sets the minimum size of clusters allowed in cluster_input(). (default:
+	                        15)
 	  -cw, --clust_weighted
 	                        When added will set clust_weight argument to False in cluster_input().
 	                        (default: True)
@@ -82,7 +83,7 @@ Full CLI options (check out with ``geneplexus --help``)
 	  -s, --scale           When added, will set scale to True in fit(). See docs for more info of
 	                        when this is good to do. (default: False)
 	  -mnp , --min_num_pos
-	                        Minimum umber of genes needed to fit a model in fit(). (default: 5)
+	                        Minimum umber of genes needed to fit a model in fit(). (default: 15)
 	  -mnpcv , --min_num_pos_cv
 	                        Minumum number of genes needed to do cross validation in fit(). (default:
 	                        15)
