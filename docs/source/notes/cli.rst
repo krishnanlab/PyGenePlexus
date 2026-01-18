@@ -31,7 +31,7 @@ Full CLI options (check out with ``geneplexus --help``)
 	options:
 	  -h, --help            show this help message and exit
 	  -i , --input_file     Input gene list file (eg. (.txt file)). (default: None)
-	  -d , --gene_list_delimiter 
+	  -d , --gene_list_delimiter
 	                        Delimiter used in the gene list. Use 'newline' if the genes are separated
 	                        by new line, and use 'tab' if the genes are seperate by tabs. If not
 	                        newline or tab, will use argument directly, so /t, /n, , (default:
@@ -51,7 +51,7 @@ Full CLI options (check out with ``geneplexus --help``)
 	  -gr , --gsc_res       Geneset collection used for model similarities. The choices are: {GO,
 	                        Monarch, Mondo, Combined}. If more than one gsc can be comma spearated.
 	                        (default: Combined)
-	  -in , --input_negatives 
+	  -in , --input_negatives
 	                        Input negative gene list (.txt) file. (default: None)
 	  -l , --log_level      Logging level. The choices are: {CRITICAL, ERROR, WARNING, INFO, DEBUG}.
 	                        Set to CRITICAL for quietest logging. (default: INFO)
@@ -62,34 +62,34 @@ Full CLI options (check out with ``geneplexus --help``)
 	  --do_clustering       When added cluster_input() function will be run. (default: False)
 	  --skip-mdl-sim        When added make_sim_dfs() will not be run (default: False)
 	  --skip-sm-edgelist    When added make_small_edgelist() will not be run (default: False)
-	  -cm , --clust_method 
+	  -cm , --clust_method
 	                        Sets the clustering method in cluster_input(). The choices are: {louvain,
 	                        domino} (default: louvain)
-	  -cmin , --clust_min_size 
+	  -cmin , --clust_min_size
 	                        Sets the minimum size of clusters allowed in cluster_input(). (default:
 	                        15)
 	  -cw, --clust_weighted
 	                        When added will set clust_weight argument to False in cluster_input().
 	                        (default: True)
-	  -ck , --clust_kwargs 
+	  -ck , --clust_kwargs
 	                        Sets the clustering keyword arguments in cluster_input(). (default:
 	                        {'louvain_max_size': 70, 'louvain_max_tries': 3, 'louvain_res': 1,
 	                        'louvain_seed': 123, 'domino_res': 1, 'domino_slice_thresh': 0.3,
 	                        'domino_n_steps': 20, 'domino_module_threshold': 0.05, 'domino_seed':
 	                        123})
-	  -lk , --logreg_kwargs 
+	  -lk , --logreg_kwargs
 	                        Set the logistic regression keyword arguments in fit(). (default:
 	                        {'max_iter': 10000, 'solver': 'lbfgs', 'penalty': 'l2', 'C': 1.0})
 	  -s, --scale           When added, will set scale to True in fit(). See docs for more info of
 	                        when this is good to do. (default: False)
-	  -mnp , --min_num_pos 
+	  -mnp , --min_num_pos
 	                        Minimum umber of genes needed to fit a model in fit(). (default: 15)
-	  -mnpcv , --min_num_pos_cv 
+	  -mnpcv , --min_num_pos_cv
 	                        Minumum number of genes needed to do cross validation in fit(). (default:
 	                        15)
 	  -nf , --num_folds     Number of folds to do for cross validation in fit(). (default: 3)
 	  -nv , --null_val      Value to use when CV can't be done in fit(). (default: None)
-	  -rs , --random_state 
+	  -rs , --random_state
 	                        Random state value to use in fit(). (default: 0)
 	  -cv, --cross_validate
 	                        When added, will set cross validate to False in fit(). (default: True)
