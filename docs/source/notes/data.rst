@@ -6,7 +6,7 @@ Preprocessed Data
 
 PyGenePlexus comes with pre-processed data that can be downloaded
 using :meth:`geneplexus.download.download_select_data` or directly
-from `Zenodo <https://zenodo.org/records/14149956>`_.
+from `Zenodo <https://zenodo.org/records/14750555>`_.
 
 **All options:**
 
