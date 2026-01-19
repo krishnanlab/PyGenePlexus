@@ -124,6 +124,5 @@ from . import download
 from . import util
 from .geneplexus import GenePlexus
 
-
 __version__ = "3.0.0"
 __all__ = ["download", "GenePlexus", "util", "config"]
