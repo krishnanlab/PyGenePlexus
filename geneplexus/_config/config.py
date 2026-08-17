@@ -1,6 +1,7 @@
 """Global variables used by the GenePlexus library."""
 import os.path as osp
 import pathlib
+import re
 from typing import Any
 from typing import Dict
 from typing import List
@@ -10,6 +11,7 @@ from typing import Tuple
 from typing import Union
 
 import numpy as np
+import sklearn
 
 MAX_RETRY = 10  # maximum number of retries for downloading
 
@@ -118,9 +120,20 @@ DEFAULT_DOMINO_KWARGS = {
 DEFAULT_LOGREG_KWARGS: Dict[str, Any] = {
     "max_iter": 10000,
     "solver": "lbfgs",
-    "penalty": "l2",
     "C": 1.0,
 }
+# In scikit-learn>=1.8, ``penalty`` is deprecated in favor of ``l1_ratio``/``C``
+# (l1_ratio=0 is equivalent to the old penalty="l2" default), and passing
+# ``penalty`` explicitly now raises a FutureWarning even when set to "l2".
+# Older versions don't accept l1_ratio unless penalty="elasticnet", so pick
+# whichever explicit form matches the installed version instead of relying on
+# either version's default.
+_SKLEARN_VERSION_MATCH = re.match(r"(\d+)\.(\d+)", sklearn.__version__)
+_SKLEARN_VERSION = tuple(map(int, _SKLEARN_VERSION_MATCH.groups())) if _SKLEARN_VERSION_MATCH else (0, 0)
+if _SKLEARN_VERSION >= (1, 8):
+    DEFAULT_LOGREG_KWARGS["l1_ratio"] = 0.0
+else:
+    DEFAULT_LOGREG_KWARGS["penalty"] = "l2"
 
 __all__ = [
     "URL_DICT",

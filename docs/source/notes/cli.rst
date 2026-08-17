@@ -79,7 +79,9 @@ Full CLI options (check out with ``geneplexus --help``)
 	                        123})
 	  -lk , --logreg_kwargs
 	                        Set the logistic regression keyword arguments in fit(). (default:
-	                        {'max_iter': 10000, 'solver': 'lbfgs', 'penalty': 'l2', 'C': 1.0})
+	                        {'max_iter': 10000, 'solver': 'lbfgs', 'C': 1.0, 'l1_ratio': 0.0} on
+	                        scikit-learn>=1.8, otherwise {'max_iter': 10000, 'solver': 'lbfgs',
+	                        'penalty': 'l2', 'C': 1.0})
 	  -s, --scale           When added, will set scale to True in fit(). See docs for more info of
 	                        when this is good to do. (default: False)
 	  -mnp , --min_num_pos

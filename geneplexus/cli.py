@@ -225,7 +225,10 @@ def parse_args() -> argparse.Namespace:
         default=config.DEFAULT_LOGREG_KWARGS,
         metavar="",
         type=json.loads,
-        help="Set the logistic regression keyword arguments in fit().",
+        help=(
+            "Set the logistic regression keyword arguments in fit(). The default shown "
+            "depends on the installed scikit-learn version (penalty vs l1_ratio)."
+        ),
     )
 
     parser.add_argument(
