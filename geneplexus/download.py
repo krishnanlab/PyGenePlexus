@@ -1,5 +1,6 @@
 """Data download module."""
 import io
+import logging
 import os
 import os.path as osp
 import shutil
@@ -12,6 +13,7 @@ from urllib.parse import urljoin
 
 import pystow
 import requests
+from tqdm import tqdm
 
 from . import util
 from ._config import logger
@@ -120,12 +122,29 @@ def _download_and_extract(file_loc, file_cat, fn_download, data_loc, num_retries
         try:
             with requests.get(
                 url,
-                timeout=2,
+                timeout=(10, 30),  # (connect timeout, read timeout per chunk)
+                stream=True,
                 headers={"User-Agent": "<geneplexus>/v3 (https://github.com/krishnanlab/PyGenePlexus)"},
             ) as r:
                 if r.ok:
                     logger.debug(f"Response ok ({r!r}): {url=}")
-                    with tarfile.open(fileobj=io.BytesIO(r.content), mode="r:gz") as tf:
+                    total = int(r.headers.get("Content-Length", 0)) or None
+                    stream_levels = [h.level for h in logger.handlers if isinstance(h, logging.StreamHandler)]
+                    bar_disabled = bool(stream_levels) and min(stream_levels) > logging.INFO
+                    buf = io.BytesIO()
+                    with tqdm(
+                        total=total,
+                        unit="B",
+                        unit_scale=True,
+                        unit_divisor=1024,
+                        desc=f"Downloading {file_cat}",
+                        disable=bar_disabled,
+                    ) as pbar:
+                        for chunk in r.iter_content(chunk_size=1024 * 1024):
+                            buf.write(chunk)
+                            pbar.update(len(chunk))
+                    buf.seek(0)
+                    with tarfile.open(fileobj=buf, mode="r:gz") as tf:
                         for member in tf.getmembers():
                             member.name = os.path.basename(member.name)
                             tf.extract(member, file_loc)
@@ -137,19 +156,19 @@ def _download_and_extract(file_loc, file_cat, fn_download, data_loc, num_retries
                     if _check_all_files(file_loc, file_cat):
                         break
                     else:
-                        logger.warning(f"Not all files downloaded, trying again")
+                        logger.warning("Not all files downloaded, trying again")
+                        continue
                 elif r.status_code == 429:  # Retry later
                     t = r.headers["Retry-after"]
                     logger.warning(f"Too many requests, waiting for {t} sec")
                     time.sleep(int(t))
                     continue
                 else:
-                    logger.info("An unknown error occured")
+                    logger.info(f"An unknown error occured (status {r.status_code})")
                     continue
-        except:
-            logger.info("An error occured during download (probably a connection timeout)")
+        except Exception as e:
+            logger.info(f"An error occured during download: {e!r}")
             continue
-        logger.critical("Session context closed, this should never happen!")
     else:
         raise DownloadError(f"Failed to download from {url} ({num_retries=})")
 
