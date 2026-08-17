@@ -630,7 +630,10 @@ class GenePlexus:
 
         Args:
             logreg_kwargs: Scikit-learn logistic regression settings (see
-                :class:`~sklearn.linear_model.LogisticRegression`).
+                :class:`~sklearn.linear_model.LogisticRegression`). The default
+                uses ``l1_ratio=0.0`` on scikit-learn>=1.8 and ``penalty="l2"``
+                on older versions (equivalent settings), since ``penalty`` is
+                deprecated in scikit-learn>=1.8.
             scale: Whether to scale the data when doing model training and prediction. It is
                 not recommended to set to ``True`` unless using custom data.
             min_num_pos: Minimum number of positives required for the model
