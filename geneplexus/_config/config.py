@@ -1,4 +1,5 @@
 """Global variables used by the GenePlexus library."""
+
 import os.path as osp
 import pathlib
 import re

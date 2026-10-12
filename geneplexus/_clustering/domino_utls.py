@@ -224,7 +224,7 @@ def linear_threshold(G, seeds, steps=0):
 
 def _diffuse_all(G, A):
     layer_i_nodes = []
-    layer_i_nodes.append([i for i in A])
+    layer_i_nodes.append([*A])
     while True:
         len_old = len(A)
         A, activated_nodes_of_this_round = _diffuse_one_round(G, A)
@@ -236,7 +236,7 @@ def _diffuse_all(G, A):
 
 def _diffuse_k_rounds(G, A, steps):
     layer_i_nodes = []
-    layer_i_nodes.append([i for i in A])
+    layer_i_nodes.append([*A])
     while steps > 0 and len(A) < len(G):
         len_old = len(A)
         A, activated_nodes_of_this_round = _diffuse_one_round(G, A)
